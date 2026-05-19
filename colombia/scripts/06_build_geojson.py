@@ -11,11 +11,17 @@ import json
 import pandas as pd
 from pathlib import Path
 
+def load_party_lookup():
+    OUT2 = Path(__file__).parent.parent / "data" / "processed"
+    with open(OUT2 / "parties.json") as f:
+        return json.load(f)  # "XXXX" → {nombre, color}
+
 OUT = Path(__file__).parent.parent / "data" / "processed"
 
 
 def build_geojson():
     print("Loading data …")
+    party_lookup = load_party_lookup()
 
     with open(OUT / "colombia_municipios.geojson") as f:
         mpio_geo = json.load(f)
@@ -36,19 +42,27 @@ def build_geojson():
         "votantes", "censo", "votos_validos", "votos_blanco",
         "votos_nulos", "mesas_total", "mesas_escrutadas",
         "turnout_pct", "pct_blanco", "pct_nulo",
-        "winner", "winner_votes", "winner_pct",
+        "winner", "winner_votes", "winner_pct", "winner_color",
     ]
     keep_cols = [c for c in keep_cols if c in mpio_results.columns]
     results_slim = mpio_results[keep_cols].copy()
 
-    # Also embed top-5 candidates per municipio as JSON string
-    cand_cols = [c for c in mpio_results.columns if c.startswith("cand_")]
-    if cand_cols:
-        def top5(row):
-            cands = {col.split("|")[1]: int(row[col]) for col in cand_cols}
-            top = sorted(cands.items(), key=lambda x: -x[1])[:5]
-            return json.dumps([{"name": n, "votes": v} for n, v in top], ensure_ascii=False)
-        results_slim["top5_candidates"] = mpio_results.apply(top5, axis=1)
+    # Embed top-5 parties per municipio as JSON string
+    party_cols = [c for c in mpio_results.columns if c.startswith("party_")]
+    if party_cols:
+        def top5_parties(row):
+            entries = []
+            for col in party_cols:
+                code = col.replace("party_", "")
+                info = party_lookup.get(code, {})
+                entries.append({
+                    "name": info.get("nombre", code),
+                    "color": info.get("color", "#888"),
+                    "votes": int(row[col])
+                })
+            top = sorted(entries, key=lambda x: -x["votes"])[:5]
+            return json.dumps(top, ensure_ascii=False)
+        results_slim["top5_candidates"] = mpio_results.apply(top5_parties, axis=1)
 
     results_dict = results_slim.set_index("mpio_reg_code_5").to_dict(orient="index")
 
@@ -78,17 +92,25 @@ def build_geojson():
     dept_keep = [
         "dept_map_num", "dept_name_reg", "dept_name_dane", "dept_dane_code",
         "votantes", "censo", "votos_validos", "turnout_pct",
-        "winner", "winner_votes", "winner_pct",
+        "winner", "winner_votes", "winner_pct", "winner_color",
     ]
     dept_keep = [c for c in dept_keep if c in dept_results.columns]
 
-    # Add top5 per dept
-    dept_cand = [c for c in dept_results.columns if c.startswith("cand_")]
-    if dept_cand:
+    # Add top5 parties per dept
+    dept_party = [c for c in dept_results.columns if c.startswith("party_")]
+    if dept_party:
         def dept_top5(row):
-            cands = {col.split("|")[1]: int(float(row[col])) for col in dept_cand}
-            top = sorted(cands.items(), key=lambda x: -x[1])[:5]
-            return json.dumps([{"name": n, "votes": v} for n, v in top], ensure_ascii=False)
+            entries = []
+            for col in dept_party:
+                code = col.replace("party_", "")
+                info = party_lookup.get(code, {})
+                entries.append({
+                    "name": info.get("nombre", code),
+                    "color": info.get("color", "#888"),
+                    "votes": int(float(row[col]))
+                })
+            top = sorted(entries, key=lambda x: -x["votes"])[:5]
+            return json.dumps(top, ensure_ascii=False)
         dept_results["top5_candidates"] = dept_results.apply(dept_top5, axis=1)
         dept_keep.append("top5_candidates")
 

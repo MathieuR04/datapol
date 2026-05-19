@@ -9,6 +9,8 @@ node_modules/
 # Large generated files — reproducible by running the pipeline
 colombia/data/processed/resultados_puestos_raw.json
 colombia/data/processed/resultados_puestos.csv
+colombia/data/processed/resultados_mesas.csv
+colombia/data/processed/resultados_mesas_errors.csv
 
 # Large raw source files (download separately per README)
 colombia/data/raw/Divipole_definitiva_*.pdf

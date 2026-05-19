@@ -45,21 +45,23 @@ def parse_puesto_json(code: str, data: dict) -> dict:
         "votos_validos":    totales.get("votval"),
     }
 
-    # Flatten candidate votes: sum by (codcan, nomcan+apecan) across all camaras
-    # partotabla entries are wrapped: {"act": {"codpar":..., "cantotabla": [...]}}
-    candidate_votes: dict[str, int] = {}
+    # Party totals + candidate votes (composite key to avoid codcan=0 collision across parties)
+    # partotabla entries wrapped: {"act": {"codpar":..., "vot":..., "cantotabla": [...]}}
+    # Party names come from parties.json (nomenclator); API does not expose them here.
     for camara in data.get("camaras", []):
         for partido_wrapper in camara.get("partotabla", []):
             partido = partido_wrapper.get("act", partido_wrapper)
+            codpar = int(partido.get("codpar", 0))
+            party_vot = partido.get("vot")
+            pkey = f"party_{codpar:04d}"
+            record[pkey] = record.get(pkey, 0) + (int(party_vot) if party_vot else 0)
+
             for cand in partido.get("cantotabla", []):
                 codcan = int(cand.get("codcan", 0))
-                name = f"{cand.get('nomcan', '')} {cand.get('apecan', '')}".strip()
-                key = f"{codcan:06d}|{name}"
+                cand_name = f"{cand.get('nomcan', '')} {cand.get('apecan', '')}".strip()
+                ckey = f"cand_{codpar:04d}_{codcan:06d}|{cand_name}"
                 vot = cand.get("vot")
-                candidate_votes[key] = candidate_votes.get(key, 0) + (int(vot) if vot else 0)
-
-    for key, vot in candidate_votes.items():
-        record[f"cand_{key}"] = vot
+                record[ckey] = record.get(ckey, 0) + (int(vot) if vot else 0)
 
     return record
 
