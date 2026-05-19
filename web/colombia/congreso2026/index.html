@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Colombia — Senado 2026 | Datapol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -10,197 +10,205 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #f5f0e8;
-      --surface:   #ede8df;
-      --border:    #cfc0ab;
-      --text:      #1a1209;
-      --muted:     #7a6858;
-      --dim:       #b0a090;
-      --terra:     #c4603a;
-      --terra-dk:  #8b3c1f;
-      --terra-lt:  #e8d4c4;
-      --sand:      #d9c9b4;
+      --bg:       #f5f0e8;
+      --surface:  #ede8df;
+      --border:   #cfc0ab;
+      --border2:  #bfb0a0;
+      --text:     #1a1209;
+      --muted:    #7a6858;
+      --dim:      #b0a090;
+      --terra:    #c4603a;
+      --terra-dk: #8b3c1f;
+      --terra-lt: #f0e4d8;
+      --sand:     #d9c9b4;
     }
-
-    html, body {
+    html { height: 100%; }
+    body {
       height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       font-size: 12px;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
-    /* ── App shell ──────────────────────────────────────────────────────── */
-    .app { display: flex; flex-direction: column; height: 100vh; }
+    /* ── Nav ──────────────────────────────────────────────────────────────── */
+    .nav {
+      background: var(--text);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      height: 32px;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 14px;
+      color: var(--sand);
+      letter-spacing: 0.05em;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+    .nav-sep { width: 1px; height: 14px; background: #333; margin: 0 0.6rem; }
+    .nav-item {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #555;
+      padding: 0 0.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--terra); }
+    .nav-item:hover:not(.active) { color: #999; }
+    .nav-pill {
+      font-size: 8px;
+      background: #333;
+      color: #666;
+      border-radius: 2px;
+      padding: 1px 5px;
+      margin-left: 4px;
+    }
 
-    /* ── Header ─────────────────────────────────────────────────────────── */
+    /* ── Header ───────────────────────────────────────────────────────────── */
     .header {
       background: var(--bg);
       border-bottom: 2px solid var(--text);
-      padding: 0.6rem 1.25rem;
+      padding: 0.55rem 1.25rem;
       display: flex;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1.25rem;
       flex-shrink: 0;
     }
-
     .header-title {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 22px;
+      font-size: 20px;
       letter-spacing: 0.04em;
-      color: var(--text);
       line-height: 1;
       white-space: nowrap;
     }
-
     .header-sub {
-      font-size: 10px;
+      font-size: 9px;
       color: var(--muted);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       border-left: 2px solid var(--terra);
       padding-left: 0.6rem;
+      line-height: 1.5;
     }
-
-    /* Mesas progress bar — in header */
     .header-progress {
       flex: 1;
+      max-width: 280px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      max-width: 320px;
+      gap: 4px;
     }
     .hp-labels {
       display: flex;
       justify-content: space-between;
       font-size: 9px;
       color: var(--muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
-    .hp-bar {
-      height: 5px;
-      background: var(--sand);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .hp-fill {
-      height: 100%;
-      background: var(--terra);
-      border-radius: 2px;
-      transition: width 0.5s ease;
-    }
-
-    .header-stats {
-      display: flex;
-      gap: 1.5rem;
-      margin-left: auto;
-    }
-    .hstat { display: flex; flex-direction: column; align-items: flex-end; }
-    .hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .hstat-val {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 18px;
-      line-height: 1;
-      color: var(--text);
-    }
-    .hstat-val.hi { color: var(--terra); }
-
-    /* Live indicator */
+    .hp-bar { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .hp-fill { height: 100%; background: var(--terra); border-radius: 2px; transition: width 0.5s; }
     .live-tag {
       display: none;
       align-items: center;
       gap: 0.3rem;
       font-size: 9px;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: 0.07em;
       color: var(--terra);
       border: 1px solid var(--terra);
       padding: 0.2rem 0.5rem;
       border-radius: 2px;
+      flex-shrink: 0;
     }
-    .live-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--terra);
-      animation: blink 1.5s step-end infinite;
-    }
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--terra); animation: blink 1.4s step-end infinite; }
     @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .header-stats { display: flex; gap: 1.25rem; margin-left: auto; }
+    .hstat { display: flex; flex-direction: column; align-items: flex-end; }
+    .hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .hstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; color: var(--text); }
+    .hstat-val.hi { color: var(--terra); }
 
-    /* ── Body ────────────────────────────────────────────────────────────── */
+    /* ── Body ─────────────────────────────────────────────────────────────── */
     .body { display: flex; flex: 1; min-height: 0; }
 
-    /* ── Map area ────────────────────────────────────────────────────────── */
+    /* ── Map ──────────────────────────────────────────────────────────────── */
     .map-wrap { flex: 1; position: relative; min-width: 0; }
-    #map { width: 100%; height: 100%; background: #ede8df; }
-
-    /* Leaflet overrides for light theme */
-    .leaflet-container { background: #ede8df; }
-    .leaflet-control-zoom a {
-      background: var(--bg) !important;
-      color: var(--text) !important;
-      border-color: var(--border) !important;
-    }
+    #map { width: 100%; height: 100%; background: #e8e0d4; }
+    .leaflet-container { background: #e8e0d4; }
+    .leaflet-control-zoom a { background: var(--bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
     .leaflet-control-zoom a:hover { background: var(--surface) !important; }
-    .leaflet-control-attribution {
-      background: rgba(245,240,232,0.85) !important;
-      color: var(--dim) !important;
-      font-size: 9px !important;
-    }
+    .leaflet-control-attribution { background: rgba(245,240,232,0.9) !important; color: var(--dim) !important; font-size: 9px !important; }
     .leaflet-control-attribution a { color: var(--dim) !important; }
 
-    /* Map view toggle */
+    /* Map controls overlay */
     .map-controls {
       position: absolute;
       bottom: 0.75rem;
       left: 0.75rem;
       z-index: 800;
       display: flex;
-      gap: 0.3rem;
+      flex-direction: column;
+      gap: 0.35rem;
     }
-    .view-btn {
-      background: var(--bg);
+    .ctrl-row { display: flex; gap: 0.3rem; }
+    .view-btn, .level-btn {
+      background: rgba(245,240,232,0.92);
       border: 1px solid var(--border);
       color: var(--muted);
       font-size: 9px;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      padding: 0.3rem 0.65rem;
+      padding: 0.3rem 0.7rem;
       border-radius: 2px;
       cursor: pointer;
+      backdrop-filter: blur(4px);
       transition: all 0.15s;
+      white-space: nowrap;
     }
-    .view-btn.active {
-      background: var(--terra);
-      color: #fff;
-      border-color: var(--terra);
-    }
-    .view-btn:hover:not(.active) { background: var(--surface); color: var(--text); }
+    .view-btn.active, .level-btn.active { background: var(--terra); color: #fff; border-color: var(--terra); }
+    .view-btn:hover:not(.active), .level-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
 
     /* Loading */
-    #loading {
-      position: absolute; inset: 0;
-      background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      z-index: 2000; gap: 0.75rem;
-    }
+    #loading { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; gap: 0.75rem; }
     #loading p { color: var(--muted); font-size: 11px; }
-    .spinner {
-      width: 28px; height: 28px;
-      border: 2px solid var(--sand);
-      border-top-color: var(--terra);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--sand); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Right panel ─────────────────────────────────────────────────────── */
+    /* Bubble legend */
+    .bubble-legend {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.5rem;
+      z-index: 800;
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.5rem 0.7rem;
+      font-size: 9px;
+      color: var(--muted);
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+    .bubble-legend.show { display: block; }
+    .bubble-legend-title { font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .bubble-legend-items { display: flex; align-items: flex-end; gap: 0.75rem; }
+    .bl-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .bl-circle { border-radius: 50%; border: 1px solid #999; background: rgba(196,96,58,0.25); }
+    .bl-label { font-size: 8px; }
+
+    /* ── Panel ────────────────────────────────────────────────────────────── */
     .panel {
       width: 280px;
       min-width: 280px;
@@ -210,18 +218,14 @@
       flex-direction: column;
       overflow: hidden;
     }
-
-    .panel-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-    }
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .ptab {
       flex: 1;
-      padding: 0.55rem 0;
+      padding: 0.6rem 0;
       text-align: center;
       font-size: 9px;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: var(--muted);
       cursor: pointer;
@@ -231,319 +235,216 @@
     .ptab.active { color: var(--terra); border-color: var(--terra); }
     .ptab:hover:not(.active) { color: var(--text); }
 
-    .panel-content { flex: 1; overflow-y: auto; }
-    .panel-content::-webkit-scrollbar { width: 4px; }
-    .panel-content::-webkit-scrollbar-track { background: transparent; }
-    .panel-content::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+    .panel-scroll::-webkit-scrollbar { width: 3px; }
+    .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+    .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
 
     .p-view { display: none; }
     .p-view.active { display: block; }
 
-    /* Party list */
-    .sect-head {
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 0.6rem 0.75rem 0.3rem;
-      border-bottom: 1px solid var(--border);
-    }
+    .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
 
-    .party-row {
-      padding: 0.5rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-      cursor: default;
-    }
-    .party-top {
-      display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      margin-bottom: 4px;
-    }
-    .party-pct {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 20px;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-    .party-name {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.2;
-      flex: 1;
-    }
-    .party-votes {
-      font-size: 9px;
-      color: var(--muted);
-      flex-shrink: 0;
-    }
-    .party-bar-wrap {
-      height: 4px;
-      background: var(--sand);
-      border-radius: 1px;
-      overflow: hidden;
-    }
+    /* Party rows */
+    .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .party-row:hover { background: var(--terra-lt); }
+    .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .party-top { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 4px; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; }
+    .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
+    .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+    .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
     .party-bar { height: 100%; border-radius: 1px; }
 
-    /* Dept list */
-    .dept-row {
-      padding: 0.45rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.1s;
-    }
+    /* Dept rows */
+    .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
     .dept-row:hover { background: var(--terra-lt); }
     .dept-top { display: flex; align-items: center; gap: 0.4rem; }
     .dept-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
-    .dept-name {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--text);
-      flex: 1;
-    }
-    .dept-votes { font-size: 9px; color: var(--muted); }
-    .dept-winner { font-size: 9px; color: var(--muted); margin-top: 2px; padding-left: 12px; }
+    .dept-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
+    .dept-votes { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .dept-winner { font-size: 9px; color: var(--muted); margin-top: 2px; padding-left: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* Detail panel */
-    .detail-panel { display: none; flex-direction: column; flex: 1; overflow-y: auto; }
+    .detail-panel { display: none; flex-direction: column; overflow-y: auto; flex: 1; }
     .detail-panel.active { display: flex; }
-
-    .detail-back {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.5rem 0.75rem;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      transition: color 0.15s;
-    }
+    .detail-back { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: color 0.15s; }
     .detail-back:hover { color: var(--terra); }
-
-    .detail-hero {
-      padding: 0.75rem 0.75rem 0.5rem;
-      border-bottom: 2px solid var(--text);
-    }
-    .detail-mpio {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 20px;
-      line-height: 1;
-      letter-spacing: 0.03em;
-    }
-    .detail-winner-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      margin-top: 0.3rem;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--terra-dk);
-    }
-    .detail-winner-swatch {
-      width: 8px; height: 8px;
-      border-radius: 1px;
-      flex-shrink: 0;
-    }
-
-    .detail-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .dstat {
-      padding: 0.45rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-    }
+    .detail-hero { padding: 0.75rem 0.75rem 0.5rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; letter-spacing: 0.03em; }
+    .detail-winner-tag { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--terra-dk); }
+    .detail-winner-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
+    .detail-stats-grid { display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; }
+    .dstat { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
     .dstat:nth-child(even) { border-right: none; }
-    .dstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .dstat-val { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 1px; }
-
-    .detail-sect-head {
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 0.5rem 0.75rem 0.25rem;
-    }
-
-    .detail-party {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.75rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .detail-party-pct {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 16px;
-      line-height: 1;
-      flex-shrink: 0;
-      min-width: 44px;
-    }
+    .dstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .dstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1.1; color: var(--text); margin-top: 1px; }
+    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem 0.25rem; flex-shrink: 0; }
+    .detail-party { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .detail-party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 18px; line-height: 1; flex-shrink: 0; min-width: 48px; }
     .detail-party-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
     .detail-party-name { font-size: 10px; color: var(--text); flex: 1; line-height: 1.2; }
     .detail-party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
 
-    /* ── Bottom bar ──────────────────────────────────────────────────────── */
-    .bottombar {
-      background: var(--text);
-      height: 26px;
-      display: flex;
-      align-items: center;
-      padding: 0 1.25rem;
-      gap: 2rem;
-      flex-shrink: 0;
-    }
-    .bbar-item { display: flex; align-items: center; gap: 0.5rem; }
-    .bbar-label {
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--dim);
-    }
-    .bbar-val {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 14px;
-      line-height: 1;
-      color: var(--sand);
-    }
+    /* ── Bottom bar ───────────────────────────────────────────────────────── */
+    .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
+    .bottombar::-webkit-scrollbar { display: none; }
+    .bbar-item { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    .bbar-label { font-size: 8px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #4a4a3a; }
+    .bbar-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; color: var(--sand); }
     .bbar-val.hi { color: var(--terra); }
-    .bbar-sep { width: 1px; height: 12px; background: #333; flex-shrink: 0; }
+    .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
 
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
-      .panel { display: none; }
-      .header-stats .hstat:nth-child(n+3) { display: none; }
+      body { overflow: auto; }
+      .body { flex-direction: column; }
+      .map-wrap { height: 55vw; min-height: 280px; flex: none; }
+      .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
+      .header-sub, .header-progress, .live-tag { display: none !important; }
+      .header-stats { gap: 0.75rem; }
+      .hstat-val { font-size: 17px; }
+      .bottombar { height: auto; padding: 0.4rem 0.75rem; flex-wrap: wrap; gap: 0.5rem 1rem; }
+      .bbar-sep { display: none; }
     }
   </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- Header -->
-  <div class="header">
-    <div>
-      <div class="header-title">Senado · Colombia 2026</div>
+<!-- Nav -->
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <div class="nav-sep"></div>
+  <span class="nav-item active">Senado</span>
+  <span class="nav-item" style="cursor:default">Cámara <span class="nav-pill">próx.</span></span>
+  <span class="nav-item" style="cursor:default">Presidencial <span class="nav-pill">próx.</span></span>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header-title">🇨🇴 Senado · Colombia 2026</div>
+  </div>
+  <div class="header-sub">Resultados por municipio<br>Registraduría Nacional</div>
+  <div class="header-progress">
+    <div class="hp-labels">
+      <span>Mesas escrutadas</span>
+      <span id="hp-label">—</span>
     </div>
-    <div class="header-sub">Resultados por municipio<br>Registraduría Nacional</div>
-
-    <div class="header-progress">
-      <div class="hp-labels">
-        <span>Mesas escrutadas</span>
-        <span id="hp-label">—</span>
-      </div>
-      <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
+    <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+  <div class="header-stats">
+    <div class="hstat">
+      <span class="hstat-label">Participación</span>
+      <span class="hstat-val hi" id="hs-turnout">—</span>
     </div>
-
-    <div class="live-tag" id="live-tag">
-      <div class="live-dot"></div>
-      VIVO
+    <div class="hstat">
+      <span class="hstat-label">Votos válidos</span>
+      <span class="hstat-val" id="hs-votes">—</span>
     </div>
-
-    <div class="header-stats">
-      <div class="hstat">
-        <span class="hstat-label">Participación</span>
-        <span class="hstat-val hi" id="hs-turnout">—</span>
-      </div>
-      <div class="hstat">
-        <span class="hstat-label">Votos válidos</span>
-        <span class="hstat-val" id="hs-votes">—</span>
-      </div>
-      <div class="hstat">
-        <span class="hstat-label">Municipios</span>
-        <span class="hstat-val" id="hs-mpios">—</span>
-      </div>
+    <div class="hstat">
+      <span class="hstat-label">Municipios</span>
+      <span class="hstat-val" id="hs-mpios">—</span>
     </div>
   </div>
+</div>
 
-  <!-- Body -->
-  <div class="body">
+<!-- Body -->
+<div class="body">
 
-    <!-- Map -->
-    <div class="map-wrap">
-      <div id="loading">
-        <div class="spinner"></div>
-        <p>Cargando datos…</p>
+  <!-- Map -->
+  <div class="map-wrap">
+    <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
+
+    <div class="map-controls">
+      <!-- Level toggle -->
+      <div class="ctrl-row">
+        <button class="level-btn active" data-level="municipio">Municipio</button>
+        <button class="level-btn" data-level="dept">Departamento</button>
       </div>
-      <div class="map-controls">
+      <!-- View toggle -->
+      <div class="ctrl-row" id="view-btns">
         <button class="view-btn active" data-view="winner">Partido</button>
         <button class="view-btn" data-view="turnout">Participación</button>
-        <button class="view-btn" data-view="votes">Votos</button>
-      </div>
-      <div id="map"></div>
-    </div>
-
-    <!-- Right panel -->
-    <div class="panel">
-      <div class="panel-tabs" id="panel-tabs">
-        <div class="ptab active" data-tab="partidos">Partidos</div>
-        <div class="ptab" data-tab="depts">Departamentos</div>
-      </div>
-
-      <div class="panel-content" id="panel-content">
-        <div class="p-view active" id="view-partidos"></div>
-        <div class="p-view" id="view-depts"></div>
-      </div>
-
-      <!-- Detail overlay -->
-      <div class="detail-panel" id="detail-panel">
-        <div class="detail-back" id="detail-back">← Volver</div>
-        <div class="detail-hero">
-          <div class="detail-mpio" id="d-mpio">—</div>
-          <div class="detail-winner-tag" id="d-winner-tag"></div>
-        </div>
-        <div class="detail-stats-grid" id="d-stats"></div>
-        <div class="detail-sect-head">Partidos</div>
-        <div id="d-parties"></div>
+        <button class="view-btn" data-view="mesas">Mesas</button>
+        <button class="view-btn" data-view="votos">Votos</button>
       </div>
     </div>
 
+    <div class="bubble-legend" id="bubble-legend">
+      <div class="bubble-legend-title" id="bl-title">Mesas faltantes</div>
+      <div class="bubble-legend-items" id="bl-items"></div>
+    </div>
+
+    <div id="map"></div>
   </div>
 
-  <!-- Bottom bar -->
-  <div class="bottombar">
-    <div class="bbar-item">
-      <span class="bbar-label">Censo</span>
-      <span class="bbar-val" id="bb-censo">—</span>
+  <!-- Panel -->
+  <div class="panel">
+    <div class="panel-tabs" id="panel-tabs">
+      <div class="ptab active" data-tab="partidos">Partidos</div>
+      <div class="ptab" data-tab="depts">Departamentos</div>
     </div>
-    <div class="bbar-sep"></div>
-    <div class="bbar-item">
-      <span class="bbar-label">Votantes</span>
-      <span class="bbar-val hi" id="bb-votantes">—</span>
+    <div class="panel-scroll" id="panel-scroll">
+      <div class="p-view active" id="view-partidos"></div>
+      <div class="p-view" id="view-depts"></div>
     </div>
-    <div class="bbar-sep"></div>
-    <div class="bbar-item">
-      <span class="bbar-label">Votos nulos</span>
-      <span class="bbar-val" id="bb-nulos">—</span>
-    </div>
-    <div class="bbar-sep"></div>
-    <div class="bbar-item">
-      <span class="bbar-label">En blanco</span>
-      <span class="bbar-val" id="bb-blanco">—</span>
-    </div>
-    <div class="bbar-sep"></div>
-    <div class="bbar-item">
-      <span class="bbar-label">Mesas</span>
-      <span class="bbar-val" id="bb-mesas">—</span>
+    <!-- Detail overlay -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-back" id="detail-back">← Volver</div>
+      <div class="detail-hero">
+        <div class="detail-mpio" id="d-mpio">—</div>
+        <div class="detail-winner-tag" id="d-winner-tag"></div>
+      </div>
+      <div class="detail-stats-grid" id="d-stats"></div>
+      <div class="detail-sect-head">Partidos</div>
+      <div id="d-parties"></div>
     </div>
   </div>
 
 </div>
 
+<!-- Bottom bar -->
+<div class="bottombar">
+  <div class="bbar-item"><span class="bbar-label">Censo</span><span class="bbar-val" id="bb-censo">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Votantes</span><span class="bbar-val hi" id="bb-votantes">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Votos nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Mesas</span><span class="bbar-val" id="bb-mesas">—</span></div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function () {
+
+  // ── Party color overrides (nomenclator colors corrected) ─────────────────
+  const PARTY_COLORS = {
+    "PACTO HISTÓRICO SENADO":                  "#6B21A8",
+    "MOVIMIENTO POLÍTICO PACTO HISTÓRICO":     "#6B21A8",
+    "PARTIDO CENTRO DEMOCRÁTICO":              "#1D4ED8",
+    "PARTIDO LIBERAL COLOMBIANO":              "#DC2626",
+    "PARTIDO CONSERVADOR COLOMBIANO":          "#1E40AF",
+    "PARTIDO ALIANZA VERDE":                   "#16A34A",
+    "ALIANZA POR COLOMBIA":                    "#15803D",
+    "PARTIDO DE LA UNIÓN POR LA GENTE - PARTIDO DE LA U": "#D97706",
+    "COALICIÓN CAMBIO RADICAL - ALMA":         "#EA580C",
+    "PARTIDO CAMBIO RADICAL":                  "#EA580C",
+    "AHORA COLOMBIA":                          "#BE185D",
+    "MOVIMIENTO SALVACIÓN NACIONAL":           "#7C3AED",
+    "CREEMOS":                                 "#0891B2",
+    "FRENTE AMPLIO UNITARIO":                  "#059669",
+    "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"": "#B45309",
+    "PARTIDO POLÍTICO MIRA":                   "#0369A1",
+  };
+
+  function partyColor(name, fallback) {
+    return PARTY_COLORS[name] || fallback || "#9a8878";
+  }
 
   // ── Map ──────────────────────────────────────────────────────────────────
   const map = L.map("map", { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true });
@@ -558,87 +459,270 @@
     const [r1,g1,b1]=p(a),[r2,g2,b2]=p(b);
     return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
   }
+  function blendWithBg(hex, strength=0.72) {
+    try {
+      const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+      const bg=[245,240,232];
+      const s=strength;
+      return `rgb(${Math.round(r*s+bg[0]*(1-s))},${Math.round(g*s+bg[1]*(1-s))},${Math.round(b*s+bg[2]*(1-s))})`;
+    } catch(e) { return "#d9c9b4"; }
+  }
   function turnoutColor(pct) {
-    if (pct==null||isNaN(pct)) return "#e8ddd0";
-    const s=[[0,"#e8ddd0"],[20,"#f0c9a0"],[35,"#e8a870"],[50,"#d97040"],[65,"#b84a20"],[80,"#7a2010"]];
+    if (pct==null||isNaN(pct)) return "#e0d8cc";
+    const s=[[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
     for (let i=1;i<s.length;i++) {
       if (pct<=s[i][0]) { const t=(pct-s[i-1][0])/(s[i][0]-s[i-1][0]); return lerp(s[i-1][1],s[i][1],t); }
     }
     return s[s.length-1][1];
-  }
-  function votesColor(v, mx) {
-    return (!v||!mx)?"#e8ddd0":lerp("#e8ddd0","#8b3c1f",Math.pow(v/mx,0.4));
   }
 
   // ── Formatting ───────────────────────────────────────────────────────────
   const fmtN = n => (n==null||n===""||isNaN(n))?"—":parseInt(n).toLocaleString("es-CO");
   const fmtP = n => (n==null||n===""||isNaN(n))?"—":parseFloat(n).toFixed(1)+"%";
 
+  // ── Centroid of a GeoJSON feature ────────────────────────────────────────
+  function centroid(feat) {
+    const g = feat.geometry;
+    let coords = g.type==="MultiPolygon"
+      ? g.coordinates.reduce((a,poly)=>a.concat(poly[0]),[])
+      : g.coordinates[0];
+    let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;
+    coords.forEach(([lng,lat])=>{
+      if(lat<minLat)minLat=lat; if(lat>maxLat)maxLat=lat;
+      if(lng<minLng)minLng=lng; if(lng>maxLng)maxLng=lng;
+    });
+    return [(minLat+maxLat)/2, (minLng+maxLng)/2];
+  }
+
   // ── State ────────────────────────────────────────────────────────────────
-  let currentView = "winner";
-  let geojsonLayer = null;
-  let geojsonData  = null;
-  let maxVotes = 1;
+  let currentView  = "winner";
+  let currentLevel = "municipio";
+  let selectedParty = null;
+
+  let mpioData = null, deptData = null;
+  let deptNameMap = {};  // "01" → "ANTIOQUIA"
+  let deptBoundsMap = {}; // "01" → LatLngBounds
+  let deptFeatMap = {}; // "01" → feature
+
+  let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
   let activeLayer = null;
   let previousTab = "partidos";
 
-  // ── Feature styling ──────────────────────────────────────────────────────
-  function hexToRgb(hex) {
-    // Parse hex and return a slightly muted version for light map
-    try {
-      const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-      // blend 70% party color + 30% cream base
-      const bg=[245,240,232];
-      return `rgb(${Math.round(r*.75+bg[0]*.25)},${Math.round(g*.75+bg[1]*.25)},${Math.round(b*.75+bg[2]*.25)})`;
-    } catch(e) { return "#d9c9b4"; }
-  }
-
-  function styleFeature(feat) {
-    const p = feat.properties || {};
+  // ── Style functions ───────────────────────────────────────────────────────
+  function styleMpio(feat) {
+    const p = feat.properties||{};
     let fill = "#e0d8cc";
-    if (currentView==="winner")   fill = p.winner_color ? hexToRgb(p.winner_color) : "#e0d8cc";
-    else if (currentView==="turnout") fill = turnoutColor(parseFloat(p.turnout_pct));
-    else if (currentView==="votes")   fill = votesColor(parseInt(p.votos_validos), maxVotes);
-    return { fillColor: fill, weight: 0.5, color: "#bfb0a0", fillOpacity: 0.9 };
+    if (currentView==="winner") {
+      const c = partyColor(p.winner, p.winner_color);
+      fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c);
+    } else if (currentView==="turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct));
+    } else if (currentView==="party" && selectedParty) {
+      // party choropleth — see getPartyShare
+      const share = getPartyShare(p, selectedParty);
+      fill = lerp("#e0d8cc", PARTY_COLORS[selectedParty]||"#c4603a", Math.pow(share/0.6, 0.7));
+    }
+    return { fillColor: fill, weight: 0.4, color: "#bfb0a0", fillOpacity: 0.92 };
   }
 
-  // ── Detail panel ─────────────────────────────────────────────────────────
-  function showDetail(feat) {
-    const p = feat.properties || {};
+  function styleDept(feat) {
+    const p = feat.properties||{};
+    let fill = "#e0d8cc";
+    if (currentView==="winner") {
+      const c = partyColor(p.winner, p.winner_color);
+      fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c, 0.8);
+    } else if (currentView==="turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct));
+    }
+    return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
+  }
+
+  function getPartyShare(props, partyName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates||"[]"); } catch(e){}
+    const entry = top5.find(c=>c.name===partyName);
+    const vv = parseInt(props.votos_validos)||1;
+    return entry ? entry.votes/vv : 0;
+  }
+
+  // ── Render choropleth ─────────────────────────────────────────────────────
+  function renderChoropleth() {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer=null; }
+    document.getElementById("bubble-legend").classList.remove("show");
+
+    if (currentLevel==="municipio") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer=null; }
+      if (!mpioLayer) {
+        mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(map);
+      } else {
+        mpioLayer.setStyle(styleMpio);
+      }
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.8, color: "#1a1209" }
+        }).addTo(map);
+      }
+    } else {
+      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer=null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer=null; }
+      if (!deptLayer) {
+        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(map);
+      } else {
+        deptLayer.setStyle(styleDept);
+      }
+    }
+  }
+
+  // ── Render bubbles ────────────────────────────────────────────────────────
+  function renderBubbles(valueKey, labelFn) {
+    if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer=null; }
+    if (deptLayer) { map.removeLayer(deptLayer); deptLayer=null; }
+    if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer=null; }
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer=null; }
+
+    const sourceData = currentLevel==="municipio" ? mpioData : deptData;
+    const features = sourceData.features.filter(f => {
+      const v = valueKey(f.properties||{});
+      return v > 0;
+    });
+    const values = features.map(f=>valueKey(f.properties||{}));
+    const maxVal = Math.max(...values, 1);
+    const maxR = currentLevel==="dept" ? 30 : 18;
+
+    bubbleLayer = L.layerGroup();
+    features.forEach(feat => {
+      const val = valueKey(feat.properties||{});
+      if (!val) return;
+      const r = Math.max(2, Math.sqrt(val/maxVal)*maxR);
+      const latlng = centroid(feat);
+      L.circleMarker(latlng, {
+        radius: r,
+        fillColor: "#c4603a",
+        fillOpacity: 0.45,
+        weight: 0.8,
+        color: "#8b3c1f",
+      }).bindTooltip(labelFn(feat.properties||{}, val), { sticky:true, className:"leaflet-tooltip" })
+        .addTo(bubbleLayer);
+    });
+    bubbleLayer.addTo(map);
+
+    // Legend
+    const legend = document.getElementById("bubble-legend");
+    legend.classList.add("show");
+    const sizes = [maxVal, maxVal/4, maxVal/16].filter(v=>v>0);
+    document.getElementById("bl-items").innerHTML = sizes.map(v => {
+      const r = Math.max(2, Math.sqrt(v/maxVal)*maxR);
+      const d = r*2;
+      return `<div class="bl-item">
+        <div class="bl-circle" style="width:${d}px;height:${d}px"></div>
+        <span class="bl-label">${fmtN(Math.round(v))}</span>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Render dispatcher ─────────────────────────────────────────────────────
+  function render() {
+    if (currentView==="mesas") {
+      document.getElementById("bl-title").textContent = "Mesas faltantes";
+      renderBubbles(
+        p => Math.max(0, (parseInt(p.mesas_total)||0) - (parseInt(p.mesas_escrutadas)||0)),
+        (p, v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} mesas pendientes`
+      );
+    } else if (currentView==="votos") {
+      document.getElementById("bl-title").textContent = "Votos válidos";
+      renderBubbles(
+        p => parseInt(p.votos_validos)||0,
+        (p, v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} votos válidos`
+      );
+    } else {
+      renderChoropleth();
+    }
+    if (activeLayer) activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
+  }
+
+  // ── Feature interactions ──────────────────────────────────────────────────
+  function onEachMpio(feat, layer) {
+    layer.on({
+      mouseover(e) { if(e.target!==activeLayer) e.target.setStyle({weight:1.2,color:"#1a1209",fillOpacity:1}); },
+      mouseout(e)  { if(e.target!==activeLayer) mpioLayer.resetStyle(e.target); },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if(activeLayer&&activeLayer!==e.target) {
+          (mpioLayer||deptLayer)?.resetStyle(activeLayer);
+        }
+        activeLayer = e.target;
+        e.target.setStyle({weight:2,color:"#c4603a",fillOpacity:1});
+        showDetail(feat, "municipio");
+        map.fitBounds(e.target.getBounds(), {padding:[60,60]});
+      }
+    });
+  }
+
+  function onEachDept(feat, layer) {
+    const key = (feat.properties||{}).name||"";
+    if (key) deptBoundsMap[key] = layer.getBounds();
+    layer.on({
+      mouseover(e) { if(e.target!==activeLayer) e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1}); },
+      mouseout(e)  { if(e.target!==activeLayer) deptLayer?.resetStyle(e.target); },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if(activeLayer&&activeLayer!==e.target) deptLayer?.resetStyle(activeLayer);
+        activeLayer = e.target;
+        e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1});
+        showDetail(feat, "dept");
+        map.fitBounds(e.target.getBounds(), {padding:[40,40]});
+      }
+    });
+  }
+
+  map.on("click", hideDetail);
+
+  // ── Detail panel ──────────────────────────────────────────────────────────
+  function showDetail(feat, type) {
+    const p = feat.properties||{};
     document.querySelectorAll(".p-view").forEach(el=>el.classList.remove("active"));
-    document.getElementById("panel-content").style.display = "none";
+    document.getElementById("panel-scroll").style.display="none";
     document.getElementById("detail-panel").classList.add("active");
 
-    document.getElementById("d-mpio").textContent = p.mpio_name_reg || p.mpio_name_dane || "—";
+    const name = type==="dept"
+      ? (p.dept_name_reg||p.NOMBRE_DPT||"—")
+      : (p.mpio_name_reg||p.mpio_name_dane||"—");
+    document.getElementById("d-mpio").textContent = name;
 
     const wt = document.getElementById("d-winner-tag");
     if (p.winner) {
-      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${p.winner_color||'#888'}"></div>${p.winner}`;
-    } else {
-      wt.textContent = "Sin datos";
-    }
+      const col = partyColor(p.winner, p.winner_color);
+      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
+    } else { wt.textContent = "Sin datos"; }
 
     const vv = parseInt(p.votos_validos)||0;
-    const stats = [
-      ["Participación", fmtP(p.turnout_pct)],
-      ["Votos válidos", fmtN(p.votos_validos)],
-      ["En blanco",     fmtN(p.votos_blanco)],
-      ["Nulos",         fmtN(p.votos_nulos)],
-      ["Mesas esc.",    fmtN(p.mesas_escrutadas)],
-      ["Mesas total",   fmtN(p.mesas_total)],
-    ];
-    document.getElementById("d-stats").innerHTML = stats.map(([l,v]) =>
+    const stats = type==="dept"
+      ? [
+          ["Participación", fmtP(p.turnout_pct)],
+          ["Votos válidos", fmtN(p.votos_validos)],
+          ["Votantes", fmtN(p.votantes)],
+          ["Censo", fmtN(p.censo)],
+        ]
+      : [
+          ["Participación", fmtP(p.turnout_pct)],
+          ["Votos válidos", fmtN(p.votos_validos)],
+          ["En blanco", fmtN(p.votos_blanco)],
+          ["Nulos", fmtN(p.votos_nulos)],
+          ["Mesas esc.", fmtN(p.mesas_escrutadas)],
+          ["Mesas total", fmtN(p.mesas_total)],
+        ];
+    document.getElementById("d-stats").innerHTML = stats.map(([l,v])=>
       `<div class="dstat"><div class="dstat-label">${l}</div><div class="dstat-val">${v}</div></div>`
     ).join("");
 
-    let top5 = [];
-    try { top5 = JSON.parse(p.top5_candidates||"[]"); } catch(e){}
-    const maxP = top5[0]?.votes||1;
-    document.getElementById("d-parties").innerHTML = top5.slice(0,5).map(c => {
-      const pct = vv?(c.votes/vv*100).toFixed(1):"0.0";
+    let top5=[];
+    try{top5=JSON.parse(p.top5_candidates||"[]");}catch(e){}
+    document.getElementById("d-parties").innerHTML = top5.slice(0,5).map(c=>{
+      const pct=vv?(c.votes/vv*100).toFixed(1):"0.0";
+      const col=partyColor(c.name,c.color);
       return `<div class="detail-party">
-        <span class="detail-party-pct" style="color:${c.color||'#555'}">${pct}%</span>
-        <div class="detail-party-swatch" style="background:${c.color||'#888'}"></div>
+        <span class="detail-party-pct" style="color:${col}">${pct}%</span>
+        <div class="detail-party-swatch" style="background:${col}"></div>
         <span class="detail-party-name">${c.name}</span>
         <span class="detail-party-votes">${fmtN(c.votes)}</span>
       </div>`;
@@ -647,169 +731,189 @@
 
   function hideDetail() {
     document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-content").style.display = "";
+    document.getElementById("panel-scroll").style.display="";
     document.querySelectorAll(".p-view").forEach(el=>el.classList.remove("active"));
-    const v = document.getElementById(`view-${previousTab}`);
-    if (v) v.classList.add("active");
-    if (activeLayer) { geojsonLayer.resetStyle(activeLayer); activeLayer = null; }
+    const v=document.getElementById(`view-${previousTab}`);
+    if(v)v.classList.add("active");
+    if(activeLayer){
+      mpioLayer?.resetStyle(activeLayer);
+      deptLayer?.resetStyle(activeLayer);
+      activeLayer=null;
+    }
   }
-
   document.getElementById("detail-back").addEventListener("click", hideDetail);
-  map.on("click", hideDetail);
-
-  // ── Feature interaction ───────────────────────────────────────────────────
-  function onEachFeature(feat, layer) {
-    layer.on({
-      mouseover(e) {
-        if (e.target!==activeLayer)
-          e.target.setStyle({ weight: 1.5, color: "#1a1209", fillOpacity: 1 });
-      },
-      mouseout(e) {
-        if (e.target!==activeLayer) geojsonLayer.resetStyle(e.target);
-      },
-      click(e) {
-        L.DomEvent.stopPropagation(e);
-        if (activeLayer&&activeLayer!==e.target) geojsonLayer.resetStyle(activeLayer);
-        activeLayer = e.target;
-        e.target.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
-        showDetail(feat);
-        map.fitBounds(e.target.getBounds(), { padding: [60,60] });
-      },
-    });
-  }
-
-  // ── Render ───────────────────────────────────────────────────────────────
-  function render() {
-    if (geojsonLayer) map.removeLayer(geojsonLayer);
-    geojsonLayer = L.geoJSON(geojsonData, { style: styleFeature, onEachFeature }).addTo(map);
-  }
 
   // ── Stats ─────────────────────────────────────────────────────────────────
   function updateStats(features) {
-    const w = features.filter(f=>f.properties?.votantes);
-    const sum = k => w.reduce((s,f)=>s+(parseInt(f.properties[k])||0),0);
-    const totVot=sum("votantes"), totCen=sum("censo");
-    const totVal=sum("votos_validos"), totNul=sum("votos_nulos"), totBla=sum("votos_blanco");
-    const totMes=sum("mesas_total"), totEsc=sum("mesas_escrutadas");
-    const pct = totMes?totEsc/totMes:0;
+    const sum = k => features.reduce((s,f)=>s+(parseInt(f.properties?.[k])||0),0);
+    const totVot=sum("votantes"),totCen=sum("censo"),totVal=sum("votos_validos");
+    const totNul=sum("votos_nulos"),totBla=sum("votos_blanco");
+    const totMes=sum("mesas_total"),totEsc=sum("mesas_escrutadas");
+    const withData=features.filter(f=>f.properties?.votantes);
+    const pct=totMes?totEsc/totMes:0;
 
-    document.getElementById("hs-turnout").textContent = totCen?(totVot/totCen*100).toFixed(1)+"%":"—";
-    document.getElementById("hs-votes").textContent   = fmtN(totVal);
-    document.getElementById("hs-mpios").textContent   = w.length.toLocaleString("es-CO");
-
-    document.getElementById("hp-fill").style.width  = (pct*100).toFixed(1)+"%";
-    document.getElementById("hp-label").textContent = `${(pct*100).toFixed(1)}% · ${fmtN(totEsc)} / ${fmtN(totMes)}`;
-
-    document.getElementById("bb-censo").textContent   = fmtN(totCen);
-    document.getElementById("bb-votantes").textContent = fmtN(totVot);
-    document.getElementById("bb-nulos").textContent   = fmtN(totNul);
-    document.getElementById("bb-blanco").textContent  = fmtN(totBla);
-    document.getElementById("bb-mesas").textContent   = `${fmtN(totEsc)} / ${fmtN(totMes)}`;
-
-    if (pct>0) document.getElementById("live-tag").style.display = "flex";
+    document.getElementById("hs-turnout").textContent=totCen?(totVot/totCen*100).toFixed(1)+"%":"—";
+    document.getElementById("hs-votes").textContent=fmtN(totVal);
+    document.getElementById("hs-mpios").textContent=withData.length.toLocaleString("es-CO");
+    document.getElementById("hp-fill").style.width=(pct*100).toFixed(1)+"%";
+    document.getElementById("hp-label").textContent=`${(pct*100).toFixed(1)}% · ${fmtN(totEsc)}/${fmtN(totMes)}`;
+    document.getElementById("bb-censo").textContent=fmtN(totCen);
+    document.getElementById("bb-votantes").textContent=fmtN(totVot);
+    document.getElementById("bb-nulos").textContent=fmtN(totNul);
+    document.getElementById("bb-blanco").textContent=fmtN(totBla);
+    document.getElementById("bb-mesas").textContent=`${fmtN(totEsc)}/${fmtN(totMes)}`;
+    if(pct>0)document.getElementById("live-tag").style.display="flex";
   }
 
-  // ── Party list ────────────────────────────────────────────────────────────
+  // ── Party sidebar ─────────────────────────────────────────────────────────
   function buildPartyList(features) {
-    const acc = {};
-    let totalValid = 0;
-    features.forEach(f => {
-      totalValid += parseInt(f.properties?.votos_validos)||0;
+    const acc={};
+    let totalValid=0;
+    features.forEach(f=>{
+      totalValid+=parseInt(f.properties?.votos_validos)||0;
       let top5=[];
-      try { top5=JSON.parse(f.properties?.top5_candidates||"[]"); } catch(e){}
-      top5.forEach(c => {
-        if (!acc[c.name]) acc[c.name]={votes:0,color:c.color};
-        acc[c.name].votes += c.votes||0;
+      try{top5=JSON.parse(f.properties?.top5_candidates||"[]");}catch(e){}
+      top5.forEach(c=>{
+        if(!acc[c.name])acc[c.name]={votes:0,color:c.color};
+        acc[c.name].votes+=c.votes||0;
       });
     });
+    const sorted=Object.entries(acc).sort((a,b)=>b[1].votes-a[1].votes).slice(0,20);
+    const maxV=sorted[0]?.[1].votes||1;
 
-    const sorted = Object.entries(acc).sort((a,b)=>b[1].votes-a[1].votes).slice(0,15);
-    const maxV = sorted[0]?.[1].votes||1;
-
-    const html = `<div class="sect-head">${sorted.length} listas · ${fmtN(totalValid)} votos válidos</div>` +
-      sorted.map(([name, info]) => {
-        const pct = totalValid?(info.votes/totalValid*100).toFixed(1):"0.0";
-        const barW = (info.votes/maxV*100).toFixed(1);
-        return `<div class="party-row">
+    document.getElementById("view-partidos").innerHTML=
+      `<div class="sect-head">${sorted.length} listas · ${fmtN(totalValid)} votos válidos</div>`+
+      sorted.map(([name,info])=>{
+        const col=partyColor(name,info.color);
+        const pct=totalValid?(info.votes/totalValid*100).toFixed(1):"0.0";
+        const barW=(info.votes/maxV*100).toFixed(1);
+        return `<div class="party-row" data-party="${name}">
           <div class="party-top">
-            <span class="party-pct" style="color:${info.color}">${pct}%</span>
+            <span class="party-pct" style="color:${col}">${pct}%</span>
             <span class="party-name">${name}</span>
             <span class="party-votes">${fmtN(info.votes)}</span>
           </div>
           <div class="party-bar-wrap">
-            <div class="party-bar" style="width:${barW}%;background:${info.color}"></div>
+            <div class="party-bar" style="width:${barW}%;background:${col}"></div>
           </div>
         </div>`;
       }).join("");
 
-    document.getElementById("view-partidos").innerHTML = html;
+    // Click party → choropleth
+    document.getElementById("view-partidos").querySelectorAll(".party-row").forEach(row=>{
+      row.addEventListener("click",()=>{
+        const name=row.dataset.party;
+        if(selectedParty===name){
+          selectedParty=null;
+          document.querySelectorAll(".party-row").forEach(r=>r.classList.remove("selected"));
+          currentView="winner";
+          document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view==="winner"));
+        } else {
+          selectedParty=name;
+          document.querySelectorAll(".party-row").forEach(r=>r.classList.toggle("selected",r.dataset.party===name));
+          currentView="party";
+          document.querySelectorAll(".view-btn").forEach(b=>b.classList.remove("active"));
+        }
+        render();
+      });
+    });
   }
 
-  // ── Dept list ─────────────────────────────────────────────────────────────
-  function buildDeptList(features) {
-    const depts = {};
-    features.forEach(f => {
-      const p=f.properties||{};
-      const k=p.dept_reg_code||"??";
-      if (!depts[k]) depts[k]={votes:0,winner:p.winner,color:p.winner_color};
-      depts[k].votes += parseInt(p.votos_validos)||0;
-    });
+  // ── Dept sidebar ──────────────────────────────────────────────────────────
+  function buildDeptList() {
+    const features = deptData.features.filter(f=>f.properties?.votantes);
+    const sorted = features.slice().sort((a,b)=>(parseInt(b.properties.votos_validos)||0)-(parseInt(a.properties.votos_validos)||0));
 
-    document.getElementById("view-depts").innerHTML =
-      `<div class="sect-head">${Object.keys(depts).length} departamentos</div>` +
-      Object.entries(depts).sort((a,b)=>b[1].votes-a[1].votes).map(([code,info]) =>
-        `<div class="dept-row">
+    document.getElementById("view-depts").innerHTML=
+      `<div class="sect-head">${sorted.length} departamentos</div>`+
+      sorted.map(feat=>{
+        const p=feat.properties||{};
+        const name=p.dept_name_reg||p.NOMBRE_DPT||p.name||"—";
+        const col=partyColor(p.winner,p.winner_color);
+        return `<div class="dept-row" data-deptkey="${feat.properties?.name||''}">
           <div class="dept-top">
-            <div class="dept-swatch" style="background:${info.color||'#999'}"></div>
-            <span class="dept-name">Dpto ${code}</span>
-            <span class="dept-votes">${fmtN(info.votes)}</span>
+            <div class="dept-swatch" style="background:${col}"></div>
+            <span class="dept-name">${name}</span>
+            <span class="dept-votes">${fmtN(p.votos_validos)}</span>
           </div>
-          <div class="dept-winner">${info.winner||''}</div>
-        </div>`
-      ).join("");
+          <div class="dept-winner">${p.winner||''}</div>
+        </div>`;
+      }).join("");
+
+    document.getElementById("view-depts").querySelectorAll(".dept-row").forEach(row=>{
+      row.addEventListener("click",()=>{
+        const key=row.dataset.deptkey;
+        const feat=deptFeatMap[key];
+        if(!feat)return;
+        // Switch to dept level if needed
+        if(currentLevel!=="dept"){
+          currentLevel="dept";
+          document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.dataset.level==="dept"));
+          render();
+        }
+        const bounds=deptBoundsMap[key];
+        if(bounds)map.fitBounds(bounds,{padding:[40,40]});
+        showDetail(feat,"dept");
+      });
+    });
   }
 
-  // ── Load ──────────────────────────────────────────────────────────────────
-  fetch("../../../colombia/data/processed/colombia_results_map.geojson")
-    .then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
-    .then(data=>{
-      geojsonData=data;
-      maxVotes=Math.max(...data.features.map(f=>parseInt(f.properties?.votos_validos)||0));
-      render();
-      updateStats(data.features);
-      buildPartyList(data.features);
-      buildDeptList(data.features);
-      document.getElementById("loading").style.display="none";
-    })
-    .catch(err=>{
-      document.getElementById("loading").innerHTML=
-        `<p style="color:#c4603a;font-weight:700">${err.message}</p>
-         <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts 01–06 primero.</p>`;
+  // ── Load data ──────────────────────────────────────────────────────────────
+  const BASE = "../../../colombia/data/processed/";
+  Promise.all([
+    fetch(BASE+"colombia_results_map.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
+    fetch(BASE+"colombia_results_dept.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
+  ]).then(([mpio,dept])=>{
+    mpioData=mpio;
+    deptData=dept;
+
+    // Build dept lookups
+    dept.features.forEach(f=>{
+      const key=(f.properties?.name||"");
+      deptNameMap[key]=f.properties?.dept_name_reg||f.properties?.NOMBRE_DPT||key;
+      deptFeatMap[key]=f;
     });
 
-  // ── View buttons ──────────────────────────────────────────────────────────
-  document.querySelectorAll(".view-btn").forEach(btn=>{
+    render();
+    updateStats(mpio.features);
+    buildPartyList(mpio.features);
+    buildDeptList();
+    document.getElementById("loading").style.display="none";
+  }).catch(err=>{
+    document.getElementById("loading").innerHTML=
+      `<p style="color:#c4603a;font-weight:700">${err.message}</p>
+       <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts 01–06 primero.</p>`;
+  });
+
+  // ── Controls ───────────────────────────────────────────────────────────────
+  document.querySelectorAll(".level-btn").forEach(btn=>{
     btn.addEventListener("click",()=>{
-      if(!geojsonData)return;
-      currentView=btn.dataset.view;
-      document.querySelectorAll(".view-btn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
+      currentLevel=btn.dataset.level;
+      document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.dataset.level===currentLevel));
+      activeLayer=null;
       render();
-      if(activeLayer)activeLayer.setStyle({weight:2,color:"#c4603a",fillOpacity:1});
     });
   });
 
-  // ── Tab bar ───────────────────────────────────────────────────────────────
+  document.querySelectorAll(".view-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      currentView=btn.dataset.view;
+      selectedParty=null;
+      document.querySelectorAll(".party-row").forEach(r=>r.classList.remove("selected"));
+      document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView));
+      render();
+    });
+  });
+
   document.getElementById("panel-tabs").addEventListener("click",e=>{
     const tab=e.target.closest(".ptab");
     if(!tab)return;
     const t=tab.dataset.tab;
-    document.querySelectorAll(".ptab").forEach(x=>x.classList.remove("active"));
-    tab.classList.add("active");
+    document.querySelectorAll(".ptab").forEach(x=>x.classList.toggle("active",x.dataset.tab===t));
     document.querySelectorAll(".p-view").forEach(x=>x.classList.remove("active"));
     document.getElementById(`view-${t}`).classList.add("active");
     document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-content").style.display="";
+    document.getElementById("panel-scroll").style.display="";
     previousTab=t;
   });
 
