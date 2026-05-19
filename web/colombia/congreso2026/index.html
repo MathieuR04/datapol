@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colombia — Senado 2026 | Datapol</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/shared/styles/base.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+    }
+    .page-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .page-header .sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .controls {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .controls label { font-size: 0.78rem; color: var(--muted); margin-right: 0.25rem; }
+
+    .btn-group { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .btn-group button {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      border-right: 1px solid var(--border);
+    }
+    .btn-group button:last-child { border-right: none; }
+    .btn-group button.active { background: var(--accent); color: #fff; }
+    .btn-group button:hover:not(.active) { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    #map-container {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+    }
+    #map { width: 100%; height: 100%; background: #0f172a; }
+
+    /* Leaflet overrides */
+    .leaflet-container { background: #0f172a; }
+    .leaflet-control-zoom a { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .leaflet-control-zoom a:hover { background: var(--border); }
+    .leaflet-control-attribution { background: rgba(15,23,42,0.8); color: var(--muted); font-size: 0.65rem; }
+    .leaflet-control-attribution a { color: var(--muted); }
+
+    /* Tooltip */
+    .map-tooltip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-size: 0.82rem;
+      min-width: 200px;
+      box-shadow: var(--shadow);
+      pointer-events: none;
+    }
+    .map-tooltip h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .map-tooltip .row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.15rem 0; color: var(--muted); }
+    .map-tooltip .row span:last-child { color: var(--text); font-weight: 600; }
+    .map-tooltip .winner-row { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+    .map-tooltip .winner-name { font-weight: 700; color: var(--yellow); font-size: 0.85rem; }
+
+    /* Legend */
+    .legend {
+      position: absolute;
+      bottom: 2rem;
+      right: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      z-index: 1000;
+      font-size: 0.75rem;
+      min-width: 140px;
+      box-shadow: var(--shadow);
+    }
+    .legend h4 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 0.5rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+    /* Loading overlay */
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      gap: 1rem;
+    }
+    #loading p { color: var(--muted); font-size: 0.9rem; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { color: var(--muted); font-size: 0.7rem; }
+    .stat-value { font-weight: 700; font-size: 0.95rem; }
+
+    @media (max-width: 600px) {
+      .controls { padding: 0.5rem 0.75rem; }
+      .legend { bottom: 5rem; right: 0.5rem; }
+      .stats-bar { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="embed-hidden">
+    <span class="logo"><a href="/" style="color:inherit;text-decoration:none">data<span>pol</span></a></span>
+    <nav>
+      <a href="/">← Inicio</a>
+    </nav>
+  </header>
+
+  <div class="page-header embed-hidden">
+    <h1>🇨🇴 Colombia — Congreso 2026 · Senado</h1>
+    <div class="sub">Resultados por municipio · Fuente: Registraduría Nacional</div>
+  </div>
+
+  <div class="controls embed-hidden">
+    <label>Vista:</label>
+    <div class="btn-group" id="view-toggle">
+      <button class="active" data-view="winner">Candidato ganador</button>
+      <button data-view="turnout">Participación</button>
+      <button data-view="votes">Votos válidos</button>
+    </div>
+  </div>
+
+  <div id="map-container">
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>Cargando resultados…</p>
+    </div>
+    <div id="map"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="stats-bar embed-hidden" id="stats-bar">
+    <div class="stat"><span class="stat-label">Municipios con datos</span><span class="stat-value" id="s-mpios">—</span></div>
+    <div class="stat"><span class="stat-label">Participación nacional</span><span class="stat-value" id="s-turnout">—</span></div>
+    <div class="stat"><span class="stat-label">Votos válidos</span><span class="stat-value" id="s-votes">—</span></div>
+    <div class="stat"><span class="stat-label">Mesas escrutadas</span><span class="stat-value" id="s-mesas">—</span></div>
+  </div>
+
+  <footer class="embed-hidden">
+    <p>datapol · datos abiertos · Registraduría Nacional de Colombia</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  (function () {
+    // ── Embed mode ────────────────────────────────────────────────────────────
+    const isEmbed = new URLSearchParams(location.search).get("embed") === "true";
+    if (isEmbed) {
+      document.querySelectorAll(".embed-hidden").forEach(el => el.style.display = "none");
+    }
+
+    // ── Map init ──────────────────────────────────────────────────────────────
+    const map = L.map("map", {
+      center: [4.5, -74.2],
+      zoom: 5,
+      zoomControl: true,
+      attributionControl: true,
+    });
+
+    // Dark tile layer
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
+      attribution: '© <a href="https://carto.com">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 14,
+    }).addTo(map);
+
+    // ── Color schemes ─────────────────────────────────────────────────────────
+    const CANDIDATE_COLORS = [
+      "#E63946","#457B9D","#2A9D8F","#E9C46A","#F4A261",
+      "#264653","#A8DADC","#6A4C93","#1D3557","#606C38",
+      "#F77F00","#D62828","#023E8A","#38B000","#9E0059",
+    ];
+    const candidateColorMap = {};
+    let colorIdx = 0;
+    function candidateColor(name) {
+      if (!name) return "#555";
+      if (!candidateColorMap[name]) {
+        candidateColorMap[name] = CANDIDATE_COLORS[colorIdx % CANDIDATE_COLORS.length];
+        colorIdx++;
+      }
+      return candidateColorMap[name];
+    }
+
+    function turnoutColor(pct) {
+      if (pct == null || isNaN(pct)) return "#2a2a3a";
+      const stops = [
+        [0,  "#1e293b"],
+        [20, "#1e3a5f"],
+        [35, "#1d4ed8"],
+        [50, "#3b82f6"],
+        [65, "#fbbf24"],
+        [80, "#ef4444"],
+      ];
+      for (let i = 1; i < stops.length; i++) {
+        if (pct <= stops[i][0]) {
+          const t = (pct - stops[i-1][0]) / (stops[i][0] - stops[i-1][0]);
+          return lerpColor(stops[i-1][1], stops[i][1], t);
+        }
+      }
+      return stops[stops.length-1][1];
+    }
+
+    function votesColor(votes, max) {
+      if (!votes || !max) return "#1e293b";
+      const t = Math.pow(votes / max, 0.4);
+      return lerpColor("#1e293b", "#3b82f6", t);
+    }
+
+    function lerpColor(a, b, t) {
+      const parse = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+      const [r1,g1,b1] = parse(a), [r2,g2,b2] = parse(b);
+      const r = Math.round(r1 + (r2-r1)*t);
+      const g = Math.round(g1 + (g2-g1)*t);
+      const bl = Math.round(b1 + (b2-b1)*t);
+      return `rgb(${r},${g},${bl})`;
+    }
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let currentView = "winner";
+    let geojsonLayer = null;
+    let geojsonData = null;
+    let maxVotes = 1;
+
+    // ── Styling ───────────────────────────────────────────────────────────────
+    function styleFeature(feat) {
+      const p = feat.properties || {};
+      let fill = "#2a2a3a";
+
+      if (currentView === "winner") {
+        fill = candidateColor(p.winner);
+      } else if (currentView === "turnout") {
+        fill = turnoutColor(parseFloat(p.turnout_pct));
+      } else if (currentView === "votes") {
+        fill = votesColor(parseInt(p.votos_validos), maxVotes);
+      }
+
+      return {
+        fillColor: fill,
+        weight: 0.4,
+        color: "#1e293b",
+        fillOpacity: 0.85,
+      };
+    }
+
+    // ── Tooltip ───────────────────────────────────────────────────────────────
+    const tooltip = L.tooltip({ permanent: false, sticky: true, className: "map-tooltip", opacity: 1 });
+
+    function fmt(n) {
+      if (n == null || n === "" || isNaN(n)) return "—";
+      return parseInt(n).toLocaleString("es-CO");
+    }
+    function fmtPct(n) {
+      if (n == null || n === "" || isNaN(n)) return "—";
+      return parseFloat(n).toFixed(1) + "%";
+    }
+
+    function buildTooltipHtml(p) {
+      const name = p.mpio_name_reg || p.mpio_name_dane || "—";
+      let top5 = [];
+      try { top5 = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
+
+      let candidatesHtml = top5.slice(0,3).map(c =>
+        `<div class="row"><span>${c.name}</span><span>${fmt(c.votes)}</span></div>`
+      ).join("");
+
+      return `
+        <div class="map-tooltip">
+          <h3>${name}</h3>
+          <div class="row"><span>Participación</span><span>${fmtPct(p.turnout_pct)}</span></div>
+          <div class="row"><span>Votos válidos</span><span>${fmt(p.votos_validos)}</span></div>
+          <div class="row"><span>Mesas escrutadas</span><span>${fmt(p.mesas_escrutadas)} / ${fmt(p.mesas_total)}</span></div>
+          ${p.winner ? `
+          <div class="winner-row">
+            <div class="winner-name">🏆 ${p.winner}</div>
+            <div class="row"><span>Votos</span><span>${fmt(p.winner_votes)} (${fmtPct(p.winner_pct)})</span></div>
+          </div>
+          ` : ""}
+          ${candidatesHtml ? `<div style="margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid var(--border)">${candidatesHtml}</div>` : ""}
+        </div>`;
+    }
+
+    function onEachFeature(feat, layer) {
+      layer.on({
+        mouseover(e) {
+          e.target.setStyle({ weight: 1.5, color: "#fff", fillOpacity: 1 });
+          tooltip.setContent(buildTooltipHtml(feat.properties || {}));
+          layer.bindTooltip(tooltip).openTooltip(e.latlng);
+        },
+        mouseout(e) {
+          geojsonLayer.resetStyle(e.target);
+          layer.closeTooltip();
+        },
+        click(e) {
+          map.fitBounds(e.target.getBounds(), { padding: [40, 40] });
+        },
+      });
+    }
+
+    // ── Legend ────────────────────────────────────────────────────────────────
+    function buildLegend() {
+      const el = document.getElementById("legend");
+      if (currentView === "winner") {
+        const entries = Object.entries(candidateColorMap).slice(0, 10);
+        el.innerHTML = `<h4>Candidato ganador</h4>` +
+          entries.map(([name, color]) =>
+            `<div class="legend-item"><div class="legend-swatch" style="background:${color}"></div><span>${name}</span></div>`
+          ).join("") +
+          (Object.keys(candidateColorMap).length > 10 ? `<div style="color:var(--muted);font-size:0.7rem">+ otros</div>` : "");
+      } else if (currentView === "turnout") {
+        el.innerHTML = `<h4>Participación</h4>` +
+          ["<20%","20–35%","35–50%","50–65%","65–80%",">80%"].map((lbl, i) => {
+            const colors = ["#1e3a5f","#1d4ed8","#3b82f6","#fbbf24","#ef4444","#dc2626"];
+            return `<div class="legend-item"><div class="legend-swatch" style="background:${colors[i]}"></div><span>${lbl}</span></div>`;
+          }).join("");
+      } else {
+        el.innerHTML = `<h4>Votos válidos</h4>` +
+          [["Pocos","#1e293b"],["Medios","#1d4ed8"],["Muchos","#3b82f6"]].map(([lbl,c]) =>
+            `<div class="legend-item"><div class="legend-swatch" style="background:${c}"></div><span>${lbl}</span></div>`
+          ).join("");
+      }
+    }
+
+    // ── Render / re-render ────────────────────────────────────────────────────
+    function render() {
+      if (geojsonLayer) { map.removeLayer(geojsonLayer); }
+      geojsonLayer = L.geoJSON(geojsonData, {
+        style: styleFeature,
+        onEachFeature,
+      }).addTo(map);
+      buildLegend();
+    }
+
+    // ── Stats bar ─────────────────────────────────────────────────────────────
+    function updateStats(features) {
+      const withData = features.filter(f => f.properties && f.properties.votantes);
+      const totalVotantes = withData.reduce((s, f) => s + (parseInt(f.properties.votantes) || 0), 0);
+      const totalCenso    = withData.reduce((s, f) => s + (parseInt(f.properties.censo)    || 0), 0);
+      const totalValid    = withData.reduce((s, f) => s + (parseInt(f.properties.votos_validos) || 0), 0);
+      const totalMesas    = withData.reduce((s, f) => s + (parseInt(f.properties.mesas_total) || 0), 0);
+      const totalEscrut   = withData.reduce((s, f) => s + (parseInt(f.properties.mesas_escrutadas) || 0), 0);
+
+      document.getElementById("s-mpios").textContent   = withData.length.toLocaleString("es-CO");
+      document.getElementById("s-turnout").textContent = totalCenso
+        ? (totalVotantes / totalCenso * 100).toFixed(1) + "%" : "—";
+      document.getElementById("s-votes").textContent   = totalValid.toLocaleString("es-CO");
+      document.getElementById("s-mesas").textContent   = totalMesas
+        ? `${totalEscrut.toLocaleString("es-CO")} / ${totalMesas.toLocaleString("es-CO")}` : "—";
+    }
+
+    // ── Load GeoJSON ──────────────────────────────────────────────────────────
+    const GEOJSON_URL = "../../colombia/data/processed/colombia_results_map.geojson";
+
+    fetch(GEOJSON_URL)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(data => {
+        geojsonData = data;
+
+        // Pre-compute max votes for color scale
+        maxVotes = Math.max(...data.features.map(f => parseInt(f.properties?.votos_validos) || 0));
+
+        // Pre-populate candidate colors in winner order (most common winner first)
+        const winnerCounts = {};
+        data.features.forEach(f => {
+          const w = f.properties?.winner;
+          if (w) winnerCounts[w] = (winnerCounts[w] || 0) + 1;
+        });
+        Object.entries(winnerCounts)
+          .sort((a,b) => b[1]-a[1])
+          .forEach(([name]) => candidateColor(name));
+
+        render();
+        updateStats(data.features);
+        document.getElementById("loading").style.display = "none";
+      })
+      .catch(err => {
+        document.getElementById("loading").innerHTML =
+          `<p style="color:var(--red)">Error cargando datos: ${err.message}</p>
+           <p style="color:var(--muted);font-size:0.8rem">Ejecuta el pipeline primero (scripts 01–06)</p>`;
+      });
+
+    // ── View toggle ───────────────────────────────────────────────────────────
+    document.getElementById("view-toggle").addEventListener("click", e => {
+      const btn = e.target.closest("button[data-view]");
+      if (!btn || !geojsonData) return;
+      currentView = btn.dataset.view;
+      document.querySelectorAll("#view-toggle button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      render();
+    });
+
+  })();
+  </script>
+</body>
+</html>

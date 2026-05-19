@@ -1,0 +1,14 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+node_modules/
+
+# Large generated files — reproducible by running the pipeline
+colombia/data/processed/resultados_puestos_raw.json
+colombia/data/processed/resultados_puestos.csv
+
+# Large raw source files (download separately per README)
+colombia/data/raw/Divipole_definitiva_*.pdf
