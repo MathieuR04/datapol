@@ -9,6 +9,7 @@ Outputs:
 
 import asyncio
 import aiohttp
+import argparse
 import json
 import pandas as pd
 import time
@@ -120,33 +121,64 @@ async def scrape_all(codes: list[str]):
     return results, errors
 
 
-def scrape():
+def puestos_needing_update() -> list[str]:
+    """Return puesto codes with 0 votantes or mesas_escrutadas < mesas_total."""
+    path = OUT / "resultados_puestos.csv"
+    if not path.exists():
+        return []
+    df = pd.read_csv(path, dtype={"puesto_code": str},
+                     usecols=["puesto_code", "mesas_total", "mesas_escrutadas"])
+    df["mesas_total"]      = pd.to_numeric(df["mesas_total"],      errors="coerce").fillna(0)
+    df["mesas_escrutadas"] = pd.to_numeric(df["mesas_escrutadas"], errors="coerce").fillna(0)
+    incomplete = df[df["mesas_escrutadas"] < df["mesas_total"]]
+    return incomplete["puesto_code"].tolist()
+
+
+def scrape(update_mode: bool = False):
     master = pd.read_csv(OUT / "puestos_master.csv", dtype=str)
-    codes = master["puesto_code"].tolist()
-    print(f"Scraping {len(codes):,} puestos (national + exterior) …")
+
+    if update_mode:
+        codes = puestos_needing_update()
+        if not codes:
+            print("All puestos fully escrutados — nothing to update.")
+            return
+        print(f"Update mode: {len(codes):,} puestos not yet fully escrutados …")
+    else:
+        codes = master["puesto_code"].tolist()
+        print(f"Scraping {len(codes):,} puestos (national + exterior) …")
 
     results, errors = asyncio.run(scrape_all(codes))
 
     print(f"\nDone: {len(results):,} ok, {len(errors):,} errors")
 
-    # Save raw JSON
-    raw_path = OUT / "resultados_puestos_raw.json"
-    with open(raw_path, "w") as f:
-        json.dump(results, f, ensure_ascii=False)
-    print(f"Saved raw → {raw_path.name}")
-
-    # Save errors log
     if errors:
         pd.DataFrame(errors).to_csv(OUT / "scrape_errors.csv", index=False)
-        print(f"Errors logged → scrape_errors.csv")
 
-    # Build wide CSV (one row per puesto, candidates as columns)
-    df = pd.DataFrame(results).fillna(0)
-    df.to_csv(OUT / "resultados_puestos.csv", index=False)
-    print(f"Saved wide CSV → resultados_puestos.csv  ({len(df)} rows, {len(df.columns)} cols)")
+    new_df = pd.DataFrame(results).fillna(0)
 
-    return df
+    if update_mode:
+        existing_path = OUT / "resultados_puestos.csv"
+        if existing_path.exists():
+            existing = pd.read_csv(existing_path, dtype={"puesto_code": str})
+            updated_codes = set(new_df["puesto_code"])
+            kept = existing[~existing["puesto_code"].isin(updated_codes)]
+            # Align columns before concat
+            all_cols = list(dict.fromkeys(list(existing.columns) + list(new_df.columns)))
+            new_df = pd.concat(
+                [kept.reindex(columns=all_cols, fill_value=0),
+                 new_df.reindex(columns=all_cols, fill_value=0)],
+                ignore_index=True
+            )
+            print(f"  Merged: {len(new_df):,} total puesto rows")
+
+    new_df.to_csv(OUT / "resultados_puestos.csv", index=False)
+    print(f"Saved → resultados_puestos.csv  ({len(new_df):,} rows, {len(new_df.columns)} cols)")
+    return new_df
 
 
 if __name__ == "__main__":
-    scrape()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--update", action="store_true",
+                        help="Only re-scrape puestos not yet fully escrutados")
+    args = parser.parse_args()
+    scrape(update_mode=args.update)
