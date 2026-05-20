@@ -22,26 +22,24 @@ def load_party_lookup() -> dict:
 
 
 def compute_pcts(df: pd.DataFrame, party_cols: list[str], cand_cols: list[str],
-                 party_lookup: dict) -> pd.DataFrame:
+                 party_lookup: dict, col_prefix: str = "party_") -> pd.DataFrame:
     df = df.copy()
     df["turnout_pct"]  = (df["votantes"] / df["censo"].replace(0, pd.NA) * 100).round(2)
     df["pct_blanco"]   = (df["votos_blanco"]  / df["votos_validos"].replace(0, pd.NA) * 100).round(2)
     df["pct_nulo"]     = (df["votos_nulos"]    / df["votantes"].replace(0, pd.NA) * 100).round(2)
 
     if party_cols:
-        # winner = party with most votes; columns are "party_XXXX"
         party_df = df[party_cols]
         df["winner_col"] = party_df.idxmax(axis=1)
         df["winner_votes"] = party_df.max(axis=1)
         df["winner_pct"] = (df["winner_votes"] / df["votos_validos"].replace(0, pd.NA) * 100).round(2)
-        # Decode codpar from column name "party_XXXX"
         def decode_winner(col):
             if not isinstance(col, str): return ""
-            code = col.replace("party_", "")
+            code = col.replace(col_prefix, "")
             return party_lookup.get(code, {}).get("nombre", col)
         def decode_color(col):
             if not isinstance(col, str): return "#888"
-            code = col.replace("party_", "")
+            code = col.replace(col_prefix, "")
             return party_lookup.get(code, {}).get("color", "#888")
         df["winner"] = df["winner_col"].map(decode_winner)
         df["winner_color"] = df["winner_col"].map(decode_color)
@@ -113,6 +111,45 @@ def aggregate():
     dept_agg = compute_pcts(dept_agg, party_cols, cand_cols, party_lookup)
     dept_agg.to_csv(OUT / "resultados_departamentos.csv", index=False)
     print(f"  resultados_departamentos.csv: {len(dept_agg)} depts")
+
+    # ── indígena constituency aggregation (municipio + dept, national only) ──
+    ind_base_avail = [c for c in ind_base if c in nat.columns]
+    if indig_cols and ind_base_avail:
+        def _ind_agg(group_col):
+            agg = (
+                nat.groupby(group_col)[ind_base_avail + indig_cols + icand_cols]
+                .sum(numeric_only=True)
+                .reset_index()
+            )
+            # Rename so compute_pcts can work normally
+            agg = agg.rename(columns={
+                "ind_votantes":      "votantes",
+                "ind_votos_validos": "votos_validos",
+                "ind_votos_blanco":  "votos_blanco",
+                "ind_votos_nulos":   "votos_nulos",
+            })
+            agg["censo"] = 0          # indigenous voter registry not available
+            agg["mesas_total"] = 0
+            agg["mesas_escrutadas"] = 0
+            return compute_pcts(agg, indig_cols, icand_cols, party_lookup, col_prefix="indig_")
+
+        mpio_ind = _ind_agg("mpio_reg_code_7")
+        mpio_ind = mpio_ind.merge(
+            mpio_bridge[["mpio_reg_code_7", "mpio_name_reg", "mpio_dane_code",
+                         "mpio_name_dane", "dept_reg_code", "dept_dane_code"]],
+            on="mpio_reg_code_7", how="left"
+        )
+        mpio_ind.to_csv(OUT / "resultados_municipios_indigena.csv", index=False)
+        print(f"  resultados_municipios_indigena.csv: {len(mpio_ind)} municipios")
+
+        dept_ind = _ind_agg("dept_reg_code")
+        dept_bridge = pd.read_csv(OUT / "dept_bridge.csv", dtype=str)
+        dept_ind = dept_ind.merge(
+            dept_bridge[["dept_reg_code", "dept_name_reg", "dept_dane_code", "dept_name_dane"]],
+            on="dept_reg_code", how="left"
+        )
+        dept_ind.to_csv(OUT / "resultados_departamentos_indigena.csv", index=False)
+        print(f"  resultados_departamentos_indigena.csv: {len(dept_ind)} depts")
 
     # ── exterior aggregation ─────────────────────────────────────────────────
     ext_master = master[master["is_exterior"] == True][

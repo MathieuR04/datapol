@@ -295,6 +295,68 @@
     .bbar-val.hi { color: var(--terra); }
     .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
 
+    /* ── Mode bar ─────────────────────────────────────────────────────────── */
+    .mode-bar { background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; height: 28px; gap: 0; flex-shrink: 0; }
+    .mode-tab { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.3rem 0.75rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+    .mode-tab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .mode-tab:hover:not(.active) { color: var(--text); }
+
+    /* ── Constituency buttons ──────────────────────────────────────────────── */
+    .const-btn { background: rgba(245,240,232,0.92); border: 1px solid var(--border); color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.15s; }
+    .const-btn.active { background: #166534; color: #fff; border-color: #166534; }
+    .const-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+    /* ── Resultados view ──────────────────────────────────────────────────── */
+    #resultados-view { flex: 1; display: none; flex-direction: column; overflow: hidden; background: var(--bg); min-height: 0; }
+    .res-scroll { flex: 1; overflow-y: auto; padding: 1rem 2rem; display: flex; flex-direction: column; gap: 0; max-width: 900px; align-self: center; width: 100%; }
+    .res-scroll::-webkit-scrollbar { width: 3px; }
+    .res-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .res-section-head { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; letter-spacing: 0.05em; color: var(--text); padding: 1rem 0 0.4rem; border-bottom: 2px solid var(--text); margin-bottom: 0; display: flex; align-items: baseline; gap: 0.75rem; }
+    .res-section-sub { font-family: 'Inter', sans-serif; font-size: 9px; color: var(--muted); letter-spacing: 0.04em; font-weight: 400; text-transform: none; }
+    .res-party { border-bottom: 1px solid var(--border); }
+    .res-party-header { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; cursor: pointer; transition: background 0.1s; user-select: none; }
+    .res-party-header:hover { background: var(--terra-lt); margin: 0 -0.5rem; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .res-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .res-name { font-size: 10px; font-weight: 700; color: var(--text); flex: 1; line-height: 1.2; }
+    .res-votes { font-size: 9px; color: var(--muted); }
+    .res-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; color: var(--muted); min-width: 52px; text-align: right; }
+    .res-seats-wrap { display: flex; flex-direction: column; align-items: center; min-width: 50px; }
+    .res-seats { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; color: var(--terra); }
+    .res-seats-label { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .res-listtype { font-size: 7px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; background: var(--sand); padding: 2px 5px; border-radius: 2px; white-space: nowrap; }
+    .res-toggle { font-size: 11px; color: var(--muted); padding: 0 0.25rem; flex-shrink: 0; cursor: pointer; }
+    .cand-list { display: none; flex-direction: column; background: var(--surface); max-height: 300px; overflow-y: auto; border-top: 1px solid var(--border); }
+    .cand-list.open { display: flex; }
+    .cand-list::-webkit-scrollbar { width: 3px; }
+    .cand-list::-webkit-scrollbar-thumb { background: var(--sand); }
+    .cand-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.22rem 0.75rem; font-size: 10px; border-bottom: 1px solid var(--border); }
+    .cand-row.elected { background: #f0fdf4; }
+    .cand-rank { color: var(--dim); min-width: 22px; font-size: 9px; flex-shrink: 0; }
+    .cand-name { flex: 1; color: var(--text); }
+    .cand-votes { font-size: 9px; color: var(--muted); }
+    .cand-tick { color: #16a34a; font-weight: 700; min-width: 16px; text-align: center; flex-shrink: 0; }
+    .cand-dash { color: var(--dim); min-width: 16px; text-align: center; flex-shrink: 0; }
+    .res-ind-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; padding: 0.75rem 0; }
+    .res-ind-card { border: 1px solid var(--border); border-radius: 3px; padding: 0.75rem; }
+    .res-ind-name { font-size: 10px; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .res-ind-stat { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-top: 0.2rem; }
+    .res-ind-seats { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; color: var(--terra); line-height: 1; }
+
+    /* ── Cámara view ──────────────────────────────────────────────────────── */
+    #camara-view { flex: 1; display: none; flex-direction: row; overflow: hidden; background: var(--bg); min-height: 0; }
+    .cam-chart { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem 1rem 0.5rem; min-width: 0; }
+    #parliament-svg { width: 100%; max-width: 580px; height: auto; display: block; }
+    .cam-subtitle { font-size: 9px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 0.5rem; text-align: center; }
+    .cam-legend { width: 230px; min-width: 230px; border-left: 1px solid var(--border); overflow-y: auto; }
+    .cam-legend::-webkit-scrollbar { width: 3px; }
+    .cam-legend::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .cam-legend-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .cam-legend-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .cam-legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .cam-legend-name { font-size: 9px; color: var(--text); flex: 1; line-height: 1.2; }
+    .cam-legend-seats { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 18px; line-height: 1; color: var(--terra); min-width: 24px; text-align: right; }
+    .cam-legend-divider { font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); background: var(--surface); margin-top: 0.25rem; }
+
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
       body { overflow: auto; }
@@ -318,6 +380,13 @@
   <span class="nav-item active">Senado</span>
   <span class="nav-item" style="cursor:default">Cámara <span class="nav-pill">próx.</span></span>
   <span class="nav-item" style="cursor:default">Presidencial <span class="nav-pill">próx.</span></span>
+</div>
+
+<!-- Mode bar -->
+<div class="mode-bar">
+  <button class="mode-tab active" data-mode="mapa">Mapa</button>
+  <button class="mode-tab" data-mode="resultados">Resultados</button>
+  <button class="mode-tab" data-mode="camara">Cámara</button>
 </div>
 
 <!-- Header -->
@@ -358,6 +427,11 @@
     <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
 
     <div class="map-controls">
+      <!-- Constituency toggle -->
+      <div class="ctrl-row">
+        <button class="const-btn active" data-const="nacional">Nacional</button>
+        <button class="const-btn" data-const="indigena">Indígena</button>
+      </div>
       <!-- Level toggle -->
       <div class="ctrl-row">
         <button class="level-btn active" data-level="municipio">Municipio</button>
@@ -403,6 +477,20 @@
     </div>
   </div>
 
+</div>
+
+<!-- Resultados view -->
+<div id="resultados-view">
+  <div class="res-scroll" id="res-content"></div>
+</div>
+
+<!-- Cámara view -->
+<div id="camara-view">
+  <div class="cam-chart">
+    <svg id="parliament-svg" viewBox="0 0 560 310" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="cam-subtitle" id="cam-subtitle">103 escaños · Senado Colombia 2026</div>
+  </div>
+  <div class="cam-legend" id="cam-legend"></div>
 </div>
 
 <!-- Bottom bar -->
@@ -499,14 +587,19 @@
   let currentLevel = "municipio";
   let selectedParty = null;
 
-  let mpioData = null, deptData = null, nationalParties = null;
-  let deptNameMap = {};  // "01" → "ANTIOQUIA"
-  let deptBoundsMap = {}; // "01" → LatLngBounds
-  let deptFeatMap = {}; // "01" → feature
+  let mpioNatData = null, deptNatData = null;   // national constituency
+  let mpioIndData = null, deptIndData = null;   // indigenous constituency
+  let mpioData = null, deptData = null;         // active (points to nat or ind)
+  let nationalParties = null, indigenaParties = null, seatsData = null;
+  let deptNameMap = {};
+  let deptBoundsMap = {};
+  let deptFeatMap = {};
 
   let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
   let activeLayer = null;
   let previousTab = "partidos";
+  let currentMode = "mapa";
+  let currentConstituency = "nacional";
 
   // ── Style functions ───────────────────────────────────────────────────────
   function styleMpio(feat) {
@@ -783,7 +876,7 @@
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
   function buildPartyList() {
-    const parties = nationalParties || [];
+    const parties = (currentConstituency==="indigena" ? indigenaParties : nationalParties) || [];
     const totalValid = parties.reduce((s,p)=>s+p.votes,0);
     const top = parties.slice(0,20);
     const maxV = top[0]?.votes||1;
@@ -871,12 +964,18 @@
     fetch(BASE+"colombia_results_map.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"colombia_results_dept.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"national_parties.json").then(r=>r.json()).catch(()=>[]),
-  ]).then(([mpio,dept,parties])=>{
-    mpioData=mpio;
-    deptData=dept;
+    fetch(BASE+"colombia_results_indigena_map.geojson").then(r=>r.json()).catch(()=>null),
+    fetch(BASE+"colombia_results_indigena_dept.geojson").then(r=>r.json()).catch(()=>null),
+    fetch(BASE+"indigena_parties.json").then(r=>r.json()).catch(()=>[]),
+    fetch(BASE+"senate_seats.json").then(r=>r.json()).catch(()=>null),
+  ]).then(([mpio,dept,parties,mpioInd,deptInd,indParties,seats])=>{
+    mpioNatData=mpio; deptNatData=dept;
+    mpioIndData=mpioInd; deptIndData=deptInd;
+    mpioData=mpio; deptData=dept;
     nationalParties=parties;
+    indigenaParties=indParties;
+    seatsData=seats;
 
-    // Build dept lookups
     dept.features.forEach(f=>{
       const key=(f.properties?.name||"");
       deptNameMap[key]=f.properties?.dept_name_reg||f.properties?.NOMBRE_DPT||key;
@@ -895,6 +994,186 @@
   });
 
   // ── Controls ───────────────────────────────────────────────────────────────
+  // ── Mode switching ────────────────────────────────────────────────────────
+  function switchMode(mode) {
+    currentMode=mode;
+    document.querySelectorAll(".mode-tab").forEach(t=>t.classList.toggle("active",t.dataset.mode===mode));
+    document.querySelector(".body").style.display       = mode==="mapa"       ? "flex" : "none";
+    document.getElementById("resultados-view").style.display = mode==="resultados" ? "flex" : "none";
+    document.getElementById("camara-view").style.display     = mode==="camara"     ? "flex" : "none";
+    document.querySelector(".bottombar").style.display  = mode==="mapa"       ? "flex" : "none";
+    if (mode==="resultados" && seatsData) renderResultados();
+    if (mode==="camara"     && seatsData) renderCamara();
+    if (mode==="mapa") setTimeout(()=>map.invalidateSize(),50);
+  }
+  document.querySelectorAll(".mode-tab").forEach(t=>t.addEventListener("click",()=>switchMode(t.dataset.mode)));
+
+  // ── Constituency switching ────────────────────────────────────────────────
+  function switchConstituency(c) {
+    currentConstituency=c;
+    document.querySelectorAll(".const-btn").forEach(b=>b.classList.toggle("active",b.dataset.const===c));
+    if (c==="indigena" && mpioIndData) { mpioData=mpioIndData; deptData=deptIndData; }
+    else                               { mpioData=mpioNatData; deptData=deptNatData; }
+    // Rebuild dept lookups
+    deptFeatMap={}; deptBoundsMap={}; deptNameMap={};
+    (deptData||{features:[]}).features.forEach(f=>{
+      const key=f.properties?.name||"";
+      deptNameMap[key]=f.properties?.dept_name_reg||key;
+      deptFeatMap[key]=f;
+    });
+    if(mpioLayer){map.removeLayer(mpioLayer);mpioLayer=null;}
+    if(deptLayer){map.removeLayer(deptLayer);deptLayer=null;}
+    if(deptBoundaryLayer){map.removeLayer(deptBoundaryLayer);deptBoundaryLayer=null;}
+    if(bubbleLayer){map.removeLayer(bubbleLayer);bubbleLayer=null;}
+    activeLayer=null; hideDetail();
+    render(); buildPartyList(); buildDeptList();
+  }
+  document.querySelectorAll(".const-btn").forEach(b=>b.addEventListener("click",()=>switchConstituency(b.dataset.const)));
+
+  // ── Resultados view ───────────────────────────────────────────────────────
+  function renderResultados() {
+    if (!seatsData) return;
+    const el=document.getElementById("res-content");
+    const f=n=>(n==null||n===""||isNaN(n))?"—":parseInt(n).toLocaleString("es-CO");
+    const fp=n=>(n==null||n===""||isNaN(n))?"—":parseFloat(n).toFixed(1)+"%";
+
+    let h=`<div class="res-section-head">Circunscripción Nacional
+      <span class="res-section-sub">100 escaños · umbral 3% · ${f(seatsData.total_valid)} votos válidos</span>
+    </div>`;
+
+    seatsData.parties.forEach(p=>{
+      const col=partyColor(p.nombre,p.color);
+      const lbl=p.list_type==="closed"?"Lista cerrada":"Lista abierta";
+      const show=Math.max(p.seats+4, 15);
+      const cands=p.candidates.slice(0,show);
+      const more=p.candidates.length-show;
+      h+=`<div class="res-party">
+        <div class="res-party-header" onclick="(function(el){var cl=el.nextElementSibling.classList;cl.toggle('open');el.querySelector('.res-toggle').textContent=cl.contains('open')?'▲':'▼';})(this)">
+          <div class="res-swatch" style="background:${col}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="res-name">${p.nombre}</div>
+            <div class="res-votes">${f(p.votes)} votos</div>
+          </div>
+          <span class="res-pct">${fp(p.vote_pct)}</span>
+          <div class="res-seats-wrap"><span class="res-seats">${p.seats}</span><span class="res-seats-label">escaños</span></div>
+          <span class="res-listtype">${lbl}</span>
+          <span class="res-toggle">▼</span>
+        </div>
+        <div class="cand-list">
+          ${cands.map(c=>`<div class="cand-row${c.elected?" elected":""}">
+            <span class="cand-rank">${c.rank}.</span>
+            <span class="cand-name">${c.name}</span>
+            ${p.list_type==="open"?`<span class="cand-votes">${f(c.votes)}</span>`:""}
+            ${c.elected?'<span class="cand-tick">✓</span>':'<span class="cand-dash">—</span>'}
+          </div>`).join("")}
+          ${more>0?`<div class="cand-row"><span class="cand-rank" style="color:var(--dim)">…</span><span class="cand-name" style="color:var(--muted)">${more} candidatos más</span></div>`:""}
+        </div>
+      </div>`;
+    });
+
+    h+=`<div class="res-section-head" style="margin-top:1.25rem">Circunscripción Especial Indígena
+      <span class="res-section-sub">2 escaños</span></div>
+      <div class="res-ind-grid">`;
+    seatsData.indigena.filter(p=>p.seats>0).forEach(p=>{
+      const col=partyColor(p.nombre,p.color);
+      h+=`<div class="res-ind-card" style="border-left:3px solid ${col}">
+        <div class="res-ind-name">${p.nombre}</div>
+        <div class="res-ind-stat"><span>${f(p.votes)} votos</span><span>${fp(p.vote_pct)}</span></div>
+        <div class="res-ind-seats">${p.seats}</div>
+        <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">escaño${p.seats!==1?"s":""}</div>
+      </div>`;
+    });
+    h+=`</div>`;
+
+    h+=`<div class="res-section-head" style="margin-top:0.75rem">Estatuto de la Oposición
+      <span class="res-section-sub">1 escaño · ${seatsData.oposicion.note}</span></div>
+      <div style="height:2rem"></div>`;
+
+    el.innerHTML=h;
+  }
+
+  // ── Cámara / parliament chart ─────────────────────────────────────────────
+  function renderCamara() {
+    if (!seatsData) return;
+
+    // Political left→right order for Colombia
+    const POLITICAL_ORDER=["0092","0002","0009","0057","0003","0044","0043","0017","0010"];
+
+    // Build ordered seat color list
+    const allSeats=[];
+    POLITICAL_ORDER.forEach(code=>{
+      const p=seatsData.parties.find(x=>x.code===code);
+      if (!p) return;
+      const col=partyColor(p.nombre,p.color);
+      for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre});
+    });
+    seatsData.parties.forEach(p=>{
+      if(!POLITICAL_ORDER.includes(p.code)){
+        const col=partyColor(p.nombre,p.color);
+        for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre});
+      }
+    });
+    seatsData.indigena.filter(p=>p.seats>0).forEach(p=>{
+      const col=partyColor(p.nombre,p.color);
+      for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre});
+    });
+    allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición (pendiente)"});
+
+    // Semicircle positions: 4 rows
+    const cx=280, cy=298;
+    const radii=[88,136,184,232];
+    const totalR=radii.reduce((s,r)=>s+r,0);
+    const spr=radii.map(r=>Math.round(103*r/totalR));
+    spr[3]=103-spr[0]-spr[1]-spr[2];
+
+    const positions=[];
+    spr.forEach((n,row)=>{
+      const r=radii[row];
+      for(let i=0;i<n;i++){
+        const angle=Math.PI*(n-0.5-i)/n;
+        positions.push({x:cx+r*Math.cos(angle), y:cy-r*Math.sin(angle)});
+      }
+    });
+
+    const seatR=Math.min(6.2, radii[0]*Math.PI/spr[0]*0.40);
+    const svg=document.getElementById("parliament-svg");
+    svg.innerHTML=positions.map((pos,i)=>{
+      if(i>=allSeats.length) return "";
+      const s=allSeats[i];
+      return `<circle cx="${pos.x.toFixed(1)}" cy="${pos.y.toFixed(1)}" r="${seatR.toFixed(1)}" fill="${s.color}" stroke="#f5f0e8" stroke-width="0.7"><title>${s.nombre}</title></circle>`;
+    }).join("");
+
+    // Legend
+    const leg=document.getElementById("cam-legend");
+    let lh=`<div class="cam-legend-head">CIRCUNSCRIPCIÓN NACIONAL — 100 ESC.</div>`;
+    POLITICAL_ORDER.forEach(code=>{
+      const p=seatsData.parties.find(x=>x.code===code);
+      if(!p) return;
+      const col=partyColor(p.nombre,p.color);
+      lh+=`<div class="cam-legend-row">
+        <div class="cam-legend-swatch" style="background:${col}"></div>
+        <span class="cam-legend-name">${p.nombre}</span>
+        <span class="cam-legend-seats">${p.seats}</span>
+      </div>`;
+    });
+    lh+=`<div class="cam-legend-divider">CIRC. ESPECIAL INDÍGENA — 2 ESC.</div>`;
+    seatsData.indigena.filter(p=>p.seats>0).forEach(p=>{
+      const col=partyColor(p.nombre,p.color);
+      lh+=`<div class="cam-legend-row">
+        <div class="cam-legend-swatch" style="background:${col}"></div>
+        <span class="cam-legend-name">${p.nombre}</span>
+        <span class="cam-legend-seats">${p.seats}</span>
+      </div>`;
+    });
+    lh+=`<div class="cam-legend-divider">ESTATUTO DE LA OPOSICIÓN — 1 ESC.</div>
+    <div class="cam-legend-row">
+      <div class="cam-legend-swatch" style="background:#94a3b8"></div>
+      <span class="cam-legend-name">Pendiente segunda vuelta presidencial</span>
+      <span class="cam-legend-seats">1</span>
+    </div>`;
+    leg.innerHTML=lh;
+  }
+
   document.querySelectorAll(".level-btn").forEach(btn=>{
     btn.addEventListener("click",()=>{
       currentLevel=btn.dataset.level;

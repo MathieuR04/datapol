@@ -139,5 +139,99 @@ def build_geojson():
     return matched
 
 
+def build_indigena_geojson():
+    """Build municipio and dept GeoJSON for the indigenous constituency."""
+    party_lookup = load_party_lookup()
+
+    mpio_csv = OUT / "resultados_municipios_indigena.csv"
+    dept_csv = OUT / "resultados_departamentos_indigena.csv"
+    if not mpio_csv.exists():
+        print("  No resultados_municipios_indigena.csv — skipping indigenous GeoJSON")
+        return
+
+    with open(OUT / "colombia_municipios.geojson") as f:
+        mpio_geo = json.load(f)
+
+    mpio_ind = pd.read_csv(mpio_csv, dtype={"mpio_reg_code_7": str, "mpio_dane_code": str})
+    mpio_ind["mpio_reg_code_5"] = (
+        mpio_ind["mpio_reg_code_7"].str[:2] + mpio_ind["mpio_reg_code_7"].str[4:]
+    )
+
+    indig_cols = [c for c in mpio_ind.columns if c.startswith("indig_")]
+    keep = ["mpio_reg_code_5", "mpio_name_reg", "mpio_dane_code",
+            "dept_reg_code", "dept_dane_code",
+            "votantes", "votos_validos", "votos_blanco", "votos_nulos",
+            "winner", "winner_votes", "winner_pct", "winner_color"]
+    keep = [c for c in keep if c in mpio_ind.columns]
+    slim = mpio_ind[keep].copy()
+
+    if indig_cols:
+        def top5_indig(row):
+            entries = []
+            for col in indig_cols:
+                code = col.replace("indig_", "")
+                info = party_lookup.get(code, {})
+                entries.append({"name": info.get("nombre", code),
+                                 "color": info.get("color", "#888"),
+                                 "votes": int(row[col])})
+            top = sorted(entries, key=lambda x: -x["votes"])[:5]
+            return json.dumps(top, ensure_ascii=False)
+        slim["top5_candidates"] = mpio_ind.apply(top5_indig, axis=1)
+
+    results_dict = slim.set_index("mpio_reg_code_5").to_dict(orient="index")
+    matched = 0
+    for feat in mpio_geo["features"]:
+        code5 = feat["properties"].get("mpio_reg_code_5", "")
+        if code5 in results_dict:
+            feat["properties"].update(results_dict[code5])
+            matched += 1
+
+    print(f"  Indigenous mpio matched: {matched}/{len(mpio_geo['features'])}")
+    with open(OUT / "colombia_results_indigena_map.geojson", "w") as f:
+        json.dump(mpio_geo, f, ensure_ascii=False)
+    print("  Saved → colombia_results_indigena_map.geojson")
+
+    # Dept
+    with open(Path(__file__).parent.parent / "data" / "raw" / "00.geojson") as f:
+        dept_geo = json.load(f)
+
+    dept_ind = pd.read_csv(dept_csv, dtype=str)
+    dept_ind["dept_map_num"] = dept_ind["dept_reg_code"].str[:2]
+    dept_keep = ["dept_map_num", "dept_name_reg", "dept_name_dane", "dept_dane_code",
+                 "votantes", "votos_validos", "winner", "winner_votes", "winner_pct", "winner_color"]
+    dept_indig_cols = [c for c in dept_ind.columns if c.startswith("indig_")]
+    dept_keep = [c for c in dept_keep if c in dept_ind.columns]
+
+    if dept_indig_cols:
+        def dept_top5_indig(row):
+            entries = []
+            for col in dept_indig_cols:
+                code = col.replace("indig_", "")
+                info = party_lookup.get(code, {})
+                v = int(float(row[col])) if row[col] not in ("", "nan") else 0
+                entries.append({"name": info.get("nombre", code), "color": info.get("color", "#888"), "votes": v})
+            return json.dumps(sorted(entries, key=lambda x: -x["votes"])[:5], ensure_ascii=False)
+        dept_ind["top5_candidates"] = dept_ind.apply(dept_top5_indig, axis=1)
+        dept_keep.append("top5_candidates")
+
+    dept_dict = dept_ind[dept_keep].set_index("dept_map_num").to_dict(orient="index")
+    dept_matched = 0
+    kept = []
+    for feat in dept_geo.get("features", []):
+        key = str(feat.get("properties", {}).get("name", "")).zfill(2)
+        if key not in dept_dict:
+            continue
+        feat["properties"].update(dept_dict[key])
+        dept_matched += 1
+        kept.append(feat)
+    dept_geo["features"] = kept
+
+    print(f"  Indigenous dept matched: {dept_matched}")
+    with open(OUT / "colombia_results_indigena_dept.geojson", "w") as f:
+        json.dump(dept_geo, f, ensure_ascii=False)
+    print("  Saved → colombia_results_indigena_dept.geojson")
+
+
 if __name__ == "__main__":
     build_geojson()
+    build_indigena_geojson()
