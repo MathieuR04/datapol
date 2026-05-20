@@ -177,7 +177,8 @@
       transition: all 0.15s;
       white-space: nowrap;
     }
-    .view-btn.active, .level-btn.active { background: var(--terra); color: #fff; border-color: var(--terra); }
+    .level-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .view-btn.active  { background: var(--terra); color: #fff; border-color: var(--terra); }
     .view-btn:hover:not(.active), .level-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
 
     /* Loading */
@@ -506,8 +507,8 @@
         <div class="ctrl-row" id="view-btns">
           <button class="view-btn active" data-view="winner">Partido</button>
           <button class="view-btn" data-view="turnout">Participación</button>
-          <button class="view-btn" data-view="mesas">Mesas</button>
-          <button class="view-btn" data-view="votos">Votos</button>
+          <button class="view-btn" data-view="votos">Votos válidos</button>
+          <button class="view-btn" data-view="mesas">Mesas restantes</button>
         </div>
       </div>
     </div>
