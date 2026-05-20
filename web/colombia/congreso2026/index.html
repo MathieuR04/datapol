@@ -459,7 +459,7 @@
 <div class="mode-bar">
   <button class="mode-tab active" data-mode="nacional">Mapa Nacional</button>
   <button class="mode-tab" data-mode="indigena">Mapa Indígena</button>
-  <button class="mode-tab" data-mode="resultados">Resultados</button>
+  <button class="mode-tab" data-mode="resultados">Electos</button>
   <button class="mode-tab" data-mode="camara">Cámara</button>
 </div>
 
@@ -1245,75 +1245,79 @@
       return obj;
     });
   }
+  let _exteriorRows = null; // cached CSV parse — only fetch once
+
   function buildExteriorList() {
     const el = document.getElementById("view-exterior");
     if (!el) return;
+
+    // Indigenous constituency has no overseas voting
+    if (currentMode === "indigena") {
+      el.innerHTML = `<div style="padding:0.9rem 0.75rem;font-size:10px;color:var(--muted);line-height:1.6;border-bottom:1px solid var(--border)">
+        La circunscripción especial indígena no tiene votación en el exterior.<br>
+        El voto indígena es exclusivamente territorial.
+      </div>`;
+      return;
+    }
+
+    // Nacional mode — render from cache or fetch
+    const render = rows => {
+      const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
+      const partyByCode = {};
+      (nationalParties || []).forEach(p => { partyByCode[p.code] = p; });
+
+      el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
+        rows.map((r, idx) => {
+          const col = partyColor(r.winner, r.winner_color);
+          const name = r.mpio_name || r.dept_name || "—";
+          const vot = parseInt(r.votantes) || 0;
+          const pct = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+          return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
+            <div class="dept-top">
+              <div class="dept-swatch" style="background:${col}"></div>
+              <span class="dept-name" style="font-size:9px">${name}</span>
+              <span class="dept-votes">${fmtN(vot)}</span>
+            </div>
+            <div class="dept-winner">${r.winner || ""} <span style="color:var(--dim)">${pct}</span></div>
+          </div>`;
+        }).join("");
+
+      el.querySelectorAll(".ext-row").forEach(row => {
+        row.addEventListener("click", () => {
+          const r = rows[parseInt(row.dataset.extidx)];
+          const partyEntries = [];
+          Object.keys(r).forEach(col => {
+            if (!col.startsWith("party_")) return;
+            const code = col.replace("party_", "");
+            const votes = parseInt(r[col]) || 0;
+            if (!votes) return;
+            const info = partyByCode[code] || {};
+            partyEntries.push({ name: info.nombre || code, color: partyColor(info.nombre || "", info.color || ""), votes });
+          });
+          partyEntries.sort((a, b) => b.votes - a.votes);
+          const fakeFeat = { properties: {
+            dept_name_reg: r.mpio_name || r.dept_name || "—",
+            winner: r.winner, winner_color: r.winner_color,
+            votantes: r.votantes, censo: r.censo || 0,
+            votos_validos: r.votos_validos, votos_blanco: r.votos_blanco,
+            votos_nulos: r.votos_nulos, votos_no_marcados: r.votos_no_marcados,
+            mesas_escrutadas: r.mesas_escrutadas, mesas_total: r.mesas_total,
+            top5_candidates: JSON.stringify(partyEntries),
+          }};
+          showDetail(fakeFeat, "dept");
+        });
+      });
+    };
+
+    if (_exteriorRows) { render(_exteriorRows); return; }
+
     el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
     fetch(BASE + "resultados_exterior.csv")
       .then(r => r.text())
       .then(text => {
-        const rows = parseCSV(text);
-        rows.sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
-        const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
-
-        // Build party code → info lookup from nationalParties
-        const partyByCode = {};
-        (nationalParties || []).forEach(p => { partyByCode[p.code] = p; });
-
-        el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
-          rows.map((r, idx) => {
-            const col = partyColor(r.winner, r.winner_color);
-            const name = r.mpio_name || r.dept_name || "—";
-            const vot = parseInt(r.votantes) || 0;
-            const pct = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
-            return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
-              <div class="dept-top">
-                <div class="dept-swatch" style="background:${col}"></div>
-                <span class="dept-name" style="font-size:9px">${name}</span>
-                <span class="dept-votes">${fmtN(vot)}</span>
-              </div>
-              <div class="dept-winner">${r.winner || ""} <span style="color:var(--dim)">${pct}</span></div>
-            </div>`;
-          }).join("");
-
-        // Click → show detail panel using a fake feat built from CSV row
-        el.querySelectorAll(".ext-row").forEach(row => {
-          row.addEventListener("click", () => {
-            const r = rows[parseInt(row.dataset.extidx)];
-
-            // Build party list from party_ columns
-            const partyEntries = [];
-            Object.keys(r).forEach(col => {
-              if (!col.startsWith("party_")) return;
-              const code = col.replace("party_", "");
-              const votes = parseInt(r[col]) || 0;
-              if (!votes) return;
-              const info = partyByCode[code] || {};
-              partyEntries.push({
-                name:  info.nombre || code,
-                color: partyColor(info.nombre || "", info.color || ""),
-                votes,
-              });
-            });
-            partyEntries.sort((a, b) => b.votes - a.votes);
-
-            const fakeFeat = { properties: {
-              dept_name_reg:      r.mpio_name || r.dept_name || "—",
-              winner:             r.winner,
-              winner_color:       r.winner_color,
-              votantes:           r.votantes,
-              censo:              r.censo || 0,
-              votos_validos:      r.votos_validos,
-              votos_blanco:       r.votos_blanco,
-              votos_nulos:        r.votos_nulos,
-              votos_no_marcados:  r.votos_no_marcados,
-              mesas_escrutadas:   r.mesas_escrutadas,
-              mesas_total:        r.mesas_total,
-              top5_candidates:    JSON.stringify(partyEntries),
-            }};
-            showDetail(fakeFeat, "dept");
-          });
-        });
+        _exteriorRows = parseCSV(text);
+        _exteriorRows.sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
+        render(_exteriorRows);
       })
       .catch(() => {
         el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
@@ -1384,7 +1388,7 @@
         mpioData = mpioNatData;
         deptData = deptNatData;
       }
-      render(); buildPartyList(); buildDeptList();
+      render(); buildPartyList(); buildDeptList(); buildExteriorList();
       updateBottomBar(mode);
       setTimeout(() => curMap.invalidateSize(), 50);
     }
