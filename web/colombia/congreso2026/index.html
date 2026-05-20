@@ -385,6 +385,37 @@
     .cam-panel-votes { font-size: 9px; color: var(--muted); }
     .cam-panel-tick { color: #16a34a; font-weight: 700; min-width: 16px; text-align: center; }
 
+    /* ── Map control group labels ─────────────────────────────────────────── */
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .ctrl-label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0 0.1rem; }
+    .ctrl-label.geo  { color: var(--text); }
+    .ctrl-label.data { color: var(--terra); }
+
+    /* ── Full-view back button (floats center-top of map) ─────────────────── */
+    .map-topbar {
+      position: absolute;
+      top: 0.6rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 800;
+    }
+    .btn-fullview {
+      background: rgba(245,240,232,0.93);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.9rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .btn-fullview:hover { color: var(--terra); }
+
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
       body { overflow: auto; }
@@ -392,8 +423,11 @@
       .map-wrap { height: 55vw; min-height: 280px; flex: none; }
       .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
       .header-sub, .header-progress, .live-tag { display: none !important; }
-      .header-stats { gap: 0.75rem; }
-      .hstat-val { font-size: 17px; }
+      .header-stats { gap: 0.5rem; flex-shrink: 0; overflow: hidden; }
+      .hstat { align-items: flex-end; min-width: 0; }
+      .hstat-val { font-size: 15px; }
+      .hstat-label { font-size: 7px; }
+      .header-title { font-size: 15px; }
       .bottombar { height: auto; padding: 0.4rem 0.75rem; flex-wrap: wrap; gap: 0.5rem 1rem; }
       .bbar-sep { display: none; }
     }
@@ -434,20 +468,16 @@
   <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
   <div class="header-stats">
     <div class="hstat">
-      <span class="hstat-label">Participación</span>
-      <span class="hstat-val hi" id="hs-turnout">—</span>
+      <span class="hstat-label">Censo</span>
+      <span class="hstat-val" id="hs-censo">—</span>
     </div>
     <div class="hstat">
       <span class="hstat-label">Votantes</span>
       <span class="hstat-val" id="hs-votes">—</span>
     </div>
     <div class="hstat">
-      <span class="hstat-label">Censo</span>
-      <span class="hstat-val" id="hs-censo">—</span>
-    </div>
-    <div class="hstat">
-      <span class="hstat-label">Municipios</span>
-      <span class="hstat-val" id="hs-mpios">—</span>
+      <span class="hstat-label">Participación</span>
+      <span class="hstat-val hi" id="hs-turnout">—</span>
     </div>
   </div>
 </div>
@@ -459,18 +489,26 @@
   <div class="map-wrap">
     <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
 
+    <div class="map-topbar" id="map-topbar" style="display:none">
+      <button class="btn-fullview" id="btn-fullview">← Colombia</button>
+    </div>
+
     <div class="map-controls">
-      <!-- Level toggle -->
-      <div class="ctrl-row">
-        <button class="level-btn active" data-level="municipio">Municipio</button>
-        <button class="level-btn" data-level="dept">Departamento</button>
+      <div class="ctrl-group">
+        <span class="ctrl-label geo">Geografía</span>
+        <div class="ctrl-row">
+          <button class="level-btn active" data-level="dept">Departamento</button>
+          <button class="level-btn" data-level="municipio">Municipio</button>
+        </div>
       </div>
-      <!-- View toggle -->
-      <div class="ctrl-row" id="view-btns">
-        <button class="view-btn active" data-view="winner">Partido</button>
-        <button class="view-btn" data-view="turnout">Participación</button>
-        <button class="view-btn" data-view="mesas">Mesas</button>
-        <button class="view-btn" data-view="votos">Votos</button>
+      <div class="ctrl-group">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row" id="view-btns">
+          <button class="view-btn active" data-view="winner">Partido</button>
+          <button class="view-btn" data-view="turnout">Participación</button>
+          <button class="view-btn" data-view="mesas">Mesas</button>
+          <button class="view-btn" data-view="votos">Votos</button>
+        </div>
       </div>
     </div>
 
@@ -487,11 +525,13 @@
   <div class="panel">
     <div class="panel-tabs" id="panel-tabs">
       <div class="ptab active" data-tab="partidos">Partidos</div>
-      <div class="ptab" data-tab="depts">Departamentos</div>
+      <div class="ptab" data-tab="depts">Deptos</div>
+      <div class="ptab" data-tab="exterior">Exterior</div>
     </div>
     <div class="panel-scroll" id="panel-scroll">
       <div class="p-view active" id="view-partidos"></div>
       <div class="p-view" id="view-depts"></div>
+      <div class="p-view" id="view-exterior"></div>
     </div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
@@ -535,6 +575,8 @@
   <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
   <div class="bbar-sep"></div>
   <div class="bbar-item"><span class="bbar-label">Mesas</span><span class="bbar-val" id="bb-mesas">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Municipios</span><span class="bbar-val" id="bb-mpios">—</span></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -570,8 +612,9 @@
   // ── Maps — two completely separate Leaflet instances ─────────────────────
   const TILE = { url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
                  opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 } };
-  const mapNac = L.map("map-nac", { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true });
-  const mapInd = L.map("map-ind", { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true });
+  const MAP_OPTS = { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true, zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80 };
+  const mapNac = L.map("map-nac", MAP_OPTS);
+  const mapInd = L.map("map-ind", MAP_OPTS);
   L.tileLayer(TILE.url, TILE.opts).addTo(mapNac);
   L.tileLayer(TILE.url, TILE.opts).addTo(mapInd);
   let curMap = mapNac;
@@ -633,7 +676,7 @@
 
   // ── State ────────────────────────────────────────────────────────────────
   let currentView  = "winner";
-  let currentLevel = "municipio";
+  let currentLevel = "dept";
   let selectedParty = null;
 
   let mpioNatData = null, deptNatData = null;   // national constituency
@@ -769,6 +812,7 @@
       marker.on("click", e => {
         L.DomEvent.stopPropagation(e);
         showDetail(feat, currentLevel==="municipio" ? "municipio" : "dept");
+        document.getElementById("map-topbar").style.display = "block";
       });
       marker.addTo(curState.bubbleLayer);
     });
@@ -835,6 +879,7 @@
         e.target.setStyle({weight:2,color:"#c4603a",fillOpacity:1});
         showDetail(feat, "municipio");
         curMap.fitBounds(e.target.getBounds(), {padding:[60,60]});
+        document.getElementById("map-topbar").style.display = "block";
       }
     });
   }
@@ -862,12 +907,26 @@
         e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1});
         showDetail(feat, "dept");
         curMap.fitBounds(e.target.getBounds(), {padding:[40,40]});
+        document.getElementById("map-topbar").style.display = "block";
       }
     });
   }
 
   mapNac.on("click", hideDetail);
   mapInd.on("click", hideDetail);
+
+  // ── Full-view button ──────────────────────────────────────────────────────
+  document.getElementById("btn-fullview").addEventListener("click", () => {
+    curMap.setView([4.5, -74.2], 5);
+    document.getElementById("map-topbar").style.display = "none";
+    hideDetail();
+  });
+  function onMapZoomEnd() {
+    // Hide the back button when user zooms out to overview level
+    if (curMap.getZoom() <= 5.5) document.getElementById("map-topbar").style.display = "none";
+  }
+  mapNac.on("zoomend", onMapZoomEnd);
+  mapInd.on("zoomend", onMapZoomEnd);
 
   // ── Detail panel ──────────────────────────────────────────────────────────
   function showDetail(feat, type) {
@@ -946,8 +1005,15 @@
     const v=document.getElementById(`view-${previousTab}`);
     if(v)v.classList.add("active");
     if(curState.activeLayer){
-      curState.mpioLayer?.resetStyle(curState.activeLayer);
-      curState.deptLayer?.resetStyle(curState.activeLayer);
+      if (BUBBLE_VIEWS.has(currentView)) {
+        // In bubble views polygons are transparent — don't call resetStyle (it would color them)
+        const isDept = currentLevel === "dept";
+        curState.activeLayer.setStyle({ fillColor:"transparent", fillOpacity:0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        curState.mpioLayer?.resetStyle(curState.activeLayer);
+        curState.deptLayer?.resetStyle(curState.activeLayer);
+      }
       curState.activeLayer=null;
     }
   }
@@ -959,11 +1025,11 @@
     if (!seatsData) return;
     const s = seatsData.stats_nacional;
     const pct = s.mesas_total ? s.mesas_escrutadas / s.mesas_total : 0;
-    document.getElementById("hs-turnout").textContent = s.censo ? (s.votantes/s.censo*100).toFixed(1)+"%" : "—";
+    // Order: Censo | Votantes | Participación (= nac votantes / censo)
+    document.getElementById("hs-censo").textContent   = fmtN(s.censo);
     document.getElementById("hs-votes").textContent   = fmtN(seatsData.total_votantes);
-    document.getElementById("hs-censo").textContent   = fmtN(seatsData.stats_nacional?.censo);
-    document.getElementById("hs-mpios").textContent   = (mpioNatData?.features.filter(f=>f.properties?.votantes).length||0).toLocaleString("es-CO");
-    document.getElementById("hp-fill").style.width    = (pct*100).toFixed(1)+"%";
+    document.getElementById("hs-turnout").textContent = s.censo ? (s.votantes / s.censo * 100).toFixed(1) + "%" : "—";
+    document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
     document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
   }
@@ -977,6 +1043,10 @@
     document.getElementById("bb-nulos").textContent       = fmtN(s.votos_nulos);
     document.getElementById("bb-blanco").textContent      = fmtN(s.votos_blanco);
     document.getElementById("bb-mesas").textContent       = `${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
+    // Municipios reported vs total
+    const mpioSrc = (mode === "indigena" ? mpioIndData : mpioNatData)?.features || [];
+    const reported = mpioSrc.filter(f => (parseInt(f.properties?.mesas_escrutadas) || 0) > 0).length;
+    document.getElementById("bb-mpios").textContent = `${reported}/${mpioSrc.length}`;
   }
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
@@ -1061,7 +1131,7 @@
           render();
         }
         const bounds=curState.deptBoundsMap[key];
-        if(bounds)curMap.fitBounds(bounds,{padding:[40,40]});
+        if(bounds){ curMap.fitBounds(bounds,{padding:[40,40]}); document.getElementById("map-topbar").style.display="block"; }
         showDetail(feat,"dept");
       });
     });
@@ -1103,6 +1173,7 @@
     updateBottomBar("nacional");
     buildPartyList();
     buildDeptList();
+    buildExteriorList();
     document.getElementById("loading").style.display="none";
   }).catch(err=>{
     document.getElementById("loading").innerHTML=
@@ -1110,19 +1181,111 @@
        <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts 01–06 primero.</p>`;
   });
 
+  // ── Exterior consulados panel ─────────────────────────────────────────────
+  function parseCSVLine(line) {
+    const result = []; let cur = "", inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ""; }
+      else { cur += c; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  function parseCSV(text) {
+    const lines = text.trim().split("\n");
+    const headers = parseCSVLine(lines[0]);
+    return lines.slice(1).filter(l => l.trim()).map(line => {
+      const cols = parseCSVLine(line);
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = cols[i] !== undefined ? cols[i] : "");
+      return obj;
+    });
+  }
+  function buildExteriorList() {
+    const el = document.getElementById("view-exterior");
+    if (!el) return;
+    el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
+    fetch(BASE + "resultados_exterior.csv")
+      .then(r => r.text())
+      .then(text => {
+        const rows = parseCSV(text);
+        rows.sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
+        const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
+        const totalVal = rows.reduce((s, r) => s + (parseInt(r.votos_validos) || 0), 0);
+        el.innerHTML = `<div class="sect-head">${rows.length} grupos · ${fmtN(totalVot)} votantes</div>` +
+          rows.map(r => {
+            const col = partyColor(r.winner, r.winner_color);
+            const name = r.mpio_name || r.dept_name || "—";
+            const region = r.dept_name && r.dept_name !== name ? r.dept_name : "";
+            const vot = parseInt(r.votantes) || 0;
+            const vv  = parseInt(r.votos_validos) || 0;
+            const pct = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+            return `<div class="dept-row">
+              <div class="dept-top">
+                <div class="dept-swatch" style="background:${col}"></div>
+                <span class="dept-name" style="font-size:9px">${name}</span>
+                <span class="dept-votes">${fmtN(vot)}</span>
+              </div>
+              <div class="dept-winner">${r.winner || ""}${region ? " · " + region : ""} <span style="color:var(--dim)">${pct}</span></div>
+            </div>`;
+          }).join("");
+      })
+      .catch(() => {
+        el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
+          Datos del exterior no disponibles.<br>Ejecuta 05_aggregate.py primero.
+        </div>`;
+      });
+  }
+
   // ── Controls ───────────────────────────────────────────────────────────────
+  // ── Full state reset (called on every map mode switch) ───────────────────
+  function resetMapState() {
+    // Clear all Leaflet layers from both maps
+    [[mapNac, mapState.nacional], [mapInd, mapState.indigena]].forEach(([map, state]) => {
+      if (state.mpioLayer)        { try { map.removeLayer(state.mpioLayer);         } catch(e){} state.mpioLayer = null; }
+      if (state.deptLayer)        { try { map.removeLayer(state.deptLayer);         } catch(e){} state.deptLayer = null; }
+      if (state.deptBoundaryLayer){ try { map.removeLayer(state.deptBoundaryLayer); } catch(e){} state.deptBoundaryLayer = null; }
+      if (state.bubbleLayer)      { try { map.removeLayer(state.bubbleLayer);       } catch(e){} state.bubbleLayer = null; }
+      state.activeLayer = null;
+    });
+    // Reset view state
+    currentView   = "winner";
+    currentLevel  = "dept";
+    selectedParty = null;
+    // Reset buttons
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+    document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === "dept"));
+    document.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+    // Hide overlays
+    document.getElementById("bubble-legend").classList.remove("show");
+    document.getElementById("map-topbar").style.display = "none";
+    // Reset both maps to Colombia overview
+    mapNac.setView([4.5, -74.2], 5);
+    mapInd.setView([4.5, -74.2], 5);
+    // Hide detail panel, restore panel scroll
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    document.querySelectorAll(".p-view").forEach(el => el.classList.remove("active"));
+    const v = document.getElementById(`view-${previousTab}`);
+    if (v) v.classList.add("active");
+  }
+
   // ── Mode switching ────────────────────────────────────────────────────────
   function switchMode(mode) {
-    currentMode=mode;
-    const isMap = mode==="nacional" || mode==="indigena";
-    document.querySelectorAll(".mode-tab").forEach(t=>t.classList.toggle("active",t.dataset.mode===mode));
+    currentMode = mode;
+    const isMap = mode === "nacional" || mode === "indigena";
+    document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
     document.querySelector(".body").style.display            = isMap               ? "flex" : "none";
     document.getElementById("resultados-view").style.display = mode==="resultados" ? "flex" : "none";
     document.getElementById("camara-view").style.display     = mode==="camara"     ? "flex" : "none";
     document.querySelector(".bottombar").style.display       = isMap               ? "flex" : "none";
     if (isMap) {
-      // Switch map instances
-      if (mode==="indigena") {
+      // Full reset on every map mode switch (as if page were refreshed)
+      resetMapState();
+      // Switch active map instance
+      if (mode === "indigena") {
         document.getElementById("map-nac").style.display = "none";
         document.getElementById("map-ind").style.display = "block";
         curMap   = mapInd;
@@ -1137,13 +1300,12 @@
         mpioData = mpioNatData;
         deptData = deptNatData;
       }
-      hideDetail();
       render(); buildPartyList(); buildDeptList();
       updateBottomBar(mode);
-      setTimeout(()=>curMap.invalidateSize(), 50);
+      setTimeout(() => curMap.invalidateSize(), 50);
     }
-    if (mode==="resultados" && seatsData) renderResultados();
-    if (mode==="camara"     && seatsData) renderCamara();
+    if (mode === "resultados" && seatsData) renderResultados();
+    if (mode === "camara"     && seatsData) renderCamara();
   }
   document.querySelectorAll(".mode-tab").forEach(t=>t.addEventListener("click",()=>switchMode(t.dataset.mode)));
 
@@ -1364,6 +1526,8 @@
       currentLevel=btn.dataset.level;
       document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.dataset.level===currentLevel));
       curState.activeLayer=null;
+      document.getElementById("map-topbar").style.display = "none";
+      hideDetail();
       render();
     });
   });
