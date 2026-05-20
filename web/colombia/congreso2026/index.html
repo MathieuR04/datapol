@@ -437,6 +437,10 @@
       .view-btn, .level-btn { font-size: 7px; padding: 0.18rem 0.4rem; letter-spacing: 0.03em; }
       /* Compact bubble legend — scale the whole widget from its anchor corner */
       .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
+      /* Cámara: stack chart above legend on mobile */
+      #camara-view { flex-direction: column; }
+      .cam-chart { flex: none; padding: 1rem 0.5rem 0.25rem; }
+      .cam-legend { width: 100%; min-width: 0; border-left: none; border-top: 1px solid var(--border); max-height: 45vh; overflow-y: auto; }
     }
   </style>
 </head>
@@ -619,7 +623,9 @@
   // ── Maps — two completely separate Leaflet instances ─────────────────────
   const TILE = { url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
                  opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 } };
-  const MAP_OPTS = { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true, zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80 };
+  // Responsive default zoom: phone needs ~4, desktop needs ~5.5
+  function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
+  const MAP_OPTS = { center: [4.5, -74.2], zoom: defZoom(), zoomControl: true, attributionControl: true, zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80 };
   const mapNac = L.map("map-nac", MAP_OPTS);
   const mapInd = L.map("map-ind", MAP_OPTS);
   L.tileLayer(TILE.url, TILE.opts).addTo(mapNac);
@@ -879,7 +885,16 @@
       },
       click(e) {
         L.DomEvent.stopPropagation(e);
-        if(curState.activeLayer&&curState.activeLayer!==e.target) {
+        // Second click on the same region → zoom back out
+        if (curState.activeLayer === e.target) {
+          curState.mpioLayer?.resetStyle(e.target);
+          curState.activeLayer = null;
+          curMap.setView([4.5, -74.2], defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if(curState.activeLayer) {
           if (BUBBLE_VIEWS.has(currentView))
             curState.activeLayer.setStyle({fillColor:"transparent",fillOpacity:0,weight:0.3,color:"#cfc0ab"});
           else
@@ -912,7 +927,16 @@
       },
       click(e) {
         L.DomEvent.stopPropagation(e);
-        if(curState.activeLayer&&curState.activeLayer!==e.target) {
+        // Second click on the same region → zoom back out
+        if (curState.activeLayer === e.target) {
+          curState.deptLayer?.resetStyle(e.target);
+          curState.activeLayer = null;
+          curMap.setView([4.5, -74.2], defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if(curState.activeLayer) {
           if (BUBBLE_VIEWS.has(currentView))
             curState.activeLayer.setStyle({fillColor:"transparent",fillOpacity:0,weight:1.5,color:"#1a1209"});
           else
@@ -932,13 +956,13 @@
 
   // ── Full-view button ──────────────────────────────────────────────────────
   document.getElementById("btn-fullview").addEventListener("click", () => {
-    curMap.setView([4.5, -74.2], 5);
+    curMap.setView([4.5, -74.2], defZoom());
     document.getElementById("map-topbar").style.display = "none";
     hideDetail();
   });
   function onMapZoomEnd() {
     // Hide the back button when user zooms out to overview level
-    if (curMap.getZoom() <= 5.5) document.getElementById("map-topbar").style.display = "none";
+    if (curMap.getZoom() <= defZoom() + 0.3) document.getElementById("map-topbar").style.display = "none";
   }
   mapNac.on("zoomend", onMapZoomEnd);
   mapInd.on("zoomend", onMapZoomEnd);
@@ -1321,8 +1345,9 @@
     document.getElementById("bubble-legend").classList.remove("show");
     document.getElementById("map-topbar").style.display = "none";
     // Reset both maps to Colombia overview
-    mapNac.setView([4.5, -74.2], 5);
-    mapInd.setView([4.5, -74.2], 5);
+    const dz = defZoom();
+    mapNac.setView([4.5, -74.2], dz);
+    mapInd.setView([4.5, -74.2], dz);
     // Hide detail panel, restore panel scroll
     document.getElementById("detail-panel").classList.remove("active");
     document.getElementById("panel-scroll").style.display = "";
