@@ -499,7 +499,7 @@
   let currentLevel = "municipio";
   let selectedParty = null;
 
-  let mpioData = null, deptData = null;
+  let mpioData = null, deptData = null, nationalParties = null;
   let deptNameMap = {};  // "01" → "ANTIOQUIA"
   let deptBoundsMap = {}; // "01" → LatLngBounds
   let deptFeatMap = {}; // "01" → feature
@@ -522,7 +522,7 @@
       const share = getPartyShare(p, selectedParty);
       fill = lerp("#e0d8cc", PARTY_COLORS[selectedParty]||"#c4603a", Math.pow(share/0.6, 0.7));
     }
-    return { fillColor: fill, weight: 0.4, color: "#bfb0a0", fillOpacity: 0.92 };
+    return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
   }
 
   function styleDept(feat) {
@@ -533,6 +533,9 @@
       fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c, 0.8);
     } else if (currentView==="turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct));
+    } else if (currentView==="party" && selectedParty) {
+      const share = getPartyShare(p, selectedParty);
+      fill = lerp("#e0d8cc", PARTY_COLORS[selectedParty]||"#c4603a", Math.pow(share/0.6, 0.7));
     }
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
@@ -559,7 +562,8 @@
       }
       if (!deptBoundaryLayer) {
         deptBoundaryLayer = L.geoJSON(deptData, {
-          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.8, color: "#1a1209" }
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          interactive: false
         }).addTo(map);
       }
     } else {
@@ -575,10 +579,29 @@
 
   // ── Render bubbles ────────────────────────────────────────────────────────
   function renderBubbles(valueKey, labelFn) {
-    if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer=null; }
-    if (deptLayer) { map.removeLayer(deptLayer); deptLayer=null; }
-    if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer=null; }
     if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer=null; }
+
+    // Show polygon outlines as context underneath bubbles
+    if (currentLevel==="municipio") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer=null; }
+      if (!mpioLayer) {
+        mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(map);
+      }
+      mpioLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:0.3, color:"#cfc0ab" }));
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor:"transparent", fillOpacity:0, weight:1.2, color:"#1a1209" },
+          interactive: false
+        }).addTo(map);
+      }
+    } else {
+      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer=null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer=null; }
+      if (!deptLayer) {
+        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(map);
+      }
+      deptLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:1.5, color:"#1a1209" }));
+    }
 
     const sourceData = currentLevel==="municipio" ? mpioData : deptData;
     const features = sourceData.features.filter(f => {
@@ -696,21 +719,14 @@
     } else { wt.textContent = "Sin datos"; }
 
     const vv = parseInt(p.votos_validos)||0;
-    const stats = type==="dept"
-      ? [
-          ["Participación", fmtP(p.turnout_pct)],
-          ["Votos válidos", fmtN(p.votos_validos)],
-          ["Votantes", fmtN(p.votantes)],
-          ["Censo", fmtN(p.censo)],
-        ]
-      : [
-          ["Participación", fmtP(p.turnout_pct)],
-          ["Votos válidos", fmtN(p.votos_validos)],
-          ["En blanco", fmtN(p.votos_blanco)],
-          ["Nulos", fmtN(p.votos_nulos)],
-          ["Mesas esc.", fmtN(p.mesas_escrutadas)],
-          ["Mesas total", fmtN(p.mesas_total)],
-        ];
+    const stats = [
+      ["Participación", fmtP(p.turnout_pct)],
+      ["Votos válidos", fmtN(p.votos_validos)],
+      ["En blanco", fmtN(p.votos_blanco)],
+      ["Nulos", fmtN(p.votos_nulos)],
+      ["Mesas esc.", fmtN(p.mesas_escrutadas)],
+      ["Mesas total", fmtN(p.mesas_total)],
+    ];
     document.getElementById("d-stats").innerHTML = stats.map(([l,v])=>
       `<div class="dstat"><div class="dstat-label">${l}</div><div class="dstat-val">${v}</div></div>`
     ).join("");
@@ -766,32 +782,23 @@
   }
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
-  function buildPartyList(features) {
-    const acc={};
-    let totalValid=0;
-    features.forEach(f=>{
-      totalValid+=parseInt(f.properties?.votos_validos)||0;
-      let top5=[];
-      try{top5=JSON.parse(f.properties?.top5_candidates||"[]");}catch(e){}
-      top5.forEach(c=>{
-        if(!acc[c.name])acc[c.name]={votes:0,color:c.color};
-        acc[c.name].votes+=c.votes||0;
-      });
-    });
-    const sorted=Object.entries(acc).sort((a,b)=>b[1].votes-a[1].votes).slice(0,20);
-    const maxV=sorted[0]?.[1].votes||1;
+  function buildPartyList() {
+    const parties = nationalParties || [];
+    const totalValid = parties.reduce((s,p)=>s+p.votes,0);
+    const top = parties.slice(0,20);
+    const maxV = top[0]?.votes||1;
 
     document.getElementById("view-partidos").innerHTML=
-      `<div class="sect-head">${sorted.length} listas · ${fmtN(totalValid)} votos válidos</div>`+
-      sorted.map(([name,info])=>{
-        const col=partyColor(name,info.color);
-        const pct=totalValid?(info.votes/totalValid*100).toFixed(1):"0.0";
-        const barW=(info.votes/maxV*100).toFixed(1);
-        return `<div class="party-row" data-party="${name}">
+      `<div class="sect-head">${top.length} listas · ${fmtN(totalValid)} votos válidos</div>`+
+      top.map(p=>{
+        const col=partyColor(p.nombre,p.color);
+        const pct=totalValid?(p.votes/totalValid*100).toFixed(1):"0.0";
+        const barW=(p.votes/maxV*100).toFixed(1);
+        return `<div class="party-row" data-party="${p.nombre}">
           <div class="party-top">
             <span class="party-pct" style="color:${col}">${pct}%</span>
-            <span class="party-name">${name}</span>
-            <span class="party-votes">${fmtN(info.votes)}</span>
+            <span class="party-name">${p.nombre}</span>
+            <span class="party-votes">${fmtN(p.votes)}</span>
           </div>
           <div class="party-bar-wrap">
             <div class="party-bar" style="width:${barW}%;background:${col}"></div>
@@ -863,9 +870,11 @@
   Promise.all([
     fetch(BASE+"colombia_results_map.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"colombia_results_dept.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
-  ]).then(([mpio,dept])=>{
+    fetch(BASE+"national_parties.json").then(r=>r.json()).catch(()=>[]),
+  ]).then(([mpio,dept,parties])=>{
     mpioData=mpio;
     deptData=dept;
+    nationalParties=parties;
 
     // Build dept lookups
     dept.features.forEach(f=>{
@@ -876,7 +885,7 @@
 
     render();
     updateStats(mpio.features);
-    buildPartyList(mpio.features);
+    buildPartyList();
     buildDeptList();
     document.getElementById("loading").style.display="none";
   }).catch(err=>{
