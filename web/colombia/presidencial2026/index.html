@@ -490,9 +490,9 @@
 
 <!-- Nav -->
 <div class="nav">
-  <a class="nav-brand" href="../../">DATAPOL</a>
+  <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
   <div class="nav-sep"></div>
-  <a class="nav-item" href="../congreso2026/">Senado</a>
+  <a class="nav-item" href="/datapol/web/colombia/congreso2026/">Senado</a>
   <span class="nav-item active">1ra Vuelta</span>
   <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
 </div>
@@ -555,7 +555,7 @@
       <div class="ctrl-group">
         <span class="ctrl-label data">Datos</span>
         <div class="ctrl-row" id="view-btns">
-          <button class="view-btn active" data-view="winner">Partido</button>
+          <button class="view-btn active" data-view="winner">Candidato</button>
           <button class="view-btn" data-view="turnout">Participación</button>
           <button class="view-btn" data-view="votos">Votos válidos</button>
           <button class="view-btn" data-view="mesas">Mesas restantes</button>
@@ -1128,79 +1128,72 @@
     return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
   }
 
-  function renderNeedle(prob2, cand2, cand3) {
-    // prob2 = probability that candidate #2 passes (0-100)
-    // angle: 0% → left (180°), 100% → right (0°)
-    // semicircle from 180° to 0°, needle at prob2%
+  function renderNeedle(diffEst, diffCiLow, diffCiHigh, candLeft, candRight) {
+    // Gauge shows vote-share DIFFERENCE: left = candLeft winning, right = candRight winning
+    // diffEst    = vote_pct_left - vote_pct_right  (positive → left winning)
+    // diffCiLow / diffCiHigh = 80% CI on that difference (in pp)
+    // Needle angle: π=left edge, 0=right edge, π/2=center (tie)
+    // diff = +MAX_RANGE → angle π (left), diff = -MAX_RANGE → angle 0 (right)
+    const MAX_RANGE = 12; // ±12 pp on the gauge
     const cx = 150, cy = 148, r = 90;
-    // SVG: 0° = right, math angle: π = left, 0 = right
-    // Left end of arc: 180° (math) = π
-    // Right end of arc: 0° (math)
-    const startA = Math.PI;     // left
-    const endA   = 0;           // right
-    const midA   = Math.PI / 2; // top (50%)
-    const needleA = Math.PI * (1 - prob2 / 100); // from left→right as prob goes 0→100
+    const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
+    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE); // π/2 at 0, π at +MAX, 0 at -MAX
 
-    // Track (full gray arc)
-    const trackPath = buildNeedleArc(cx, cy, r, startA, endA);
+    const needleA  = toAngle(diffEst);
+    const ciLowA   = toAngle(diffCiHigh); // high diff → left angle (smaller angle value means more right)
+    const ciHighA  = toAngle(diffCiLow);  // Note: reversed because angle decreases as diff increases from left to right
 
-    // Split arc: left colored with cand3's color, right colored with cand2's color
-    const leftPath  = buildNeedleArc(cx, cy, r, startA, needleA);
-    const rightPath = buildNeedleArc(cx, cy, r, needleA, endA);
+    const startA = Math.PI; // left
+    const endA   = 0;       // right
+    const midA   = Math.PI / 2; // center / tie
 
     const svg = document.getElementById("needle-svg");
-    // Remove old paths/lines, keep text
     svg.querySelectorAll("path, line.needle-arc-path").forEach(e => e.remove());
 
-    // Full track
-    const trackEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    trackEl.setAttribute("d", trackPath);
-    trackEl.setAttribute("fill", "none");
-    trackEl.setAttribute("stroke", "#e0d8cc");
-    trackEl.setAttribute("stroke-width", "18");
-    trackEl.setAttribute("stroke-linecap", "butt");
-    svg.insertBefore(trackEl, svg.firstChild);
-
-    // Left arc (cand3 color)
-    const leftEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    leftEl.setAttribute("d", leftPath);
-    leftEl.setAttribute("fill", "none");
-    leftEl.setAttribute("stroke", cand3 ? cand3.color : "#9a8878");
-    leftEl.setAttribute("stroke-width", "18");
-    leftEl.setAttribute("stroke-linecap", "butt");
-    leftEl.setAttribute("opacity", "0.55");
-    svg.insertBefore(leftEl, svg.firstChild.nextSibling);
-
-    // Right arc (cand2 color)
-    if (prob2 < 100) {
-      const rightEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      rightEl.setAttribute("d", rightPath);
-      rightEl.setAttribute("fill", "none");
-      rightEl.setAttribute("stroke", cand2 ? cand2.color : "#1D4ED8");
-      rightEl.setAttribute("stroke-width", "18");
-      rightEl.setAttribute("stroke-linecap", "butt");
-      rightEl.setAttribute("opacity", "0.55");
-      svg.insertBefore(rightEl, svg.firstChild.nextSibling.nextSibling);
+    function mkPath(d, stroke, width, opacity, linecap) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      el.setAttribute("d", d); el.setAttribute("fill", "none");
+      el.setAttribute("stroke", stroke); el.setAttribute("stroke-width", width || "18");
+      el.setAttribute("stroke-linecap", linecap || "butt");
+      if (opacity) el.setAttribute("opacity", opacity);
+      return el;
     }
 
-    // Center tick
+    // Track
+    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
+
+    // Left half arc (candLeft color, dim)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.25","butt"));
+    // Right half arc (candRight color, dim)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.25","butt"));
+
+    // CI band — brighter arc between ciLowA and ciHighA
+    if (Math.abs(ciHighA - ciLowA) > 0.01) {
+      const ciArcLeft  = Math.max(ciLowA, ciHighA);  // larger angle = more left
+      const ciArcRight = Math.min(ciLowA, ciHighA);  // smaller = more right
+      // determine which candidate's color to use based on which side needle is on
+      const ciCol = diffEst >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
+      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r, ciArcLeft, ciArcRight), ciCol, "18", "0.5", "butt"));
+    }
+
+    // Center tick (tie marker)
     const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    tick.setAttribute("x1", cx.toString()); tick.setAttribute("y1", (cy - r - 9).toString());
-    tick.setAttribute("x2", cx.toString()); tick.setAttribute("y2", (cy - r + 9).toString());
-    tick.setAttribute("stroke", "#cfc0ab"); tick.setAttribute("stroke-width", "1");
-    svg.insertBefore(tick, svg.querySelector("#needle-line"));
+    tick.setAttribute("x1", cx); tick.setAttribute("y1", (cy-r-10));
+    tick.setAttribute("x2", cx); tick.setAttribute("y2", (cy-r+10));
+    tick.setAttribute("stroke", "#888"); tick.setAttribute("stroke-width", "1.5");
+    svg.appendChild(tick);
 
     // Needle
-    const nxEnd = cx + (r - 18) * Math.cos(needleA);
-    const nyEnd = cy - (r - 18) * Math.sin(needleA);
+    const nxEnd = cx + (r-8) * Math.cos(needleA);
+    const nyEnd = cy - (r-8) * Math.sin(needleA);
     const needleLine = svg.querySelector("#needle-line");
-    needleLine.setAttribute("x1", cx.toString()); needleLine.setAttribute("y1", cy.toString());
+    needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
     needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
 
-    // Probability text
+    // Center text: show difference
     const pctText = svg.querySelector("#needle-pct-text");
-    pctText.textContent = prob2.toFixed(0) + "%";
-    // Position text below the arc center
+    const sign = diffEst >= 0 ? "+" : "";
+    pctText.textContent = `${sign}${diffEst.toFixed(1)} pp`;
     pctText.setAttribute("y", (cy + 14).toString());
   }
 
@@ -1229,15 +1222,27 @@
     // Needle: cand #2 vs #3 (indices 1 and 2 after sort)
     const c1 = cands[0], c2 = cands[1], c3 = cands[2];
     if (c2 && c3) {
-      const sum23 = (c2.prob_runoff || 0) + (c3.prob_runoff || 0);
-      const prob2 = sum23 > 0 ? (c2.prob_runoff / sum23) * 100 : 50;
-      renderNeedle(prob2, c2, c3);
-      document.getElementById("needle-left-name").textContent  = c3.nombre.split(" ")[0];
-      document.getElementById("needle-left-name").style.color  = c3.color;
-      document.getElementById("needle-right-name").textContent = c2.nombre.split(" ")[0];
-      document.getElementById("needle-right-name").style.color = c2.color;
-      document.getElementById("needle-left-pct").textContent   = (c3.prob_runoff || 0).toFixed(0) + "% prob.";
-      document.getElementById("needle-right-pct").textContent  = (c2.prob_runoff || 0).toFixed(0) + "% prob.";
+      // Needle: left = 2nd place (favored, e.g. De La Espriella), right = 3rd place
+      // Use explicit battle block from forecast.json if present, else derive from vote shares
+      const battle = fd.battle || {};
+      const candLeft  = c2;   // 2nd by prob_runoff → left side
+      const candRight = c3;   // 3rd by prob_runoff → right side
+      const diffEst   = battle.diff_estimate   ?? ((candLeft.vote_pct_current||candLeft.poll_pct||0) - (candRight.vote_pct_current||candRight.poll_pct||0));
+      const diffCiLow = battle.diff_ci_low     ?? (diffEst - 3);
+      const diffCiHigh = battle.diff_ci_high   ?? (diffEst + 3);
+      renderNeedle(diffEst, diffCiLow, diffCiHigh, candLeft, candRight);
+
+      // Labels: left = 2nd place (De La Espriella side), right = 3rd place (Valencia side)
+      const leftPct  = isLive ? (candLeft.vote_pct_current||0)  : (candLeft.poll_pct||0);
+      const rightPct = isLive ? (candRight.vote_pct_current||0) : (candRight.poll_pct||0);
+      document.getElementById("needle-left-name").textContent  = candLeft.nombre.split(" ").slice(-1)[0];
+      document.getElementById("needle-left-name").style.color  = candLeft.color;
+      document.getElementById("needle-right-name").textContent = candRight.nombre.split(" ")[0];
+      document.getElementById("needle-right-name").style.color = candRight.color;
+      document.getElementById("needle-left-pct").textContent   = leftPct.toFixed(1)  + "% · " + (candLeft.prob_runoff||0).toFixed(0)  + "% prob";
+      document.getElementById("needle-right-pct").textContent  = rightPct.toFixed(1) + "% · " + (candRight.prob_runoff||0).toFixed(0) + "% prob";
+      document.getElementById("needle-center-note").textContent =
+        `IC: [${diffCiLow>=0?"+":""}${diffCiLow.toFixed(1)}, ${diffCiHigh>=0?"+":""}${diffCiHigh.toFixed(1)}] pp`;
     }
 
     // Candidate bars
@@ -1283,7 +1288,7 @@
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
-  const BASE = "../../../colombia/data/presidencial2026/processed/";
+  const BASE = "../../../colombia/2026/presidencial_1ra/data/processed/";
   Promise.all([
     fetch(BASE + "results.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
     fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),

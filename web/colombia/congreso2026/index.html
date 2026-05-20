@@ -448,11 +448,11 @@
 
 <!-- Nav -->
 <div class="nav">
-  <a class="nav-brand" href="../../">DATAPOL</a>
+  <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
   <div class="nav-sep"></div>
   <span class="nav-item active">Senado</span>
   <span class="nav-item" style="cursor:default">Cámara <span class="nav-pill">próx.</span></span>
-  <a class="nav-item" href="../presidencial2026/">1ra Vuelta</a>
+  <a class="nav-item" href="/datapol/web/colombia/presidencial2026/">1ra Vuelta</a>
 </div>
 
 <!-- Mode bar -->
@@ -1180,7 +1180,7 @@
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
-  const BASE = "../../../colombia/data/processed/";
+  const BASE = "../../../colombia/2026/senado/data/processed/";
   Promise.all([
     fetch(BASE+"colombia_results_map.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"colombia_results_dept.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
