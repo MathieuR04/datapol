@@ -8,8 +8,20 @@ Outputs:
 """
 
 import json
+import math
 import pandas as pd
 from pathlib import Path
+
+
+def _clean(obj):
+    """Recursively replace float NaN/Inf with None so output is valid JSON."""
+    if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+        return None
+    if isinstance(obj, dict):
+        return {k: _clean(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_clean(v) for v in obj]
+    return obj
 
 def load_party_lookup():
     OUT2 = Path(__file__).parent.parent / "data" / "processed"
@@ -78,7 +90,7 @@ def build_geojson():
 
     out_path = OUT / "colombia_results_map.geojson"
     with open(out_path, "w") as f:
-        json.dump(mpio_geo, f, ensure_ascii=False)
+        json.dump(_clean(mpio_geo), f, ensure_ascii=False)
     print(f"  Saved → colombia_results_map.geojson")
 
     # ── dept-level GeoJSON ────────────────────────────────────────────────────
@@ -133,7 +145,7 @@ def build_geojson():
 
     dept_out = OUT / "colombia_results_dept.geojson"
     with open(dept_out, "w") as f:
-        json.dump(dept_geo, f, ensure_ascii=False)
+        json.dump(_clean(dept_geo), f, ensure_ascii=False)
     print(f"  Saved → colombia_results_dept.geojson")
 
     return matched
@@ -189,7 +201,7 @@ def build_indigena_geojson():
 
     print(f"  Indigenous mpio matched: {matched}/{len(mpio_geo['features'])}")
     with open(OUT / "colombia_results_indigena_map.geojson", "w") as f:
-        json.dump(mpio_geo, f, ensure_ascii=False)
+        json.dump(_clean(mpio_geo), f, ensure_ascii=False)
     print("  Saved → colombia_results_indigena_map.geojson")
 
     # Dept
@@ -231,7 +243,7 @@ def build_indigena_geojson():
 
     print(f"  Indigenous dept matched: {dept_matched}")
     with open(OUT / "colombia_results_indigena_dept.geojson", "w") as f:
-        json.dump(dept_geo, f, ensure_ascii=False)
+        json.dump(_clean(dept_geo), f, ensure_ascii=False)
     print("  Saved → colombia_results_indigena_dept.geojson")
 
 

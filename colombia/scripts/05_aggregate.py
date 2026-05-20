@@ -24,15 +24,15 @@ def load_party_lookup() -> dict:
 def compute_pcts(df: pd.DataFrame, party_cols: list[str], cand_cols: list[str],
                  party_lookup: dict, col_prefix: str = "party_") -> pd.DataFrame:
     df = df.copy()
-    df["turnout_pct"]  = (df["votantes"] / df["censo"].replace(0, pd.NA) * 100).round(2)
-    df["pct_blanco"]   = (df["votos_blanco"]  / df["votos_validos"].replace(0, pd.NA) * 100).round(2)
-    df["pct_nulo"]     = (df["votos_nulos"]    / df["votantes"].replace(0, pd.NA) * 100).round(2)
+    df["turnout_pct"]  = (df["votantes"] / df["censo"].replace(0, pd.NA) * 100).round(2).fillna(0)
+    df["pct_blanco"]   = (df["votos_blanco"]  / df["votos_validos"].replace(0, pd.NA) * 100).round(2).fillna(0)
+    df["pct_nulo"]     = (df["votos_nulos"]    / df["votantes"].replace(0, pd.NA) * 100).round(2).fillna(0)
 
     if party_cols:
         party_df = df[party_cols]
         df["winner_col"] = party_df.idxmax(axis=1)
         df["winner_votes"] = party_df.max(axis=1)
-        df["winner_pct"] = (df["winner_votes"] / df["votos_validos"].replace(0, pd.NA) * 100).round(2)
+        df["winner_pct"] = (df["winner_votes"] / df["votos_validos"].replace(0, pd.NA) * 100).round(2).fillna(0)
         def decode_winner(col):
             if not isinstance(col, str): return ""
             code = col.replace(col_prefix, "")
