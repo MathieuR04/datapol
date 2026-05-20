@@ -1603,6 +1603,20 @@
     document.getElementById("detail-panel").classList.remove("active");
     document.getElementById("panel-scroll").style.display="";
     previousTab=t;
+    // Reset map to full Colombia view and clear any active selection
+    if (curState.activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        curState.activeLayer.setStyle({fillColor:"transparent",fillOpacity:0,
+          weight:isDept?1.5:0.3, color:isDept?"#1a1209":"#cfc0ab"});
+      } else {
+        curState.mpioLayer?.resetStyle(curState.activeLayer);
+        curState.deptLayer?.resetStyle(curState.activeLayer);
+      }
+      curState.activeLayer = null;
+    }
+    curMap.setView([4.5, -74.2], 5);
+    document.getElementById("map-topbar").style.display = "none";
   });
 
 })();
