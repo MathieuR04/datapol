@@ -392,12 +392,11 @@
     .ctrl-label.geo  { color: var(--text); }
     .ctrl-label.data { color: var(--terra); }
 
-    /* ── Full-view back button (floats center-top of map) ─────────────────── */
+    /* ── Full-view back button (top-left, below Leaflet zoom control) ─────── */
     .map-topbar {
       position: absolute;
-      top: 0.6rem;
-      left: 50%;
-      transform: translateX(-50%);
+      top: 80px;
+      left: 10px;
       z-index: 800;
     }
     .btn-fullview {
@@ -1214,24 +1213,65 @@
         const rows = parseCSV(text);
         rows.sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
         const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
-        const totalVal = rows.reduce((s, r) => s + (parseInt(r.votos_validos) || 0), 0);
-        el.innerHTML = `<div class="sect-head">${rows.length} grupos · ${fmtN(totalVot)} votantes</div>` +
-          rows.map(r => {
+
+        // Build party code → info lookup from nationalParties
+        const partyByCode = {};
+        (nationalParties || []).forEach(p => { partyByCode[p.code] = p; });
+
+        el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
+          rows.map((r, idx) => {
             const col = partyColor(r.winner, r.winner_color);
             const name = r.mpio_name || r.dept_name || "—";
-            const region = r.dept_name && r.dept_name !== name ? r.dept_name : "";
             const vot = parseInt(r.votantes) || 0;
-            const vv  = parseInt(r.votos_validos) || 0;
             const pct = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
-            return `<div class="dept-row">
+            return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
               <div class="dept-top">
                 <div class="dept-swatch" style="background:${col}"></div>
                 <span class="dept-name" style="font-size:9px">${name}</span>
                 <span class="dept-votes">${fmtN(vot)}</span>
               </div>
-              <div class="dept-winner">${r.winner || ""}${region ? " · " + region : ""} <span style="color:var(--dim)">${pct}</span></div>
+              <div class="dept-winner">${r.winner || ""} <span style="color:var(--dim)">${pct}</span></div>
             </div>`;
           }).join("");
+
+        // Click → show detail panel using a fake feat built from CSV row
+        el.querySelectorAll(".ext-row").forEach(row => {
+          row.addEventListener("click", () => {
+            const r = rows[parseInt(row.dataset.extidx)];
+
+            // Build party list from party_ columns
+            const partyEntries = [];
+            Object.keys(r).forEach(col => {
+              if (!col.startsWith("party_")) return;
+              const code = col.replace("party_", "");
+              const votes = parseInt(r[col]) || 0;
+              if (!votes) return;
+              const info = partyByCode[code] || {};
+              partyEntries.push({
+                name:  info.nombre || code,
+                color: partyColor(info.nombre || "", info.color || ""),
+                votes,
+              });
+            });
+            partyEntries.sort((a, b) => b.votes - a.votes);
+
+            const fakeFeat = { properties: {
+              dept_name_reg:      r.mpio_name || r.dept_name || "—",
+              winner:             r.winner,
+              winner_color:       r.winner_color,
+              votantes:           r.votantes,
+              censo:              r.censo || 0,
+              votos_validos:      r.votos_validos,
+              votos_blanco:       r.votos_blanco,
+              votos_nulos:        r.votos_nulos,
+              votos_no_marcados:  r.votos_no_marcados,
+              mesas_escrutadas:   r.mesas_escrutadas,
+              mesas_total:        r.mesas_total,
+              top5_candidates:    JSON.stringify(partyEntries),
+            }};
+            showDetail(fakeFeat, "dept");
+          });
+        });
       })
       .catch(() => {
         el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
