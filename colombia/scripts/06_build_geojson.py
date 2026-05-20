@@ -60,7 +60,7 @@ def build_geojson():
                     "color": info.get("color", "#888"),
                     "votes": int(row[col])
                 })
-            top = sorted(entries, key=lambda x: -x["votes"])[:5]
+            top = sorted(entries, key=lambda x: -x["votes"])
             return json.dumps(top, ensure_ascii=False)
         results_slim["top5_candidates"] = mpio_results.apply(top5_parties, axis=1)
 
@@ -110,7 +110,7 @@ def build_geojson():
                     "color": info.get("color", "#888"),
                     "votes": int(float(row[col]))
                 })
-            top = sorted(entries, key=lambda x: -x["votes"])[:5]
+            top = sorted(entries, key=lambda x: -x["votes"])
             return json.dumps(top, ensure_ascii=False)
         dept_results["top5_candidates"] = dept_results.apply(dept_top5, axis=1)
         dept_keep.append("top5_candidates")
@@ -174,7 +174,7 @@ def build_indigena_geojson():
                 entries.append({"name": info.get("nombre", code),
                                  "color": info.get("color", "#888"),
                                  "votes": int(row[col])})
-            top = sorted(entries, key=lambda x: -x["votes"])[:5]
+            top = sorted(entries, key=lambda x: -x["votes"])
             return json.dumps(top, ensure_ascii=False)
         slim["top5_candidates"] = mpio_ind.apply(top5_indig, axis=1)
 

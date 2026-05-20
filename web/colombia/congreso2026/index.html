@@ -144,7 +144,7 @@
 
     /* ── Map ──────────────────────────────────────────────────────────────── */
     .map-wrap { flex: 1; position: relative; min-width: 0; }
-    #map { width: 100%; height: 100%; background: #e8e0d4; }
+    #map-nac, #map-ind { width: 100%; height: 100%; background: #e8e0d4; position: absolute; top: 0; left: 0; }
     .leaflet-container { background: #e8e0d4; }
     .leaflet-control-zoom a { background: var(--bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
     .leaflet-control-zoom a:hover { background: var(--surface) !important; }
@@ -429,6 +429,10 @@
       <span class="hstat-val" id="hs-votes">—</span>
     </div>
     <div class="hstat">
+      <span class="hstat-label">Censo</span>
+      <span class="hstat-val" id="hs-censo">—</span>
+    </div>
+    <div class="hstat">
       <span class="hstat-label">Municipios</span>
       <span class="hstat-val" id="hs-mpios">—</span>
     </div>
@@ -462,7 +466,8 @@
       <div class="bubble-legend-items" id="bl-items"></div>
     </div>
 
-    <div id="map"></div>
+    <div id="map-nac"></div>
+    <div id="map-ind" style="display:none"></div>
   </div>
 
   <!-- Panel -->
@@ -498,7 +503,7 @@
 <!-- Cámara view -->
 <div id="camara-view">
   <div class="cam-chart">
-    <svg id="parliament-svg" viewBox="0 0 700 390" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="parliament-svg" viewBox="0 0 700 325" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="cam-subtitle" id="cam-subtitle">103 escaños · Senado Colombia 2026</div>
     <div id="cam-cand-panel"></div>
   </div>
@@ -546,12 +551,23 @@
     return PARTY_COLORS[name] || fallback || "#9a8878";
   }
 
-  // ── Map ──────────────────────────────────────────────────────────────────
-  const map = L.map("map", { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true });
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
-    attribution: '© <a href="https://carto.com">CARTO</a>',
-    subdomains: "abcd", maxZoom: 14,
-  }).addTo(map);
+  // ── Maps — two completely separate Leaflet instances ─────────────────────
+  const TILE = { url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+                 opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 } };
+  const mapNac = L.map("map-nac", { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true });
+  const mapInd = L.map("map-ind", { center: [4.5, -74.2], zoom: 5, zoomControl: true, attributionControl: true });
+  L.tileLayer(TILE.url, TILE.opts).addTo(mapNac);
+  L.tileLayer(TILE.url, TILE.opts).addTo(mapInd);
+  let curMap = mapNac;
+
+  // Per-map layer state
+  const mapState = {
+    nacional: { mpioLayer: null, deptLayer: null, deptBoundaryLayer: null, bubbleLayer: null,
+                activeLayer: null, deptBoundsMap: {}, deptFeatMap: {}, deptNameMap: {} },
+    indigena: { mpioLayer: null, deptLayer: null, deptBoundaryLayer: null, bubbleLayer: null,
+                activeLayer: null, deptBoundsMap: {}, deptFeatMap: {}, deptNameMap: {} },
+  };
+  let curState = mapState.nacional;
 
   // ── Color helpers ────────────────────────────────────────────────────────
   function lerp(a, b, t) {
@@ -603,12 +619,7 @@
   let mpioIndData = null, deptIndData = null;   // indigenous constituency
   let mpioData = null, deptData = null;         // active (points to nat or ind)
   let nationalParties = null, indigenaParties = null, seatsData = null;
-  let deptNameMap = {};
-  let deptBoundsMap = {};
-  let deptFeatMap = {};
 
-  let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
-  let activeLayer = null;
   let previousTab = "partidos";
   let currentMode = "nacional";
 
@@ -654,57 +665,57 @@
 
   // ── Render choropleth ─────────────────────────────────────────────────────
   function renderChoropleth() {
-    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer=null; }
+    if (curState.bubbleLayer) { curMap.removeLayer(curState.bubbleLayer); curState.bubbleLayer=null; }
     document.getElementById("bubble-legend").classList.remove("show");
 
     if (currentLevel==="municipio") {
-      if (deptLayer) { map.removeLayer(deptLayer); deptLayer=null; }
-      if (!mpioLayer) {
-        mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(map);
+      if (curState.deptLayer) { curMap.removeLayer(curState.deptLayer); curState.deptLayer=null; }
+      if (!curState.mpioLayer) {
+        curState.mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(curMap);
       } else {
-        mpioLayer.setStyle(styleMpio);
+        curState.mpioLayer.setStyle(styleMpio);
       }
-      if (!deptBoundaryLayer) {
-        deptBoundaryLayer = L.geoJSON(deptData, {
+      if (!curState.deptBoundaryLayer) {
+        curState.deptBoundaryLayer = L.geoJSON(deptData, {
           style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
           interactive: false
-        }).addTo(map);
+        }).addTo(curMap);
       }
     } else {
-      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer=null; }
-      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer=null; }
-      if (!deptLayer) {
-        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(map);
+      if (curState.mpioLayer) { curMap.removeLayer(curState.mpioLayer); curState.mpioLayer=null; }
+      if (curState.deptBoundaryLayer) { curMap.removeLayer(curState.deptBoundaryLayer); curState.deptBoundaryLayer=null; }
+      if (!curState.deptLayer) {
+        curState.deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(curMap);
       } else {
-        deptLayer.setStyle(styleDept);
+        curState.deptLayer.setStyle(styleDept);
       }
     }
   }
 
   // ── Render bubbles ────────────────────────────────────────────────────────
   function renderBubbles(valueKey, labelFn) {
-    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer=null; }
+    if (curState.bubbleLayer) { curMap.removeLayer(curState.bubbleLayer); curState.bubbleLayer=null; }
 
     // Show polygon outlines as context underneath bubbles
     if (currentLevel==="municipio") {
-      if (deptLayer) { map.removeLayer(deptLayer); deptLayer=null; }
-      if (!mpioLayer) {
-        mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(map);
+      if (curState.deptLayer) { curMap.removeLayer(curState.deptLayer); curState.deptLayer=null; }
+      if (!curState.mpioLayer) {
+        curState.mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(curMap);
       }
-      mpioLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:0.3, color:"#cfc0ab" }));
-      if (!deptBoundaryLayer) {
-        deptBoundaryLayer = L.geoJSON(deptData, {
+      curState.mpioLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:0.3, color:"#cfc0ab" }));
+      if (!curState.deptBoundaryLayer) {
+        curState.deptBoundaryLayer = L.geoJSON(deptData, {
           style: { fillColor:"transparent", fillOpacity:0, weight:1.2, color:"#1a1209" },
           interactive: false
-        }).addTo(map);
+        }).addTo(curMap);
       }
     } else {
-      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer=null; }
-      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer=null; }
-      if (!deptLayer) {
-        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(map);
+      if (curState.mpioLayer) { curMap.removeLayer(curState.mpioLayer); curState.mpioLayer=null; }
+      if (curState.deptBoundaryLayer) { curMap.removeLayer(curState.deptBoundaryLayer); curState.deptBoundaryLayer=null; }
+      if (!curState.deptLayer) {
+        curState.deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(curMap);
       }
-      deptLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:1.5, color:"#1a1209" }));
+      curState.deptLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:1.5, color:"#1a1209" }));
     }
 
     const sourceData = currentLevel==="municipio" ? mpioData : deptData;
@@ -716,7 +727,7 @@
     const maxVal = Math.max(...values, 1);
     const maxR = currentLevel==="dept" ? 30 : 18;
 
-    bubbleLayer = L.layerGroup();
+    curState.bubbleLayer = L.layerGroup();
     features.forEach(feat => {
       const val = valueKey(feat.properties||{});
       if (!val) return;
@@ -729,9 +740,9 @@
         weight: 0.8,
         color: "#8b3c1f",
       }).bindTooltip(labelFn(feat.properties||{}, val), { sticky:true, className:"leaflet-tooltip" })
-        .addTo(bubbleLayer);
+        .addTo(curState.bubbleLayer);
     });
-    bubbleLayer.addTo(map);
+    curState.bubbleLayer.addTo(curMap);
 
     // Legend
     const legend = document.getElementById("bubble-legend");
@@ -764,45 +775,46 @@
     } else {
       renderChoropleth();
     }
-    if (activeLayer) activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
+    if (curState.activeLayer) curState.activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
   }
 
   // ── Feature interactions ──────────────────────────────────────────────────
   function onEachMpio(feat, layer) {
     layer.on({
-      mouseover(e) { if(e.target!==activeLayer) e.target.setStyle({weight:1.2,color:"#1a1209",fillOpacity:1}); },
-      mouseout(e)  { if(e.target!==activeLayer) mpioLayer.resetStyle(e.target); },
+      mouseover(e) { if(e.target!==curState.activeLayer) e.target.setStyle({weight:1.2,color:"#1a1209",fillOpacity:1}); },
+      mouseout(e)  { if(e.target!==curState.activeLayer) curState.mpioLayer?.resetStyle(e.target); },
       click(e) {
         L.DomEvent.stopPropagation(e);
-        if(activeLayer&&activeLayer!==e.target) {
-          (mpioLayer||deptLayer)?.resetStyle(activeLayer);
+        if(curState.activeLayer&&curState.activeLayer!==e.target) {
+          (curState.mpioLayer||curState.deptLayer)?.resetStyle(curState.activeLayer);
         }
-        activeLayer = e.target;
+        curState.activeLayer = e.target;
         e.target.setStyle({weight:2,color:"#c4603a",fillOpacity:1});
         showDetail(feat, "municipio");
-        map.fitBounds(e.target.getBounds(), {padding:[60,60]});
+        curMap.fitBounds(e.target.getBounds(), {padding:[60,60]});
       }
     });
   }
 
   function onEachDept(feat, layer) {
     const key = (feat.properties||{}).name||"";
-    if (key) deptBoundsMap[key] = layer.getBounds();
+    if (key) curState.deptBoundsMap[key] = layer.getBounds();
     layer.on({
-      mouseover(e) { if(e.target!==activeLayer) e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1}); },
-      mouseout(e)  { if(e.target!==activeLayer) deptLayer?.resetStyle(e.target); },
+      mouseover(e) { if(e.target!==curState.activeLayer) e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1}); },
+      mouseout(e)  { if(e.target!==curState.activeLayer) curState.deptLayer?.resetStyle(e.target); },
       click(e) {
         L.DomEvent.stopPropagation(e);
-        if(activeLayer&&activeLayer!==e.target) deptLayer?.resetStyle(activeLayer);
-        activeLayer = e.target;
+        if(curState.activeLayer&&curState.activeLayer!==e.target) curState.deptLayer?.resetStyle(curState.activeLayer);
+        curState.activeLayer = e.target;
         e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1});
         showDetail(feat, "dept");
-        map.fitBounds(e.target.getBounds(), {padding:[40,40]});
+        curMap.fitBounds(e.target.getBounds(), {padding:[40,40]});
       }
     });
   }
 
-  map.on("click", hideDetail);
+  mapNac.on("click", hideDetail);
+  mapInd.on("click", hideDetail);
 
   // ── Detail panel ──────────────────────────────────────────────────────────
   function showDetail(feat, type) {
@@ -837,7 +849,7 @@
 
     let top5=[];
     try{top5=JSON.parse(p.top5_candidates||"[]");}catch(e){}
-    document.getElementById("d-parties").innerHTML = top5.slice(0,5).map(c=>{
+    document.getElementById("d-parties").innerHTML = top5.filter(c=>c.votes>0).map(c=>{
       const pct=vv?(c.votes/vv*100).toFixed(1):"0.0";
       const col=partyColor(c.name,c.color);
       return `<div class="detail-party">
@@ -855,10 +867,10 @@
     document.querySelectorAll(".p-view").forEach(el=>el.classList.remove("active"));
     const v=document.getElementById(`view-${previousTab}`);
     if(v)v.classList.add("active");
-    if(activeLayer){
-      mpioLayer?.resetStyle(activeLayer);
-      deptLayer?.resetStyle(activeLayer);
-      activeLayer=null;
+    if(curState.activeLayer){
+      curState.mpioLayer?.resetStyle(curState.activeLayer);
+      curState.deptLayer?.resetStyle(curState.activeLayer);
+      curState.activeLayer=null;
     }
   }
   document.getElementById("detail-back").addEventListener("click", hideDetail);
@@ -871,6 +883,7 @@
     const pct = s.mesas_total ? s.mesas_escrutadas / s.mesas_total : 0;
     document.getElementById("hs-turnout").textContent = s.censo ? (s.votantes/s.censo*100).toFixed(1)+"%" : "—";
     document.getElementById("hs-votes").textContent   = fmtN(seatsData.total_votantes);
+    document.getElementById("hs-censo").textContent   = fmtN(seatsData.stats_nacional?.censo);
     document.getElementById("hs-mpios").textContent   = (mpioNatData?.features.filter(f=>f.properties?.votantes).length||0).toLocaleString("es-CO");
     document.getElementById("hp-fill").style.width    = (pct*100).toFixed(1)+"%";
     document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
@@ -938,6 +951,7 @@
 
   // ── Dept sidebar ──────────────────────────────────────────────────────────
   function buildDeptList() {
+    if (!deptData) return;
     const features = deptData.features.filter(f=>f.properties?.votantes);
     const sorted = features.slice().sort((a,b)=>(parseInt(b.properties.votos_validos)||0)-(parseInt(a.properties.votos_validos)||0));
 
@@ -960,7 +974,7 @@
     document.getElementById("view-depts").querySelectorAll(".dept-row").forEach(row=>{
       row.addEventListener("click",()=>{
         const key=row.dataset.deptkey;
-        const feat=deptFeatMap[key];
+        const feat=curState.deptFeatMap[key];
         if(!feat)return;
         // Switch to dept level if needed
         if(currentLevel!=="dept"){
@@ -968,8 +982,8 @@
           document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.dataset.level==="dept"));
           render();
         }
-        const bounds=deptBoundsMap[key];
-        if(bounds)map.fitBounds(bounds,{padding:[40,40]});
+        const bounds=curState.deptBoundsMap[key];
+        if(bounds)curMap.fitBounds(bounds,{padding:[40,40]});
         showDetail(feat,"dept");
       });
     });
@@ -993,10 +1007,17 @@
     indigenaParties=indParties;
     seatsData=seats;
 
+    // Populate nacional dept lookups
     dept.features.forEach(f=>{
       const key=(f.properties?.name||"");
-      deptNameMap[key]=f.properties?.dept_name_reg||f.properties?.NOMBRE_DPT||key;
-      deptFeatMap[key]=f;
+      mapState.nacional.deptNameMap[key]=f.properties?.dept_name_reg||f.properties?.NOMBRE_DPT||key;
+      mapState.nacional.deptFeatMap[key]=f;
+    });
+    // Populate indigena dept lookups
+    if (deptInd) deptInd.features.forEach(f=>{
+      const key=(f.properties?.name||"");
+      mapState.indigena.deptNameMap[key]=f.properties?.dept_name_reg||f.properties?.NOMBRE_DPT||key;
+      mapState.indigena.deptFeatMap[key]=f;
     });
 
     render();
@@ -1017,27 +1038,31 @@
     currentMode=mode;
     const isMap = mode==="nacional" || mode==="indigena";
     document.querySelectorAll(".mode-tab").forEach(t=>t.classList.toggle("active",t.dataset.mode===mode));
-    document.querySelector(".body").style.display            = isMap             ? "flex" : "none";
+    document.querySelector(".body").style.display            = isMap               ? "flex" : "none";
     document.getElementById("resultados-view").style.display = mode==="resultados" ? "flex" : "none";
     document.getElementById("camara-view").style.display     = mode==="camara"     ? "flex" : "none";
-    document.querySelector(".bottombar").style.display       = isMap             ? "flex" : "none";
+    document.querySelector(".bottombar").style.display       = isMap               ? "flex" : "none";
     if (isMap) {
-      if (mode==="indigena" && mpioIndData) { mpioData=mpioIndData; deptData=deptIndData; }
-      else                                  { mpioData=mpioNatData; deptData=deptNatData; }
-      deptFeatMap={}; deptBoundsMap={}; deptNameMap={};
-      (deptData||{features:[]}).features.forEach(f=>{
-        const key=f.properties?.name||"";
-        deptNameMap[key]=f.properties?.dept_name_reg||key;
-        deptFeatMap[key]=f;
-      });
-      if(mpioLayer){map.removeLayer(mpioLayer);mpioLayer=null;}
-      if(deptLayer){map.removeLayer(deptLayer);deptLayer=null;}
-      if(deptBoundaryLayer){map.removeLayer(deptBoundaryLayer);deptBoundaryLayer=null;}
-      if(bubbleLayer){map.removeLayer(bubbleLayer);bubbleLayer=null;}
-      activeLayer=null; hideDetail();
+      // Switch map instances
+      if (mode==="indigena") {
+        document.getElementById("map-nac").style.display = "none";
+        document.getElementById("map-ind").style.display = "block";
+        curMap   = mapInd;
+        curState = mapState.indigena;
+        mpioData = mpioIndData;
+        deptData = deptIndData;
+      } else {
+        document.getElementById("map-ind").style.display = "none";
+        document.getElementById("map-nac").style.display = "block";
+        curMap   = mapNac;
+        curState = mapState.nacional;
+        mpioData = mpioNatData;
+        deptData = deptNatData;
+      }
+      hideDetail();
       render(); buildPartyList(); buildDeptList();
       updateBottomBar(mode);
-      setTimeout(()=>map.invalidateSize(),50);
+      setTimeout(()=>curMap.invalidateSize(), 50);
     }
     if (mode==="resultados" && seatsData) renderResultados();
     if (mode==="camara"     && seatsData) renderCamara();
@@ -1152,12 +1177,12 @@
     });
     allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición",code:"oposicion"});
 
-    // Semicircle positions: 4 rows, seats distributed proportionally to radius
-    const cx=350, cy=375;
-    const radii=[110,170,230,290];
+    // Semicircle positions: 6 rows, seats distributed proportionally to radius
+    const cx=350, cy=310;
+    const radii=[70,105,140,175,210,245];
     const totalR=radii.reduce((s,r)=>s+r,0);
     const spr=radii.map(r=>Math.round(103*r/totalR));
-    spr[3]=103-spr[0]-spr[1]-spr[2];
+    spr[5]=103-spr[0]-spr[1]-spr[2]-spr[3]-spr[4];
 
     // Collect ALL positions with their angles, then sort by angle descending (left→right)
     const allPositions=[];
@@ -1260,7 +1285,7 @@
     btn.addEventListener("click",()=>{
       currentLevel=btn.dataset.level;
       document.querySelectorAll(".level-btn").forEach(b=>b.classList.toggle("active",b.dataset.level===currentLevel));
-      activeLayer=null;
+      curState.activeLayer=null;
       render();
     });
   });
