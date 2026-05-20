@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Colombia — 1ra Vuelta 2026 | Datapol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f5f0e8;
+      --surface:  #ede8df;
+      --border:   #cfc0ab;
+      --border2:  #bfb0a0;
+      --text:     #1a1209;
+      --muted:    #7a6858;
+      --dim:      #b0a090;
+      --terra:    #c4603a;
+      --terra-dk: #8b3c1f;
+      --terra-lt: #f0e4d8;
+      --sand:     #d9c9b4;
+    }
+    html { height: 100%; }
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────────── */
+    .nav {
+      background: var(--text);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      height: 32px;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 14px;
+      color: var(--sand);
+      letter-spacing: 0.05em;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+    .nav-sep { width: 1px; height: 14px; background: #333; margin: 0 0.6rem; }
+    .nav-item {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #555;
+      padding: 0 0.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--terra); }
+    .nav-item:hover:not(.active) { color: #999; }
+    .nav-pill {
+      font-size: 8px;
+      background: #333;
+      color: #666;
+      border-radius: 2px;
+      padding: 1px 5px;
+      margin-left: 4px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .header {
+      background: var(--bg);
+      border-bottom: 2px solid var(--text);
+      padding: 0.55rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .header-sub {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-left: 2px solid var(--terra);
+      padding-left: 0.6rem;
+      line-height: 1.5;
+    }
+    .header-progress {
+      flex: 1;
+      max-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hp-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .hp-bar { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .hp-fill { height: 100%; background: var(--terra); border-radius: 2px; transition: width 0.5s; }
+    .live-tag {
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--terra);
+      border: 1px solid var(--terra);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--terra); animation: blink 1.4s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .header-stats { display: flex; gap: 1.25rem; margin-left: auto; }
+    .hstat { display: flex; flex-direction: column; align-items: flex-end; }
+    .hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .hstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; color: var(--text); }
+    .hstat-val.hi { color: var(--terra); }
+
+    /* ── Mode bar ─────────────────────────────────────────────────────────── */
+    .mode-bar { background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; height: 28px; gap: 0; flex-shrink: 0; }
+    .mode-tab { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.3rem 0.75rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+    .mode-tab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .mode-tab:hover:not(.active) { color: var(--text); }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .body { display: flex; flex: 1; min-height: 0; }
+
+    /* ── Map ──────────────────────────────────────────────────────────────── */
+    .map-wrap { flex: 1; position: relative; min-width: 0; }
+    #map { width: 100%; height: 100%; background: #e8e0d4; }
+    .leaflet-container { background: #e8e0d4; }
+    .leaflet-control-zoom a { background: var(--bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    .leaflet-control-zoom a:hover { background: var(--surface) !important; }
+    .leaflet-control-attribution { background: rgba(245,240,232,0.9) !important; color: var(--dim) !important; font-size: 9px !important; }
+    .leaflet-control-attribution a { color: var(--dim) !important; }
+
+    /* Map controls overlay */
+    .map-controls {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 0.75rem;
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .ctrl-row { display: flex; gap: 0.3rem; }
+    .view-btn, .level-btn {
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .level-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .view-btn.active  { background: var(--terra); color: #fff; border-color: var(--terra); }
+    .view-btn:hover:not(.active), .level-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+    /* Map control group labels */
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .ctrl-label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0 0.1rem; }
+    .ctrl-label.geo  { color: var(--text); }
+    .ctrl-label.data { color: var(--terra); }
+
+    /* Loading */
+    #loading { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; gap: 0.75rem; }
+    #loading p { color: var(--muted); font-size: 11px; }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--sand); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Bubble legend */
+    .bubble-legend {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.5rem;
+      z-index: 800;
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.5rem 0.7rem;
+      font-size: 9px;
+      color: var(--muted);
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+    .bubble-legend.show { display: block; }
+    .bubble-legend-title { font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .bubble-legend-items { display: flex; align-items: flex-end; gap: 0.75rem; }
+    .bl-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .bl-circle { border-radius: 50%; border: 1px solid #999; background: rgba(196,96,58,0.25); }
+    .bl-label { font-size: 8px; }
+
+    /* Full-view back button */
+    .map-topbar {
+      position: absolute;
+      top: 10px;
+      left: 44px;
+      z-index: 800;
+    }
+    .btn-fullview {
+      background: rgba(245,240,232,0.93);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.9rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .btn-fullview:hover { color: var(--terra); }
+
+    /* ── Panel ────────────────────────────────────────────────────────────── */
+    .panel {
+      width: 280px;
+      min-width: 280px;
+      background: var(--surface);
+      border-left: 2px solid var(--text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+    .panel-scroll::-webkit-scrollbar { width: 3px; }
+    .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+    .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
+
+    /* Dept rows */
+    .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .dept-row:hover { background: var(--terra-lt); }
+    .dept-top { display: flex; align-items: center; gap: 0.4rem; }
+    .dept-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
+    .dept-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
+    .dept-votes { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .dept-winner { font-size: 9px; color: var(--muted); margin-top: 2px; padding-left: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Detail panel */
+    .detail-panel { display: none; flex-direction: column; overflow-y: auto; flex: 1; }
+    .detail-panel.active { display: flex; }
+    .detail-panel::-webkit-scrollbar { width: 3px; }
+    .detail-panel::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .detail-back { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: color 0.15s; }
+    .detail-back:hover { color: var(--terra); }
+    .detail-hero { padding: 0.65rem 0.75rem 0.45rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; letter-spacing: 0.03em; }
+    .detail-winner-tag { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--terra-dk); }
+    .detail-winner-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .detail-kpi-row { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .dkpi { flex: 1; padding: 0.4rem 0.6rem; border-right: 1px solid var(--border); }
+    .dkpi:last-child { border-right: none; }
+    .dkpi-label { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .dkpi-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1.1; color: var(--text); margin-top: 1px; }
+    .dkpi-val.hi { color: var(--terra); }
+    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.75rem 0.2rem; flex-shrink: 0; }
+
+    /* Candidate bar in detail */
+    .detail-cand { display: flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .detail-cand-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .detail-cand-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .detail-cand-name { font-size: 9.5px; color: var(--text); flex: 1; line-height: 1.2; }
+    .detail-cand-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
+
+    /* ── Pronóstico view ─────────────────────────────────────────────────── */
+    #pronostico-view {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg);
+      min-height: 0;
+    }
+    #pronostico-view::-webkit-scrollbar { width: 3px; }
+    #pronostico-view::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .pron-inner {
+      max-width: 680px;
+      width: 100%;
+      align-self: center;
+      padding: 1.25rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Pre-election banner */
+    .pre-banner {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--terra);
+      border-radius: 3px;
+      padding: 0.65rem 0.85rem;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+      display: none;
+    }
+    .pre-banner.show { display: block; }
+    .pre-banner strong { color: var(--terra); }
+
+    /* Needle section */
+    .needle-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem 0.75rem;
+    }
+    .needle-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 0.65rem;
+    }
+    .needle-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    #needle-svg { display: block; width: 100%; height: auto; }
+    .needle-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 0.35rem;
+      gap: 0.5rem;
+    }
+    .needle-label {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.3;
+      max-width: 45%;
+    }
+    .needle-label.left { text-align: left; }
+    .needle-label.right { text-align: right; }
+    .needle-label-sub { font-size: 8px; font-weight: 400; color: var(--muted); }
+    .needle-center-pct {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      flex: 1;
+      padding-top: 0.2rem;
+    }
+
+    /* Candidate probability bars */
+    .pron-section-head {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      border-bottom: 2px solid var(--text);
+      padding-bottom: 0.3rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .pron-section-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      font-weight: 400;
+      text-transform: none;
+    }
+    .cand-prob-list { display: flex; flex-direction: column; gap: 0; }
+    .cand-prob-row {
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .cand-prob-top {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cand-prob-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); flex: 1; }
+    .cand-prob-partido { font-size: 9px; color: var(--muted); }
+    .cand-prob-pct-val {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .sv-badge {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--terra-lt);
+      color: var(--terra-dk);
+      border: 1px solid var(--terra);
+      border-radius: 2px;
+      padding: 2px 6px;
+      flex-shrink: 0;
+    }
+    .cand-prob-bar-wrap {
+      height: 6px;
+      background: var(--sand);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .cand-prob-bar { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    .cand-prob-bottom {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 9px;
+      color: var(--muted);
+    }
+    .cand-prob-vote-pct {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 13px;
+      line-height: 1;
+      color: var(--text);
+    }
+    .cand-prob-ci { font-size: 8px; color: var(--dim); }
+
+    /* Methodology note */
+    .pron-note {
+      font-size: 9px;
+      color: var(--dim);
+      line-height: 1.7;
+      font-style: italic;
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+    }
+
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      body { overflow: auto; }
+      .body { flex-direction: column; }
+      .map-wrap { height: 55vw; min-height: 280px; flex: none; }
+      .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
+      .header-sub, .live-tag { display: none !important; }
+      .header-stats { display: none !important; }
+      .header-progress { max-width: none; flex: 1; display: flex !important; }
+      .header-title { font-size: 15px; }
+      .map-controls { gap: 0.2rem; }
+      .ctrl-group { gap: 0.1rem; }
+      .ctrl-row { gap: 0.15rem; flex-wrap: wrap; }
+      .ctrl-label { font-size: 6px; }
+      .view-btn, .level-btn { font-size: 7px; padding: 0.18rem 0.4rem; letter-spacing: 0.03em; }
+      .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
+      .pron-inner { padding: 0.75rem 0.85rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <div class="nav-sep"></div>
+  <a class="nav-item" href="/colombia/congreso2026/">Senado</a>
+  <span class="nav-item active">1ra Vuelta</span>
+  <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
+</div>
+
+<!-- Mode bar -->
+<div class="mode-bar">
+  <button class="mode-tab active" data-mode="mapa">Mapa</button>
+  <button class="mode-tab" data-mode="pronostico">Pronóstico</button>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header-title">Colombia · 1ra Vuelta 2026</div>
+  </div>
+  <div class="header-sub">Resultados por municipio<br>Registraduría Nacional</div>
+  <div class="header-progress">
+    <div class="hp-labels">
+      <span>Mesas escrutadas</span>
+      <span id="hp-label">—</span>
+    </div>
+    <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+  <div class="header-stats">
+    <div class="hstat">
+      <span class="hstat-label">Censo</span>
+      <span class="hstat-val" id="hs-censo">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Votantes</span>
+      <span class="hstat-val" id="hs-votes">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Participación</span>
+      <span class="hstat-val hi" id="hs-turnout">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- Body (Mapa mode) -->
+<div class="body" id="mapa-body">
+
+  <!-- Map -->
+  <div class="map-wrap">
+    <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
+
+    <div class="map-topbar" id="map-topbar" style="display:none">
+      <button class="btn-fullview" id="btn-fullview">← Colombia</button>
+    </div>
+
+    <div class="map-controls">
+      <div class="ctrl-group">
+        <span class="ctrl-label geo">Geografía</span>
+        <div class="ctrl-row">
+          <button class="level-btn active" data-level="dept">Departamento</button>
+          <button class="level-btn" data-level="municipio">Municipio</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row" id="view-btns">
+          <button class="view-btn active" data-view="winner">Partido</button>
+          <button class="view-btn" data-view="turnout">Participación</button>
+          <button class="view-btn" data-view="votos">Votos válidos</button>
+          <button class="view-btn" data-view="mesas">Mesas restantes</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-legend" id="bubble-legend">
+      <div class="bubble-legend-title" id="bl-title">Mesas faltantes</div>
+      <div class="bubble-legend-items" id="bl-items"></div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <!-- Panel -->
+  <div class="panel">
+    <div class="panel-scroll" id="panel-scroll">
+      <div id="view-depts"></div>
+    </div>
+    <!-- Detail overlay -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-back" id="detail-back">← Volver</div>
+      <div class="detail-hero">
+        <div class="detail-mpio" id="d-mpio">—</div>
+        <div class="detail-winner-tag" id="d-winner-tag"></div>
+      </div>
+      <div class="detail-kpi-row" id="d-kpis"></div>
+      <div class="detail-sect-head">Candidatos</div>
+      <div id="d-candidates"></div>
+    </div>
+  </div>
+
+</div><!-- end .body -->
+
+<!-- Pronóstico view -->
+<div id="pronostico-view">
+  <div class="pron-inner">
+
+    <div class="pre-banner" id="pre-banner">
+      <strong>Estimación pre-electoral basada en encuestas.</strong><br>
+      Se actualizará en tiempo real el 31 de mayo de 2026.
+      Los porcentajes reflejan el promedio de encuestas recientes (AtlasIntel, may-2026).
+    </div>
+
+    <!-- Needle gauge -->
+    <div class="needle-section" id="needle-section">
+      <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-wrap">
+        <svg id="needle-svg" viewBox="0 0 300 165" preserveAspectRatio="xMidYMid meet">
+          <!-- Semicircle track -->
+          <path id="needle-track-left"  fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
+          <path id="needle-track-right" fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
+          <path id="needle-arc-left"    fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
+          <path id="needle-arc-right"   fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
+          <!-- Center tick marks -->
+          <line x1="150" y1="138" x2="150" y2="128" stroke="#cfc0ab" stroke-width="1"/>
+          <!-- Needle line -->
+          <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
+                stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Needle pivot -->
+          <circle cx="150" cy="148" r="5" fill="#1a1209"/>
+          <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
+          <!-- Probability text in center -->
+          <text id="needle-pct-text" x="150" y="152" text-anchor="middle"
+                font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
+                fill="var(--muted)">—%</text>
+        </svg>
+      </div>
+      <div class="needle-labels">
+        <div class="needle-label left">
+          <div id="needle-left-name" style="color:#1E293B">—</div>
+          <div class="needle-label-sub" id="needle-left-pct">—%</div>
+        </div>
+        <div class="needle-center-pct" id="needle-center-note">prob. de pasar</div>
+        <div class="needle-label right">
+          <div id="needle-right-name" style="color:#1D4ED8">—</div>
+          <div class="needle-label-sub" id="needle-right-pct">—%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Candidate bars -->
+    <div>
+      <div class="pron-section-head">
+        Probabilidades de segunda vuelta
+        <span class="pron-section-sub" id="pron-source-note">Encuestas</span>
+      </div>
+      <div class="cand-prob-list" id="cand-prob-list"></div>
+    </div>
+
+    <!-- Methodology note -->
+    <div class="pron-note" id="pron-note" style="display:none"></div>
+
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+
+  // ── Formatting ───────────────────────────────────────────────────────────
+  const fmtN = n => (n == null || n === "" || isNaN(n)) ? "—" : parseInt(n).toLocaleString("es-CO");
+  const fmtP = n => (n == null || n === "" || isNaN(n)) ? "—" : parseFloat(n).toFixed(1) + "%";
+
+  // ── Color helpers ────────────────────────────────────────────────────────
+  function lerp(a, b, t) {
+    const p = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+    const [r1,g1,b1] = p(a), [r2,g2,b2] = p(b);
+    return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
+  }
+  function blendWithBg(hex, strength) {
+    strength = strength == null ? 0.72 : strength;
+    try {
+      const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+      const bg = [245,240,232];
+      return `rgb(${Math.round(r*strength+bg[0]*(1-strength))},${Math.round(g*strength+bg[1]*(1-strength))},${Math.round(b*strength+bg[2]*(1-strength))})`;
+    } catch(e) { return "#d9c9b4"; }
+  }
+  function turnoutColor(pct, maxPct) {
+    if (pct == null || isNaN(pct) || pct === 0) return "#e0d8cc";
+    const stops = [[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
+    const scaled = maxPct ? Math.min(pct / maxPct * 85, 85) : pct;
+    for (let i=1; i<stops.length; i++) {
+      if (scaled <= stops[i][0]) {
+        const t = (scaled - stops[i-1][0]) / (stops[i][0] - stops[i-1][0]);
+        return lerp(stops[i-1][1], stops[i][1], t);
+      }
+    }
+    return stops[stops.length-1][1];
+  }
+
+  // ── Centroid of a GeoJSON feature ────────────────────────────────────────
+  function centroid(feat) {
+    const g = feat.geometry;
+    let coords = g.type === "MultiPolygon"
+      ? g.coordinates.reduce((a, poly) => a.concat(poly[0]), [])
+      : g.coordinates[0];
+    let minLat=Infinity, maxLat=-Infinity, minLng=Infinity, maxLng=-Infinity;
+    coords.forEach(([lng, lat]) => {
+      if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
+      if (lng < minLng) minLng = lng; if (lng > maxLng) maxLng = lng;
+    });
+    return [(minLat+maxLat)/2, (minLng+maxLng)/2];
+  }
+
+  // ── Map setup ─────────────────────────────────────────────────────────────
+  const TILE = {
+    url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+    opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 }
+  };
+  function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
+  const MAP_OPTS = {
+    center: [4.5, -74.2], zoom: defZoom(),
+    zoomControl: true, attributionControl: true,
+    zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80,
+    doubleClickZoom: false
+  };
+  const map = L.map("map", MAP_OPTS);
+  L.tileLayer(TILE.url, TILE.opts).addTo(map);
+
+  // ── State ────────────────────────────────────────────────────────────────
+  let currentView  = "winner";
+  let currentLevel = "dept";
+  let activeLayer  = null;
+  let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
+  let deptBoundsMap = {}, deptFeatMap = {};
+
+  let mpioData = null, deptData = null;
+  let resultsData = null, forecastData = null;
+
+  const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
+
+  // ── Style functions ───────────────────────────────────────────────────────
+  function styleMpio(feat) {
+    const p = feat.properties || {};
+    let fill = "#e0d8cc";
+    if (currentView === "winner") {
+      if ((parseInt(p.winner_votes) || 0) > 0 && p.winner_color) {
+        fill = blendWithBg(p.winner_color, 0.72);
+      }
+    } else if (currentView === "turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    }
+    return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
+  }
+
+  function styleDept(feat) {
+    const p = feat.properties || {};
+    let fill = "#e0d8cc";
+    if (currentView === "winner") {
+      if ((parseInt(p.winner_votes) || 0) > 0 && p.winner_color) {
+        fill = blendWithBg(p.winner_color, 0.80);
+      }
+    } else if (currentView === "turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    }
+    return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
+  }
+
+  // ── Render choropleth ─────────────────────────────────────────────────────
+  function renderChoropleth() {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    document.getElementById("bubble-legend").classList.remove("show");
+
+    if (currentLevel === "municipio") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (!mpioLayer) {
+        mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio, smoothFactor: 0 }).addTo(map);
+      } else {
+        mpioLayer.setStyle(styleMpio);
+      }
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+    } else {
+      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (!deptLayer) {
+        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept, smoothFactor: 0 }).addTo(map);
+      } else {
+        deptLayer.setStyle(styleDept);
+      }
+    }
+  }
+
+  // ── Render bubbles ────────────────────────────────────────────────────────
+  function renderBubbles(valueKey, labelFn) {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+
+    if (currentLevel === "municipio") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (!mpioLayer) {
+        mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio, smoothFactor: 0 }).addTo(map);
+      }
+      mpioLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          interactive: false
+        }).addTo(map);
+      }
+    } else {
+      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (!deptLayer) {
+        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept, smoothFactor: 0 }).addTo(map);
+      }
+      deptLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 1.5, color: "#1a1209" }));
+    }
+
+    const sourceData = currentLevel === "municipio" ? mpioData : deptData;
+    const features = sourceData.features.filter(f => valueKey(f.properties || {}) > 0);
+    const values = features.map(f => valueKey(f.properties || {}));
+    const maxVal = Math.max(...values, 1);
+    const maxR = currentLevel === "dept" ? 30 : 18;
+
+    bubbleLayer = L.layerGroup();
+    features.forEach(feat => {
+      const val = valueKey(feat.properties || {});
+      if (!val) return;
+      const r = Math.max(2, Math.sqrt(val / maxVal) * maxR);
+      const latlng = centroid(feat);
+      const marker = L.circleMarker(latlng, {
+        radius: r, fillColor: "#c4603a", fillOpacity: 0.45,
+        weight: 0.8, color: "#8b3c1f"
+      });
+      marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
+      marker.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        showDetail(feat, currentLevel === "municipio" ? "municipio" : "dept");
+        document.getElementById("map-topbar").style.display = "block";
+      });
+      marker.addTo(bubbleLayer);
+    });
+    bubbleLayer.addTo(map);
+
+    // Legend
+    const legend = document.getElementById("bubble-legend");
+    legend.classList.add("show");
+    const sizes = [maxVal, maxVal/4, maxVal/16].filter(v => v > 0);
+    document.getElementById("bl-items").innerHTML = sizes.map(v => {
+      const r = Math.max(2, Math.sqrt(v / maxVal) * maxR);
+      const d = r * 2;
+      return `<div class="bl-item">
+        <div class="bl-circle" style="width:${d}px;height:${d}px"></div>
+        <span class="bl-label">${fmtN(Math.round(v))}</span>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Render dispatcher ─────────────────────────────────────────────────────
+  function render() {
+    if (currentView === "mesas") {
+      document.getElementById("bl-title").textContent = "Mesas faltantes";
+      renderBubbles(
+        p => Math.max(0, (parseInt(p.mesas_total) || 0) - (parseInt(p.mesas_escrutadas) || 0)),
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} mesas pendientes`
+      );
+    } else if (currentView === "votos") {
+      document.getElementById("bl-title").textContent = "Votos válidos";
+      renderBubbles(
+        p => parseInt(p.votos_validos) || 0,
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} votos válidos`
+      );
+    } else {
+      renderChoropleth();
+    }
+    if (activeLayer) activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
+  }
+
+  // ── Feature interactions ──────────────────────────────────────────────────
+  function onEachMpio(feat, layer) {
+    layer.on({
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return;
+        if (e.target !== activeLayer) e.target.setStyle({ weight: 1.2, color: "#1a1209", fillOpacity: 1 });
+      },
+      mouseout(e) {
+        if (e.target === activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) {
+          e.target.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" });
+        } else {
+          mpioLayer?.resetStyle(e.target);
+        }
+      },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if (activeLayer === e.target) {
+          mpioLayer?.resetStyle(e.target);
+          activeLayer = null;
+          map.setView([4.5, -74.2], defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if (activeLayer) {
+          if (BUBBLE_VIEWS.has(currentView))
+            activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" });
+          else
+            (mpioLayer || deptLayer)?.resetStyle(activeLayer);
+        }
+        activeLayer = e.target;
+        e.target.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
+        showDetail(feat, "municipio");
+        map.fitBounds(e.target.getBounds(), { padding: [60, 60] });
+        document.getElementById("map-topbar").style.display = "block";
+      }
+    });
+  }
+
+  function onEachDept(feat, layer) {
+    const key = (feat.properties || {}).name || "";
+    if (key) {
+      deptBoundsMap[key] = layer.getBounds();
+      deptFeatMap[key] = feat;
+    }
+    layer.on({
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return;
+        if (e.target !== activeLayer) e.target.setStyle({ weight: 2.5, color: "#c4603a", fillOpacity: 1 });
+      },
+      mouseout(e) {
+        if (e.target === activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) {
+          e.target.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: 1.5, color: "#1a1209" });
+        } else {
+          deptLayer?.resetStyle(e.target);
+        }
+      },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if (activeLayer === e.target) {
+          deptLayer?.resetStyle(e.target);
+          activeLayer = null;
+          map.setView([4.5, -74.2], defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if (activeLayer) {
+          if (BUBBLE_VIEWS.has(currentView))
+            activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: 1.5, color: "#1a1209" });
+          else
+            deptLayer?.resetStyle(activeLayer);
+        }
+        activeLayer = e.target;
+        e.target.setStyle({ weight: 2.5, color: "#c4603a", fillOpacity: 1 });
+        showDetail(feat, "dept");
+        map.fitBounds(e.target.getBounds(), { padding: [40, 40] });
+        document.getElementById("map-topbar").style.display = "block";
+      }
+    });
+  }
+
+  map.on("click", hideDetail);
+
+  // Full-view button
+  document.getElementById("btn-fullview").addEventListener("click", () => {
+    map.setView([4.5, -74.2], defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+    hideDetail();
+  });
+  map.on("zoomend", () => {
+    if (map.getZoom() <= defZoom() + 0.3) document.getElementById("map-topbar").style.display = "none";
+  });
+
+  // ── Detail panel ──────────────────────────────────────────────────────────
+  function showDetail(feat, type) {
+    const p = feat.properties || {};
+    document.getElementById("panel-scroll").style.display = "none";
+    document.getElementById("detail-panel").classList.add("active");
+
+    const name = type === "dept"
+      ? (p.dept_name_reg || p.NOMBRE_DPT || "—")
+      : (p.mpio_name_reg || p.mpio_name_dane || "—");
+    document.getElementById("d-mpio").textContent = name;
+
+    const wt = document.getElementById("d-winner-tag");
+    if (p.winner && p.winner_color) {
+      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${p.winner_color}"></div>${p.winner}`;
+    } else {
+      wt.textContent = "Sin datos";
+    }
+
+    // KPIs
+    const vv  = parseInt(p.votos_validos) || 0;
+    const vt  = parseInt(p.votantes) || 0;
+    const cen = parseInt(p.censo) || 0;
+    const meE = parseInt(p.mesas_escrutadas) || 0;
+    const meT = parseInt(p.mesas_total) || 0;
+    const pct = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + "%" : "—";
+
+    document.getElementById("d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Censo</div><div class="dkpi-val">${fmtN(cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Votantes</div><div class="dkpi-val">${fmtN(vt)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${pct(vt, cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Mesas</div><div class="dkpi-val">${fmtN(meE)}/${fmtN(meT)}</div></div>`;
+
+    // Candidates
+    let candidates = [];
+    try { candidates = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
+    document.getElementById("d-candidates").innerHTML = candidates.filter(c => c.votes > 0).map(c => {
+      const col = c.color || "#9a8878";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, vv)}</span>
+        <div class="detail-cand-dot" style="background:${col}"></div>
+        <span class="detail-cand-name">${c.name}</span>
+        <span class="detail-cand-votes">${fmtN(c.votes)}</span>
+      </div>`;
+    }).join("") || `<div style="padding:0.75rem;font-size:10px;color:var(--muted)">Sin datos de candidatos.</div>`;
+  }
+
+  function hideDetail() {
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        mpioLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+    }
+  }
+  document.getElementById("detail-back").addEventListener("click", hideDetail);
+
+  // ── Header stats ──────────────────────────────────────────────────────────
+  function updateHeader(r) {
+    if (!r) return;
+    const pct = r.mesas_total ? r.mesas_escrutadas / r.mesas_total : 0;
+    document.getElementById("hs-censo").textContent   = fmtN(r.censo);
+    document.getElementById("hs-votes").textContent   = fmtN(r.votantes);
+    document.getElementById("hs-turnout").textContent = r.censo ? (r.votantes / r.censo * 100).toFixed(1) + "%" : "—";
+    document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
+    document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(r.mesas_escrutadas)}/${fmtN(r.mesas_total)}`;
+    if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+  }
+
+  // ── Dept sidebar ──────────────────────────────────────────────────────────
+  function buildDeptList() {
+    if (!deptData) return;
+    const features = deptData.features.slice().sort((a, b) =>
+      (parseInt(b.properties?.votos_validos) || 0) - (parseInt(a.properties?.votos_validos) || 0)
+    );
+
+    const el = document.getElementById("view-depts");
+    el.innerHTML = `<div class="sect-head">${features.length} departamentos</div>` +
+      features.map(feat => {
+        const p = feat.properties || {};
+        const name = p.dept_name_reg || p.NOMBRE_DPT || p.name || "—";
+        const col = p.winner_color || "#9a8878";
+        return `<div class="dept-row" data-deptkey="${p.name || ''}">
+          <div class="dept-top">
+            <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+            <span class="dept-name">${name}</span>
+            <span class="dept-votes">${fmtN(p.votos_validos)}</span>
+          </div>
+          <div class="dept-winner">${p.winner || 'Sin datos'}</div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".dept-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const key = row.dataset.deptkey;
+        const feat = deptFeatMap[key];
+        if (!feat) return;
+        if (currentLevel !== "dept") {
+          currentLevel = "dept";
+          document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === "dept"));
+          render();
+        }
+        const bounds = deptBoundsMap[key];
+        if (bounds) { map.fitBounds(bounds, { padding: [40, 40] }); document.getElementById("map-topbar").style.display = "block"; }
+        showDetail(feat, "dept");
+      });
+    });
+  }
+
+  // ── Controls ──────────────────────────────────────────────────────────────
+  document.querySelectorAll(".level-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentLevel = btn.dataset.level;
+      document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === currentLevel));
+      activeLayer = null;
+      document.getElementById("map-topbar").style.display = "none";
+      hideDetail();
+      render();
+    });
+  });
+
+  document.querySelectorAll(".view-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentView = btn.dataset.view;
+      document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === currentView));
+      render();
+    });
+  });
+
+  // ── Mode switching ────────────────────────────────────────────────────────
+  function switchMode(mode) {
+    document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
+    const isMap = mode === "mapa";
+    document.getElementById("mapa-body").style.display    = isMap ? "flex" : "none";
+    document.getElementById("pronostico-view").style.display = isMap ? "none" : "flex";
+    if (isMap) {
+      setTimeout(() => map.invalidateSize(), 50);
+    }
+    if (mode === "pronostico" && forecastData) {
+      renderPronostico();
+    }
+  }
+  document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
+
+  // ── Needle gauge ──────────────────────────────────────────────────────────
+  function buildNeedleArc(cx, cy, r, startAngle, endAngle) {
+    // angles in radians, measured from positive x-axis
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy - r * Math.sin(startAngle); // SVG y-axis is inverted
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy - r * Math.sin(endAngle);
+    const large = Math.abs(endAngle - startAngle) > Math.PI ? 1 : 0;
+    const sweep = endAngle < startAngle ? 1 : 0;
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
+  }
+
+  function renderNeedle(prob2, cand2, cand3) {
+    // prob2 = probability that candidate #2 passes (0-100)
+    // angle: 0% → left (180°), 100% → right (0°)
+    // semicircle from 180° to 0°, needle at prob2%
+    const cx = 150, cy = 148, r = 90;
+    // SVG: 0° = right, math angle: π = left, 0 = right
+    // Left end of arc: 180° (math) = π
+    // Right end of arc: 0° (math)
+    const startA = Math.PI;     // left
+    const endA   = 0;           // right
+    const midA   = Math.PI / 2; // top (50%)
+    const needleA = Math.PI * (1 - prob2 / 100); // from left→right as prob goes 0→100
+
+    // Track (full gray arc)
+    const trackPath = buildNeedleArc(cx, cy, r, startA, endA);
+
+    // Split arc: left colored with cand3's color, right colored with cand2's color
+    const leftPath  = buildNeedleArc(cx, cy, r, startA, needleA);
+    const rightPath = buildNeedleArc(cx, cy, r, needleA, endA);
+
+    const svg = document.getElementById("needle-svg");
+    // Remove old paths/lines, keep text
+    svg.querySelectorAll("path, line.needle-arc-path").forEach(e => e.remove());
+
+    // Full track
+    const trackEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    trackEl.setAttribute("d", trackPath);
+    trackEl.setAttribute("fill", "none");
+    trackEl.setAttribute("stroke", "#e0d8cc");
+    trackEl.setAttribute("stroke-width", "18");
+    trackEl.setAttribute("stroke-linecap", "butt");
+    svg.insertBefore(trackEl, svg.firstChild);
+
+    // Left arc (cand3 color)
+    const leftEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    leftEl.setAttribute("d", leftPath);
+    leftEl.setAttribute("fill", "none");
+    leftEl.setAttribute("stroke", cand3 ? cand3.color : "#9a8878");
+    leftEl.setAttribute("stroke-width", "18");
+    leftEl.setAttribute("stroke-linecap", "butt");
+    leftEl.setAttribute("opacity", "0.55");
+    svg.insertBefore(leftEl, svg.firstChild.nextSibling);
+
+    // Right arc (cand2 color)
+    if (prob2 < 100) {
+      const rightEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      rightEl.setAttribute("d", rightPath);
+      rightEl.setAttribute("fill", "none");
+      rightEl.setAttribute("stroke", cand2 ? cand2.color : "#1D4ED8");
+      rightEl.setAttribute("stroke-width", "18");
+      rightEl.setAttribute("stroke-linecap", "butt");
+      rightEl.setAttribute("opacity", "0.55");
+      svg.insertBefore(rightEl, svg.firstChild.nextSibling.nextSibling);
+    }
+
+    // Center tick
+    const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    tick.setAttribute("x1", cx.toString()); tick.setAttribute("y1", (cy - r - 9).toString());
+    tick.setAttribute("x2", cx.toString()); tick.setAttribute("y2", (cy - r + 9).toString());
+    tick.setAttribute("stroke", "#cfc0ab"); tick.setAttribute("stroke-width", "1");
+    svg.insertBefore(tick, svg.querySelector("#needle-line"));
+
+    // Needle
+    const nxEnd = cx + (r - 18) * Math.cos(needleA);
+    const nyEnd = cy - (r - 18) * Math.sin(needleA);
+    const needleLine = svg.querySelector("#needle-line");
+    needleLine.setAttribute("x1", cx.toString()); needleLine.setAttribute("y1", cy.toString());
+    needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
+
+    // Probability text
+    const pctText = svg.querySelector("#needle-pct-text");
+    pctText.textContent = prob2.toFixed(0) + "%";
+    // Position text below the arc center
+    pctText.setAttribute("y", (cy + 14).toString());
+  }
+
+  // ── Pronóstico view ───────────────────────────────────────────────────────
+  function renderPronostico() {
+    if (!forecastData) return;
+    const fd = forecastData;
+    const isLive = fd.pct_mesas > 0;
+
+    // Pre-election banner
+    const banner = document.getElementById("pre-banner");
+    if (!isLive) {
+      banner.classList.add("show");
+    } else {
+      banner.classList.remove("show");
+    }
+
+    // Source note
+    document.getElementById("pron-source-note").textContent = isLive
+      ? `${fd.pct_mesas.toFixed(1)}% mesas · ${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones`
+      : "Encuestas AtlasIntel · may-2026";
+
+    // Sort by prob_runoff desc
+    const cands = (fd.candidates || []).slice().sort((a, b) => b.prob_runoff - a.prob_runoff);
+
+    // Needle: cand #2 vs #3 (indices 1 and 2 after sort)
+    const c1 = cands[0], c2 = cands[1], c3 = cands[2];
+    if (c2 && c3) {
+      const sum23 = (c2.prob_runoff || 0) + (c3.prob_runoff || 0);
+      const prob2 = sum23 > 0 ? (c2.prob_runoff / sum23) * 100 : 50;
+      renderNeedle(prob2, c2, c3);
+      document.getElementById("needle-left-name").textContent  = c3.nombre.split(" ")[0];
+      document.getElementById("needle-left-name").style.color  = c3.color;
+      document.getElementById("needle-right-name").textContent = c2.nombre.split(" ")[0];
+      document.getElementById("needle-right-name").style.color = c2.color;
+      document.getElementById("needle-left-pct").textContent   = (c3.prob_runoff || 0).toFixed(0) + "% prob.";
+      document.getElementById("needle-right-pct").textContent  = (c2.prob_runoff || 0).toFixed(0) + "% prob.";
+    }
+
+    // Candidate bars
+    const maxProbRunoff = cands[0]?.prob_runoff || 100;
+    const list = document.getElementById("cand-prob-list");
+    list.innerHTML = cands.map((c, i) => {
+      const barWidth = maxProbRunoff > 0 ? (c.prob_runoff / maxProbRunoff * 100).toFixed(1) : 0;
+      const isSV = i < 2;
+      const voteDisplay = isLive
+        ? `<span class="cand-prob-vote-pct">${c.vote_pct_current.toFixed(1)}%</span> votos contados`
+        : `<span class="cand-prob-vote-pct">${c.poll_pct?.toFixed(1) || "—"}%</span> en encuestas`;
+      const ci = isLive
+        ? `<span class="cand-prob-ci">[IC ${c.ci_low?.toFixed(1)}%–${c.ci_high?.toFixed(1)}%]</span>`
+        : `<span class="cand-prob-ci">[${c.ci_low?.toFixed(1)}%–${c.ci_high?.toFixed(1)}%]</span>`;
+      return `<div class="cand-prob-row">
+        <div class="cand-prob-top">
+          <div class="cand-prob-dot" style="background:${c.color}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="cand-prob-name">${c.nombre}</div>
+            <div class="cand-prob-partido">${c.partido}</div>
+          </div>
+          ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
+          <span class="cand-prob-pct-val" style="color:${c.color}">${c.prob_runoff.toFixed(0)}%</span>
+        </div>
+        <div class="cand-prob-bar-wrap">
+          <div class="cand-prob-bar" style="width:${barWidth}%;background:${c.color}"></div>
+        </div>
+        <div class="cand-prob-bottom">
+          ${voteDisplay} ${ci}
+        </div>
+      </div>`;
+    }).join("");
+
+    // Methodology note
+    const note = document.getElementById("pron-note");
+    if (isLive) {
+      note.style.display = "block";
+      note.textContent = `Pronóstico calculado con ${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones Montecarlo basadas en los resultados actuales (${fd.pct_mesas.toFixed(1)}% de mesas escrutadas) y distribuciones de incertidumbre sobre los votos restantes. Los intervalos de confianza reflejan la varianza esperada de los municipios aún no reportados.`;
+    } else {
+      note.style.display = "block";
+      note.textContent = "Las probabilidades pre-electorales se derivan de encuestas recientes y simulaciones Montecarlo. Los intervalos de confianza corresponden a los rangos publicados por AtlasIntel (mayo de 2026). Esta estimación se actualizará automáticamente a medida que lleguen los resultados oficiales el 31 de mayo.";
+    }
+  }
+
+  // ── Load data ──────────────────────────────────────────────────────────────
+  const BASE = "../../../colombia/data/presidencial2026/processed/";
+  Promise.all([
+    fetch(BASE + "results.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+    fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
+    fetch(BASE + "colombia_results_presidencial_map.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "colombia_results_presidencial_dept.geojson").then(r => r.json()).catch(() => null),
+  ]).then(([results, forecast, mpioGeo, deptGeo]) => {
+    resultsData  = results;
+    forecastData = forecast;
+
+    // Use GeoJSON if available, else build a stub from results for the header
+    if (mpioGeo) mpioData = mpioGeo;
+    if (deptGeo) {
+      deptData = deptGeo;
+      deptGeo.features.forEach(f => {
+        const key = (f.properties || {}).name || "";
+        if (key) deptFeatMap[key] = f;
+      });
+    }
+
+    updateHeader(results);
+    buildDeptList();
+
+    if (mpioData || deptData) {
+      render();
+    } else {
+      // No GeoJSON yet — show placeholder on map
+      document.getElementById("loading").innerHTML =
+        `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:200px">
+          Mapa no disponible.<br>GeoJSON generado el día de la elección.
+        </p>`;
+      document.getElementById("loading").style.background = "transparent";
+    }
+
+    document.getElementById("loading").style.display = "none";
+  }).catch(err => {
+    document.getElementById("loading").innerHTML =
+      `<p style="color:#c4603a;font-weight:700">${err.message}</p>
+       <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts de procesamiento primero.</p>`;
+  });
+
+  // ── Auto-refresh ──────────────────────────────────────────────────────────
+  let refreshTimer = null;
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(async () => {
+      try {
+        const [results, forecast] = await Promise.all([
+          fetch(BASE + "results.json").then(r => r.json()),
+          fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
+        ]);
+        resultsData  = results;
+        if (forecast) forecastData = forecast;
+        updateHeader(results);
+        if (results.pct_mesas > 0) {
+          // Reload GeoJSON and re-render
+          const [mpioGeo, deptGeo] = await Promise.all([
+            fetch(BASE + "colombia_results_presidencial_map.geojson").then(r => r.json()).catch(() => null),
+            fetch(BASE + "colombia_results_presidencial_dept.geojson").then(r => r.json()).catch(() => null),
+          ]);
+          if (mpioGeo) mpioData = mpioGeo;
+          if (deptGeo) {
+            deptData = deptGeo;
+            deptGeo.features.forEach(f => {
+              const key = (f.properties || {}).name || "";
+              if (key) deptFeatMap[key] = f;
+            });
+            // Clear layers to force re-render
+            if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer = null; }
+            if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+            if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+            if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+            render();
+          }
+          buildDeptList();
+          scheduleRefresh();
+        }
+      } catch(e) {
+        scheduleRefresh();
+      }
+    }, 60000);
+  }
+  // Always schedule refresh — it will no-op gracefully before election starts
+  // and kick in automatically once mesas > 0.
+  setTimeout(scheduleRefresh, 5000);
+
+})();
+</script>
+</body>
+</html>
