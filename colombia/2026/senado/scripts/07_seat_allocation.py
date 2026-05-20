@@ -16,7 +16,7 @@ import urllib.request
 import pandas as pd
 from pathlib import Path
 
-OUT = Path(__file__).parent.parent / "data" / "processed"
+OUT = Path(__file__).parent.parent / "data"
 THRESHOLD_PCT = 3.0
 SEATS_NACIONAL = 100
 SEATS_INDIGENA = 2

@@ -28,7 +28,7 @@ def load_party_lookup():
     with open(OUT2 / "parties.json") as f:
         return json.load(f)  # "XXXX" → {nombre, color}
 
-OUT = Path(__file__).parent.parent / "data" / "processed"
+OUT = Path(__file__).parent.parent / "data"
 
 
 def build_geojson():
@@ -38,7 +38,7 @@ def build_geojson():
     with open(OUT / "colombia_municipios.geojson") as f:
         mpio_geo = json.load(f)
 
-    mpio_results = pd.read_csv(OUT / "resultados_municipios.csv",
+    mpio_results = pd.read_csv(OUT / "results/colombia_2026_municipio_senado_nacional.csv",
                                dtype={"mpio_reg_code_7": str, "mpio_dane_code": str})
 
     # Build mpio_reg_code_5 from mpio_reg_code_7: drop the "00" in positions 2:4
@@ -88,7 +88,7 @@ def build_geojson():
 
     print(f"  Matched {matched}/{len(mpio_geo['features'])} features")
 
-    out_path = OUT / "colombia_results_map.geojson"
+    out_path = OUT / "colombia_2026_municipio_senado_nacional.geojson"
     with open(out_path, "w") as f:
         json.dump(_clean(mpio_geo), f, ensure_ascii=False)
     print(f"  Saved → colombia_results_map.geojson")
@@ -143,7 +143,7 @@ def build_geojson():
     dept_geo["features"] = kept_features
     print(f"  Dept features matched: {dept_matched}/{len(dept_geo.get('features',[]))}")
 
-    dept_out = OUT / "colombia_results_dept.geojson"
+    dept_out = OUT / "colombia_2026_dept_senado_nacional.geojson"
     with open(dept_out, "w") as f:
         json.dump(_clean(dept_geo), f, ensure_ascii=False)
     print(f"  Saved → colombia_results_dept.geojson")
@@ -155,7 +155,7 @@ def build_indigena_geojson():
     """Build municipio and dept GeoJSON for the indigenous constituency."""
     party_lookup = load_party_lookup()
 
-    mpio_csv = OUT / "resultados_municipios_indigena.csv"
+    mpio_csv = OUT / "results/colombia_2026_municipio_senado_indigena.csv"
     dept_csv = OUT / "resultados_departamentos_indigena.csv"
     if not mpio_csv.exists():
         print("  No resultados_municipios_indigena.csv — skipping indigenous GeoJSON")
@@ -200,7 +200,7 @@ def build_indigena_geojson():
             matched += 1
 
     print(f"  Indigenous mpio matched: {matched}/{len(mpio_geo['features'])}")
-    with open(OUT / "colombia_results_indigena_map.geojson", "w") as f:
+    with open(OUT / "colombia_2026_municipio_senado_indigena.geojson", "w") as f:
         json.dump(_clean(mpio_geo), f, ensure_ascii=False)
     print("  Saved → colombia_results_indigena_map.geojson")
 
@@ -242,7 +242,7 @@ def build_indigena_geojson():
     dept_geo["features"] = kept
 
     print(f"  Indigenous dept matched: {dept_matched}")
-    with open(OUT / "colombia_results_indigena_dept.geojson", "w") as f:
+    with open(OUT / "colombia_2026_dept_senado_indigena.geojson", "w") as f:
         json.dump(_clean(dept_geo), f, ensure_ascii=False)
     print("  Saved → colombia_results_indigena_dept.geojson")
 

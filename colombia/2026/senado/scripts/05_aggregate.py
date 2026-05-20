@@ -14,7 +14,7 @@ import json
 import pandas as pd
 from pathlib import Path
 
-OUT = Path(__file__).parent.parent / "data" / "processed"
+OUT = Path(__file__).parent.parent / "data"
 
 def load_party_lookup() -> dict:
     with open(OUT / "parties.json") as f:
@@ -51,7 +51,7 @@ def aggregate():
     print("Loading data …")
     party_lookup = load_party_lookup()
     results = pd.read_csv(OUT / "resultados_puestos.csv", dtype={"puesto_code": str})
-    master  = pd.read_csv(OUT / "puestos_master.csv",  dtype=str)
+    master  = pd.read_csv(OUT / "colombia_2026_electoral_roll.csv",  dtype=str)
     mpio_bridge = pd.read_csv(OUT / "mpio_bridge.csv",  dtype=str)
 
     # Merge master info into results
@@ -94,7 +94,7 @@ def aggregate():
     )
 
     mpio_agg = compute_pcts(mpio_agg, party_cols, cand_cols, party_lookup)
-    mpio_agg.to_csv(OUT / "resultados_municipios.csv", index=False)
+    mpio_agg.to_csv(OUT / "results/colombia_2026_municipio_senado_nacional.csv", index=False)
     print(f"  resultados_municipios.csv: {len(mpio_agg)} municipios")
 
     # ── dept aggregation (national) ──────────────────────────────────────────
@@ -148,7 +148,7 @@ def aggregate():
         mpio_ind = mpio_ind.drop(columns=["censo", "mesas_total", "mesas_escrutadas"], errors="ignore")
         mpio_ind = mpio_ind.merge(mpio_nat_mesas, on="mpio_reg_code_7", how="left")
         mpio_ind["turnout_pct"] = (mpio_ind["votantes"] / mpio_ind["censo"].replace(0, pd.NA) * 100).round(2)
-        mpio_ind.to_csv(OUT / "resultados_municipios_indigena.csv", index=False)
+        mpio_ind.to_csv(OUT / "results/colombia_2026_municipio_senado_indigena.csv", index=False)
         print(f"  resultados_municipios_indigena.csv: {len(mpio_ind)} municipios")
 
         dept_ind = _ind_agg("dept_reg_code")
@@ -179,7 +179,7 @@ def aggregate():
         on="mpio_reg_code_7", how="left"
     )
     ext_agg = compute_pcts(ext_agg, party_cols, cand_cols, party_lookup)
-    ext_agg.to_csv(OUT / "resultados_exterior.csv", index=False)
+    ext_agg.to_csv(OUT / "results/colombia_2026_municipio_senado_nacional.csv", index=False)
     print(f"  resultados_exterior.csv: {len(ext_agg)} exterior groups")
 
     # ── national totals (single row) ─────────────────────────────────────────

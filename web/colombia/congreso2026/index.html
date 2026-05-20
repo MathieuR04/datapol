@@ -1180,13 +1180,13 @@
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
-  const BASE = "../../../colombia/2026/senado/data/processed/";
+  const BASE = "../../../colombia/2026/senado/data/";
   Promise.all([
-    fetch(BASE+"colombia_results_map.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
-    fetch(BASE+"colombia_results_dept.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
+    fetch(BASE+"colombia_2026_municipio_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
+    fetch(BASE+"colombia_2026_dept_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"national_parties.json").then(r=>r.json()).catch(()=>[]),
-    fetch(BASE+"colombia_results_indigena_map.geojson").then(r=>r.json()).catch(()=>null),
-    fetch(BASE+"colombia_results_indigena_dept.geojson").then(r=>r.json()).catch(()=>null),
+    fetch(BASE+"colombia_2026_municipio_senado_indigena.geojson").then(r=>r.json()).catch(()=>null),
+    fetch(BASE+"colombia_2026_dept_senado_indigena.geojson").then(r=>r.json()).catch(()=>null),
     fetch(BASE+"indigena_parties.json").then(r=>r.json()).catch(()=>[]),
     fetch(BASE+"senate_seats.json").then(r=>r.json()).catch(()=>null),
   ]).then(([mpio,dept,parties,mpioInd,deptInd,indParties,seats])=>{

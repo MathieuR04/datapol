@@ -7,15 +7,12 @@ __pycache__/
 node_modules/
 
 # Large generated files — reproducible by running the pipeline
-colombia/data/processed/resultados_puestos_raw.json
-colombia/data/processed/resultados_puestos.csv
-colombia/data/processed/resultados_mesas.csv
-colombia/data/processed/resultados_mesas_errors.csv
-colombia/2026/*/data/processed/resultados_puestos_raw.json
-colombia/2026/*/data/processed/resultados_puestos.csv
-colombia/2026/*/data/processed/resultados_mesas.csv
-colombia/2026/*/data/processed/resultados_mesas_errors.csv
+colombia/2026/*/data/results/colombia_*_mesa_*.csv
+colombia/2026/*/data/colombia_*_mesa_*.csv
+colombia/2026/senado/data/processed/resultados_puestos_raw.json
+colombia/2026/senado/data/processed/resultados_puestos.csv
+colombia/2026/senado/data/processed/resultados_mesas.csv
+colombia/2026/senado/data/processed/resultados_mesas_errors.csv
 
 # Large raw source files (download separately per README)
-colombia/data/raw/Divipole_definitiva_*.pdf
-colombia/shared/data/raw/Divipole_definitiva_*.pdf
+colombia/2026/metadata/raw/Divipole_definitiva_*.pdf

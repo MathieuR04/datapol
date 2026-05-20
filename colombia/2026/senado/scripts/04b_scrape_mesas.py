@@ -22,7 +22,7 @@ import pandas as pd
 import time
 from pathlib import Path
 
-OUT = Path(__file__).parent.parent / "data" / "processed"
+OUT = Path(__file__).parent.parent / "data"
 OUT.mkdir(parents=True, exist_ok=True)
 
 BASE_URL = "https://resultadospreccongreso2026.registraduria.gov.co/json/ACT/SE/{code}.json"
@@ -175,7 +175,7 @@ def merge_update(existing: pd.DataFrame, new_results: list[dict]) -> pd.DataFram
 def scrape(update_mode: bool = False):
     print(f"Mode: {'UPDATE (incomplete puestos only)' if update_mode else 'FULL'}")
 
-    master = pd.read_csv(OUT / "puestos_master.csv", dtype=str)
+    master = pd.read_csv(OUT / "colombia_2026_electoral_roll.csv", dtype=str)
 
     puesto_filter = None
     if update_mode:
