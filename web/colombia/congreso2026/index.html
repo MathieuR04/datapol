@@ -1501,12 +1501,12 @@
     });
     allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición",code:"oposicion"});
 
-    // Semicircle positions: 6 rows, seats distributed proportionally to radius
+    // Semicircle positions: 5 rows, inner=70, step=50, outer=270
     const cx=350, cy=310;
-    const radii=[70,105,140,175,210,245];
+    const radii=[70,120,170,220,270];
     const totalR=radii.reduce((s,r)=>s+r,0);
     const spr=radii.map(r=>Math.round(103*r/totalR));
-    spr[5]=103-spr[0]-spr[1]-spr[2]-spr[3]-spr[4];
+    spr[4]=103-spr[0]-spr[1]-spr[2]-spr[3];
 
     // Collect ALL positions with their angles, then sort by angle descending (left→right)
     const allPositions=[];
@@ -1519,7 +1519,7 @@
     });
     allPositions.sort((a,b)=>b.angle-a.angle);
 
-    const seatR=Math.min(7.5, radii[0]*Math.PI/spr[0]*0.40);
+    const seatR=Math.min(10, radii[0]*Math.PI/spr[0]*0.42);
     const svg=document.getElementById("parliament-svg");
     svg.innerHTML=allPositions.map((pos,i)=>{
       if(i>=allSeats.length) return "";
