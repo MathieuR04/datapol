@@ -91,7 +91,8 @@ def build_geojson():
 
     dept_keep = [
         "dept_map_num", "dept_name_reg", "dept_name_dane", "dept_dane_code",
-        "votantes", "censo", "votos_validos", "turnout_pct",
+        "votantes", "censo", "votos_validos", "votos_blanco", "votos_nulos",
+        "mesas_total", "mesas_escrutadas", "turnout_pct", "pct_blanco", "pct_nulo",
         "winner", "winner_votes", "winner_pct", "winner_color",
     ]
     dept_keep = [c for c in dept_keep if c in dept_results.columns]
@@ -117,13 +118,17 @@ def build_geojson():
     dept_dict = dept_results[dept_keep].set_index("dept_map_num").to_dict(orient="index")
 
     dept_matched = 0
+    kept_features = []
     for feat in dept_geo.get("features", []):
         props = feat.get("properties", {})
         key = str(props.get("name", "")).zfill(2)
-        if key in dept_dict:
-            props.update(dept_dict[key])
-            dept_matched += 1
+        if key not in dept_dict:
+            continue  # drop Consulados and any unmapped features
+        props.update(dept_dict[key])
+        dept_matched += 1
+        kept_features.append(feat)
 
+    dept_geo["features"] = kept_features
     print(f"  Dept features matched: {dept_matched}/{len(dept_geo.get('features',[]))}")
 
     dept_out = OUT / "colombia_results_dept.geojson"

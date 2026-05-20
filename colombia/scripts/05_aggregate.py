@@ -63,11 +63,14 @@ def aggregate():
         on="puesto_code", how="left"
     )
 
-    # Identify party and candidate columns
+    # Identify party and candidate columns — nacional and indígena are separate
     party_cols = [c for c in df.columns if c.startswith("party_")]
     cand_cols  = [c for c in df.columns if c.startswith("cand_")]
+    indig_cols = [c for c in df.columns if c.startswith("indig_")]
+    icand_cols = [c for c in df.columns if c.startswith("icand_")]
     base_cols = ["votantes", "abstencion", "votos_nulos", "votos_no_marcados",
                  "votos_blanco", "votos_validos", "censo", "mesas_total", "mesas_escrutadas"]
+    ind_base  = ["ind_votantes", "ind_votos_validos", "ind_votos_blanco", "ind_votos_nulos"]
 
     # ── national vs exterior ─────────────────────────────────────────────────
     nat = df[df["is_exterior"] == False].copy()   # is_exterior normalised to bool above
@@ -76,7 +79,9 @@ def aggregate():
     print(f"  Exterior puestos with results: {len(ext):,}")
 
     # ── municipio aggregation (national) ─────────────────────────────────────
-    grp_cols = base_cols + party_cols + cand_cols
+    # Only nacional columns (party_/cand_); indígena kept separate below.
+    ind_base_present = [c for c in ind_base if c in df.columns]
+    grp_cols = base_cols + party_cols + cand_cols + indig_cols + icand_cols + ind_base_present
     mpio_agg = (
         nat.groupby("mpio_reg_code_7")[grp_cols]
         .sum(numeric_only=True)
@@ -132,13 +137,54 @@ def aggregate():
     nat_total.to_csv(OUT / "resultados_nacional.csv", index=False)
     print(f"  resultados_nacional.csv: national totals saved")
 
-    # Print top-10 parties nationally
+    # ── nacional_parties.json (nacional + exterior, party_* only) ───────────
+    # Sums only the nacional constituency columns (party_XXXX), which now
+    # excludes the indígena constituency (indig_XXXX).  Exterior puestos are
+    # included because they vote in the nacional list.
     if party_cols:
-        totals = nat[party_cols].sum().sort_values(ascending=False)
-        print("\nTop 10 parties (national):")
-        for col, votes in totals.head(10).items():
-            name = col.split("|")[1] if "|" in col else col
-            print(f"  {name}: {int(votes):,}")
+        all_party = df[party_cols].sum().sort_values(ascending=False)
+        national_parties = []
+        for col, votes in all_party.items():
+            if int(votes) == 0:
+                continue
+            code = col.replace("party_", "")
+            info = party_lookup.get(code, {})
+            national_parties.append({
+                "code": code,
+                "nombre": info.get("nombre", code),
+                "color": info.get("color", "#888"),
+                "votes": int(votes),
+            })
+        with open(OUT / "national_parties.json", "w") as f:
+            json.dump(national_parties, f, ensure_ascii=False, indent=2)
+        print(f"  national_parties.json: {len(national_parties)} parties (nacional + exterior)")
+
+        print("\nTop 10 parties (nacional + exterior):")
+        for p in national_parties[:10]:
+            print(f"  {p['nombre']}: {p['votes']:,}")
+
+    # ── indigena_parties.json (circunscripción especial indígena) ────────────
+    if indig_cols:
+        all_indig = df[indig_cols].sum().sort_values(ascending=False)
+        ind_total_valid = int(df["ind_votos_validos"].sum()) if "ind_votos_validos" in df.columns else 0
+        indigena_parties = []
+        for col, votes in all_indig.items():
+            if int(votes) == 0:
+                continue
+            code = col.replace("indig_", "")
+            info = party_lookup.get(code, {})
+            indigena_parties.append({
+                "code": code,
+                "nombre": info.get("nombre", code),
+                "color": info.get("color", "#888"),
+                "votes": int(votes),
+            })
+        with open(OUT / "indigena_parties.json", "w") as f:
+            json.dump(indigena_parties, f, ensure_ascii=False, indent=2)
+        print(f"\n  indigena_parties.json: {len(indigena_parties)} parties")
+        for p in indigena_parties[:6]:
+            pct = p['votes']/ind_total_valid*100 if ind_total_valid else 0
+            print(f"  {p['nombre']}: {p['votes']:,} ({pct:.1f}%)")
 
     return mpio_agg, dept_agg
 
