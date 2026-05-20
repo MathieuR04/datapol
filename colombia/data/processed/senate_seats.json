@@ -1,7 +1,8 @@
 {
-  "total_valid": 18806189,
+  "total_valid": 19180050,
+  "votos_blanco_nacional": 612937,
   "threshold_pct": 3.0,
-  "threshold_votes": 564186,
+  "threshold_votes": 575402,
   "seats_total": 103,
   "seats_nacional": 100,
   "seats_indigena": 2,
@@ -12,7 +13,7 @@
       "nombre": "PACTO HISTÓRICO SENADO",
       "color": "#6B21A8",
       "votes": 4413636,
-      "vote_pct": 23.47,
+      "vote_pct": 23.01,
       "seats": 25,
       "list_type": "closed",
       "candidates": [
@@ -593,7 +594,7 @@
       "nombre": "PARTIDO CENTRO DEMOCRÁTICO",
       "color": "#1D4ED8",
       "votes": 3035715,
-      "vote_pct": 16.14,
+      "vote_pct": 15.83,
       "seats": 17,
       "list_type": "closed",
       "candidates": [
@@ -988,7 +989,7 @@
       "nombre": "PARTIDO LIBERAL COLOMBIANO",
       "color": "#DC2626",
       "votes": 2275182,
-      "vote_pct": 12.1,
+      "vote_pct": 11.86,
       "seats": 13,
       "list_type": "open",
       "candidates": [
@@ -1599,7 +1600,7 @@
       "nombre": "ALIANZA POR COLOMBIA",
       "color": "#15803D",
       "votes": 1904154,
-      "vote_pct": 10.13,
+      "vote_pct": 9.93,
       "seats": 10,
       "list_type": "open",
       "candidates": [
@@ -2186,7 +2187,7 @@
       "nombre": "PARTIDO CONSERVADOR COLOMBIANO",
       "color": "#1E40AF",
       "votes": 1863663,
-      "vote_pct": 9.91,
+      "vote_pct": 9.72,
       "seats": 10,
       "list_type": "open",
       "candidates": [
@@ -2785,7 +2786,7 @@
       "nombre": "PARTIDO DE LA UNIÓN POR LA GENTE - PARTIDO DE LA U",
       "color": "#D97706",
       "votes": 1565786,
-      "vote_pct": 8.33,
+      "vote_pct": 8.16,
       "seats": 9,
       "list_type": "open",
       "candidates": [
@@ -3396,7 +3397,7 @@
       "nombre": "COALICIÓN CAMBIO RADICAL - ALMA",
       "color": "#EA580C",
       "votes": 1248021,
-      "vote_pct": 6.64,
+      "vote_pct": 6.51,
       "seats": 7,
       "list_type": "open",
       "candidates": [
@@ -4001,7 +4002,7 @@
       "nombre": "AHORA COLOMBIA",
       "color": "#BE185D",
       "votes": 900606,
-      "vote_pct": 4.79,
+      "vote_pct": 4.7,
       "seats": 5,
       "list_type": "open",
       "candidates": [
@@ -4606,7 +4607,7 @@
       "nombre": "MOVIMIENTO SALVACIÓN NACIONAL",
       "color": "#7C3AED",
       "votes": 705924,
-      "vote_pct": 3.75,
+      "vote_pct": 3.68,
       "seats": 4,
       "list_type": "open",
       "candidates": [
@@ -4914,7 +4915,28 @@
       "color": "#B45309",
       "votes": 88294,
       "vote_pct": 35.97,
-      "seats": 1
+      "seats": 1,
+      "list_type": "open",
+      "candidates": [
+        {
+          "rank": 1,
+          "name": "MARTHA ISABEL PERALTA EPIEYU",
+          "votes": 61098,
+          "elected": true
+        },
+        {
+          "rank": 2,
+          "name": "JULIO CESAR ESTRADA CORDERO",
+          "votes": 8157,
+          "elected": false
+        },
+        {
+          "rank": 3,
+          "name": "NELSON CUCUÑAME LULIGO",
+          "votes": 7576,
+          "elected": false
+        }
+      ]
     },
     {
       "code": "0006",
@@ -4922,7 +4944,28 @@
       "color": "#92400E",
       "votes": 72927,
       "vote_pct": 29.71,
-      "seats": 1
+      "seats": 1,
+      "list_type": "open",
+      "candidates": [
+        {
+          "rank": 1,
+          "name": "JESUS OMERO CUASAPUD CHASPUENGAL",
+          "votes": 37609,
+          "elected": true
+        },
+        {
+          "rank": 2,
+          "name": "RUBEN MARINO BORJE",
+          "votes": 24567,
+          "elected": false
+        },
+        {
+          "rank": 3,
+          "name": "MARIA ESPERANZA TARAPUEZ GUEPUD",
+          "votes": 3797,
+          "elected": false
+        }
+      ]
     },
     {
       "code": "0188",
@@ -4930,7 +4973,28 @@
       "color": "#78350F",
       "votes": 56060,
       "vote_pct": 22.84,
-      "seats": 0
+      "seats": 0,
+      "list_type": "open",
+      "candidates": [
+        {
+          "rank": 1,
+          "name": "JOSE WILMAN TUMBO CHEPE",
+          "votes": 44702,
+          "elected": false
+        },
+        {
+          "rank": 2,
+          "name": "MANUEL JESUS MAVISOY JUAGIBIOY",
+          "votes": 4507,
+          "elected": false
+        },
+        {
+          "rank": 3,
+          "name": "LUZ EMILSE PANCHI",
+          "votes": 1516,
+          "elected": false
+        }
+      ]
     },
     {
       "code": "0285",
@@ -4938,11 +5002,32 @@
       "color": "#811EC5",
       "votes": 16628,
       "vote_pct": 6.77,
-      "seats": 0
+      "seats": 0,
+      "list_type": "open",
+      "candidates": [
+        {
+          "rank": 1,
+          "name": "RICHARD HUMBERTO FUELANTALA DELGADO",
+          "votes": 9992,
+          "elected": false
+        },
+        {
+          "rank": 2,
+          "name": "ANTONIO DE JESUS GUEVARA BETANCUR",
+          "votes": 2412,
+          "elected": false
+        },
+        {
+          "rank": 3,
+          "name": "ZUNILDA AMAYA URIANA",
+          "votes": 1447,
+          "elected": false
+        }
+      ]
     }
   ],
   "oposicion": {
     "seats": 1,
-    "note": "Asignado al segundo candidato presidencial — pendiente segunda vuelta"
+    "note": "Estatuto de la Oposición — asignado tras segunda vuelta presidencial"
   }
 }

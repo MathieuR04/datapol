@@ -344,18 +344,33 @@
 
     /* ── Cámara view ──────────────────────────────────────────────────────── */
     #camara-view { flex: 1; display: none; flex-direction: row; overflow: hidden; background: var(--bg); min-height: 0; }
-    .cam-chart { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem 1rem 0.5rem; min-width: 0; }
-    #parliament-svg { width: 100%; max-width: 580px; height: auto; display: block; }
+    .cam-chart { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem 1rem 0.5rem; min-width: 0; position: relative; }
+    #parliament-svg { width: 100%; height: auto; display: block; }
     .cam-subtitle { font-size: 9px; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 0.5rem; text-align: center; }
-    .cam-legend { width: 230px; min-width: 230px; border-left: 1px solid var(--border); overflow-y: auto; }
+    .cam-legend { width: 240px; min-width: 240px; border-left: 1px solid var(--border); overflow-y: auto; }
     .cam-legend::-webkit-scrollbar { width: 3px; }
     .cam-legend::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
     .cam-legend-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); background: var(--surface); }
-    .cam-legend-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .cam-legend-row { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .cam-legend-row:hover { background: var(--terra-lt); }
+    .cam-legend-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
     .cam-legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
     .cam-legend-name { font-size: 9px; color: var(--text); flex: 1; line-height: 1.2; }
     .cam-legend-seats { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 18px; line-height: 1; color: var(--terra); min-width: 24px; text-align: right; }
     .cam-legend-divider { font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); background: var(--surface); margin-top: 0.25rem; }
+    #cam-cand-panel { display: none; position: absolute; top: 0.75rem; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border2); border-radius: 3px; width: 300px; max-height: 85%; overflow-y: auto; z-index: 100; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    #cam-cand-panel.open { display: block; }
+    #cam-cand-panel::-webkit-scrollbar { width: 3px; }
+    #cam-cand-panel::-webkit-scrollbar-thumb { background: var(--sand); }
+    .cam-panel-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; position: sticky; top: 0; background: var(--surface); }
+    .cam-panel-close { margin-left: auto; cursor: pointer; color: var(--dim); font-size: 14px; line-height: 1; }
+    .cam-panel-close:hover { color: var(--terra); }
+    .cam-panel-cand { display: flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; font-size: 10px; border-bottom: 1px solid var(--border); }
+    .cam-panel-cand.elected { background: #f0fdf4; }
+    .cam-panel-rank { color: var(--dim); min-width: 22px; font-size: 9px; }
+    .cam-panel-name { flex: 1; color: var(--text); }
+    .cam-panel-votes { font-size: 9px; color: var(--muted); }
+    .cam-panel-tick { color: #16a34a; font-weight: 700; min-width: 16px; text-align: center; }
 
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
@@ -384,7 +399,8 @@
 
 <!-- Mode bar -->
 <div class="mode-bar">
-  <button class="mode-tab active" data-mode="mapa">Mapa</button>
+  <button class="mode-tab active" data-mode="nacional">Mapa Nacional</button>
+  <button class="mode-tab" data-mode="indigena">Mapa Indígena</button>
   <button class="mode-tab" data-mode="resultados">Resultados</button>
   <button class="mode-tab" data-mode="camara">Cámara</button>
 </div>
@@ -427,11 +443,6 @@
     <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
 
     <div class="map-controls">
-      <!-- Constituency toggle -->
-      <div class="ctrl-row">
-        <button class="const-btn active" data-const="nacional">Nacional</button>
-        <button class="const-btn" data-const="indigena">Indígena</button>
-      </div>
       <!-- Level toggle -->
       <div class="ctrl-row">
         <button class="level-btn active" data-level="municipio">Municipio</button>
@@ -487,8 +498,9 @@
 <!-- Cámara view -->
 <div id="camara-view">
   <div class="cam-chart">
-    <svg id="parliament-svg" viewBox="0 0 560 310" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="parliament-svg" viewBox="0 0 700 390" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="cam-subtitle" id="cam-subtitle">103 escaños · Senado Colombia 2026</div>
+    <div id="cam-cand-panel"></div>
   </div>
   <div class="cam-legend" id="cam-legend"></div>
 </div>
@@ -598,8 +610,7 @@
   let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
   let activeLayer = null;
   let previousTab = "partidos";
-  let currentMode = "mapa";
-  let currentConstituency = "nacional";
+  let currentMode = "nacional";
 
   // ── Style functions ───────────────────────────────────────────────────────
   function styleMpio(feat) {
@@ -876,8 +887,11 @@
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
   function buildPartyList() {
-    const parties = (currentConstituency==="indigena" ? indigenaParties : nationalParties) || [];
-    const totalValid = parties.reduce((s,p)=>s+p.votes,0);
+    const parties = (currentMode==="indigena" ? indigenaParties : nationalParties) || [];
+    // For nacional, use true total_valid (includes blank votes); for indigena sum party votes
+    const totalValid = currentMode==="indigena"
+      ? parties.reduce((s,p)=>s+p.votes,0)
+      : (seatsData?.total_valid || parties.reduce((s,p)=>s+p.votes,0));
     const top = parties.slice(0,20);
     const maxV = top[0]?.votes||1;
 
@@ -997,38 +1011,34 @@
   // ── Mode switching ────────────────────────────────────────────────────────
   function switchMode(mode) {
     currentMode=mode;
+    const isMap = mode==="nacional" || mode==="indigena";
     document.querySelectorAll(".mode-tab").forEach(t=>t.classList.toggle("active",t.dataset.mode===mode));
-    document.querySelector(".body").style.display       = mode==="mapa"       ? "flex" : "none";
+    document.querySelector(".body").style.display            = isMap             ? "flex" : "none";
     document.getElementById("resultados-view").style.display = mode==="resultados" ? "flex" : "none";
     document.getElementById("camara-view").style.display     = mode==="camara"     ? "flex" : "none";
-    document.querySelector(".bottombar").style.display  = mode==="mapa"       ? "flex" : "none";
+    document.querySelector(".bottombar").style.display       = isMap             ? "flex" : "none";
+    if (isMap) {
+      if (mode==="indigena" && mpioIndData) { mpioData=mpioIndData; deptData=deptIndData; }
+      else                                  { mpioData=mpioNatData; deptData=deptNatData; }
+      deptFeatMap={}; deptBoundsMap={}; deptNameMap={};
+      (deptData||{features:[]}).features.forEach(f=>{
+        const key=f.properties?.name||"";
+        deptNameMap[key]=f.properties?.dept_name_reg||key;
+        deptFeatMap[key]=f;
+      });
+      if(mpioLayer){map.removeLayer(mpioLayer);mpioLayer=null;}
+      if(deptLayer){map.removeLayer(deptLayer);deptLayer=null;}
+      if(deptBoundaryLayer){map.removeLayer(deptBoundaryLayer);deptBoundaryLayer=null;}
+      if(bubbleLayer){map.removeLayer(bubbleLayer);bubbleLayer=null;}
+      activeLayer=null; hideDetail();
+      render(); buildPartyList(); buildDeptList();
+      updateStats((mpioData||{features:[]}).features);
+      setTimeout(()=>map.invalidateSize(),50);
+    }
     if (mode==="resultados" && seatsData) renderResultados();
     if (mode==="camara"     && seatsData) renderCamara();
-    if (mode==="mapa") setTimeout(()=>map.invalidateSize(),50);
   }
   document.querySelectorAll(".mode-tab").forEach(t=>t.addEventListener("click",()=>switchMode(t.dataset.mode)));
-
-  // ── Constituency switching ────────────────────────────────────────────────
-  function switchConstituency(c) {
-    currentConstituency=c;
-    document.querySelectorAll(".const-btn").forEach(b=>b.classList.toggle("active",b.dataset.const===c));
-    if (c==="indigena" && mpioIndData) { mpioData=mpioIndData; deptData=deptIndData; }
-    else                               { mpioData=mpioNatData; deptData=deptNatData; }
-    // Rebuild dept lookups
-    deptFeatMap={}; deptBoundsMap={}; deptNameMap={};
-    (deptData||{features:[]}).features.forEach(f=>{
-      const key=f.properties?.name||"";
-      deptNameMap[key]=f.properties?.dept_name_reg||key;
-      deptFeatMap[key]=f;
-    });
-    if(mpioLayer){map.removeLayer(mpioLayer);mpioLayer=null;}
-    if(deptLayer){map.removeLayer(deptLayer);deptLayer=null;}
-    if(deptBoundaryLayer){map.removeLayer(deptBoundaryLayer);deptBoundaryLayer=null;}
-    if(bubbleLayer){map.removeLayer(bubbleLayer);bubbleLayer=null;}
-    activeLayer=null; hideDetail();
-    render(); buildPartyList(); buildDeptList();
-  }
-  document.querySelectorAll(".const-btn").forEach(b=>b.addEventListener("click",()=>switchConstituency(b.dataset.const)));
 
   // ── Resultados view ───────────────────────────────────────────────────────
   function renderResultados() {
@@ -1071,19 +1081,38 @@
       </div>`;
     });
 
+    const indTotal = seatsData.indigena.reduce((s,p)=>s+p.votes,0);
     h+=`<div class="res-section-head" style="margin-top:1.25rem">Circunscripción Especial Indígena
-      <span class="res-section-sub">2 escaños</span></div>
-      <div class="res-ind-grid">`;
-    seatsData.indigena.filter(p=>p.seats>0).forEach(p=>{
+      <span class="res-section-sub">2 escaños · ${f(indTotal)} votos válidos</span></div>`;
+    seatsData.indigena.forEach(p=>{
       const col=partyColor(p.nombre,p.color);
-      h+=`<div class="res-ind-card" style="border-left:3px solid ${col}">
-        <div class="res-ind-name">${p.nombre}</div>
-        <div class="res-ind-stat"><span>${f(p.votes)} votos</span><span>${fp(p.vote_pct)}</span></div>
-        <div class="res-ind-seats">${p.seats}</div>
-        <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">escaño${p.seats!==1?"s":""}</div>
+      const lbl=p.list_type==="closed"?"Lista cerrada":"Lista abierta";
+      const cands=p.candidates||[];
+      const show=Math.max(p.seats+4, 10);
+      const shown=cands.slice(0,show);
+      const more=cands.length-show;
+      h+=`<div class="res-party">
+        <div class="res-party-header" onclick="(function(el){var cl=el.nextElementSibling.classList;cl.toggle('open');el.querySelector('.res-toggle').textContent=cl.contains('open')?'▲':'▼';})(this)">
+          <div class="res-swatch" style="background:${col}"></div>
+          <div style="flex:1;min-width:0">
+            <div class="res-name">${p.nombre}</div>
+            <div class="res-votes">${f(p.votes)} votos</div>
+          </div>
+          <span class="res-pct">${fp(p.vote_pct)}</span>
+          <div class="res-seats-wrap"><span class="res-seats">${p.seats}</span><span class="res-seats-label">escaño${p.seats!==1?"s":""}</span></div>
+          ${cands.length?`<span class="res-listtype">${lbl}</span><span class="res-toggle">▼</span>`:""}
+        </div>
+        ${cands.length?`<div class="cand-list">
+          ${shown.map(c=>`<div class="cand-row${c.elected?" elected":""}">
+            <span class="cand-rank">${c.rank}.</span>
+            <span class="cand-name">${c.name}</span>
+            ${p.list_type==="open"?`<span class="cand-votes">${f(c.votes)}</span>`:""}
+            ${c.elected?'<span class="cand-tick">✓</span>':'<span class="cand-dash">—</span>'}
+          </div>`).join("")}
+          ${more>0?`<div class="cand-row"><span class="cand-rank" style="color:var(--dim)">…</span><span class="cand-name" style="color:var(--muted)">${more} candidatos más</span></div>`:""}
+        </div>`:""}
       </div>`;
     });
-    h+=`</div>`;
 
     h+=`<div class="res-section-head" style="margin-top:0.75rem">Estatuto de la Oposición
       <span class="res-section-sub">1 escaño · ${seatsData.oposicion.note}</span></div>
@@ -1099,79 +1128,128 @@
     // Political left→right order for Colombia
     const POLITICAL_ORDER=["0092","0002","0009","0057","0003","0044","0043","0017","0010"];
 
-    // Build ordered seat color list
+    // Build ordered seat list (code attached for SVG highlighting)
     const allSeats=[];
     POLITICAL_ORDER.forEach(code=>{
       const p=seatsData.parties.find(x=>x.code===code);
-      if (!p) return;
+      if(!p)return;
       const col=partyColor(p.nombre,p.color);
-      for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre});
+      for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre,code});
     });
     seatsData.parties.forEach(p=>{
       if(!POLITICAL_ORDER.includes(p.code)){
         const col=partyColor(p.nombre,p.color);
-        for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre});
+        for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre,code:p.code});
       }
     });
     seatsData.indigena.filter(p=>p.seats>0).forEach(p=>{
       const col=partyColor(p.nombre,p.color);
-      for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre});
+      for(let i=0;i<p.seats;i++) allSeats.push({color:col,nombre:p.nombre,code:`ind_${p.code}`});
     });
-    allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición (pendiente)"});
+    allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición",code:"oposicion"});
 
-    // Semicircle positions: 4 rows
-    const cx=280, cy=298;
-    const radii=[88,136,184,232];
+    // Semicircle positions: 4 rows, seats distributed proportionally to radius
+    const cx=350, cy=375;
+    const radii=[110,170,230,290];
     const totalR=radii.reduce((s,r)=>s+r,0);
     const spr=radii.map(r=>Math.round(103*r/totalR));
     spr[3]=103-spr[0]-spr[1]-spr[2];
 
-    const positions=[];
+    // Collect ALL positions with their angles, then sort by angle descending (left→right)
+    const allPositions=[];
     spr.forEach((n,row)=>{
       const r=radii[row];
       for(let i=0;i<n;i++){
         const angle=Math.PI*(n-0.5-i)/n;
-        positions.push({x:cx+r*Math.cos(angle), y:cy-r*Math.sin(angle)});
+        allPositions.push({x:cx+r*Math.cos(angle), y:cy-r*Math.sin(angle), angle});
       }
     });
+    allPositions.sort((a,b)=>b.angle-a.angle);
 
-    const seatR=Math.min(6.2, radii[0]*Math.PI/spr[0]*0.40);
+    const seatR=Math.min(7.5, radii[0]*Math.PI/spr[0]*0.40);
     const svg=document.getElementById("parliament-svg");
-    svg.innerHTML=positions.map((pos,i)=>{
+    svg.innerHTML=allPositions.map((pos,i)=>{
       if(i>=allSeats.length) return "";
       const s=allSeats[i];
-      return `<circle cx="${pos.x.toFixed(1)}" cy="${pos.y.toFixed(1)}" r="${seatR.toFixed(1)}" fill="${s.color}" stroke="#f5f0e8" stroke-width="0.7"><title>${s.nombre}</title></circle>`;
+      return `<circle cx="${pos.x.toFixed(1)}" cy="${pos.y.toFixed(1)}" r="${seatR.toFixed(1)}" fill="${s.color}" stroke="#f5f0e8" stroke-width="0.8" data-code="${s.code}" class="parl-seat"><title>${s.nombre}</title></circle>`;
     }).join("");
 
-    // Legend
+    // Legend with click → candidate panel
     const leg=document.getElementById("cam-legend");
+    const fmtN2=n=>parseInt(n).toLocaleString("es-CO");
+    function legendRow(col,name,seats,code,candidates,listType){
+      return `<div class="cam-legend-row" data-code="${code}" data-candidates='${JSON.stringify(candidates||[])}' data-listtype="${listType||""}">
+        <div class="cam-legend-swatch" style="background:${col}"></div>
+        <span class="cam-legend-name">${name}</span>
+        <span class="cam-legend-seats">${seats}</span>
+      </div>`;
+    }
+
     let lh=`<div class="cam-legend-head">CIRCUNSCRIPCIÓN NACIONAL — 100 ESC.</div>`;
     POLITICAL_ORDER.forEach(code=>{
       const p=seatsData.parties.find(x=>x.code===code);
-      if(!p) return;
-      const col=partyColor(p.nombre,p.color);
-      lh+=`<div class="cam-legend-row">
-        <div class="cam-legend-swatch" style="background:${col}"></div>
-        <span class="cam-legend-name">${p.nombre}</span>
-        <span class="cam-legend-seats">${p.seats}</span>
-      </div>`;
+      if(!p)return;
+      lh+=legendRow(partyColor(p.nombre,p.color),p.nombre,p.seats,code,p.candidates,p.list_type);
     });
     lh+=`<div class="cam-legend-divider">CIRC. ESPECIAL INDÍGENA — 2 ESC.</div>`;
     seatsData.indigena.filter(p=>p.seats>0).forEach(p=>{
-      const col=partyColor(p.nombre,p.color);
-      lh+=`<div class="cam-legend-row">
-        <div class="cam-legend-swatch" style="background:${col}"></div>
-        <span class="cam-legend-name">${p.nombre}</span>
-        <span class="cam-legend-seats">${p.seats}</span>
-      </div>`;
+      lh+=legendRow(partyColor(p.nombre,p.color),p.nombre,p.seats,`ind_${p.code}`,p.candidates,p.list_type);
     });
     lh+=`<div class="cam-legend-divider">ESTATUTO DE LA OPOSICIÓN — 1 ESC.</div>
-    <div class="cam-legend-row">
+    <div class="cam-legend-row" data-code="oposicion">
       <div class="cam-legend-swatch" style="background:#94a3b8"></div>
-      <span class="cam-legend-name">Pendiente segunda vuelta presidencial</span>
+      <span class="cam-legend-name">Asignado tras segunda vuelta presidencial</span>
       <span class="cam-legend-seats">1</span>
     </div>`;
     leg.innerHTML=lh;
+
+    // Legend click → highlight seats + show candidate panel
+    let selectedCode=null;
+    leg.querySelectorAll(".cam-legend-row[data-code]").forEach(row=>{
+      row.addEventListener("click",()=>{
+        const code=row.dataset.code;
+        const panel=document.getElementById("cam-cand-panel");
+        if(selectedCode===code){
+          // Deselect
+          selectedCode=null;
+          leg.querySelectorAll(".cam-legend-row").forEach(r=>r.classList.remove("selected"));
+          svg.querySelectorAll(".parl-seat").forEach(c=>c.setAttribute("opacity","1"));
+          panel.classList.remove("open");
+          return;
+        }
+        selectedCode=code;
+        leg.querySelectorAll(".cam-legend-row").forEach(r=>r.classList.toggle("selected",r.dataset.code===code));
+        svg.querySelectorAll(".parl-seat").forEach(c=>{
+          c.setAttribute("opacity",c.dataset.code===code?"1":"0.15");
+        });
+
+        const cands=JSON.parse(row.dataset.candidates||"[]");
+        const listType=row.dataset.listtype||"open";
+        const name=row.querySelector(".cam-legend-name").textContent;
+        const col=row.querySelector(".cam-legend-swatch").style.background;
+        if(!cands.length){panel.classList.remove("open");return;}
+
+        const elected=cands.filter(c=>c.elected);
+        panel.innerHTML=`<div class="cam-panel-head">
+          <div class="cam-legend-swatch" style="background:${col};flex-shrink:0"></div>
+          <span style="flex:1;font-size:8px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)">${name}</span>
+          <span class="cam-panel-close">✕</span>
+        </div>`+elected.map(c=>`<div class="cam-panel-cand elected">
+          <span class="cam-panel-rank">${c.rank}.</span>
+          <span class="cam-panel-name">${c.name}</span>
+          ${listType==="open"?`<span class="cam-panel-votes">${fmtN2(c.votes)}</span>`:""}
+          <span class="cam-panel-tick">✓</span>
+        </div>`).join("");
+        panel.classList.add("open");
+        panel.querySelector(".cam-panel-close").addEventListener("click",e=>{
+          e.stopPropagation();
+          selectedCode=null;
+          leg.querySelectorAll(".cam-legend-row").forEach(r=>r.classList.remove("selected"));
+          svg.querySelectorAll(".parl-seat").forEach(c=>c.setAttribute("opacity","1"));
+          panel.classList.remove("open");
+        });
+      });
+    });
   }
 
   document.querySelectorAll(".level-btn").forEach(btn=>{

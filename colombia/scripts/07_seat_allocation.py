@@ -66,6 +66,11 @@ def main():
     with open(OUT / "parties.json") as f:
         party_lookup = json.load(f)         # for color overrides
 
+    # True total valid votes = party votes + blank votes (blanks are valid in Colombia)
+    nacional_csv = pd.read_csv(OUT / "resultados_nacional.csv")
+    true_total_valid = int(nacional_csv["votos_validos"].iloc[0])
+    votos_blanco_nacional = int(nacional_csv["votos_blanco"].iloc[0])
+
     # Colour overrides (nomenclator colours are often wrong)
     COLOUR_OVERRIDES = {
         "PACTO HISTÓRICO SENADO":                               "#6B21A8",
@@ -88,7 +93,9 @@ def main():
         return COLOUR_OVERRIDES.get(nombre, fallback)
 
     # ── Nacional seat allocation ──────────────────────────────────────────────
-    total_valid = sum(p["votes"] for p in all_parties)
+    # Use true total_valid from the nacional CSV (includes blank votes)
+    # Threshold is computed against total valid votes (party votes + blanks)
+    total_valid = true_total_valid
     threshold_votes = total_valid * THRESHOLD_PCT / 100
 
     qualifying = [p for p in all_parties if p["votes"] >= threshold_votes]
@@ -102,8 +109,10 @@ def main():
     # ── Candidate aggregation ─────────────────────────────────────────────────
     print("Loading puestos for candidate aggregation …")
     df = pd.read_csv(OUT / "resultados_puestos.csv", dtype={"puesto_code": str})
-    cand_cols = [c for c in df.columns if c.startswith("cand_")]
-    nat_cands = df[cand_cols].sum()
+    cand_cols  = [c for c in df.columns if c.startswith("cand_")]
+    icand_cols = [c for c in df.columns if c.startswith("icand_")]
+    nat_cands  = df[cand_cols].sum()
+    ind_cands  = df[icand_cols].sum()
 
     # Detect list type: closed if ≥80% of candidate votes are in SOLO POR LA LISTA
     def detect_list_type(code: str) -> str:
@@ -143,39 +152,73 @@ def main():
     ind_votes_map = {p["code"]: p["votes"] for p in indig_parties}
     ind_seats_map = dhondt(ind_votes_map, SEATS_INDIGENA)
 
+    # Detect indigenous list type using icand_ columns (same 80% rule)
+    def detect_ind_list_type(code: str) -> str:
+        solo = next((v for col, v in ind_cands.items()
+                     if col.startswith(f"icand_{code}_000000")), 0)
+        total = sum(v for col, v in ind_cands.items()
+                    if col.startswith(f"icand_{code}_") and v > 0)
+        return "closed" if total > 0 and (solo / total) >= 0.80 else "open"
+
+    def parse_ind_candidates(code: str, list_type: str) -> list[dict]:
+        prefix = f"icand_{code}_"
+        party_series = {col: int(val) for col, val in ind_cands.items()
+                        if col.startswith(prefix) and int(val) >= 0}
+        candidates = []
+        for col, votes in party_series.items():
+            rest = col[len(prefix):]
+            pipe = rest.index("|") if "|" in rest else len(rest)
+            codcan = int(rest[:pipe])
+            name = rest[pipe + 1:] if "|" in rest else ""
+            if codcan == 0 or not name:
+                continue
+            candidates.append({"codcan": codcan, "name": name, "votes": votes})
+        if list_type == "closed":
+            candidates.sort(key=lambda c: c["codcan"])
+        else:
+            candidates.sort(key=lambda c: -c["votes"])
+        return [{"rank": i + 1, "name": c["name"], "votes": c["votes"]} for i, c in enumerate(candidates)]
+
     indigena_out = []
     for p in indig_parties:
         code = p["code"]
         n = ind_seats_map[code]
         if n == 0 and p["votes"] / ind_total < 0.05:
             continue                 # omit tiny parties with no seats
+        lt = detect_ind_list_type(code)
+        cands = parse_ind_candidates(code, lt)
+        for i, c in enumerate(cands):
+            c["elected"] = i < n
         indigena_out.append({
-            "code":     code,
-            "nombre":   p["nombre"],
-            "color":    color(p["nombre"], p["color"]),
-            "votes":    p["votes"],
-            "vote_pct": round(p["votes"] / ind_total * 100, 2),
-            "seats":    n,
+            "code":       code,
+            "nombre":     p["nombre"],
+            "color":      color(p["nombre"], p["color"]),
+            "votes":      p["votes"],
+            "vote_pct":   round(p["votes"] / ind_total * 100, 2),
+            "seats":      n,
+            "list_type":  lt,
+            "candidates": cands,
         })
 
     print(f"\nIndígena ({ind_total:,} valid votes):")
     for p in indigena_out:
-        print(f"  {p['nombre'][:45]:45s}  {p['votes']:>8,}  {p['seats']} seat(s)")
+        print(f"  {p['nombre'][:45]:45s}  {p['votes']:>8,}  {p['seats']} seat(s)  {p['list_type']}")
 
     # ── Write output ──────────────────────────────────────────────────────────
     out = {
-        "total_valid":      total_valid,
-        "threshold_pct":    THRESHOLD_PCT,
-        "threshold_votes":  round(threshold_votes),
-        "seats_total":      103,
-        "seats_nacional":   SEATS_NACIONAL,
-        "seats_indigena":   SEATS_INDIGENA,
-        "seats_oposicion":  1,
-        "parties":          parties_out,
-        "indigena":         indigena_out,
+        "total_valid":          total_valid,
+        "votos_blanco_nacional": votos_blanco_nacional,
+        "threshold_pct":        THRESHOLD_PCT,
+        "threshold_votes":      round(threshold_votes),
+        "seats_total":          103,
+        "seats_nacional":       SEATS_NACIONAL,
+        "seats_indigena":       SEATS_INDIGENA,
+        "seats_oposicion":      1,
+        "parties":              parties_out,
+        "indigena":             indigena_out,
         "oposicion": {
             "seats": 1,
-            "note":  "Asignado al segundo candidato presidencial — pendiente segunda vuelta"
+            "note":  "Estatuto de la Oposición — asignado tras segunda vuelta presidencial"
         },
     }
 

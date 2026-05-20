@@ -204,16 +204,27 @@ def scrape(update_mode: bool = False):
         existing_path = OUT / "resultados_puestos.csv"
         if existing_path.exists():
             existing = pd.read_csv(existing_path, dtype={"puesto_code": str})
-            updated_codes = set(new_df["puesto_code"])
+            existing_esc = pd.to_numeric(existing["mesas_escrutadas"], errors="coerce").fillna(0)
+            existing_esc_map = dict(zip(existing["puesto_code"], existing_esc))
+            new_esc = pd.to_numeric(new_df["mesas_escrutadas"], errors="coerce").fillna(0).values
+            old_esc = new_df["puesto_code"].map(existing_esc_map).fillna(0).values
+            # Only take the new row if it has >= mesas_escrutadas as the existing row
+            # This prevents --update from clobbering complete data with a flaky API response
+            improve_mask = new_esc >= old_esc
+            improved = new_df[improve_mask]
+            regressed = new_df[~improve_mask]
+            if len(regressed) > 0:
+                print(f"  Skipping {len(regressed)} puestos where new data has fewer mesas escrutadas")
+            updated_codes = set(improved["puesto_code"])
             kept = existing[~existing["puesto_code"].isin(updated_codes)]
             # Align columns before concat
-            all_cols = list(dict.fromkeys(list(existing.columns) + list(new_df.columns)))
+            all_cols = list(dict.fromkeys(list(existing.columns) + list(improved.columns)))
             new_df = pd.concat(
                 [kept.reindex(columns=all_cols, fill_value=0),
-                 new_df.reindex(columns=all_cols, fill_value=0)],
+                 improved.reindex(columns=all_cols, fill_value=0)],
                 ignore_index=True
             )
-            print(f"  Merged: {len(new_df):,} total puesto rows")
+            print(f"  Merged: {len(new_df):,} total puesto rows ({len(improved)} updated)")
 
     new_df.to_csv(OUT / "resultados_puestos.csv", index=False)
     print(f"Saved → resultados_puestos.csv  ({len(new_df):,} rows, {len(new_df.columns)} cols)")
