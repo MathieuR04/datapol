@@ -270,20 +270,33 @@
     .detail-panel.active { display: flex; }
     .detail-back { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: color 0.15s; }
     .detail-back:hover { color: var(--terra); }
-    .detail-hero { padding: 0.75rem 0.75rem 0.5rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
-    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; letter-spacing: 0.03em; }
+    .detail-hero { padding: 0.65rem 0.75rem 0.45rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; letter-spacing: 0.03em; }
     .detail-winner-tag { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--terra-dk); }
     .detail-winner-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
-    .detail-stats-grid { display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; }
-    .dstat { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
-    .dstat:nth-child(even) { border-right: none; }
-    .dstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .dstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1.1; color: var(--text); margin-top: 1px; }
-    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.5rem 0.75rem 0.25rem; flex-shrink: 0; }
-    .detail-party { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border); }
-    .detail-party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 18px; line-height: 1; flex-shrink: 0; min-width: 48px; }
-    .detail-party-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
-    .detail-party-name { font-size: 10px; color: var(--text); flex: 1; line-height: 1.2; }
+    /* Top KPI row: censo | participación | mesas */
+    .detail-kpi-row { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .dkpi { flex: 1; padding: 0.4rem 0.6rem; border-right: 1px solid var(--border); }
+    .dkpi:last-child { border-right: none; }
+    .dkpi-label { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .dkpi-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1.1; color: var(--text); margin-top: 1px; }
+    .dkpi-val.hi { color: var(--terra); }
+    /* Breakdown table */
+    .detail-breakdown { flex-shrink: 0; border-bottom: 1px solid var(--border); }
+    .dbreak-row { display: flex; align-items: center; padding: 0.28rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .dbreak-row:last-child { border-bottom: none; }
+    .dbreak-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+    .dbreak-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); min-width: 64px; text-align: right; }
+    .dbreak-pct { font-size: 9px; color: var(--muted); min-width: 42px; text-align: right; padding-left: 0.5rem; }
+    .dbreak-row.total { background: var(--surface); }
+    .dbreak-row.total .dbreak-label { color: var(--text); font-weight: 700; }
+    .dbreak-row.total .dbreak-val { color: var(--terra); }
+    /* Parties */
+    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.75rem 0.2rem; flex-shrink: 0; }
+    .detail-party { display: flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .detail-party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .detail-party-swatch { width: 7px; height: 7px; border-radius: 1px; flex-shrink: 0; }
+    .detail-party-name { font-size: 9.5px; color: var(--text); flex: 1; line-height: 1.2; }
     .detail-party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
 
     /* ── Bottom bar ───────────────────────────────────────────────────────── */
@@ -487,7 +500,8 @@
         <div class="detail-mpio" id="d-mpio">—</div>
         <div class="detail-winner-tag" id="d-winner-tag"></div>
       </div>
-      <div class="detail-stats-grid" id="d-stats"></div>
+      <div class="detail-kpi-row" id="d-kpis"></div>
+      <div class="detail-breakdown" id="d-breakdown"></div>
       <div class="detail-sect-head">Partidos</div>
       <div id="d-parties"></div>
     </div>
@@ -834,26 +848,50 @@
       wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
     } else { wt.textContent = "Sin datos"; }
 
-    const vv = parseInt(p.votos_validos)||0;
-    const stats = [
-      ["Participación", fmtP(p.turnout_pct)],
-      ["Votos válidos", fmtN(p.votos_validos)],
-      ["En blanco", fmtN(p.votos_blanco)],
-      ["Nulos", fmtN(p.votos_nulos)],
-      ["Mesas esc.", fmtN(p.mesas_escrutadas)],
-      ["Mesas total", fmtN(p.mesas_total)],
-    ];
-    document.getElementById("d-stats").innerHTML = stats.map(([l,v])=>
-      `<div class="dstat"><div class="dstat-label">${l}</div><div class="dstat-val">${v}</div></div>`
-    ).join("");
+    // Derived values
+    const vv   = parseInt(p.votos_validos)||0;
+    const vt   = parseInt(p.votantes)||0;
+    const cen  = parseInt(p.censo)||0;
+    const bla  = parseInt(p.votos_blanco)||0;
+    const nul  = parseInt(p.votos_nulos)||0;
+    const nom  = parseInt(p.votos_no_marcados) || Math.max(0, vt - vv - nul);
+    const meE  = parseInt(p.mesas_escrutadas)||0;
+    const meT  = parseInt(p.mesas_total)||0;
+    const vpar = Math.max(0, vv - bla);      // votos por partido
+    const pct  = (n, d) => d>0 ? (n/d*100).toFixed(1)+"%" : "—";
 
-    let top5=[];
-    try{top5=JSON.parse(p.top5_candidates||"[]");}catch(e){}
-    document.getElementById("d-parties").innerHTML = top5.filter(c=>c.votes>0).map(c=>{
-      const pct=vv?(c.votes/vv*100).toFixed(1):"0.0";
+    // KPI row: censo | participación | mesas
+    document.getElementById("d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Censo</div><div class="dkpi-val">${fmtN(cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${pct(vt,cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Mesas cont.</div><div class="dkpi-val">${fmtN(meE)}/${fmtN(meT)}</div></div>`;
+
+    // Breakdown table (percentages over votos válidos)
+    const rows = [
+      ["No marcados", nom, pct(nom,vv)],
+      ["Votos nulos",  nul, pct(nul,vv)],
+      ["En blanco",    bla, pct(bla,vv)],
+      ["Votos partido",vpar,pct(vpar,vv)],
+    ];
+    document.getElementById("d-breakdown").innerHTML =
+      rows.map(([l,v,p])=>`<div class="dbreak-row">
+        <span class="dbreak-label">${l}</span>
+        <span class="dbreak-val">${fmtN(v)}</span>
+        <span class="dbreak-pct">${p}</span>
+      </div>`).join("")+
+      `<div class="dbreak-row total">
+        <span class="dbreak-label">Votos válidos</span>
+        <span class="dbreak-val">${fmtN(vv)}</span>
+        <span class="dbreak-pct">${pct(vv,vt)}</span>
+      </div>`;
+
+    // Party list
+    let parties=[];
+    try{parties=JSON.parse(p.top5_candidates||"[]");}catch(e){}
+    document.getElementById("d-parties").innerHTML = parties.filter(c=>c.votes>0).map(c=>{
       const col=partyColor(c.name,c.color);
       return `<div class="detail-party">
-        <span class="detail-party-pct" style="color:${col}">${pct}%</span>
+        <span class="detail-party-pct" style="color:${col}">${pct(c.votes,vv)}</span>
         <div class="detail-party-swatch" style="background:${col}"></div>
         <span class="detail-party-name">${c.name}</span>
         <span class="detail-party-votes">${fmtN(c.votes)}</span>

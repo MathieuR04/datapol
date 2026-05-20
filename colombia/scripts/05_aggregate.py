@@ -128,7 +128,11 @@ def aggregate():
                 "ind_votos_blanco":  "votos_blanco",
                 "ind_votos_nulos":   "votos_nulos",
             })
-            agg["censo"] = 0          # indigenous voter registry not available
+            # Derive no_marcados (same formula as nacional: votantes - validos - nulos)
+            agg["votos_no_marcados"] = agg["votantes"] - agg["votos_validos"] - agg["votos_nulos"]
+            # Mesas are physical tables shared between constituencies — set as placeholder;
+            # the correct values are joined below from nacional aggregation.
+            agg["censo"] = 0
             agg["mesas_total"] = 0
             agg["mesas_escrutadas"] = 0
             return compute_pcts(agg, indig_cols, icand_cols, party_lookup, col_prefix="indig_")
@@ -139,6 +143,11 @@ def aggregate():
                          "mpio_name_dane", "dept_reg_code", "dept_dane_code"]],
             on="mpio_reg_code_7", how="left"
         )
+        # Overwrite mesas/censo with nacional values — same physical mesas serve both constituencies
+        mpio_nat_mesas = mpio_agg[["mpio_reg_code_7", "censo", "mesas_total", "mesas_escrutadas"]]
+        mpio_ind = mpio_ind.drop(columns=["censo", "mesas_total", "mesas_escrutadas"], errors="ignore")
+        mpio_ind = mpio_ind.merge(mpio_nat_mesas, on="mpio_reg_code_7", how="left")
+        mpio_ind["turnout_pct"] = (mpio_ind["votantes"] / mpio_ind["censo"].replace(0, pd.NA) * 100).round(2)
         mpio_ind.to_csv(OUT / "resultados_municipios_indigena.csv", index=False)
         print(f"  resultados_municipios_indigena.csv: {len(mpio_ind)} municipios")
 
@@ -148,6 +157,11 @@ def aggregate():
             dept_bridge[["dept_reg_code", "dept_name_reg", "dept_dane_code", "dept_name_dane"]],
             on="dept_reg_code", how="left"
         )
+        # Overwrite mesas/censo with nacional values
+        dept_nat_mesas = dept_agg[["dept_reg_code", "censo", "mesas_total", "mesas_escrutadas"]]
+        dept_ind = dept_ind.drop(columns=["censo", "mesas_total", "mesas_escrutadas"], errors="ignore")
+        dept_ind = dept_ind.merge(dept_nat_mesas, on="dept_reg_code", how="left")
+        dept_ind["turnout_pct"] = (dept_ind["votantes"] / dept_ind["censo"].replace(0, pd.NA) * 100).round(2)
         dept_ind.to_csv(OUT / "resultados_departamentos_indigena.csv", index=False)
         print(f"  resultados_departamentos_indigena.csv: {len(dept_ind)} depts")
 

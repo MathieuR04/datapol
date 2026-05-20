@@ -40,7 +40,7 @@ def build_geojson():
         "mpio_reg_code_5", "mpio_name_reg", "mpio_name_dane",
         "mpio_dane_code", "dept_reg_code", "dept_dane_code",
         "votantes", "censo", "votos_validos", "votos_blanco",
-        "votos_nulos", "mesas_total", "mesas_escrutadas",
+        "votos_nulos", "votos_no_marcados", "mesas_total", "mesas_escrutadas",
         "turnout_pct", "pct_blanco", "pct_nulo",
         "winner", "winner_votes", "winner_pct", "winner_color",
     ]
@@ -91,7 +91,7 @@ def build_geojson():
 
     dept_keep = [
         "dept_map_num", "dept_name_reg", "dept_name_dane", "dept_dane_code",
-        "votantes", "censo", "votos_validos", "votos_blanco", "votos_nulos",
+        "votantes", "censo", "votos_validos", "votos_blanco", "votos_nulos", "votos_no_marcados",
         "mesas_total", "mesas_escrutadas", "turnout_pct", "pct_blanco", "pct_nulo",
         "winner", "winner_votes", "winner_pct", "winner_color",
     ]
@@ -160,7 +160,8 @@ def build_indigena_geojson():
     indig_cols = [c for c in mpio_ind.columns if c.startswith("indig_")]
     keep = ["mpio_reg_code_5", "mpio_name_reg", "mpio_dane_code",
             "dept_reg_code", "dept_dane_code",
-            "votantes", "votos_validos", "votos_blanco", "votos_nulos",
+            "votantes", "censo", "votos_validos", "votos_blanco", "votos_nulos", "votos_no_marcados",
+            "mesas_total", "mesas_escrutadas", "turnout_pct", "pct_blanco", "pct_nulo",
             "winner", "winner_votes", "winner_pct", "winner_color"]
     keep = [c for c in keep if c in mpio_ind.columns]
     slim = mpio_ind[keep].copy()
@@ -198,7 +199,9 @@ def build_indigena_geojson():
     dept_ind = pd.read_csv(dept_csv, dtype=str)
     dept_ind["dept_map_num"] = dept_ind["dept_reg_code"].str[:2]
     dept_keep = ["dept_map_num", "dept_name_reg", "dept_name_dane", "dept_dane_code",
-                 "votantes", "votos_validos", "winner", "winner_votes", "winner_pct", "winner_color"]
+                 "votantes", "censo", "votos_validos", "votos_blanco", "votos_nulos", "votos_no_marcados",
+                 "mesas_total", "mesas_escrutadas", "turnout_pct", "pct_blanco", "pct_nulo",
+                 "winner", "winner_votes", "winner_pct", "winner_color"]
     dept_indig_cols = [c for c in dept_ind.columns if c.startswith("indig_")]
     dept_keep = [c for c in dept_keep if c in dept_ind.columns]
 
