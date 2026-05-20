@@ -1,0 +1,471 @@
+[
+  {
+    "code": "8800360",
+    "name": "Estados Unidos",
+    "mesas_total": 841,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800355",
+    "name": "España",
+    "mesas_total": 574,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800815",
+    "name": "Venezuela",
+    "mesas_total": 349,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800250",
+    "name": "Canada",
+    "mesas_total": 209,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800305",
+    "name": "Chile",
+    "mesas_total": 121,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800380",
+    "name": "Francia",
+    "mesas_total": 108,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800330",
+    "name": "Ecuador",
+    "mesas_total": 106,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800590",
+    "name": "Mexico",
+    "mesas_total": 83,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800655",
+    "name": "Panama",
+    "mesas_total": 72,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800165",
+    "name": "Australia",
+    "mesas_total": 71,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800465",
+    "name": "Inglaterra",
+    "mesas_total": 71,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800220",
+    "name": "Brasil",
+    "mesas_total": 49,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800495",
+    "name": "Italia",
+    "mesas_total": 42,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800155",
+    "name": "Argentina",
+    "mesas_total": 41,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800120",
+    "name": "Alemania",
+    "mesas_total": 40,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800315",
+    "name": "China Republica Popular",
+    "mesas_total": 28,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800285",
+    "name": "Costa Rica",
+    "mesas_total": 26,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800670",
+    "name": "Peru",
+    "mesas_total": 25,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800755",
+    "name": "Suecia",
+    "mesas_total": 24,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800435",
+    "name": "Paises Bajos",
+    "mesas_total": 21,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800760",
+    "name": "Suiza",
+    "mesas_total": 19,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800505",
+    "name": "Japon",
+    "mesas_total": 16,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800160",
+    "name": "Aruba",
+    "mesas_total": 15,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800770",
+    "name": "Turquia",
+    "mesas_total": 14,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800190",
+    "name": "Belgica",
+    "mesas_total": 14,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800350",
+    "name": "Emiratos Arabes Unidos",
+    "mesas_total": 13,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800680",
+    "name": "Portugal",
+    "mesas_total": 13,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800685",
+    "name": "Republica Dominicana",
+    "mesas_total": 12,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800675",
+    "name": "Polonia",
+    "mesas_total": 11,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800170",
+    "name": "Austria",
+    "mesas_total": 11,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800625",
+    "name": "Nueva Zelandia",
+    "mesas_total": 10,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800215",
+    "name": "Bolivia",
+    "mesas_total": 10,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800683",
+    "name": "Puerto Rico",
+    "mesas_total": 10,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800490",
+    "name": "Israel",
+    "mesas_total": 10,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800140",
+    "name": "Curazao",
+    "mesas_total": 10,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800535",
+    "name": "Libano",
+    "mesas_total": 9,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800340",
+    "name": "El Salvador",
+    "mesas_total": 9,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800785",
+    "name": "Trinidad Y Tobago",
+    "mesas_total": 9,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800410",
+    "name": "Guatemala",
+    "mesas_total": 9,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800115",
+    "name": "Ghana",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800745",
+    "name": "Sudafrica",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800325",
+    "name": "Dinamarca",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800470",
+    "name": "Irlanda",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800335",
+    "name": "Egipto",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800500",
+    "name": "Jamaica",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800290",
+    "name": "Cuba",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800805",
+    "name": "Uruguay",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800700",
+    "name": "Rusia",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800635",
+    "name": "Noruega",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800440",
+    "name": "Honduras",
+    "mesas_total": 8,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800130",
+    "name": "Argelia",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800665",
+    "name": "Paraguay",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800135",
+    "name": "Azerbaiyan",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800765",
+    "name": "Tailandia",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800445",
+    "name": "Hungria",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800690",
+    "name": "Republica Socialista De Vietna",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800375",
+    "name": "Finlandia",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800460",
+    "name": "Indonesia",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800560",
+    "name": "Malasia",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800620",
+    "name": "Nicaragua",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800370",
+    "name": "Republica De Filipinas",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800515",
+    "name": "Kenia",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800455",
+    "name": "India",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800430",
+    "name": "Haiti",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800580",
+    "name": "Marruecos",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800275",
+    "name": "Corea Del Sur",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  },
+  {
+    "code": "8800688",
+    "name": "Republica De Singapur",
+    "mesas_total": 7,
+    "mesas_escrutadas": 0,
+    "votes": 0
+  }
+]

@@ -255,11 +255,29 @@
       flex-direction: column;
       overflow: hidden;
     }
+    /* Panel tabs */
+    .panel-tabs { display: flex; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.42rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+    .ptab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .ptab:hover:not(.active) { color: var(--text); }
     .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
     .panel-scroll::-webkit-scrollbar { width: 3px; }
     .panel-scroll::-webkit-scrollbar-track { background: transparent; }
     .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
     .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
+    /* Candidate tab rows */
+    .cand-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.38rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .cand-row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .cand-row-info { flex: 1; min-width: 0; }
+    .cand-row-name { font-size: 10px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cand-row-partido { font-size: 8.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cand-row-right { text-align: right; flex-shrink: 0; }
+    .cand-row-votes { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); }
+    .cand-row-pct { font-size: 8px; color: var(--muted); }
+    /* Exterior tab rows */
+    .ext-row { padding: 0.38rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.4rem; }
+    .ext-row-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
+    .ext-row-meta { font-size: 8.5px; color: var(--muted); text-align: right; white-space: nowrap; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -355,30 +373,35 @@
       margin: 0 auto;
     }
     #needle-svg { display: block; width: 100%; height: auto; }
+    /* old needle-labels placeholder removed — defined in pronóstico section below */
+
+    /* Needle labels redesign */
     .needle-labels {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-top: 0.35rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       gap: 0.5rem;
-    }
-    .needle-label {
-      font-size: 10px;
-      font-weight: 700;
-      line-height: 1.3;
-      max-width: 45%;
+      margin-top: 0.5rem;
+      align-items: start;
     }
     .needle-label.left { text-align: left; }
     .needle-label.right { text-align: right; }
-    .needle-label-sub { font-size: 8px; font-weight: 400; color: var(--muted); }
-    .needle-center-pct {
+    .needle-label-name { font-size: 11px; font-weight: 700; }
+    .needle-label-prob {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 11px;
-      color: var(--muted);
-      text-align: center;
-      flex: 1;
-      padding-top: 0.2rem;
+      font-size: 28px;
+      line-height: 1;
     }
+    .needle-label-probsub { font-size: 8px; color: var(--muted); }
+    .needle-label-votes { font-size: 9px; color: var(--muted); margin-top: 2px; }
+    .needle-center-block { text-align: center; padding-top: 0.4rem; }
+    .needle-center-diff {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--text);
+    }
+    .needle-center-sub { font-size: 8px; color: var(--muted); margin-top: 2px; }
+    .needle-center-ci { font-size: 8px; color: var(--dim); margin-top: 1px; }
 
     /* Candidate probability bars */
     .pron-section-head {
@@ -400,13 +423,20 @@
       font-weight: 400;
       text-transform: none;
     }
+    .pron-prob-note {
+      font-size: 8.5px;
+      color: var(--dim);
+      font-style: italic;
+      padding: 0.3rem 0;
+      margin-bottom: 0.15rem;
+    }
     .cand-prob-list { display: flex; flex-direction: column; gap: 0; }
     .cand-prob-row {
-      padding: 0.7rem 0;
+      padding: 0.65rem 0;
       border-bottom: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.3rem;
     }
     .cand-prob-top {
       display: flex;
@@ -414,16 +444,18 @@
       gap: 0.5rem;
     }
     .cand-prob-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-    .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); flex: 1; }
+    .cand-prob-nameblock { flex: 1; min-width: 0; }
+    .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); }
     .cand-prob-partido { font-size: 9px; color: var(--muted); }
+    .cand-prob-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
     .cand-prob-pct-val {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 22px;
+      font-size: 30px;
       line-height: 1;
-      flex-shrink: 0;
     }
+    .cand-prob-pct-label { font-size: 7.5px; color: var(--muted); letter-spacing: 0.04em; }
     .sv-badge {
-      font-size: 8px;
+      font-size: 7.5px;
       font-weight: 700;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -431,11 +463,11 @@
       color: var(--terra-dk);
       border: 1px solid var(--terra);
       border-radius: 2px;
-      padding: 2px 6px;
-      flex-shrink: 0;
+      padding: 1px 5px;
+      margin-top: 2px;
     }
     .cand-prob-bar-wrap {
-      height: 6px;
+      height: 5px;
       background: var(--sand);
       border-radius: 2px;
       overflow: hidden;
@@ -448,9 +480,9 @@
       font-size: 9px;
       color: var(--muted);
     }
-    .cand-prob-vote-pct {
+    .cand-prob-votes {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 13px;
+      font-size: 14px;
       line-height: 1;
       color: var(--text);
     }
@@ -573,8 +605,15 @@
 
   <!-- Panel -->
   <div class="panel">
+    <div class="panel-tabs" id="panel-tabs">
+      <button class="ptab active" data-ptab="candidatos">Candidatos</button>
+      <button class="ptab" data-ptab="deptos">Deptos</button>
+      <button class="ptab" data-ptab="exterior">Exterior</button>
+    </div>
     <div class="panel-scroll" id="panel-scroll">
-      <div id="view-depts"></div>
+      <div id="panel-candidatos"></div>
+      <div id="panel-deptos" style="display:none"></div>
+      <div id="panel-exterior" style="display:none"></div>
     </div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
@@ -605,35 +644,36 @@
     <div class="needle-section" id="needle-section">
       <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
       <div class="needle-wrap">
-        <svg id="needle-svg" viewBox="0 0 300 165" preserveAspectRatio="xMidYMid meet">
-          <!-- Semicircle track -->
-          <path id="needle-track-left"  fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
-          <path id="needle-track-right" fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
-          <path id="needle-arc-left"    fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
-          <path id="needle-arc-right"   fill="none" stroke="#e0d8cc" stroke-width="18" stroke-linecap="butt"/>
-          <!-- Center tick marks -->
-          <line x1="150" y1="138" x2="150" y2="128" stroke="#cfc0ab" stroke-width="1"/>
+        <svg id="needle-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet">
           <!-- Needle line -->
           <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
                 stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
           <!-- Needle pivot -->
           <circle cx="150" cy="148" r="5" fill="#1a1209"/>
           <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
-          <!-- Probability text in center -->
-          <text id="needle-pct-text" x="150" y="152" text-anchor="middle"
+          <!-- Placeholder text (cleared by renderNeedle) -->
+          <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
                 font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
-                fill="var(--muted)">—%</text>
+                fill="var(--muted)"></text>
         </svg>
       </div>
       <div class="needle-labels">
         <div class="needle-label left">
-          <div id="needle-left-name" style="color:#1E293B">—</div>
-          <div class="needle-label-sub" id="needle-left-pct">—%</div>
+          <div class="needle-label-name" id="needle-left-name">—</div>
+          <div class="needle-label-prob" id="needle-left-prob">—%</div>
+          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-votes" id="needle-left-votes">— votos</div>
         </div>
-        <div class="needle-center-pct" id="needle-center-note">prob. de pasar</div>
+        <div class="needle-center-block">
+          <div class="needle-center-diff" id="needle-center-diff">—</div>
+          <div class="needle-center-sub">diferencia proy.</div>
+          <div class="needle-center-ci" id="needle-center-ci">IC: —</div>
+        </div>
         <div class="needle-label right">
-          <div id="needle-right-name" style="color:#1D4ED8">—</div>
-          <div class="needle-label-sub" id="needle-right-pct">—%</div>
+          <div class="needle-label-name" id="needle-right-name">—</div>
+          <div class="needle-label-prob" id="needle-right-prob">—%</div>
+          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-votes" id="needle-right-votes">— votos</div>
         </div>
       </div>
     </div>
@@ -644,6 +684,7 @@
         Probabilidades de segunda vuelta
         <span class="pron-section-sub" id="pron-source-note">Encuestas</span>
       </div>
+      <div class="pron-prob-note">Cada candidato tiene su propia probabilidad de clasificar. La suma ronda el 200% porque exactamente 2 candidatos pasan a segunda vuelta.</div>
       <div class="cand-prob-list" id="cand-prob-list"></div>
     </div>
 
@@ -718,14 +759,15 @@
   L.tileLayer(TILE.url, TILE.opts).addTo(map);
 
   // ── State ────────────────────────────────────────────────────────────────
-  let currentView  = "winner";
-  let currentLevel = "dept";
-  let activeLayer  = null;
+  let currentView     = "winner";
+  let currentLevel    = "dept";
+  let currentPanelTab = "candidatos";
+  let activeLayer     = null;
   let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
   let deptBoundsMap = {}, deptFeatMap = {};
 
   let mpioData = null, deptData = null;
-  let resultsData = null, forecastData = null;
+  let resultsData = null, forecastData = null, exteriorData = null;
 
   const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
 
@@ -1041,6 +1083,46 @@
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
   }
 
+  // ── Panel tab switching ───────────────────────────────────────────────────
+  function switchPanelTab(tab) {
+    currentPanelTab = tab;
+    document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
+    document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
+    document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
+    document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
+  }
+  document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
+
+  // ── Candidatos sidebar ────────────────────────────────────────────────────
+  function buildCandList() {
+    const el = document.getElementById("panel-candidatos");
+    // Prefer forecast candidates (have prob_runoff), fall back to results
+    const src = forecastData?.candidates || resultsData?.candidates || [];
+    const isLive = (forecastData?.pct_mesas || 0) > 0;
+    const totalVV = src.reduce((s, c) => s + (c.votes_current || c.votes || 0), 0);
+
+    const sorted = src.slice().sort((a, b) =>
+      (b.votes_current ?? b.poll_pct ?? 0) - (a.votes_current ?? a.poll_pct ?? 0)
+    );
+
+    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos · ${fmtN(totalVV || 0)} votos</div>` +
+      sorted.map(c => {
+        const votes = isLive ? (c.votes_current || 0) : 0;
+        const pct   = isLive && totalVV > 0 ? (votes / totalVV * 100).toFixed(1) + "%" : (c.poll_pct ? c.poll_pct.toFixed(1) + "% enc." : "—");
+        return `<div class="cand-row">
+          <div class="cand-row-dot" style="background:${c.color || '#9a8878'}"></div>
+          <div class="cand-row-info">
+            <div class="cand-row-name">${c.nombre}</div>
+            <div class="cand-row-partido">${c.partido || ''}</div>
+          </div>
+          <div class="cand-row-right">
+            <div class="cand-row-votes">${fmtN(votes)}</div>
+            <div class="cand-row-pct">${pct}</div>
+          </div>
+        </div>`;
+      }).join("");
+  }
+
   // ── Dept sidebar ──────────────────────────────────────────────────────────
   function buildDeptList() {
     if (!deptData) return;
@@ -1048,7 +1130,7 @@
       (parseInt(b.properties?.votos_validos) || 0) - (parseInt(a.properties?.votos_validos) || 0)
     );
 
-    const el = document.getElementById("view-depts");
+    const el = document.getElementById("panel-deptos");
     el.innerHTML = `<div class="sect-head">${features.length} departamentos</div>` +
       features.map(feat => {
         const p = feat.properties || {};
@@ -1079,6 +1161,27 @@
         showDetail(feat, "dept");
       });
     });
+  }
+
+  // ── Exterior sidebar ──────────────────────────────────────────────────────
+  function buildExteriorList() {
+    const el = document.getElementById("panel-exterior");
+    if (!exteriorData || !exteriorData.length) {
+      el.innerHTML = `<div class="sect-head">Circunscripción Exterior</div>
+        <div style="padding:0.7rem 0.75rem;font-size:10px;color:var(--muted)">Datos disponibles el 31 de mayo.</div>`;
+      return;
+    }
+    const totalMesas = exteriorData.reduce((s, c) => s + (c.mesas_total || 0), 0);
+    const totalMesasE = exteriorData.reduce((s, c) => s + (c.mesas_escrutadas || 0), 0);
+    el.innerHTML = `<div class="sect-head">${exteriorData.length} países · ${fmtN(totalMesas)} mesas</div>` +
+      exteriorData.map(c => {
+        const restantes = (c.mesas_total || 0) - (c.mesas_escrutadas || 0);
+        const votes = c.votes || 0;
+        return `<div class="ext-row">
+          <div class="ext-row-name">${c.name}</div>
+          <div class="ext-row-meta">${votes > 0 ? fmtN(votes) + ' votos' : fmtN(restantes) + ' mesas rest.'}</div>
+        </div>`;
+      }).join("");
   }
 
   // ── Controls ──────────────────────────────────────────────────────────────
@@ -1128,24 +1231,31 @@
     return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
   }
 
-  function renderNeedle(diffEst, diffCiLow, diffCiHigh, candLeft, candRight) {
-    // Gauge shows vote-share DIFFERENCE: left = candLeft winning, right = candRight winning
-    // diffEst    = vote_pct_left - vote_pct_right  (positive → left winning)
-    // diffCiLow / diffCiHigh = 80% CI on that difference (in pp)
-    // Needle angle: π=left edge, 0=right edge, π/2=center (tie)
-    // diff = +MAX_RANGE → angle π (left), diff = -MAX_RANGE → angle 0 (right)
-    const MAX_RANGE = 12; // ±12 pp on the gauge
+  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight) {
+    // Gauge shows projected VOTE DIFFERENCE: left = candLeft winning, right = candRight winning
+    // diffVotes  = projected_diff_votes (positive → candLeft ahead)
+    // ciLowVotes / ciHiVotes = CI bounds on that projection (in raw votes)
+    // Dynamic scale: gauge range auto-adjusts to CI extent (padded 10%)
+    const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
+    // Round up to a nice number
+    const niceMax = (() => {
+      const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
+      for (const f of [1, 1.5, 2, 2.5, 5, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
+      return mag * 10;
+    })();
+    const MAX_RANGE = niceMax;
+
     const cx = 150, cy = 148, r = 90;
     const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
-    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE); // π/2 at 0, π at +MAX, 0 at -MAX
+    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE); // π at +MAX (left), 0 at -MAX (right)
 
-    const needleA  = toAngle(diffEst);
-    const ciLowA   = toAngle(diffCiHigh); // high diff → left angle (smaller angle value means more right)
-    const ciHighA  = toAngle(diffCiLow);  // Note: reversed because angle decreases as diff increases from left to right
+    const needleA = toAngle(diffVotes);
+    const ciArcL  = toAngle(ciHiVotes);   // high diff → more left
+    const ciArcR  = toAngle(ciLowVotes);  // low diff → more right
 
-    const startA = Math.PI; // left
-    const endA   = 0;       // right
-    const midA   = Math.PI / 2; // center / tie
+    const startA = Math.PI;     // left
+    const endA   = 0;           // right
+    const midA   = Math.PI / 2; // center = tie
 
     const svg = document.getElementById("needle-svg");
     svg.querySelectorAll("path, line.needle-arc-path").forEach(e => e.remove());
@@ -1159,28 +1269,26 @@
       return el;
     }
 
-    // Track
+    // Dark base track
     svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
+    // Left half color (candLeft, dim)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.22","butt"));
+    // Right half color (candRight, dim)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.22","butt"));
 
-    // Left half arc (candLeft color, dim)
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.25","butt"));
-    // Right half arc (candRight color, dim)
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.25","butt"));
-
-    // CI band — brighter arc between ciLowA and ciHighA
-    if (Math.abs(ciHighA - ciLowA) > 0.01) {
-      const ciArcLeft  = Math.max(ciLowA, ciHighA);  // larger angle = more left
-      const ciArcRight = Math.min(ciLowA, ciHighA);  // smaller = more right
-      // determine which candidate's color to use based on which side needle is on
-      const ciCol = diffEst >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
-      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r, ciArcLeft, ciArcRight), ciCol, "18", "0.5", "butt"));
+    // CI band: bright arc spanning the confidence interval
+    if (Math.abs(ciArcL - ciArcR) > 0.01) {
+      const aL = Math.max(ciArcL, ciArcR);
+      const aR = Math.min(ciArcL, ciArcR);
+      const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
+      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aL,aR), ciCol, "18", "0.52", "butt"));
     }
 
-    // Center tick (tie marker)
+    // Center tick (tie mark)
     const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    tick.setAttribute("x1", cx); tick.setAttribute("y1", (cy-r-10));
-    tick.setAttribute("x2", cx); tick.setAttribute("y2", (cy-r+10));
-    tick.setAttribute("stroke", "#888"); tick.setAttribute("stroke-width", "1.5");
+    tick.setAttribute("x1", cx); tick.setAttribute("y1", cy-r-11);
+    tick.setAttribute("x2", cx); tick.setAttribute("y2", cy-r+11);
+    tick.setAttribute("stroke", "#bbb"); tick.setAttribute("stroke-width", "1.5");
     svg.appendChild(tick);
 
     // Needle
@@ -1190,11 +1298,20 @@
     needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
     needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
 
-    // Center text: show difference
+    // Center text in SVG (keep minimal — main labels are below)
     const pctText = svg.querySelector("#needle-pct-text");
-    const sign = diffEst >= 0 ? "+" : "";
-    pctText.textContent = `${sign}${diffEst.toFixed(1)} pp`;
+    pctText.textContent = "";  // labels rendered in HTML below
     pctText.setAttribute("y", (cy + 14).toString());
+  }
+
+  // ── Vote formatter for needle ─────────────────────────────────────────────
+  function fmtVoteDiff(v) {
+    const s = v >= 0 ? "+" : "−";
+    const a = Math.abs(v);
+    if (a >= 1000000) return `${s}${(a/1000000).toFixed(2)}M`;
+    if (a >= 100000)  return `${s}${Math.round(a/1000)}k`;
+    if (a >= 1000)    return `${s}${(a/1000).toFixed(1)}k`;
+    return `${s}${a}`;
   }
 
   // ── Pronóstico view ───────────────────────────────────────────────────────
@@ -1205,86 +1322,87 @@
 
     // Pre-election banner
     const banner = document.getElementById("pre-banner");
-    if (!isLive) {
-      banner.classList.add("show");
-    } else {
-      banner.classList.remove("show");
-    }
+    banner.classList.toggle("show", !isLive);
 
     // Source note
     document.getElementById("pron-source-note").textContent = isLive
       ? `${fd.pct_mesas.toFixed(1)}% mesas · ${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones`
       : "Encuestas AtlasIntel · may-2026";
 
-    // Sort by prob_runoff desc
+    // Sort candidates by prob_runoff desc
     const cands = (fd.candidates || []).slice().sort((a, b) => b.prob_runoff - a.prob_runoff);
-
-    // Needle: cand #2 vs #3 (indices 1 and 2 after sort)
     const c1 = cands[0], c2 = cands[1], c3 = cands[2];
-    if (c2 && c3) {
-      // Needle: left = 2nd place (favored, e.g. De La Espriella), right = 3rd place
-      // Use explicit battle block from forecast.json if present, else derive from vote shares
-      const battle = fd.battle || {};
-      const candLeft  = c2;   // 2nd by prob_runoff → left side
-      const candRight = c3;   // 3rd by prob_runoff → right side
-      const diffEst   = battle.diff_estimate   ?? ((candLeft.vote_pct_current||candLeft.poll_pct||0) - (candRight.vote_pct_current||candRight.poll_pct||0));
-      const diffCiLow = battle.diff_ci_low     ?? (diffEst - 3);
-      const diffCiHigh = battle.diff_ci_high   ?? (diffEst + 3);
-      renderNeedle(diffEst, diffCiLow, diffCiHigh, candLeft, candRight);
 
-      // Labels: left = 2nd place (De La Espriella side), right = 3rd place (Valencia side)
-      const leftPct  = isLive ? (candLeft.vote_pct_current||0)  : (candLeft.poll_pct||0);
-      const rightPct = isLive ? (candRight.vote_pct_current||0) : (candRight.poll_pct||0);
+    // ── Needle ──
+    if (c2 && c3) {
+      const battle   = fd.battle || {};
+      const candLeft  = c2;  // 2nd by prob → left side (more likely to enter runoff)
+      const candRight = c3;  // 3rd by prob → right side
+
+      // Use vote-based battle fields; fall back to deriving from current counts
+      const leftVotes  = isLive ? (candLeft.votes_current  || 0) : 0;
+      const rightVotes = isLive ? (candRight.votes_current || 0) : 0;
+      const diffVotes    = battle.projected_diff_votes ?? (battle.diff_estimate_votes ?? (leftVotes - rightVotes));
+      const ciLowVotes   = battle.projected_ci_low_votes  ?? (battle.diff_ci_low_votes  ?? (diffVotes - 300000));
+      const ciHiVotes    = battle.projected_ci_high_votes ?? (battle.diff_ci_high_votes ?? (diffVotes + 300000));
+
+      renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight);
+
+      // Needle labels (HTML below SVG)
       document.getElementById("needle-left-name").textContent  = candLeft.nombre.split(" ").slice(-1)[0];
       document.getElementById("needle-left-name").style.color  = candLeft.color;
+      document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
+      document.getElementById("needle-left-prob").style.color  = candLeft.color;
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(leftVotes) + " votos" : (candLeft.poll_pct?.toFixed(1)||"—") + "% enc.";
+
       document.getElementById("needle-right-name").textContent = candRight.nombre.split(" ")[0];
       document.getElementById("needle-right-name").style.color = candRight.color;
-      document.getElementById("needle-left-pct").textContent   = leftPct.toFixed(1)  + "% · " + (candLeft.prob_runoff||0).toFixed(0)  + "% prob";
-      document.getElementById("needle-right-pct").textContent  = rightPct.toFixed(1) + "% · " + (candRight.prob_runoff||0).toFixed(0) + "% prob";
-      document.getElementById("needle-center-note").textContent =
-        `IC: [${diffCiLow>=0?"+":""}${diffCiLow.toFixed(1)}, ${diffCiHigh>=0?"+":""}${diffCiHigh.toFixed(1)}] pp`;
+      document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
+      document.getElementById("needle-right-prob").style.color = candRight.color;
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(rightVotes) + " votos" : (candRight.poll_pct?.toFixed(1)||"—") + "% enc.";
+
+      document.getElementById("needle-center-diff").textContent = isLive ? fmtVoteDiff(diffVotes) : "—";
+      const ciLabel = isLive ? `IC: [${fmtVoteDiff(ciLowVotes)}, ${fmtVoteDiff(ciHiVotes)}]` : "";
+      document.getElementById("needle-center-ci").textContent  = ciLabel;
     }
 
-    // Candidate bars
-    const maxProbRunoff = cands[0]?.prob_runoff || 100;
+    // ── Candidate probability bars ──
     const list = document.getElementById("cand-prob-list");
     list.innerHTML = cands.map((c, i) => {
-      const barWidth = maxProbRunoff > 0 ? (c.prob_runoff / maxProbRunoff * 100).toFixed(1) : 0;
       const isSV = i < 2;
+      const votes = isLive ? (c.votes_current || 0) : 0;
       const voteDisplay = isLive
-        ? `<span class="cand-prob-vote-pct">${c.vote_pct_current.toFixed(1)}%</span> votos contados`
-        : `<span class="cand-prob-vote-pct">${c.poll_pct?.toFixed(1) || "—"}%</span> en encuestas`;
+        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos contados`
+        : `<span class="cand-prob-votes">${c.poll_pct?.toFixed(1) || "—"}%</span> en encuestas`;
       const ci = isLive
-        ? `<span class="cand-prob-ci">[IC ${c.ci_low?.toFixed(1)}%–${c.ci_high?.toFixed(1)}%]</span>`
-        : `<span class="cand-prob-ci">[${c.ci_low?.toFixed(1)}%–${c.ci_high?.toFixed(1)}%]</span>`;
+        ? `<span class="cand-prob-ci">[IC ${c.ci_low?.toFixed(1)}–${c.ci_high?.toFixed(1)}%]</span>`
+        : `<span class="cand-prob-ci">[${c.ci_low?.toFixed(1)}–${c.ci_high?.toFixed(1)}%]</span>`;
       return `<div class="cand-prob-row">
         <div class="cand-prob-top">
           <div class="cand-prob-dot" style="background:${c.color}"></div>
-          <div style="flex:1;min-width:0">
+          <div class="cand-prob-nameblock">
             <div class="cand-prob-name">${c.nombre}</div>
             <div class="cand-prob-partido">${c.partido}</div>
           </div>
-          ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
-          <span class="cand-prob-pct-val" style="color:${c.color}">${c.prob_runoff.toFixed(0)}%</span>
+          <div class="cand-prob-right">
+            <span class="cand-prob-pct-val" style="color:${c.color}">${c.prob_runoff.toFixed(0)}%</span>
+            <span class="cand-prob-pct-label">prob. 2da vuelta</span>
+            ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
+          </div>
         </div>
         <div class="cand-prob-bar-wrap">
-          <div class="cand-prob-bar" style="width:${barWidth}%;background:${c.color}"></div>
+          <div class="cand-prob-bar" style="width:${c.prob_runoff.toFixed(1)}%;background:${c.color}"></div>
         </div>
-        <div class="cand-prob-bottom">
-          ${voteDisplay} ${ci}
-        </div>
+        <div class="cand-prob-bottom">${voteDisplay} ${ci}</div>
       </div>`;
     }).join("");
 
-    // Methodology note
+    // ── Methodology note ──
     const note = document.getElementById("pron-note");
-    if (isLive) {
-      note.style.display = "block";
-      note.textContent = `Pronóstico calculado con ${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones Montecarlo basadas en los resultados actuales (${fd.pct_mesas.toFixed(1)}% de mesas escrutadas) y distribuciones de incertidumbre sobre los votos restantes. Los intervalos de confianza reflejan la varianza esperada de los municipios aún no reportados.`;
-    } else {
-      note.style.display = "block";
-      note.textContent = "Las probabilidades pre-electorales se derivan de encuestas recientes y simulaciones Montecarlo. Los intervalos de confianza corresponden a los rangos publicados por AtlasIntel (mayo de 2026). Esta estimación se actualizará automáticamente a medida que lleguen los resultados oficiales el 31 de mayo.";
-    }
+    note.style.display = "block";
+    note.textContent = isLive
+      ? `Pronóstico calculado con ${(fd.n_simulations||0).toLocaleString("es-CO")} simulaciones Montecarlo (${fd.pct_mesas.toFixed(1)}% de mesas escrutadas). La diferencia proyectada estima el resultado final al 100% del escrutinio con su intervalo de confianza.`
+      : "Las probabilidades pre-electorales se derivan de encuestas AtlasIntel (mayo 2026) y simulaciones Montecarlo. Se actualizarán automáticamente el 31 de mayo a medida que lleguen resultados oficiales.";
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
@@ -1294,11 +1412,12 @@
     fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
     fetch(BASE + "colombia_results_presidencial_map.geojson").then(r => r.json()).catch(() => null),
     fetch(BASE + "colombia_results_presidencial_dept.geojson").then(r => r.json()).catch(() => null),
-  ]).then(([results, forecast, mpioGeo, deptGeo]) => {
+    fetch(BASE + "exterior_paises.json").then(r => r.json()).catch(() => null),
+  ]).then(([results, forecast, mpioGeo, deptGeo, exterior]) => {
     resultsData  = results;
     forecastData = forecast;
+    exteriorData = exterior;
 
-    // Use GeoJSON if available, else build a stub from results for the header
     if (mpioGeo) mpioData = mpioGeo;
     if (deptGeo) {
       deptData = deptGeo;
@@ -1309,12 +1428,13 @@
     }
 
     updateHeader(results);
+    buildCandList();
     buildDeptList();
+    buildExteriorList();
 
     if (mpioData || deptData) {
       render();
     } else {
-      // No GeoJSON yet — show placeholder on map
       document.getElementById("loading").innerHTML =
         `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:200px">
           Mapa no disponible.<br>GeoJSON generado el día de la elección.
@@ -1362,6 +1482,7 @@
             if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
             render();
           }
+          buildCandList();
           buildDeptList();
           scheduleRefresh();
         }
