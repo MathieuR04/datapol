@@ -625,7 +625,7 @@
                  opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 } };
   // Responsive default zoom: phone needs ~4, desktop needs ~5.5
   function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
-  const MAP_OPTS = { center: [4.5, -74.2], zoom: defZoom(), zoomControl: true, attributionControl: true, zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80 };
+  const MAP_OPTS = { center: [4.5, -74.2], zoom: defZoom(), zoomControl: true, attributionControl: true, zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80, doubleClickZoom: false };
   const mapNac = L.map("map-nac", MAP_OPTS);
   const mapInd = L.map("map-ind", MAP_OPTS);
   L.tileLayer(TILE.url, TILE.opts).addTo(mapNac);
