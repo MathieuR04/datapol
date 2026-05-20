@@ -1028,7 +1028,7 @@
     // Order: Censo | Votantes | Participación (= nac votantes / censo)
     document.getElementById("hs-censo").textContent   = fmtN(s.censo);
     document.getElementById("hs-votes").textContent   = fmtN(seatsData.total_votantes);
-    document.getElementById("hs-turnout").textContent = s.censo ? (s.votantes / s.censo * 100).toFixed(1) + "%" : "—";
+    document.getElementById("hs-turnout").textContent = s.censo ? (seatsData.total_votantes / s.censo * 100).toFixed(1) + "%" : "—";
     document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
     document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
