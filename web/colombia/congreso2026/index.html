@@ -392,11 +392,11 @@
     .ctrl-label.geo  { color: var(--text); }
     .ctrl-label.data { color: var(--terra); }
 
-    /* ── Full-view back button (top-left, below Leaflet zoom control) ─────── */
+    /* ── Full-view back button (top-left, beside Leaflet zoom control) ─────── */
     .map-topbar {
       position: absolute;
-      top: 80px;
-      left: 10px;
+      top: 10px;
+      left: 44px;   /* zoom control is ~26px wide at left:10px → 10+26+8gap */
       z-index: 800;
     }
     .btn-fullview {
