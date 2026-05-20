@@ -11,6 +11,8 @@ Outputs:
 """
 
 import json
+import ssl
+import urllib.request
 import pandas as pd
 from pathlib import Path
 
@@ -74,15 +76,39 @@ def main():
     nat_cands  = df[cand_cols].sum()
     ind_cands  = df[icand_cols].sum()
 
+    # Fetch authoritative national totals from Registraduría summary endpoint.
+    # Bottom-up scraping inflates censo because some exterior puestos carry the
+    # full regional census.  The 00.json endpoint gives the correct total.
+    print("Fetching national summary (00.json) …")
+    _SUMMARY_URL = "https://resultadospreccongreso2026.registraduria.gov.co/json/ACT/SE/00.json"
+    _HEADERS = {"Referer": "https://resultadospreccongreso2026.registraduria.gov.co/",
+                "User-Agent": "Mozilla/5.0"}
+    try:
+        _ctx = ssl._create_unverified_context()
+        _req = urllib.request.Request(_SUMMARY_URL, headers=_HEADERS)
+        with urllib.request.urlopen(_req, timeout=15, context=_ctx) as _r:
+            _summary = json.loads(_r.read())
+        _tot = _summary.get("totales", {}).get("act", {})
+        _authoritative_censo    = int(_tot.get("centota") or 0)
+        _authoritative_votantes = int(_tot.get("votant")  or 0)
+        _authoritative_mesesc   = int(_tot.get("mesesc")  or 0)
+        _authoritative_metota   = int(_tot.get("metota")  or 0)
+        print(f"  censo={_authoritative_censo:,}  votantes={_authoritative_votantes:,}  "
+              f"mesas={_authoritative_mesesc:,}/{_authoritative_metota:,}")
+    except Exception as _e:
+        print(f"  WARNING: could not fetch 00.json ({_e}); falling back to scraped values")
+        _authoritative_censo = _authoritative_votantes = _authoritative_mesesc = _authoritative_metota = 0
+
     # Nacional stats: all puestos (national + exterior), includes blank votes
     nac_votantes       = int(df["votantes"].fillna(0).sum())
-    nac_censo          = int(df["censo"].fillna(0).sum())
+    # Use authoritative censo from summary if available; fall back to scraped total
+    nac_censo          = _authoritative_censo or int(df["censo"].fillna(0).sum())
     nac_validos        = int(df["votos_validos"].fillna(0).sum())  # party + blank
     nac_blanco         = int(df["votos_blanco"].fillna(0).sum())
     nac_nulos          = int(df["votos_nulos"].fillna(0).sum())
     nac_no_marcados    = int(df["votos_no_marcados"].fillna(0).sum())
-    nac_mesas_total    = int(df["mesas_total"].fillna(0).sum())
-    nac_mesas_esc      = int(df["mesas_escrutadas"].fillna(0).sum())
+    nac_mesas_total    = _authoritative_metota or int(df["mesas_total"].fillna(0).sum())
+    nac_mesas_esc      = _authoritative_mesesc or int(df["mesas_escrutadas"].fillna(0).sum())
 
     # Indigena stats: from ind_* columns (per-camara, all puestos)
     ind_votantes       = int(df["ind_votantes"].fillna(0).sum())

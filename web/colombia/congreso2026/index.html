@@ -597,14 +597,19 @@
       return `rgb(${Math.round(r*s+bg[0]*(1-s))},${Math.round(g*s+bg[1]*(1-s))},${Math.round(b*s+bg[2]*(1-s))})`;
     } catch(e) { return "#d9c9b4"; }
   }
-  function turnoutColor(pct) {
-    if (pct==null||isNaN(pct)) return "#e0d8cc";
-    const s=[[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
-    for (let i=1;i<s.length;i++) {
-      if (pct<=s[i][0]) { const t=(pct-s[i-1][0])/(s[i][0]-s[i-1][0]); return lerp(s[i-1][1],s[i][1],t); }
+  // maxPct: the value that maps to the darkest stop (auto-adjusted per constituency)
+  function turnoutColor(pct, maxPct) {
+    if (pct==null||isNaN(pct)||pct===0) return "#e0d8cc";
+    const stops=[[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
+    // Rescale pct proportionally so maxPct → 85 (darkest stop)
+    const scaled = maxPct ? Math.min(pct / maxPct * 85, 85) : pct;
+    for (let i=1;i<stops.length;i++) {
+      if (scaled<=stops[i][0]) { const t=(scaled-stops[i-1][0])/(stops[i][0]-stops[i-1][0]); return lerp(stops[i-1][1],stops[i][1],t); }
     }
-    return s[s.length-1][1];
+    return stops[stops.length-1][1];
   }
+  // Returns sensible max turnout for the current mode (indigena is a fraction of general census)
+  function turnoutMax() { return currentMode==="indigena" ? 8 : 70; }
 
   // ── Formatting ───────────────────────────────────────────────────────────
   const fmtN = n => (n==null||n===""||isNaN(n))?"—":parseInt(n).toLocaleString("es-CO");
@@ -642,12 +647,14 @@
     const p = feat.properties||{};
     let fill = "#e0d8cc";
     if (currentView==="winner") {
-      const c = partyColor(p.winner, p.winner_color);
-      fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c);
+      // Only color if there are actual votes (prevents zero-vote mpio being misleadingly colored)
+      if ((parseInt(p.winner_votes)||0) > 0) {
+        const c = partyColor(p.winner, p.winner_color);
+        fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c);
+      }
     } else if (currentView==="turnout") {
-      fill = turnoutColor(parseFloat(p.turnout_pct));
+      fill = turnoutColor(parseFloat(p.turnout_pct), turnoutMax());
     } else if (currentView==="party" && selectedParty) {
-      // party choropleth — see getPartyShare
       const share = getPartyShare(p, selectedParty);
       fill = lerp("#e0d8cc", PARTY_COLORS[selectedParty]||"#c4603a", Math.pow(share/0.6, 0.7));
     }
@@ -658,10 +665,12 @@
     const p = feat.properties||{};
     let fill = "#e0d8cc";
     if (currentView==="winner") {
-      const c = partyColor(p.winner, p.winner_color);
-      fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c, 0.8);
+      if ((parseInt(p.winner_votes)||0) > 0) {
+        const c = partyColor(p.winner, p.winner_color);
+        fill = blendWithBg(c.startsWith("rgb")?p.winner_color||"#9a8878":c, 0.8);
+      }
     } else if (currentView==="turnout") {
-      fill = turnoutColor(parseFloat(p.turnout_pct));
+      fill = turnoutColor(parseFloat(p.turnout_pct), turnoutMax());
     } else if (currentView==="party" && selectedParty) {
       const share = getPartyShare(p, selectedParty);
       fill = lerp("#e0d8cc", PARTY_COLORS[selectedParty]||"#c4603a", Math.pow(share/0.6, 0.7));
@@ -747,14 +756,19 @@
       if (!val) return;
       const r = Math.max(2, Math.sqrt(val/maxVal)*maxR);
       const latlng = centroid(feat);
-      L.circleMarker(latlng, {
+      const marker = L.circleMarker(latlng, {
         radius: r,
         fillColor: "#c4603a",
         fillOpacity: 0.45,
         weight: 0.8,
         color: "#8b3c1f",
-      }).bindTooltip(labelFn(feat.properties||{}, val), { sticky:true, className:"leaflet-tooltip" })
-        .addTo(curState.bubbleLayer);
+      });
+      marker.bindTooltip(labelFn(feat.properties||{}, val), { sticky:true, className:"leaflet-tooltip" });
+      marker.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        showDetail(feat, currentLevel==="municipio" ? "municipio" : "dept");
+      });
+      marker.addTo(curState.bubbleLayer);
     });
     curState.bubbleLayer.addTo(curMap);
 
@@ -792,11 +806,24 @@
     if (curState.activeLayer) curState.activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
   }
 
+  const BUBBLE_VIEWS = new Set(["mesas","votos"]);
+
   // ── Feature interactions ──────────────────────────────────────────────────
   function onEachMpio(feat, layer) {
     layer.on({
-      mouseover(e) { if(e.target!==curState.activeLayer) e.target.setStyle({weight:1.2,color:"#1a1209",fillOpacity:1}); },
-      mouseout(e)  { if(e.target!==curState.activeLayer) curState.mpioLayer?.resetStyle(e.target); },
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return; // no hover highlight in bubble views
+        if(e.target!==curState.activeLayer) e.target.setStyle({weight:1.2,color:"#1a1209",fillOpacity:1});
+      },
+      mouseout(e) {
+        if(e.target===curState.activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) {
+          // Restore transparent style used in bubble views
+          e.target.setStyle({fillColor:"transparent",fillOpacity:0,weight:0.3,color:"#cfc0ab"});
+        } else {
+          curState.mpioLayer?.resetStyle(e.target);
+        }
+      },
       click(e) {
         L.DomEvent.stopPropagation(e);
         if(curState.activeLayer&&curState.activeLayer!==e.target) {
@@ -814,8 +841,18 @@
     const key = (feat.properties||{}).name||"";
     if (key) curState.deptBoundsMap[key] = layer.getBounds();
     layer.on({
-      mouseover(e) { if(e.target!==curState.activeLayer) e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1}); },
-      mouseout(e)  { if(e.target!==curState.activeLayer) curState.deptLayer?.resetStyle(e.target); },
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return;
+        if(e.target!==curState.activeLayer) e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1});
+      },
+      mouseout(e) {
+        if(e.target===curState.activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) {
+          e.target.setStyle({fillColor:"transparent",fillOpacity:0,weight:1.5,color:"#1a1209"});
+        } else {
+          curState.deptLayer?.resetStyle(e.target);
+        }
+      },
       click(e) {
         L.DomEvent.stopPropagation(e);
         if(curState.activeLayer&&curState.activeLayer!==e.target) curState.deptLayer?.resetStyle(curState.activeLayer);
@@ -860,18 +897,19 @@
     const vpar = Math.max(0, vv - bla);      // votos por partido
     const pct  = (n, d) => d>0 ? (n/d*100).toFixed(1)+"%" : "—";
 
-    // KPI row: censo | participación | mesas
+    // KPI row: censo | votantes | participación | mesas X/Y
     document.getElementById("d-kpis").innerHTML = `
       <div class="dkpi"><div class="dkpi-label">Censo</div><div class="dkpi-val">${fmtN(cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Votantes</div><div class="dkpi-val">${fmtN(vt)}</div></div>
       <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${pct(vt,cen)}</div></div>
       <div class="dkpi"><div class="dkpi-label">Mesas cont.</div><div class="dkpi-val">${fmtN(meE)}/${fmtN(meT)}</div></div>`;
 
-    // Breakdown table (percentages over votos válidos)
+    // Breakdown: all % over total votes (votantes)
     const rows = [
-      ["No marcados", nom, pct(nom,vv)],
-      ["Votos nulos",  nul, pct(nul,vv)],
-      ["En blanco",    bla, pct(bla,vv)],
-      ["Votos partido",vpar,pct(vpar,vv)],
+      ["No marcados", nom, pct(nom,vt)],
+      ["Votos nulos",  nul, pct(nul,vt)],
+      ["En blanco",    bla, pct(bla,vt)],
+      ["Votos partido",vpar,pct(vpar,vt)],
     ];
     document.getElementById("d-breakdown").innerHTML =
       rows.map(([l,v,p])=>`<div class="dbreak-row">
@@ -955,7 +993,7 @@
         const col=partyColor(p.nombre,p.color);
         const pct=totalValid?(p.votes/totalValid*100).toFixed(1):"0.0";
         const barW=(p.votes/maxV*100).toFixed(1);
-        return `<div class="party-row" data-party="${p.nombre}">
+        return `<div class="party-row" data-party="${p.nombre.replace(/"/g,'&quot;')}">
           <div class="party-top">
             <span class="party-pct" style="color:${col}">${pct}%</span>
             <span class="party-name">${p.nombre}</span>

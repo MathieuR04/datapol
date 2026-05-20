@@ -5032,7 +5032,7 @@
   },
   "stats_nacional": {
     "votantes": 20492278,
-    "censo": 42112284,
+    "censo": 41287084,
     "votos_validos": 19423187,
     "votos_blanco": 616998,
     "votos_nulos": 573572,
@@ -5050,5 +5050,5 @@
     "mesas_escrutadas": 126093
   },
   "total_votantes": 20900614,
-  "total_censo": 42112284
+  "total_censo": 41287084
 }
