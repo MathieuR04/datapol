@@ -557,7 +557,9 @@
     "MOVIMIENTO SALVACIÓN NACIONAL":           "#7C3AED",
     "CREEMOS":                                 "#0891B2",
     "FRENTE AMPLIO UNITARIO":                  "#059669",
-    "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"": "#B45309",
+    "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"":    "#0F766E",
+    "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"":"#9A3412",
+    "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA":              "#6D28D9",
     "PARTIDO POLÍTICO MIRA":                   "#0369A1",
   };
 
@@ -694,21 +696,21 @@
     if (currentLevel==="municipio") {
       if (curState.deptLayer) { curMap.removeLayer(curState.deptLayer); curState.deptLayer=null; }
       if (!curState.mpioLayer) {
-        curState.mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(curMap);
+        curState.mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio, smoothFactor: 0 }).addTo(curMap);
       } else {
         curState.mpioLayer.setStyle(styleMpio);
       }
       if (!curState.deptBoundaryLayer) {
         curState.deptBoundaryLayer = L.geoJSON(deptData, {
           style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
-          interactive: false
+          interactive: false, smoothFactor: 0
         }).addTo(curMap);
       }
     } else {
       if (curState.mpioLayer) { curMap.removeLayer(curState.mpioLayer); curState.mpioLayer=null; }
       if (curState.deptBoundaryLayer) { curMap.removeLayer(curState.deptBoundaryLayer); curState.deptBoundaryLayer=null; }
       if (!curState.deptLayer) {
-        curState.deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(curMap);
+        curState.deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept, smoothFactor: 0 }).addTo(curMap);
       } else {
         curState.deptLayer.setStyle(styleDept);
       }
@@ -723,7 +725,7 @@
     if (currentLevel==="municipio") {
       if (curState.deptLayer) { curMap.removeLayer(curState.deptLayer); curState.deptLayer=null; }
       if (!curState.mpioLayer) {
-        curState.mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio }).addTo(curMap);
+        curState.mpioLayer = L.geoJSON(mpioData, { style: styleMpio, onEachFeature: onEachMpio, smoothFactor: 0 }).addTo(curMap);
       }
       curState.mpioLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:0.3, color:"#cfc0ab" }));
       if (!curState.deptBoundaryLayer) {
@@ -736,7 +738,7 @@
       if (curState.mpioLayer) { curMap.removeLayer(curState.mpioLayer); curState.mpioLayer=null; }
       if (curState.deptBoundaryLayer) { curMap.removeLayer(curState.deptBoundaryLayer); curState.deptBoundaryLayer=null; }
       if (!curState.deptLayer) {
-        curState.deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept }).addTo(curMap);
+        curState.deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: onEachDept, smoothFactor: 0 }).addTo(curMap);
       }
       curState.deptLayer.setStyle(()=>({ fillColor:"transparent", fillOpacity:0, weight:1.5, color:"#1a1209" }));
     }

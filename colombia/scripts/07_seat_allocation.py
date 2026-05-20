@@ -133,9 +133,9 @@ def main():
         "PARTIDO CAMBIO RADICAL":                               "#EA580C",
         "AHORA COLOMBIA":                                       "#BE185D",
         "MOVIMIENTO SALVACIÓN NACIONAL":                        "#7C3AED",
-        "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"":    "#B45309",
-        "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"":"#92400E",
-        "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA":              "#78350F",
+        "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"":    "#0F766E",
+        "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"":"#9A3412",
+        "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA":              "#6D28D9",
     }
 
     def color(nombre, fallback):
