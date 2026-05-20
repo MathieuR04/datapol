@@ -568,7 +568,7 @@
 <!-- Cámara view -->
 <div id="camara-view">
   <div class="cam-chart">
-    <svg id="parliament-svg" viewBox="0 0 700 310" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="parliament-svg" viewBox="0 0 700 320" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="cam-subtitle" id="cam-subtitle">103 escaños · Senado Colombia 2026</div>
     <div id="cam-cand-panel"></div>
   </div>
@@ -1505,25 +1505,32 @@
     });
     allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición",code:"oposicion"});
 
-    // Semicircle positions: 5 rows, inner=40 (Flourish "inner space"), arch=200, outer=240
-    const cx=350, cy=300;
-    const radii=[40,90,140,190,240];
+    // Flourish params: inner_space=40 → big inner hole, arch=200° (wider than semicircle)
+    // 5 rows from inner=80 to outer=240 (step=40); seats nearly touching within each row
+    const cx=350, cy=265;
+    const radii=[80,120,160,200,240];
     const totalR=radii.reduce((s,r)=>s+r,0);
     const spr=radii.map(r=>Math.round(103*r/totalR));
     spr[4]=103-spr[0]-spr[1]-spr[2]-spr[3];
 
-    // Collect ALL positions with their angles, then sort by angle descending (left→right)
+    // 200° arc centred on top: from +100° left of 12 o'clock to +100° right
+    const span = 200 * Math.PI / 180;
+    const startAngle = Math.PI / 2 + span / 2;   // 190° in standard math coords
+
+    // Collect ALL positions, sort left→right by angle descending
     const allPositions=[];
     spr.forEach((n,row)=>{
       const r=radii[row];
       for(let i=0;i<n;i++){
-        const angle=Math.PI*(n-0.5-i)/n;
+        const angle = startAngle - span * (i + 0.5) / n;
         allPositions.push({x:cx+r*Math.cos(angle), y:cy-r*Math.sin(angle), angle});
       }
     });
     allPositions.sort((a,b)=>b.angle-a.angle);
 
-    const seatR=Math.min(10, radii[0]*Math.PI/spr[0]*0.42);
+    // spr ∝ r → arc_per_seat is identical across all rows → uniform seat size
+    // factor 0.47 → ~1.5 px gap between adjacent seats (nearly touching)
+    const seatR = span * radii[0] / spr[0] * 0.47;
     const svg=document.getElementById("parliament-svg");
     svg.innerHTML=allPositions.map((pos,i)=>{
       if(i>=allSeats.length) return "";
