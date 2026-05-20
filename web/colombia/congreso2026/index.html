@@ -425,7 +425,7 @@
       <span class="hstat-val hi" id="hs-turnout">—</span>
     </div>
     <div class="hstat">
-      <span class="hstat-label">Votos válidos</span>
+      <span class="hstat-label">Votantes</span>
       <span class="hstat-val" id="hs-votes">—</span>
     </div>
     <div class="hstat">
@@ -507,9 +507,9 @@
 
 <!-- Bottom bar -->
 <div class="bottombar">
-  <div class="bbar-item"><span class="bbar-label">Censo</span><span class="bbar-val" id="bb-censo">—</span></div>
-  <div class="bbar-sep"></div>
   <div class="bbar-item"><span class="bbar-label">Votantes</span><span class="bbar-val hi" id="bb-votantes">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">No marcados</span><span class="bbar-val" id="bb-nomarcados">—</span></div>
   <div class="bbar-sep"></div>
   <div class="bbar-item"><span class="bbar-label">Votos nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
   <div class="bbar-sep"></div>
@@ -864,34 +864,37 @@
   document.getElementById("detail-back").addEventListener("click", hideDetail);
 
   // ── Stats ─────────────────────────────────────────────────────────────────
-  function updateStats(features) {
-    const sum = k => features.reduce((s,f)=>s+(parseInt(f.properties?.[k])||0),0);
-    const totVot=sum("votantes"),totCen=sum("censo"),totVal=sum("votos_validos");
-    const totNul=sum("votos_nulos"),totBla=sum("votos_blanco");
-    const totMes=sum("mesas_total"),totEsc=sum("mesas_escrutadas");
-    const withData=features.filter(f=>f.properties?.votantes);
-    const pct=totMes?totEsc/totMes:0;
+  // Header always shows overall election stats (independent of active tab)
+  function updateHeaderStats() {
+    if (!seatsData) return;
+    const s = seatsData.stats_nacional;
+    const pct = s.mesas_total ? s.mesas_escrutadas / s.mesas_total : 0;
+    document.getElementById("hs-turnout").textContent = s.censo ? (s.votantes/s.censo*100).toFixed(1)+"%" : "—";
+    document.getElementById("hs-votes").textContent   = fmtN(seatsData.total_votantes);
+    document.getElementById("hs-mpios").textContent   = (mpioNatData?.features.filter(f=>f.properties?.votantes).length||0).toLocaleString("es-CO");
+    document.getElementById("hp-fill").style.width    = (pct*100).toFixed(1)+"%";
+    document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
+    if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+  }
 
-    document.getElementById("hs-turnout").textContent=totCen?(totVot/totCen*100).toFixed(1)+"%":"—";
-    document.getElementById("hs-votes").textContent=fmtN(totVal);
-    document.getElementById("hs-mpios").textContent=withData.length.toLocaleString("es-CO");
-    document.getElementById("hp-fill").style.width=(pct*100).toFixed(1)+"%";
-    document.getElementById("hp-label").textContent=`${(pct*100).toFixed(1)}% · ${fmtN(totEsc)}/${fmtN(totMes)}`;
-    document.getElementById("bb-censo").textContent=fmtN(totCen);
-    document.getElementById("bb-votantes").textContent=fmtN(totVot);
-    document.getElementById("bb-nulos").textContent=fmtN(totNul);
-    document.getElementById("bb-blanco").textContent=fmtN(totBla);
-    document.getElementById("bb-mesas").textContent=`${fmtN(totEsc)}/${fmtN(totMes)}`;
-    if(pct>0)document.getElementById("live-tag").style.display="flex";
+  // Bottom bar is constituency-specific
+  function updateBottomBar(mode) {
+    if (!seatsData) return;
+    const s = mode === "indigena" ? seatsData.stats_indigena : seatsData.stats_nacional;
+    document.getElementById("bb-votantes").textContent    = fmtN(s.votantes);
+    document.getElementById("bb-nomarcados").textContent  = fmtN(s.votos_no_marcados);
+    document.getElementById("bb-nulos").textContent       = fmtN(s.votos_nulos);
+    document.getElementById("bb-blanco").textContent      = fmtN(s.votos_blanco);
+    document.getElementById("bb-mesas").textContent       = `${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
   }
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
   function buildPartyList() {
     const parties = (currentMode==="indigena" ? indigenaParties : nationalParties) || [];
-    // For nacional, use true total_valid (includes blank votes); for indigena sum party votes
+    // Use precomputed votos_validos (party votes + blanks) as the denominator
     const totalValid = currentMode==="indigena"
-      ? parties.reduce((s,p)=>s+p.votes,0)
-      : (seatsData?.total_valid || parties.reduce((s,p)=>s+p.votes,0));
+      ? (seatsData?.stats_indigena?.votos_validos || parties.reduce((s,p)=>s+p.votes,0))
+      : (seatsData?.stats_nacional?.votos_validos  || parties.reduce((s,p)=>s+p.votes,0));
     const top = parties.slice(0,20);
     const maxV = top[0]?.votes||1;
 
@@ -997,7 +1000,8 @@
     });
 
     render();
-    updateStats(mpio.features);
+    updateHeaderStats();
+    updateBottomBar("nacional");
     buildPartyList();
     buildDeptList();
     document.getElementById("loading").style.display="none";
@@ -1032,7 +1036,7 @@
       if(bubbleLayer){map.removeLayer(bubbleLayer);bubbleLayer=null;}
       activeLayer=null; hideDetail();
       render(); buildPartyList(); buildDeptList();
-      updateStats((mpioData||{features:[]}).features);
+      updateBottomBar(mode);
       setTimeout(()=>map.invalidateSize(),50);
     }
     if (mode==="resultados" && seatsData) renderResultados();
@@ -1081,9 +1085,9 @@
       </div>`;
     });
 
-    const indTotal = seatsData.indigena.reduce((s,p)=>s+p.votes,0);
+    const indTotalValid = seatsData.stats_indigena?.votos_validos || seatsData.indigena.reduce((s,p)=>s+p.votes,0);
     h+=`<div class="res-section-head" style="margin-top:1.25rem">Circunscripción Especial Indígena
-      <span class="res-section-sub">2 escaños · ${f(indTotal)} votos válidos</span></div>`;
+      <span class="res-section-sub">2 escaños · ${f(indTotalValid)} votos válidos</span></div>`;
     seatsData.indigena.forEach(p=>{
       const col=partyColor(p.nombre,p.color);
       const lbl=p.list_type==="closed"?"Lista cerrada":"Lista abierta";

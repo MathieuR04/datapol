@@ -66,10 +66,33 @@ def main():
     with open(OUT / "parties.json") as f:
         party_lookup = json.load(f)         # for color overrides
 
-    # True total valid votes = party votes + blank votes (blanks are valid in Colombia)
-    nacional_csv = pd.read_csv(OUT / "resultados_nacional.csv")
-    true_total_valid = int(nacional_csv["votos_validos"].iloc[0])
-    votos_blanco_nacional = int(nacional_csv["votos_blanco"].iloc[0])
+    # ── Load puestos early for stats + candidate aggregation ─────────────────
+    print("Loading puestos …")
+    df = pd.read_csv(OUT / "resultados_puestos.csv", dtype={"puesto_code": str})
+    cand_cols  = [c for c in df.columns if c.startswith("cand_")]
+    icand_cols = [c for c in df.columns if c.startswith("icand_")]
+    nat_cands  = df[cand_cols].sum()
+    ind_cands  = df[icand_cols].sum()
+
+    # Nacional stats: all puestos (national + exterior), includes blank votes
+    nac_votantes       = int(df["votantes"].fillna(0).sum())
+    nac_censo          = int(df["censo"].fillna(0).sum())
+    nac_validos        = int(df["votos_validos"].fillna(0).sum())  # party + blank
+    nac_blanco         = int(df["votos_blanco"].fillna(0).sum())
+    nac_nulos          = int(df["votos_nulos"].fillna(0).sum())
+    nac_no_marcados    = int(df["votos_no_marcados"].fillna(0).sum())
+    nac_mesas_total    = int(df["mesas_total"].fillna(0).sum())
+    nac_mesas_esc      = int(df["mesas_escrutadas"].fillna(0).sum())
+
+    # Indigena stats: from ind_* columns (per-camara, all puestos)
+    ind_votantes       = int(df["ind_votantes"].fillna(0).sum())
+    ind_validos        = int(df["ind_votos_validos"].fillna(0).sum())
+    ind_blanco         = int(df["ind_votos_blanco"].fillna(0).sum())
+    ind_nulos          = int(df["ind_votos_nulos"].fillna(0).sum())
+    ind_no_marcados    = ind_votantes - ind_validos - ind_nulos  # derived
+
+    # True total_valid for threshold = nacional valid (nat+ext, incl. blanks)
+    votos_blanco_nacional = nac_blanco
 
     # Colour overrides (nomenclator colours are often wrong)
     COLOUR_OVERRIDES = {
@@ -93,9 +116,8 @@ def main():
         return COLOUR_OVERRIDES.get(nombre, fallback)
 
     # ── Nacional seat allocation ──────────────────────────────────────────────
-    # Use true total_valid from the nacional CSV (includes blank votes)
-    # Threshold is computed against total valid votes (party votes + blanks)
-    total_valid = true_total_valid
+    # Threshold computed against total valid (nat+ext, incl. blanks)
+    total_valid = nac_validos
     threshold_votes = total_valid * THRESHOLD_PCT / 100
 
     qualifying = [p for p in all_parties if p["votes"] >= threshold_votes]
@@ -105,14 +127,6 @@ def main():
     print(f"Total valid (nacional): {total_valid:,}")
     print(f"3% threshold:           {threshold_votes:,.0f}")
     print(f"Qualifying parties:     {len(qualifying)}")
-
-    # ── Candidate aggregation ─────────────────────────────────────────────────
-    print("Loading puestos for candidate aggregation …")
-    df = pd.read_csv(OUT / "resultados_puestos.csv", dtype={"puesto_code": str})
-    cand_cols  = [c for c in df.columns if c.startswith("cand_")]
-    icand_cols = [c for c in df.columns if c.startswith("icand_")]
-    nat_cands  = df[cand_cols].sum()
-    ind_cands  = df[icand_cols].sum()
 
     # Detect list type: closed if ≥80% of candidate votes are in SOLO POR LA LISTA
     def detect_list_type(code: str) -> str:
@@ -220,6 +234,30 @@ def main():
             "seats": 1,
             "note":  "Estatuto de la Oposición — asignado tras segunda vuelta presidencial"
         },
+        # Pre-computed stats for the frontend (avoids recomputing from GeoJSON features)
+        "stats_nacional": {
+            "votantes":          nac_votantes,
+            "censo":             nac_censo,
+            "votos_validos":     nac_validos,
+            "votos_blanco":      nac_blanco,
+            "votos_nulos":       nac_nulos,
+            "votos_no_marcados": nac_no_marcados,
+            "mesas_total":       nac_mesas_total,
+            "mesas_escrutadas":  nac_mesas_esc,
+        },
+        "stats_indigena": {
+            "votantes":          ind_votantes,
+            "votos_validos":     ind_validos,
+            "votos_blanco":      ind_blanco,
+            "votos_nulos":       ind_nulos,
+            "votos_no_marcados": ind_no_marcados,
+            "mesas_total":       nac_mesas_total,   # same physical mesas
+            "mesas_escrutadas":  nac_mesas_esc,
+        },
+        # Total voters across both constituencies (nacional + indigena)
+        # Matches Registraduría top bar: nac_votantes + ind_votantes
+        "total_votantes":       nac_votantes + ind_votantes,
+        "total_censo":          nac_censo,
     }
 
     path = OUT / "senate_seats.json"

@@ -1,8 +1,8 @@
 {
-  "total_valid": 19180050,
-  "votos_blanco_nacional": 612937,
+  "total_valid": 19423187,
+  "votos_blanco_nacional": 616998,
   "threshold_pct": 3.0,
-  "threshold_votes": 575402,
+  "threshold_votes": 582696,
   "seats_total": 103,
   "seats_nacional": 100,
   "seats_indigena": 2,
@@ -13,7 +13,7 @@
       "nombre": "PACTO HISTÓRICO SENADO",
       "color": "#6B21A8",
       "votes": 4413636,
-      "vote_pct": 23.01,
+      "vote_pct": 22.72,
       "seats": 25,
       "list_type": "closed",
       "candidates": [
@@ -594,7 +594,7 @@
       "nombre": "PARTIDO CENTRO DEMOCRÁTICO",
       "color": "#1D4ED8",
       "votes": 3035715,
-      "vote_pct": 15.83,
+      "vote_pct": 15.63,
       "seats": 17,
       "list_type": "closed",
       "candidates": [
@@ -989,7 +989,7 @@
       "nombre": "PARTIDO LIBERAL COLOMBIANO",
       "color": "#DC2626",
       "votes": 2275182,
-      "vote_pct": 11.86,
+      "vote_pct": 11.71,
       "seats": 13,
       "list_type": "open",
       "candidates": [
@@ -1600,7 +1600,7 @@
       "nombre": "ALIANZA POR COLOMBIA",
       "color": "#15803D",
       "votes": 1904154,
-      "vote_pct": 9.93,
+      "vote_pct": 9.8,
       "seats": 10,
       "list_type": "open",
       "candidates": [
@@ -2187,7 +2187,7 @@
       "nombre": "PARTIDO CONSERVADOR COLOMBIANO",
       "color": "#1E40AF",
       "votes": 1863663,
-      "vote_pct": 9.72,
+      "vote_pct": 9.6,
       "seats": 10,
       "list_type": "open",
       "candidates": [
@@ -2786,7 +2786,7 @@
       "nombre": "PARTIDO DE LA UNIÓN POR LA GENTE - PARTIDO DE LA U",
       "color": "#D97706",
       "votes": 1565786,
-      "vote_pct": 8.16,
+      "vote_pct": 8.06,
       "seats": 9,
       "list_type": "open",
       "candidates": [
@@ -3397,7 +3397,7 @@
       "nombre": "COALICIÓN CAMBIO RADICAL - ALMA",
       "color": "#EA580C",
       "votes": 1248021,
-      "vote_pct": 6.51,
+      "vote_pct": 6.43,
       "seats": 7,
       "list_type": "open",
       "candidates": [
@@ -4002,7 +4002,7 @@
       "nombre": "AHORA COLOMBIA",
       "color": "#BE185D",
       "votes": 900606,
-      "vote_pct": 4.7,
+      "vote_pct": 4.64,
       "seats": 5,
       "list_type": "open",
       "candidates": [
@@ -4607,7 +4607,7 @@
       "nombre": "MOVIMIENTO SALVACIÓN NACIONAL",
       "color": "#7C3AED",
       "votes": 705924,
-      "vote_pct": 3.68,
+      "vote_pct": 3.63,
       "seats": 4,
       "list_type": "open",
       "candidates": [
@@ -5029,5 +5029,26 @@
   "oposicion": {
     "seats": 1,
     "note": "Estatuto de la Oposición — asignado tras segunda vuelta presidencial"
-  }
+  },
+  "stats_nacional": {
+    "votantes": 20492278,
+    "censo": 42112284,
+    "votos_validos": 19423187,
+    "votos_blanco": 616998,
+    "votos_nulos": 573572,
+    "votos_no_marcados": 495519,
+    "mesas_total": 126647,
+    "mesas_escrutadas": 126093
+  },
+  "stats_indigena": {
+    "votantes": 408336,
+    "votos_validos": 303979,
+    "votos_blanco": 58539,
+    "votos_nulos": 49967,
+    "votos_no_marcados": 54390,
+    "mesas_total": 126647,
+    "mesas_escrutadas": 126093
+  },
+  "total_votantes": 20900614,
+  "total_censo": 42112284
 }
