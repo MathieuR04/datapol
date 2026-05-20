@@ -872,7 +872,10 @@
       click(e) {
         L.DomEvent.stopPropagation(e);
         if(curState.activeLayer&&curState.activeLayer!==e.target) {
-          (curState.mpioLayer||curState.deptLayer)?.resetStyle(curState.activeLayer);
+          if (BUBBLE_VIEWS.has(currentView))
+            curState.activeLayer.setStyle({fillColor:"transparent",fillOpacity:0,weight:0.3,color:"#cfc0ab"});
+          else
+            (curState.mpioLayer||curState.deptLayer)?.resetStyle(curState.activeLayer);
         }
         curState.activeLayer = e.target;
         e.target.setStyle({weight:2,color:"#c4603a",fillOpacity:1});
@@ -901,7 +904,12 @@
       },
       click(e) {
         L.DomEvent.stopPropagation(e);
-        if(curState.activeLayer&&curState.activeLayer!==e.target) curState.deptLayer?.resetStyle(curState.activeLayer);
+        if(curState.activeLayer&&curState.activeLayer!==e.target) {
+          if (BUBBLE_VIEWS.has(currentView))
+            curState.activeLayer.setStyle({fillColor:"transparent",fillOpacity:0,weight:1.5,color:"#1a1209"});
+          else
+            curState.deptLayer?.resetStyle(curState.activeLayer);
+        }
         curState.activeLayer = e.target;
         e.target.setStyle({weight:2.5,color:"#c4603a",fillOpacity:1});
         showDetail(feat, "dept");
@@ -931,6 +939,7 @@
   function showDetail(feat, type) {
     const p = feat.properties||{};
     document.querySelectorAll(".p-view").forEach(el=>el.classList.remove("active"));
+    document.querySelectorAll(".ptab").forEach(t=>t.classList.remove("active")); // no tab selected in detail view
     document.getElementById("panel-scroll").style.display="none";
     document.getElementById("detail-panel").classList.add("active");
 
@@ -1003,6 +1012,8 @@
     document.querySelectorAll(".p-view").forEach(el=>el.classList.remove("active"));
     const v=document.getElementById(`view-${previousTab}`);
     if(v)v.classList.add("active");
+    // Re-activate the correct tab
+    document.querySelectorAll(".ptab").forEach(t=>t.classList.toggle("active",t.dataset.tab===previousTab));
     if(curState.activeLayer){
       if (BUBBLE_VIEWS.has(currentView)) {
         // In bubble views polygons are transparent — don't call resetStyle (it would color them)
