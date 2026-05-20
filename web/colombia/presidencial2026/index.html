@@ -490,9 +490,9 @@
 
 <!-- Nav -->
 <div class="nav">
-  <a class="nav-brand" href="/">DATAPOL</a>
+  <a class="nav-brand" href="../../">DATAPOL</a>
   <div class="nav-sep"></div>
-  <a class="nav-item" href="/colombia/congreso2026/">Senado</a>
+  <a class="nav-item" href="../congreso2026/">Senado</a>
   <span class="nav-item active">1ra Vuelta</span>
   <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
 </div>
@@ -1001,7 +1001,7 @@
     // Candidates
     let candidates = [];
     try { candidates = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
-    document.getElementById("d-candidates").innerHTML = candidates.filter(c => c.votes > 0).map(c => {
+    document.getElementById("d-candidates").innerHTML = candidates.map(c => {
       const col = c.color || "#9a8878";
       return `<div class="detail-cand">
         <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, vv)}</span>
@@ -1060,7 +1060,7 @@
             <span class="dept-name">${name}</span>
             <span class="dept-votes">${fmtN(p.votos_validos)}</span>
           </div>
-          <div class="dept-winner">${p.winner || 'Sin datos'}</div>
+          <div class="dept-winner">${p.winner || `${fmtN((parseInt(p.mesas_total)||0)-(parseInt(p.mesas_escrutadas)||0))} mesas restantes`}</div>
         </div>`;
       }).join("");
 
