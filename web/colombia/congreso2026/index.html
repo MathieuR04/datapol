@@ -568,7 +568,7 @@
 <!-- Cámara view -->
 <div id="camara-view">
   <div class="cam-chart">
-    <svg id="parliament-svg" viewBox="0 0 700 325" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="parliament-svg" viewBox="0 0 700 310" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="cam-subtitle" id="cam-subtitle">103 escaños · Senado Colombia 2026</div>
     <div id="cam-cand-panel"></div>
   </div>
@@ -1505,9 +1505,9 @@
     });
     allSeats.push({color:"#94a3b8",nombre:"Estatuto de la Oposición",code:"oposicion"});
 
-    // Semicircle positions: 5 rows, inner=70, step=50, outer=270
-    const cx=350, cy=310;
-    const radii=[70,120,170,220,270];
+    // Semicircle positions: 5 rows, inner=40 (Flourish "inner space"), arch=200, outer=240
+    const cx=350, cy=300;
+    const radii=[40,90,140,190,240];
     const totalR=radii.reduce((s,r)=>s+r,0);
     const spr=radii.map(r=>Math.round(103*r/totalR));
     spr[4]=103-spr[0]-spr[1]-spr[2]-spr[3];
