@@ -422,14 +422,13 @@
       .body { flex-direction: column; }
       .map-wrap { height: 55vw; min-height: 280px; flex: none; }
       .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
-      .header-sub, .header-progress, .live-tag { display: none !important; }
-      .header-stats { gap: 0.5rem; flex-shrink: 0; overflow: hidden; }
-      .hstat { align-items: flex-end; min-width: 0; }
-      .hstat-val { font-size: 15px; }
-      .hstat-label { font-size: 7px; }
+      /* Mobile header: show mesas progress, hide everything else */
+      .header-sub, .live-tag { display: none !important; }
+      .header-stats { display: none !important; }
+      .header-progress { max-width: none; flex: 1; display: flex !important; }
       .header-title { font-size: 15px; }
-      .bottombar { height: auto; padding: 0.4rem 0.75rem; flex-wrap: wrap; gap: 0.5rem 1rem; }
-      .bbar-sep { display: none; }
+      /* Hide bottom bar on mobile — not enough space */
+      .bottombar { display: none !important; }
     }
   </style>
 </head>
