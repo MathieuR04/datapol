@@ -1,0 +1,64 @@
+{
+  "votantes": 0,
+  "votos_validos": 0,
+  "votos_blanco": 0,
+  "votos_nulos": 0,
+  "votos_no_marcados": 0,
+  "mesas_escrutadas": 0,
+  "mesas_total": 126647,
+  "censo": 42112284,
+  "candidates": [
+    {
+      "code": "cepeda",
+      "votes": 0
+    },
+    {
+      "code": "valencia",
+      "votes": 0
+    },
+    {
+      "code": "delaespriella",
+      "votes": 0
+    },
+    {
+      "code": "claudialopez",
+      "votes": 0
+    },
+    {
+      "code": "barreras",
+      "votes": 0
+    },
+    {
+      "code": "fajardo",
+      "votes": 0
+    },
+    {
+      "code": "caicedo",
+      "votes": 0
+    },
+    {
+      "code": "lizcano",
+      "votes": 0
+    },
+    {
+      "code": "uribe",
+      "votes": 0
+    },
+    {
+      "code": "botero",
+      "votes": 0
+    },
+    {
+      "code": "macollins",
+      "votes": 0
+    },
+    {
+      "code": "matamoros",
+      "votes": 0
+    },
+    {
+      "code": "claralopez",
+      "votes": 0
+    }
+  ]
+}

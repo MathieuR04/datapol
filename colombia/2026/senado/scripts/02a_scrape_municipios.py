@@ -19,6 +19,7 @@ import asyncio
 import aiohttp
 import argparse
 import csv
+import json
 import time
 from pathlib import Path
 
@@ -56,8 +57,9 @@ def parse_mpio_json(code: str, data: dict) -> dict:
 
     record = {
         "mpio_reg_code_7":   code,
-        "mesas_total":        int(totales.get("metota") or 0),
-        "mesas_escrutadas":   int(totales.get("mesesc") or 0),
+        "mesas_total":        int(totales.get("metota")  or 0),
+        "mesas_escrutadas":   int(totales.get("mesesc")  or 0),
+        "censo":              int(totales.get("centota") or 0),
         # Nacional
         "votantes":           int(nat_t.get("votant")  or totales.get("votant")  or 0),
         "votos_nulos":        int(nat_t.get("votnul")  or totales.get("votnul")  or 0),
@@ -74,12 +76,20 @@ def parse_mpio_json(code: str, data: dict) -> dict:
     for camara in data.get("camaras", []):
         cam  = int(camara.get("cam", 0))
         pcol = "indig" if cam == 4 else "party"
+        ccol = "icand" if cam == 4 else "cand"
         for pw in camara.get("partotabla", []):
-            p   = pw.get("act", pw)
-            cod = int(p.get("codpar", 0))
-            vot = p.get("vot")
-            key = f"{pcol}_{cod:04d}"
-            record[key] = record.get(key, 0) + (int(vot) if vot else 0)
+            p    = pw.get("act", pw)
+            cod  = int(p.get("codpar", 0))
+            vot  = p.get("vot")
+            pkey = f"{pcol}_{cod:04d}"
+            record[pkey] = record.get(pkey, 0) + (int(vot) if vot else 0)
+            # candidate votes within each party
+            for cand in p.get("cantotabla", []):
+                codcan   = int(cand.get("codcan", 0))
+                nom      = f"{cand.get('nomcan','').strip()} {cand.get('apecan','').strip()}".strip()
+                cand_vot = cand.get("vot")
+                ckey     = f"{ccol}_{cod:04d}_{codcan:06d}|{nom}"
+                record[ckey] = record.get(ckey, 0) + (int(cand_vot) if cand_vot else 0)
 
     return record
 
@@ -139,23 +149,81 @@ def write_csv(path, rows, fieldnames):
             w.writerow({k: row.get(k, 0) for k in fieldnames})
 
 
+def write_preferencial_csv(path: Path, rows: list[dict],
+                            cand_cols: list[str], prefix: str) -> None:
+    """
+    Aggregate candidate votes across all municipio rows and write a tall
+    preferencial CSV: party_code, candidate_code, candidate_name, votes.
+
+    Column name format: <prefix>XXXX_YYYYYY|Candidate Name
+    e.g. cand_0018_000042|JOSE ANTONIO GARCIA
+         icand_0099_000001|ABELARDO RAMOS
+    """
+    # Sum each candidate column across all municipios
+    totals = {col: 0 for col in cand_cols}
+    for r in rows:
+        for col in cand_cols:
+            totals[col] += int(r.get(col) or 0)
+
+    records = []
+    for col in cand_cols:
+        rest = col[len(prefix):]            # XXXX_YYYYYY|Name
+        under = rest.index("_")
+        party_code = rest[:under]           # "XXXX"
+        rest2 = rest[under + 1:]            # "YYYYYY|Name"
+        pipe = rest2.index("|") if "|" in rest2 else len(rest2)
+        candidate_code = rest2[:pipe]       # "YYYYYY"
+        candidate_name = rest2[pipe + 1:] if "|" in rest2 else ""
+        records.append({
+            "party_code":     party_code,
+            "candidate_code": candidate_code,
+            "candidate_name": candidate_name,
+            "votes":          totals[col],
+        })
+
+    records.sort(key=lambda r: (r["party_code"], -r["votes"]))
+
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(
+            f, fieldnames=["party_code", "candidate_code", "candidate_name", "votes"])
+        w.writeheader()
+        w.writerows(records)
+    print(f"  Saved preferencial: {path.name}  ({len(records)} candidates)")
+
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def municipios_needing_update():
     codes = set()
 
     # 1. Municipios with incomplete mesas reporting
-    path = RESULTS / "colombia_2026_municipio_senado_nacional.csv"
-    if path.exists():
-        with open(path) as f:
-            for row in csv.DictReader(f):
+    nat_path = RESULTS / "colombia_2026_municipio_senado_nacional.csv"
+    if nat_path.exists():
+        with open(nat_path) as f:
+            reader = csv.DictReader(f)
+            party_cols = [c for c in (reader.fieldnames or []) if c.startswith("party_")]
+            for row in reader:
                 me = int(row.get("mesas_escrutadas") or 0)
                 mt = int(row.get("mesas_total")      or 0)
-                # incomplete: fewer mesas than expected, OR total=0 (failed scrape gave zero row)
                 if me < mt or mt == 0:
                     codes.add(row["mpio_reg_code_7"])
+                # Nacional party breakdown missing despite having valid votes
+                elif int(row.get("votos_validos") or 0) > 0:
+                    if all(int(row.get(c) or 0) == 0 for c in party_cols):
+                        codes.add(row["mpio_reg_code_7"])
 
-    # 2. Codes that errored in the last full scrape
+    # 2. Indigena party breakdown missing despite having valid votes
+    ind_path = RESULTS / "colombia_2026_municipio_senado_indigena.csv"
+    if ind_path.exists():
+        with open(ind_path) as f:
+            reader = csv.DictReader(f)
+            indig_cols = [c for c in (reader.fieldnames or []) if c.startswith("indig_")]
+            for row in reader:
+                if int(row.get("votos_validos") or 0) > 0:
+                    if all(int(row.get(c) or 0) == 0 for c in indig_cols):
+                        codes.add(row["mpio_reg_code_7"])
+
+    # 3. Codes that errored in the last scrape
     err_path = OUT / "scrape_errors.csv"
     if err_path.exists():
         with open(err_path) as f:
@@ -185,10 +253,18 @@ def scrape(update_mode=False):
     results, errors = asyncio.run(scrape_all(codes))
     print(f"Done: {len(results):,} ok  {len(errors):,} errors")
 
+    err_path = OUT / "scrape_errors.csv"
     if errors:
-        write_csv(OUT / "scrape_errors.csv", errors, ["mpio_reg_code_7", "error"])
+        write_csv(err_path, errors, ["mpio_reg_code_7", "error"])
+    elif update_mode and err_path.exists():
+        err_path.unlink()   # all previously-errored codes now OK — clear the file
 
     if not results: return
+
+    # Remember which codes were freshly scraped BEFORE merging with the nacional CSV.
+    # The nacional CSV only has party_ columns (not indig_), so merged rows from it
+    # lose all indig_ data.  We need fresh_codes later to restore indigena data.
+    fresh_codes = {r["mpio_reg_code_7"] for r in results}
 
     # Merge with existing rows in update mode
     if update_mode:
@@ -196,8 +272,7 @@ def scrape(update_mode=False):
         if path.exists():
             with open(path) as f:
                 existing  = list(csv.DictReader(f))
-            new_codes = {r["mpio_reg_code_7"] for r in results}
-            results   = [r for r in existing if r["mpio_reg_code_7"] not in new_codes] + results
+            results   = [r for r in existing if r["mpio_reg_code_7"] not in fresh_codes] + results
 
     # Detect all party/indig column names from scraped data
     all_keys   = set()
@@ -215,12 +290,15 @@ def scrape(update_mode=False):
     order = {c: i for i, c in enumerate(all_codes)}
     results.sort(key=lambda r: order.get(r["mpio_reg_code_7"], 9999))
 
+    cand_cols  = sorted(k for k in all_keys if k.startswith("cand_"))
+    icand_cols = sorted(k for k in all_keys if k.startswith("icand_"))
+
     # ── Nacional CSV ──────────────────────────────────────────────────────────
     nat_fields = (
-        ["mpio_reg_code_7", "votantes", "votos_nulos", "votos_no_marcados",
+        ["mpio_reg_code_7", "censo", "votantes", "votos_nulos", "votos_no_marcados",
          "votos_blanco", "votos_validos", "mesas_total", "mesas_escrutadas",
          "ind_votantes", "ind_votos_validos", "ind_votos_blanco", "ind_votos_nulos"]
-        + party_cols
+        + party_cols + cand_cols
     )
     write_csv(RESULTS / "colombia_2026_municipio_senado_nacional.csv", results, nat_fields)
     n_ext = sum(1 for r in results if str(r.get("mpio_reg_code_7", "")).startswith("88"))
@@ -244,19 +322,51 @@ def scrape(update_mode=False):
         ind_r["votos_no_marcados"] = (
             ind_r["votantes"] - ind_r["votos_validos"] - ind_r["votos_nulos"]
         )
-        for k in indig_cols:
+        for k in indig_cols + icand_cols:
             ind_r[k] = int(r.get(k) or 0)
         ind_out.append(ind_r)
+
+    # In update mode: rows from the nacional CSV merge have no indig_ columns.
+    # Restore indig_ party votes + icand_ candidate votes for non-freshly-scraped rows.
+    if update_mode:
+        ind_existing_path = RESULTS / "colombia_2026_municipio_senado_indigena.csv"
+        if ind_existing_path.exists():
+            with open(ind_existing_path) as f:
+                reader      = csv.DictReader(f)
+                old_indig   = {row["mpio_reg_code_7"]: row for row in reader}
+            for ind_r in ind_out:
+                code = ind_r["mpio_reg_code_7"]
+                if code not in fresh_codes and code in old_indig:
+                    old = old_indig[code]
+                    for k in indig_cols + icand_cols:
+                        ind_r[k] = int(old.get(k) or 0)
 
     ind_fields = (
         ["mpio_reg_code_7", "votantes", "votos_validos", "votos_blanco",
          "votos_nulos", "votos_no_marcados", "mesas_total", "mesas_escrutadas"]
-        + indig_cols
+        + indig_cols + icand_cols
     )
     write_csv(RESULTS / "colombia_2026_municipio_senado_indigena.csv", ind_out, ind_fields)
     n_ext_i = sum(1 for r in ind_out if str(r.get("mpio_reg_code_7", "")).startswith("88"))
     print(f"Saved indigena:  {len(ind_out):,} rows  "
           f"({len(ind_out)-n_ext_i} national + {n_ext_i} exterior)")
+
+    # ── Preferencial CSVs (nationally aggregated candidate votes) ────────────
+    # Candidate columns (cand_/icand_) are kept in the municipio CSVs so that
+    # update-mode merges can carry forward per-municipio contributions correctly.
+    # These preferencial files aggregate the same data into a tall, clean format
+    # (one row per candidate) for seat allocation and future analysis.
+    write_preferencial_csv(
+        RESULTS / "colombia_2026_senado_nacional_preferencial.csv",
+        results, cand_cols, "cand_")
+    write_preferencial_csv(
+        RESULTS / "colombia_2026_senado_indigena_preferencial.csv",
+        ind_out, icand_cols, "icand_")
+
+    # Party JSONs (national_parties.json / indigena_parties.json) are static
+    # metadata files (code, nombre, display_name, color).  They are created once
+    # by 01_build_party_jsons.py and never modified by the scraper.
+    # All vote totals are derived from the CSVs in data/results/ by 05_seat_allocation.py.
 
 
 if __name__ == "__main__":

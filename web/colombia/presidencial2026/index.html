@@ -498,6 +498,22 @@
       padding-top: 0.75rem;
     }
 
+    /* ── Bottom bar ──────────────────────────────────────────────────────── */
+    .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
+    .bottombar::-webkit-scrollbar { display: none; }
+    .bbar-item { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    .bbar-label { font-size: 8px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #4a4a3a; }
+    .bbar-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; color: var(--sand); }
+    .bbar-val.hi { color: var(--terra); }
+    .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
+
+    /* ── Margin distribution chart ────────────────────────────────────────── */
+    .margin-dist-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.85rem 1rem 0.55rem; }
+    .margin-dist-title { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; text-align: center; }
+    #margin-dist-svg { display: block; width: 100%; overflow: visible; }
+    .margin-dist-axis { display: flex; justify-content: space-between; font-size: 8px; color: var(--dim); margin-top: 2px; padding: 0 2px; }
+    .margin-dist-foot { display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 0.45rem; padding: 0 2px; }
+
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
       body { overflow: auto; }
@@ -608,12 +624,10 @@
     <div class="panel-tabs" id="panel-tabs">
       <button class="ptab active" data-ptab="candidatos">Candidatos</button>
       <button class="ptab" data-ptab="deptos">Deptos</button>
-      <button class="ptab" data-ptab="exterior">Exterior</button>
     </div>
     <div class="panel-scroll" id="panel-scroll">
       <div id="panel-candidatos"></div>
       <div id="panel-deptos" style="display:none"></div>
-      <div id="panel-exterior" style="display:none"></div>
     </div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
@@ -629,6 +643,21 @@
   </div>
 
 </div><!-- end .body -->
+
+<!-- Bottom bar -->
+<div class="bottombar" id="bottombar">
+  <div class="bbar-item"><span class="bbar-label">Mesas</span><span class="bbar-val" id="bb-mesas">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Votos válidos</span><span class="bbar-val" id="bb-validos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">No marcados</span><span class="bbar-val" id="bb-nomarcados">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Participación</span><span class="bbar-val hi" id="bb-participacion">—</span></div>
+</div>
 
 <!-- Pronóstico view -->
 <div id="pronostico-view">
@@ -651,7 +680,6 @@
           <!-- Needle pivot -->
           <circle cx="150" cy="148" r="5" fill="#1a1209"/>
           <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
-          <!-- Placeholder text (cleared by renderNeedle) -->
           <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
                 font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
                 fill="var(--muted)"></text>
@@ -662,20 +690,28 @@
           <div class="needle-label-name" id="needle-left-name">—</div>
           <div class="needle-label-prob" id="needle-left-prob">—%</div>
           <div class="needle-label-probsub">prob. 2da vuelta</div>
-          <div class="needle-label-votes" id="needle-left-votes">— votos</div>
+          <div class="needle-label-votes" id="needle-left-votes">—</div>
         </div>
         <div class="needle-center-block">
           <div class="needle-center-diff" id="needle-center-diff">—</div>
-          <div class="needle-center-sub">diferencia proy.</div>
-          <div class="needle-center-ci" id="needle-center-ci">IC: —</div>
+          <div class="needle-center-sub">margen proy. (pp)</div>
+          <div class="needle-center-ci" id="needle-center-ci"></div>
         </div>
         <div class="needle-label right">
           <div class="needle-label-name" id="needle-right-name">—</div>
           <div class="needle-label-prob" id="needle-right-prob">—%</div>
           <div class="needle-label-probsub">prob. 2da vuelta</div>
-          <div class="needle-label-votes" id="needle-right-votes">— votos</div>
+          <div class="needle-label-votes" id="needle-right-votes">—</div>
         </div>
       </div>
+    </div>
+
+    <!-- Margin distribution -->
+    <div class="margin-dist-wrap" id="margin-dist-wrap">
+      <div class="margin-dist-title">Distribución del margen proyectado entre 2º y 3er puesto</div>
+      <svg id="margin-dist-svg" viewBox="0 0 480 80" preserveAspectRatio="none"></svg>
+      <div class="margin-dist-axis" id="margin-dist-axis"></div>
+      <div class="margin-dist-foot" id="margin-dist-foot"></div>
     </div>
 
     <!-- Candidate bars -->
@@ -767,7 +803,7 @@
   let deptBoundsMap = {}, deptFeatMap = {};
 
   let mpioData = null, deptData = null;
-  let resultsData = null, forecastData = null, exteriorData = null;
+  let candidatesData = null, aggStats = null, forecastData = null;
 
   const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
 
@@ -1072,15 +1108,38 @@
   document.getElementById("detail-back").addEventListener("click", hideDetail);
 
   // ── Header stats ──────────────────────────────────────────────────────────
-  function updateHeader(r) {
-    if (!r) return;
-    const pct = r.mesas_total ? r.mesas_escrutadas / r.mesas_total : 0;
-    document.getElementById("hs-censo").textContent   = fmtN(r.censo);
-    document.getElementById("hs-votes").textContent   = fmtN(r.votantes);
-    document.getElementById("hs-turnout").textContent = r.censo ? (r.votantes / r.censo * 100).toFixed(1) + "%" : "—";
+  function updateHeaderStats() {
+    const s = aggStats || {};
+    const censo    = s.censo || 0;
+    const mesaEsc  = s.mesas_escrutadas || 0;
+    const mesaTot  = s.mesas_total || 0;
+    const votantes = s.votantes || 0;
+    const pct      = mesaTot ? mesaEsc / mesaTot : 0;
+    document.getElementById("hs-censo").textContent   = censo   ? fmtN(censo)   : "—";
+    document.getElementById("hs-votes").textContent   = votantes ? fmtN(votantes) : "—";
+    document.getElementById("hs-turnout").textContent = (censo && votantes) ? (votantes / censo * 100).toFixed(1) + "%" : "—";
     document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
-    document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(r.mesas_escrutadas)}/${fmtN(r.mesas_total)}`;
+    document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(mesaEsc)}/${fmtN(mesaTot)}`;
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+  }
+
+  // ── Bottom bar ────────────────────────────────────────────────────────────
+  function updateBottomBar() {
+    const s = aggStats || {};
+    const mesaEsc = s.mesas_escrutadas || 0;
+    const mesaTot = s.mesas_total || 0;
+    const validos = s.votos_validos || 0;
+    const blanco  = s.votos_blanco || 0;
+    const nulos   = s.votos_nulos || 0;
+    const nomarc  = s.votos_no_marcados || 0;
+    const censo   = s.censo || 0;
+    const votan   = s.votantes || 0;
+    document.getElementById("bb-mesas").textContent        = mesaTot ? `${fmtN(mesaEsc)} / ${fmtN(mesaTot)}` : "—";
+    document.getElementById("bb-validos").textContent      = validos ? fmtN(validos) : "—";
+    document.getElementById("bb-blanco").textContent       = validos ? `${fmtN(blanco)} (${(blanco/validos*100).toFixed(1)}%)` : "—";
+    document.getElementById("bb-nulos").textContent        = nulos   ? fmtN(nulos)   : "—";
+    document.getElementById("bb-nomarcados").textContent   = nomarc  ? fmtN(nomarc)  : "—";
+    document.getElementById("bb-participacion").textContent = (censo && votan) ? (votan/censo*100).toFixed(1) + "%" : "—";
   }
 
   // ── Panel tab switching ───────────────────────────────────────────────────
@@ -1089,26 +1148,30 @@
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
     document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
-    document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
   }
   document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
 
   // ── Candidatos sidebar ────────────────────────────────────────────────────
   function buildCandList() {
     const el = document.getElementById("panel-candidatos");
-    // Prefer forecast candidates (have prob_runoff), fall back to results
-    const src = forecastData?.candidates || resultsData?.candidates || [];
-    const isLive = (forecastData?.pct_mesas || 0) > 0;
-    const totalVV = src.reduce((s, c) => s + (c.votes_current || c.votes || 0), 0);
+    const cands = candidatesData || [];
+    const isLive = (aggStats?.mesas_escrutadas || 0) > 0;
 
-    const sorted = src.slice().sort((a, b) =>
-      (b.votes_current ?? b.poll_pct ?? 0) - (a.votes_current ?? a.poll_pct ?? 0)
-    );
+    // Build vote totals lookup from aggStats.candidates
+    const voteMap = {};
+    (aggStats?.candidates || []).forEach(c => { voteMap[c.code] = c.votes || 0; });
 
-    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos · ${fmtN(totalVV || 0)} votos</div>` +
+    const totalVV = aggStats?.votos_validos || 0;
+
+    // Merge metadata + votes, sort by votes desc (or keep order pre-election)
+    const merged = cands.map(c => ({...c, votes: voteMap[c.code] || 0}));
+    const sorted = isLive
+      ? merged.slice().sort((a, b) => b.votes - a.votes)
+      : merged;
+
+    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos${isLive ? ' · ' + fmtN(totalVV) + ' votos válidos' : ''}</div>` +
       sorted.map(c => {
-        const votes = isLive ? (c.votes_current || 0) : 0;
-        const pct   = isLive && totalVV > 0 ? (votes / totalVV * 100).toFixed(1) + "%" : (c.poll_pct ? c.poll_pct.toFixed(1) + "% enc." : "—");
+        const pct = isLive && totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) + "%" : "—";
         return `<div class="cand-row">
           <div class="cand-row-dot" style="background:${c.color || '#9a8878'}"></div>
           <div class="cand-row-info">
@@ -1116,7 +1179,7 @@
             <div class="cand-row-partido">${c.partido || ''}</div>
           </div>
           <div class="cand-row-right">
-            <div class="cand-row-votes">${fmtN(votes)}</div>
+            <div class="cand-row-votes">${isLive ? fmtN(c.votes) : '—'}</div>
             <div class="cand-row-pct">${pct}</div>
           </div>
         </div>`;
@@ -1163,26 +1226,7 @@
     });
   }
 
-  // ── Exterior sidebar ──────────────────────────────────────────────────────
-  function buildExteriorList() {
-    const el = document.getElementById("panel-exterior");
-    if (!exteriorData || !exteriorData.length) {
-      el.innerHTML = `<div class="sect-head">Circunscripción Exterior</div>
-        <div style="padding:0.7rem 0.75rem;font-size:10px;color:var(--muted)">Datos disponibles el 31 de mayo.</div>`;
-      return;
-    }
-    const totalMesas = exteriorData.reduce((s, c) => s + (c.mesas_total || 0), 0);
-    const totalMesasE = exteriorData.reduce((s, c) => s + (c.mesas_escrutadas || 0), 0);
-    el.innerHTML = `<div class="sect-head">${exteriorData.length} países · ${fmtN(totalMesas)} mesas</div>` +
-      exteriorData.map(c => {
-        const restantes = (c.mesas_total || 0) - (c.mesas_escrutadas || 0);
-        const votes = c.votes || 0;
-        return `<div class="ext-row">
-          <div class="ext-row-name">${c.name}</div>
-          <div class="ext-row-meta">${votes > 0 ? fmtN(votes) + ' votos' : fmtN(restantes) + ' mesas rest.'}</div>
-        </div>`;
-      }).join("");
-  }
+  // ── (Exterior tab removed — included in aggregate national totals) ────────
 
   // ── Controls ──────────────────────────────────────────────────────────────
   document.querySelectorAll(".level-btn").forEach(btn => {
@@ -1314,11 +1358,69 @@
     return `${s}${a}`;
   }
 
+  // ── Margin distribution chart ─────────────────────────────────────────────
+  function renderMarginDist(battle) {
+    const dist = battle?.margin_distribution;
+    if (!dist || !dist.edges || !dist.counts) return;
+    const { edges, counts } = dist;
+    const svg  = document.getElementById("margin-dist-svg");
+    const axis = document.getElementById("margin-dist-axis");
+    const foot = document.getElementById("margin-dist-foot");
+
+    const W = 480, H = 72, PAD = 2;
+    const maxCount = Math.max(...counts, 1);
+    const n = counts.length;
+    const barW = (W - PAD * 2) / n;
+    const leftColor  = battle.left_color  || "#1E293B";
+    const rightColor = battle.right_color || "#1D4ED8";
+
+    // Zero-crossing index
+    const zeroEdge = edges.findIndex(e => e >= 0);
+
+    let paths = "";
+    counts.forEach((c, i) => {
+      const x    = PAD + i * barW;
+      const barH = Math.max(1, (c / maxCount) * H);
+      const y    = H - barH;
+      // Left candidate (margin > 0) vs right candidate (margin < 0)
+      const midEdge = (edges[i] + (edges[i+1] ?? edges[i])) / 2;
+      const col = midEdge > 0 ? leftColor : midEdge < 0 ? rightColor : "#888";
+      const op  = midEdge === 0 ? "0.35" : "0.65";
+      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.8).toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="${op}"/>`;
+    });
+
+    // Center zero line
+    const zeroX = zeroEdge >= 0 ? (PAD + zeroEdge * barW).toFixed(1) : (W / 2).toFixed(1);
+    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>`;
+
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = paths;
+
+    // Axis labels: show ~5 evenly spaced edge values
+    const step = Math.max(1, Math.floor(edges.length / 5));
+    const labelIdxs = [];
+    for (let i = 0; i < edges.length; i += step) labelIdxs.push(i);
+    if (!labelIdxs.includes(edges.length - 1)) labelIdxs.push(edges.length - 1);
+    axis.innerHTML = edges.map((e, i) => {
+      if (!labelIdxs.includes(i)) return "";
+      const pct = PAD/W + (i / n) * (1 - 2*PAD/W);
+      return `<span style="position:relative;left:${(pct*100).toFixed(1)}%">${e > 0 ? "+" : ""}${e.toFixed(1)}pp</span>`;
+    }).filter(Boolean).join("");
+    axis.style.position = "relative";
+
+    // Footer: left vs right names
+    const leftN  = (battle.left_nombre  || "—").split(" ").slice(-1)[0];
+    const rightN = (battle.right_nombre || "—").split(" ").slice(-1)[0];
+    foot.innerHTML = `
+      <span style="color:${rightColor}">← ${rightN} adelante</span>
+      <span style="color:${leftColor}">${leftN} adelante →</span>`;
+  }
+
   // ── Pronóstico view ───────────────────────────────────────────────────────
   function renderPronostico() {
     if (!forecastData) return;
     const fd = forecastData;
-    const isLive = fd.pct_mesas > 0;
+    const isLive = (fd.pct_mesas || 0) > 0;
 
     // Pre-election banner
     const banner = document.getElementById("pre-banner");
@@ -1327,73 +1429,78 @@
     // Source note
     document.getElementById("pron-source-note").textContent = isLive
       ? `${fd.pct_mesas.toFixed(1)}% mesas · ${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones`
-      : "Encuestas AtlasIntel · may-2026";
+      : `${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones · pronóstico previo`;
 
     // Sort candidates by prob_runoff desc
-    const cands = (fd.candidates || []).slice().sort((a, b) => b.prob_runoff - a.prob_runoff);
-    const c1 = cands[0], c2 = cands[1], c3 = cands[2];
+    const cands = (fd.candidates || []).slice().sort((a, b) => (b.prob_runoff||0) - (a.prob_runoff||0));
+    const c2 = cands[1], c3 = cands[2];  // 2nd and 3rd most likely
 
     // ── Needle ──
-    if (c2 && c3) {
-      const battle   = fd.battle || {};
-      const candLeft  = c2;  // 2nd by prob → left side (more likely to enter runoff)
-      const candRight = c3;  // 3rd by prob → right side
+    const battle = fd.battle || {};
+    if (battle.left_code && battle.right_code) {
+      const candLeft  = fd.candidates?.find(c => c.code === battle.left_code)  || c2 || {};
+      const candRight = fd.candidates?.find(c => c.code === battle.right_code) || c3 || {};
 
-      // Use vote-based battle fields; fall back to deriving from current counts
-      const leftVotes  = isLive ? (candLeft.votes_current  || 0) : 0;
-      const rightVotes = isLive ? (candRight.votes_current || 0) : 0;
-      const diffVotes    = battle.projected_diff_votes ?? (battle.diff_estimate_votes ?? (leftVotes - rightVotes));
-      const ciLowVotes   = battle.projected_ci_low_votes  ?? (battle.diff_ci_low_votes  ?? (diffVotes - 300000));
-      const ciHiVotes    = battle.projected_ci_high_votes ?? (battle.diff_ci_high_votes ?? (diffVotes + 300000));
+      // Margin in percentage points (projected)
+      const marginPct  = battle.margin_pct_projected ?? 0;
+      const ciLowPct   = battle.ci_low_pct  ?? (marginPct - 5);
+      const ciHighPct  = battle.ci_high_pct ?? (marginPct + 5);
 
-      renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight);
+      // Convert pct to "vote-like" units for the needle (scale by 1M for readability)
+      const scale = 1000000;
+      renderNeedle(marginPct * scale, ciLowPct * scale, ciHighPct * scale, candLeft, candRight);
 
-      // Needle labels (HTML below SVG)
-      document.getElementById("needle-left-name").textContent  = candLeft.nombre.split(" ").slice(-1)[0];
-      document.getElementById("needle-left-name").style.color  = candLeft.color;
+      const leftName  = (candLeft.nombre  || "—").split(" ").slice(-1)[0];
+      const rightName = (candRight.nombre || "—").split(" ").slice(-1)[0];
+      document.getElementById("needle-left-name").textContent  = leftName;
+      document.getElementById("needle-left-name").style.color  = candLeft.color || "#888";
       document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
-      document.getElementById("needle-left-prob").style.color  = candLeft.color;
-      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(leftVotes) + " votos" : (candLeft.poll_pct?.toFixed(1)||"—") + "% enc.";
+      document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
 
-      document.getElementById("needle-right-name").textContent = candRight.nombre.split(" ")[0];
-      document.getElementById("needle-right-name").style.color = candRight.color;
+      document.getElementById("needle-right-name").textContent = rightName;
+      document.getElementById("needle-right-name").style.color = candRight.color || "#888";
       document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
-      document.getElementById("needle-right-prob").style.color = candRight.color;
-      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(rightVotes) + " votos" : (candRight.poll_pct?.toFixed(1)||"—") + "% enc.";
+      document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes_current || 0) + " votos" : "—";
 
-      document.getElementById("needle-center-diff").textContent = isLive ? fmtVoteDiff(diffVotes) : "—";
-      const ciLabel = isLive ? `IC: [${fmtVoteDiff(ciLowVotes)}, ${fmtVoteDiff(ciHiVotes)}]` : "";
-      document.getElementById("needle-center-ci").textContent  = ciLabel;
+      const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
+      document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
+      document.getElementById("needle-center-ci").textContent   = isLive ? `IC: [${diffFmt(ciLowPct)}, ${diffFmt(ciHighPct)}]` : "";
     }
+
+    // ── Margin distribution ──
+    renderMarginDist(battle);
 
     // ── Candidate probability bars ──
     const list = document.getElementById("cand-prob-list");
     list.innerHTML = cands.map((c, i) => {
-      const isSV = i < 2;
-      const votes = isLive ? (c.votes_current || 0) : 0;
+      const isSV   = i < 2;
+      const prob   = c.prob_runoff ?? 0;
+      const votes  = c.votes_current || 0;
+      const ciLow  = c.ci_low_pct  ?? 0;
+      const ciHigh = c.ci_high_pct ?? 0;
       const voteDisplay = isLive
-        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos contados`
-        : `<span class="cand-prob-votes">${c.poll_pct?.toFixed(1) || "—"}%</span> en encuestas`;
-      const ci = isLive
-        ? `<span class="cand-prob-ci">[IC ${c.ci_low?.toFixed(1)}–${c.ci_high?.toFixed(1)}%]</span>`
-        : `<span class="cand-prob-ci">[${c.ci_low?.toFixed(1)}–${c.ci_high?.toFixed(1)}%]</span>`;
+        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · proy. ${(c.vote_pct_projected||0).toFixed(1)}%`
+        : `<span class="cand-prob-votes">—</span> sin datos`;
+      const ciStr  = isLive ? `<span class="cand-prob-ci">[IC ${ciLow.toFixed(1)}–${ciHigh.toFixed(1)}%]</span>` : "";
       return `<div class="cand-prob-row">
         <div class="cand-prob-top">
-          <div class="cand-prob-dot" style="background:${c.color}"></div>
+          <div class="cand-prob-dot" style="background:${c.color||'#888'}"></div>
           <div class="cand-prob-nameblock">
-            <div class="cand-prob-name">${c.nombre}</div>
-            <div class="cand-prob-partido">${c.partido}</div>
+            <div class="cand-prob-name">${c.nombre || c.code}</div>
+            <div class="cand-prob-partido">${c.partido || ''}</div>
           </div>
           <div class="cand-prob-right">
-            <span class="cand-prob-pct-val" style="color:${c.color}">${c.prob_runoff.toFixed(0)}%</span>
+            <span class="cand-prob-pct-val" style="color:${c.color||'#888'}">${prob.toFixed(0)}%</span>
             <span class="cand-prob-pct-label">prob. 2da vuelta</span>
             ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
           </div>
         </div>
         <div class="cand-prob-bar-wrap">
-          <div class="cand-prob-bar" style="width:${c.prob_runoff.toFixed(1)}%;background:${c.color}"></div>
+          <div class="cand-prob-bar" style="width:${prob.toFixed(1)}%;background:${c.color||'#888'}"></div>
         </div>
-        <div class="cand-prob-bottom">${voteDisplay} ${ci}</div>
+        <div class="cand-prob-bottom">${voteDisplay} ${ciStr}</div>
       </div>`;
     }).join("");
 
@@ -1401,22 +1508,22 @@
     const note = document.getElementById("pron-note");
     note.style.display = "block";
     note.textContent = isLive
-      ? `Pronóstico calculado con ${(fd.n_simulations||0).toLocaleString("es-CO")} simulaciones Montecarlo (${fd.pct_mesas.toFixed(1)}% de mesas escrutadas). La diferencia proyectada estima el resultado final al 100% del escrutinio con su intervalo de confianza.`
-      : "Las probabilidades pre-electorales se derivan de encuestas AtlasIntel (mayo 2026) y simulaciones Montecarlo. Se actualizarán automáticamente el 31 de mayo a medida que lleguen resultados oficiales.";
+      ? `Pronóstico calculado con ${(fd.n_simulations||0).toLocaleString("es-CO")} simulaciones Montecarlo (${fd.pct_mesas.toFixed(1)}% de mesas escrutadas). La distribución del margen muestra la probabilidad de cada rango de diferencia entre el 2º y 3er candidato al final del escrutinio.`
+      : "Pronóstico en estado vacío — sin mesas escrutadas. Las probabilidades se actualizarán automáticamente el 31 de mayo a medida que lleguen resultados de la Registraduría.";
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
   const BASE = "../../../colombia/2026/primera/data/";
   Promise.all([
-    fetch(BASE + "results.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+    fetch(BASE + "candidates.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+    fetch(BASE + "aggregate_stats.json").then(r => r.json()).catch(() => null),
     fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
     fetch(BASE + "colombia_2026_municipio_primera.geojson").then(r => r.json()).catch(() => null),
     fetch(BASE + "colombia_2026_dept_primera.geojson").then(r => r.json()).catch(() => null),
-    fetch(BASE + "exterior_paises.json").then(r => r.json()).catch(() => null),
-  ]).then(([results, forecast, mpioGeo, deptGeo, exterior]) => {
-    resultsData  = results;
-    forecastData = forecast;
-    exteriorData = exterior;
+  ]).then(([cands, agg, forecast, mpioGeo, deptGeo]) => {
+    candidatesData = cands;
+    aggStats       = agg;
+    forecastData   = forecast;
 
     if (mpioGeo) mpioData = mpioGeo;
     if (deptGeo) {
@@ -1427,17 +1534,17 @@
       });
     }
 
-    updateHeader(results);
+    updateHeaderStats();
+    updateBottomBar();
     buildCandList();
     buildDeptList();
-    buildExteriorList();
 
     if (mpioData || deptData) {
       render();
     } else {
       document.getElementById("loading").innerHTML =
-        `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:200px">
-          Mapa no disponible.<br>GeoJSON generado el día de la elección.
+        `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:220px">
+          Mapa no disponible.<br>GeoJSON se genera con los scripts de procesamiento.
         </p>`;
       document.getElementById("loading").style.background = "transparent";
     }
@@ -1448,52 +1555,6 @@
       `<p style="color:#c4603a;font-weight:700">${err.message}</p>
        <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts de procesamiento primero.</p>`;
   });
-
-  // ── Auto-refresh ──────────────────────────────────────────────────────────
-  let refreshTimer = null;
-  function scheduleRefresh() {
-    clearTimeout(refreshTimer);
-    refreshTimer = setTimeout(async () => {
-      try {
-        const [results, forecast] = await Promise.all([
-          fetch(BASE + "results.json").then(r => r.json()),
-          fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
-        ]);
-        resultsData  = results;
-        if (forecast) forecastData = forecast;
-        updateHeader(results);
-        if (results.pct_mesas > 0) {
-          // Reload GeoJSON and re-render
-          const [mpioGeo, deptGeo] = await Promise.all([
-            fetch(BASE + "colombia_2026_municipio_primera.geojson").then(r => r.json()).catch(() => null),
-            fetch(BASE + "colombia_2026_dept_primera.geojson").then(r => r.json()).catch(() => null),
-          ]);
-          if (mpioGeo) mpioData = mpioGeo;
-          if (deptGeo) {
-            deptData = deptGeo;
-            deptGeo.features.forEach(f => {
-              const key = (f.properties || {}).name || "";
-              if (key) deptFeatMap[key] = f;
-            });
-            // Clear layers to force re-render
-            if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer = null; }
-            if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
-            if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
-            if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
-            render();
-          }
-          buildCandList();
-          buildDeptList();
-          scheduleRefresh();
-        }
-      } catch(e) {
-        scheduleRefresh();
-      }
-    }, 60000);
-  }
-  // Always schedule refresh — it will no-op gracefully before election starts
-  // and kick in automatically once mesas > 0.
-  setTimeout(scheduleRefresh, 5000);
 
 })();
 </script>

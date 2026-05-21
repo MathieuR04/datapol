@@ -45,8 +45,9 @@ def load_party_lookup():
         if path.exists():
             for p in json.load(open(path)):
                 lkp[str(p["code"]).zfill(4)] = {
-                    "nombre": p.get("nombre", p["code"]),
-                    "color":  p.get("color",  "#888"),
+                    "nombre":       p.get("nombre", p["code"]),
+                    "display_name": p.get("display_name", ""),
+                    "color":        p.get("color",  "#888"),
                 }
     return lkp
 
@@ -64,7 +65,8 @@ def compute_winner(row, party_cols, prefix, lkp):
     info    = lkp.get(code, {})
     vv      = int(row.get("votos_validos", 0) or 0)
     wpct    = round(best_v / vv * 100, 2) if vv else 0.0
-    return info.get("nombre", code), info.get("color", "#888"), best_v, wpct
+    name    = info.get("display_name") or info.get("nombre", code)
+    return name, info.get("color", "#888"), best_v, wpct
 
 
 def top5_json(row, party_cols, prefix, lkp):
@@ -74,13 +76,13 @@ def top5_json(row, party_cols, prefix, lkp):
         if not v: continue
         code = col.replace(prefix, "").zfill(4)
         info = lkp.get(code, {})
-        entries.append({"name": info.get("nombre", code),
+        entries.append({"name": info.get("display_name") or info.get("nombre", code),
                         "color": info.get("color", "#888"),
                         "votes": v})
     return json.dumps(sorted(entries, key=lambda x: -x["votes"]), ensure_ascii=False)
 
 
-def enrich(df, party_cols, prefix, lkp, censo_map):
+def enrich(df, party_cols, prefix, lkp, censo_map, mesas_map):
     """Add winner_*, turnout_pct, pct_* and top5_candidates to df in place."""
     df = df.copy()
     for col in ["votantes", "votos_validos", "votos_blanco", "votos_nulos",
@@ -88,7 +90,21 @@ def enrich(df, party_cols, prefix, lkp, censo_map):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
 
-    df["censo"]    = pd.to_numeric(df["mpio_reg_code_7"].map(censo_map), errors="coerce").fillna(0).astype(int)
+    # censo: scraped value takes priority; fall back to electoral roll if absent/zero.
+    if "censo" in df.columns:
+        scraped = pd.to_numeric(df["censo"], errors="coerce").fillna(0)
+        roll    = pd.to_numeric(df["mpio_reg_code_7"].map(censo_map), errors="coerce").fillna(0)
+        df["censo"] = scraped.where(scraped > 0, roll).astype(int)
+    else:
+        df["censo"] = pd.to_numeric(df["mpio_reg_code_7"].map(censo_map), errors="coerce").fillna(0).astype(int)
+
+    # mesas_total: scraped value takes priority; fall back to electoral roll num_mesas.
+    if "mesas_total" in df.columns:
+        scraped_m = pd.to_numeric(df["mesas_total"], errors="coerce").fillna(0)
+        roll_m    = pd.to_numeric(df["mpio_reg_code_7"].map(mesas_map), errors="coerce").fillna(0)
+        df["mesas_total"] = scraped_m.where(scraped_m > 0, roll_m).astype(int)
+    else:
+        df["mesas_total"] = pd.to_numeric(df["mpio_reg_code_7"].map(mesas_map), errors="coerce").fillna(0).astype(int)
     votantes  = pd.to_numeric(df["votantes"],     errors="coerce").fillna(0)
     validos   = pd.to_numeric(df["votos_validos"],errors="coerce").fillna(0)
     blanco    = pd.to_numeric(df["votos_blanco"], errors="coerce").fillna(0)
@@ -118,15 +134,19 @@ def build_mpio_geojson(df, out_path, label):
             "turnout_pct", "pct_blanco", "pct_nulo",
             "winner", "winner_votes", "winner_pct", "winner_color", "top5_candidates"]
 
-    matched = 0
+    matched, kept_feats = 0, []
     for feat in geo["features"]:
         code7 = feat["properties"].get("mpio_reg_code_7", "")
+        if str(code7).startswith("88"):
+            continue                    # exclude exterior — world-map geometry
         if code7 in result_dict:
             row = result_dict[code7]
             feat["properties"].update({k: row[k] for k in keep if k in row})
             matched += 1
+        kept_feats.append(feat)
 
-    print(f"  {label} mpio: {matched}/{len(geo['features'])} features matched")
+    geo["features"] = kept_feats
+    print(f"  {label} mpio: {matched}/{len(kept_feats)} features matched")
     with open(out_path, "w") as f:
         json.dump(_clean(geo), f, ensure_ascii=False)
     print(f"  Saved → {out_path.name}")
@@ -143,6 +163,7 @@ def build_dept_geojson(df, out_path, label):
     prefix     = "indig_" if any(c.startswith("indig_") for c in party_cols) else "party_"
 
     df = df.copy()
+    df = df[~df["mpio_reg_code_7"].str.startswith("88")]   # exclude exterior
     df["dept_num"] = df["mpio_reg_code_7"].str[:2]
 
     numeric_cols = [c for c in agg_cols + party_cols if c in df.columns]
@@ -151,12 +172,16 @@ def build_dept_geojson(df, out_path, label):
 
     dept_agg = df.groupby("dept_num")[numeric_cols].sum().reset_index()
 
+    # Ensure aggregated columns are numeric (guards against all-zero / object dtype)
+    for c in numeric_cols:
+        dept_agg[c] = pd.to_numeric(dept_agg[c], errors="coerce").fillna(0)
+
     # Re-derive winner / pcts at dept level
     lkp = load_party_lookup()
     dept_party_cols = [c for c in party_cols if c in dept_agg.columns]
-    dept_agg["turnout_pct"] = (dept_agg["votantes"] / dept_agg["censo"].replace(0, pd.NA) * 100).round(2).fillna(0)
-    dept_agg["pct_blanco"]  = (dept_agg["votos_blanco"] / dept_agg["votos_validos"].replace(0, pd.NA) * 100).round(2).fillna(0)
-    dept_agg["pct_nulo"]    = (dept_agg["votos_nulos"]  / dept_agg["votantes"].replace(0, pd.NA) * 100).round(2).fillna(0)
+    dept_agg["turnout_pct"] = (dept_agg["votantes"].astype(float) / dept_agg["censo"].replace(0, float("nan")) * 100).round(2).fillna(0)
+    dept_agg["pct_blanco"]  = (dept_agg["votos_blanco"].astype(float) / dept_agg["votos_validos"].replace(0, float("nan")) * 100).round(2).fillna(0)
+    dept_agg["pct_nulo"]    = (dept_agg["votos_nulos"].astype(float)  / dept_agg["votantes"].replace(0, float("nan")) * 100).round(2).fillna(0)
 
     winners = dept_agg.apply(lambda r: compute_winner(r, dept_party_cols, prefix, lkp), axis=1)
     dept_agg["winner"]         = winners.map(lambda x: x[0])
@@ -194,16 +219,18 @@ def main():
     print("Loading lookups …")
     lkp = load_party_lookup()
 
-    # Electoral roll → censo per mpio
+    # Electoral roll → censo and num_mesas per mpio (fallbacks when not in results CSV)
     roll = pd.read_csv(METADATA / "colombia_2026_municipio_electoral_roll.csv", dtype=str)
-    roll["censo"] = pd.to_numeric(roll["censo"], errors="coerce").fillna(0).astype(int)
+    roll["censo"]     = pd.to_numeric(roll["censo"],     errors="coerce").fillna(0).astype(int)
+    roll["num_mesas"] = pd.to_numeric(roll["num_mesas"], errors="coerce").fillna(0).astype(int)
     censo_map = roll.set_index("mpio_reg_code_7")["censo"].to_dict()
+    mesas_map = roll.set_index("mpio_reg_code_7")["num_mesas"].to_dict()
 
     # ── Nacional ─────────────────────────────────────────────────────────────
     print("\nBuilding nacional GeoJSONs …")
     nat = pd.read_csv(OUT / "results/colombia_2026_municipio_senado_nacional.csv", dtype=str)
     party_cols = [c for c in nat.columns if c.startswith("party_")]
-    nat = enrich(nat, party_cols, "party_", lkp, censo_map)
+    nat = enrich(nat, party_cols, "party_", lkp, censo_map, mesas_map)
 
     build_mpio_geojson(nat, OUT / "colombia_2026_municipio_senado_nacional.geojson", "Nacional")
     build_dept_geojson(nat, OUT / "colombia_2026_dept_senado_nacional.geojson",      "Nacional")
@@ -212,7 +239,7 @@ def main():
     print("\nBuilding indígena GeoJSONs …")
     ind = pd.read_csv(OUT / "results/colombia_2026_municipio_senado_indigena.csv", dtype=str)
     indig_cols = [c for c in ind.columns if c.startswith("indig_")]
-    ind = enrich(ind, indig_cols, "indig_", lkp, censo_map)
+    ind = enrich(ind, indig_cols, "indig_", lkp, censo_map, mesas_map)
 
     build_mpio_geojson(ind, OUT / "colombia_2026_municipio_senado_indigena.geojson", "Indígena")
     build_dept_geojson(ind, OUT / "colombia_2026_dept_senado_indigena.geojson",      "Indígena")
