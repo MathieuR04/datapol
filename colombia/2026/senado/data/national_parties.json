@@ -2,96 +2,112 @@
   {
     "code": "0092",
     "nombre": "PACTO HISTÓRICO SENADO",
+    "display_name": "",
     "color": "#96955D",
     "votes": 4413636
   },
   {
     "code": "0010",
     "nombre": "PARTIDO CENTRO DEMOCRÁTICO",
+    "display_name": "",
     "color": "#1E477D",
     "votes": 3035715
   },
   {
     "code": "0002",
     "nombre": "PARTIDO LIBERAL COLOMBIANO",
+    "display_name": "",
     "color": "#E30716",
     "votes": 2275182
   },
   {
     "code": "0057",
     "nombre": "ALIANZA POR COLOMBIA",
+    "display_name": "",
     "color": "#4FC92F",
     "votes": 1904154
   },
   {
     "code": "0003",
     "nombre": "PARTIDO CONSERVADOR COLOMBIANO",
+    "display_name": "",
     "color": "#0867B1",
     "votes": 1863663
   },
   {
     "code": "0009",
     "nombre": "PARTIDO DE LA UNIÓN POR LA GENTE - PARTIDO DE LA U",
+    "display_name": "",
     "color": "#48AB38",
     "votes": 1565786
   },
   {
     "code": "0044",
     "nombre": "COALICIÓN CAMBIO RADICAL - ALMA",
+    "display_name": "",
     "color": "#575D4A",
     "votes": 1248021
   },
   {
     "code": "0043",
     "nombre": "AHORA COLOMBIA",
+    "display_name": "",
     "color": "#C5337F",
     "votes": 900606
   },
   {
     "code": "0017",
     "nombre": "MOVIMIENTO SALVACIÓN NACIONAL",
+    "display_name": "",
     "color": "#DBAEE8",
     "votes": 705924
   },
   {
     "code": "0055",
     "nombre": "FRENTE AMPLIO UNITARIO",
+    "display_name": "",
     "color": "#600E39",
     "votes": 396042
   },
   {
     "code": "0039",
     "nombre": "CREEMOS",
+    "display_name": "",
     "color": "#BFDD09",
     "votes": 227957
   },
   {
     "code": "0170",
     "nombre": "COALICIÓN FUERZA CIUDADANA",
+    "display_name": "",
     "color": "#1941C2",
     "votes": 114722
   },
   {
     "code": "0040",
     "nombre": "LA LISTA DE OVIEDO - CON TODA POR COLOMBIA",
+    "display_name": "",
     "color": "#BFD7B6",
     "votes": 105393
   },
   {
     "code": "0018",
     "nombre": "PARTIDO POLÍTICO OXÍGENO",
+    "display_name": "",
     "color": "#0E7025",
     "votes": 27879
   },
   {
     "code": "0033",
     "nombre": "PATRIOTAS",
+    "display_name": "",
     "color": "#1DFB69",
     "votes": 10755
   },
   {
     "code": "0034",
     "nombre": "COLOMBIA SEGURA Y PRÓSPERA",
+    "display_name": "",
     "color": "#9E3A69",
     "votes": 10754
   }
