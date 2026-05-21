@@ -1,0 +1,22 @@
+{
+  "nacional": {
+    "votantes": 0,
+    "votos_validos": 0,
+    "votos_blanco": 0,
+    "votos_nulos": 0,
+    "votos_no_marcados": 0,
+    "mesas_escrutadas": 0,
+    "mesas_total": 126647,
+    "censo": 42112284
+  },
+  "indigena": {
+    "votantes": 0,
+    "votos_validos": 0,
+    "votos_blanco": 0,
+    "votos_nulos": 0,
+    "votos_no_marcados": 0,
+    "mesas_escrutadas": 0,
+    "mesas_total": 126647,
+    "censo": 42112284
+  }
+}

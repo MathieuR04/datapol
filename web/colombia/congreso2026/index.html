@@ -1066,21 +1066,19 @@
   }
   document.getElementById("detail-back").addEventListener("click", hideDetail);
 
-  // ── Stats — computed from GeoJSON features (single source of truth) ────────
+  // ── Stats — read from aggregate_stats.json (pre-computed by 04_aggregate_stats.py) ──
+  // Covers all municipios including exterior. No summing in the browser.
   function sumFeatures(features, key) {
     return features.reduce((s, f) => s + (parseInt(f.properties?.[key]) || 0), 0);
   }
 
-  // Header: always nacional (censo, total votantes, mesas progress)
   function updateHeaderStats() {
-    const feats = mpioNatData?.features || [];
-    const roll  = _rollByCode || {};
-
-    const censo     = Object.values(roll).reduce((s, r) => s + (parseInt(r.censo) || 0), 0);
-    const votantes  = sumFeatures(feats, "votantes");
-    const mesaEsc   = sumFeatures(feats, "mesas_escrutadas");
-    const mesaTot   = sumFeatures(feats, "mesas_total");
-    const pct       = mesaTot ? mesaEsc / mesaTot : 0;
+    const s = aggStats?.nacional || {};
+    const votantes = s.votantes   || 0;
+    const censo    = s.censo      || 0;
+    const mesaEsc  = s.mesas_escrutadas || 0;
+    const mesaTot  = s.mesas_total      || 0;
+    const pct      = mesaTot ? mesaEsc / mesaTot : 0;
 
     document.getElementById("hs-censo").textContent   = fmtN(censo);
     document.getElementById("hs-votes").textContent   = fmtN(votantes);
@@ -1090,26 +1088,18 @@
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
   }
 
-  // Bottom bar: constituency-specific, summed from GeoJSON features
   function updateBottomBar(mode) {
-    const isInd  = mode === "indigena";
-    const feats  = (isInd ? mpioIndData : mpioNatData)?.features || [];
+    const s = (mode === "indigena" ? aggStats?.indigena : aggStats?.nacional) || {};
 
-    const votantes  = sumFeatures(feats, "votantes");
-    const noMarcado = sumFeatures(feats, "votos_no_marcados");
-    const nulos     = sumFeatures(feats, "votos_nulos");
-    const blanco    = sumFeatures(feats, "votos_blanco");
-    const mesaEsc   = sumFeatures(feats, "mesas_escrutadas");
-    const mesaTot   = sumFeatures(feats, "mesas_total");
+    document.getElementById("bb-votantes").textContent   = fmtN(s.votantes          || 0);
+    document.getElementById("bb-nomarcados").textContent = fmtN(s.votos_no_marcados  || 0);
+    document.getElementById("bb-nulos").textContent      = fmtN(s.votos_nulos        || 0);
+    document.getElementById("bb-blanco").textContent     = fmtN(s.votos_blanco       || 0);
+    document.getElementById("bb-mesas").textContent      = `${fmtN(s.mesas_escrutadas||0)}/${fmtN(s.mesas_total||0)}`;
 
-    document.getElementById("bb-votantes").textContent   = fmtN(votantes);
-    document.getElementById("bb-nomarcados").textContent = fmtN(noMarcado);
-    document.getElementById("bb-nulos").textContent      = fmtN(nulos);
-    document.getElementById("bb-blanco").textContent     = fmtN(blanco);
-    document.getElementById("bb-mesas").textContent      = `${fmtN(mesaEsc)}/${fmtN(mesaTot)}`;
-
-    const reported = feats.filter(f => (parseInt(f.properties?.mesas_escrutadas) || 0) > 0).length;
-    document.getElementById("bb-mpios").textContent = `${reported}/${feats.length}`;
+    const mpioSrc = (mode === "indigena" ? mpioIndData : mpioNatData)?.features || [];
+    const reported = mpioSrc.filter(f => (parseInt(f.properties?.mesas_escrutadas) || 0) > 0).length;
+    document.getElementById("bb-mpios").textContent = `${reported}/${mpioSrc.length}`;
   }
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
@@ -1131,8 +1121,9 @@
       display_name: (metaByNombre[p.nombre]?.display_name) || "",
     }));
 
-    const featsForValid = (currentMode==="indigena" ? mpioIndData : mpioNatData)?.features || [];
-    const totalValid = sumFeatures(featsForValid, "votos_validos");
+    const totalValid = (currentMode==="indigena"
+      ? aggStats?.indigena?.votos_validos
+      : aggStats?.nacional?.votos_validos) || 0;
     const top = parties.slice(0,20);
     const maxV = top[0]?.votes||1;
 
@@ -1218,6 +1209,7 @@
   // ── Load data ──────────────────────────────────────────────────────────────
   const BASE     = "../../../colombia/2026/senado/data/";
   const METADATA = "../../../colombia/2026/metadata/";
+  let aggStats = null;
   Promise.all([
     fetch(BASE+"colombia_2026_municipio_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"colombia_2026_dept_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
@@ -1226,13 +1218,15 @@
     fetch(BASE+"colombia_2026_dept_senado_indigena.geojson").then(r=>r.json()).catch(()=>null),
     fetch(BASE+"indigena_parties.json").then(r=>r.json()).catch(()=>[]),
     fetch(BASE+"senate_seats.json").then(r=>r.json()).catch(()=>null),
-  ]).then(([mpio,dept,parties,mpioInd,deptInd,indParties,seats])=>{
+    fetch(BASE+"aggregate_stats.json").then(r=>r.json()).catch(()=>null),
+  ]).then(([mpio,dept,parties,mpioInd,deptInd,indParties,seats,agg])=>{
     mpioNatData=mpio; deptNatData=dept;
     mpioIndData=mpioInd; deptIndData=deptInd;
     mpioData=mpio; deptData=dept;
     nationalParties=parties;
     indigenaParties=indParties;
     seatsData=seats;
+    aggStats=agg;
 
     // Populate nacional dept lookups
     dept.features.forEach(f=>{
@@ -1382,7 +1376,7 @@
             votos_nulos:      r.votos_nulos,
             votos_no_marcados: r.votos_no_marcados,
             mesas_escrutadas: r.mesas_escrutadas,
-            mesas_total:      r.mesas_total,
+            mesas_total:      r.mesas_total || meta.num_mesas || 0,
             top5_candidates:  JSON.stringify(partyEntries),
           }};
           showDetail(fakeFeat, "dept");
@@ -1525,7 +1519,7 @@
       </div>`;
     });
 
-    const indTotalValid = sumFeatures(mpioIndData?.features || [], "votos_validos") || seatsData.indigena.reduce((s,p)=>s+p.votes,0);
+    const indTotalValid = aggStats?.indigena?.votos_validos || seatsData.indigena.reduce((s,p)=>s+p.votes,0);
     h+=`<div class="res-section-head" style="margin-top:1.25rem">Circunscripción Especial Indígena
       <span class="res-section-sub">2 escaños · ${f(indTotalValid)} votos válidos</span></div>`;
     seatsData.indigena.forEach(p=>{
