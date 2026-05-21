@@ -142,14 +142,27 @@ def write_csv(path, rows, fieldnames):
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def municipios_needing_update():
+    codes = set()
+
+    # 1. Municipios with incomplete mesas reporting
     path = RESULTS / "colombia_2026_municipio_senado_nacional.csv"
-    if not path.exists(): return []
-    codes = []
-    with open(path) as f:
-        for row in csv.DictReader(f):
-            if int(row.get("mesas_escrutadas") or 0) < int(row.get("mesas_total") or 1):
-                codes.append(row["mpio_reg_code_7"])
-    return codes
+    if path.exists():
+        with open(path) as f:
+            for row in csv.DictReader(f):
+                me = int(row.get("mesas_escrutadas") or 0)
+                mt = int(row.get("mesas_total")      or 0)
+                # incomplete: fewer mesas than expected, OR total=0 (failed scrape gave zero row)
+                if me < mt or mt == 0:
+                    codes.add(row["mpio_reg_code_7"])
+
+    # 2. Codes that errored in the last full scrape
+    err_path = OUT / "scrape_errors.csv"
+    if err_path.exists():
+        with open(err_path) as f:
+            for row in csv.DictReader(f):
+                codes.add(row["mpio_reg_code_7"])
+
+    return list(codes)
 
 
 def scrape(update_mode=False):
