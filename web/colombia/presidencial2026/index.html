@@ -257,7 +257,7 @@
     }
     /* Panel tabs */
     .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.42rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+    .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
     .ptab.active { color: var(--terra); border-bottom-color: var(--terra); }
     .ptab:hover:not(.active) { color: var(--text); }
     .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
@@ -1185,13 +1185,27 @@
   function switchPanelTab(tab) {
     currentPanelTab = tab;
     previousTab     = tab;
-    // Dismiss detail overlay if open (clicking a tab should always return to list view)
-    document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-scroll").style.display = "";
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
     document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
     document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
+    // Dismiss detail overlay
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    // Reset map: clear active selection + zoom to full Colombia
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        mpioLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+    }
+    map.setView([4.5, -74.2], defZoom());
+    document.getElementById("map-topbar").style.display = "none";
     if (tab === "exterior") buildExteriorList();
   }
   document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
