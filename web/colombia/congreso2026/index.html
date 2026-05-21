@@ -1098,11 +1098,26 @@
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
   function buildPartyList() {
-    const parties = (currentMode==="indigena" ? indigenaParties : nationalParties) || [];
-    // Use precomputed votos_validos (party votes + blanks) as the denominator
+    // Votes come from senate_seats.json (derived from CSVs by 04_seat_allocation.py).
+    // Party JSONs supply only color / display_name metadata.
+    const metaByNombre = {};
+    (currentMode==="indigena" ? indigenaParties : nationalParties || [])
+      .forEach(p => { metaByNombre[p.nombre] = p; });
+
+    const allFromSeats = currentMode==="indigena"
+      ? (seatsData?.all_indigena || [])
+      : (seatsData?.all_parties  || []);
+
+    // Merge seats votes with party-JSON metadata (color, display_name)
+    const parties = allFromSeats.map(p => ({
+      ...p,
+      color:        (metaByNombre[p.nombre]?.color)        || p.color || "#888",
+      display_name: (metaByNombre[p.nombre]?.display_name) || "",
+    }));
+
     const totalValid = currentMode==="indigena"
-      ? (seatsData?.stats_indigena?.votos_validos || parties.reduce((s,p)=>s+p.votes,0))
-      : (seatsData?.stats_nacional?.votos_validos  || parties.reduce((s,p)=>s+p.votes,0));
+      ? (seatsData?.stats_indigena?.votos_validos || 0)
+      : (seatsData?.stats_nacional?.votos_validos  || 0);
     const top = parties.slice(0,20);
     const maxV = top[0]?.votes||1;
 

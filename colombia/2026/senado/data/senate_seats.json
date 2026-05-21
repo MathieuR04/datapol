@@ -7,6 +7,166 @@
   "seats_nacional": 100,
   "seats_indigena": 2,
   "seats_oposicion": 1,
+  "all_parties": [
+    {
+      "code": "0092",
+      "nombre": "PACTO HISTÓRICO SENADO",
+      "color": "#6B21A8",
+      "votes": 0
+    },
+    {
+      "code": "0010",
+      "nombre": "PARTIDO CENTRO DEMOCRÁTICO",
+      "color": "#1D4ED8",
+      "votes": 0
+    },
+    {
+      "code": "0002",
+      "nombre": "PARTIDO LIBERAL COLOMBIANO",
+      "color": "#DC2626",
+      "votes": 0
+    },
+    {
+      "code": "0057",
+      "nombre": "ALIANZA POR COLOMBIA",
+      "color": "#15803D",
+      "votes": 0
+    },
+    {
+      "code": "0003",
+      "nombre": "PARTIDO CONSERVADOR COLOMBIANO",
+      "color": "#1E40AF",
+      "votes": 0
+    },
+    {
+      "code": "0009",
+      "nombre": "PARTIDO DE LA UNIÓN POR LA GENTE - PARTIDO DE LA U",
+      "color": "#D97706",
+      "votes": 0
+    },
+    {
+      "code": "0044",
+      "nombre": "COALICIÓN CAMBIO RADICAL - ALMA",
+      "color": "#EA580C",
+      "votes": 0
+    },
+    {
+      "code": "0043",
+      "nombre": "AHORA COLOMBIA",
+      "color": "#BE185D",
+      "votes": 0
+    },
+    {
+      "code": "0017",
+      "nombre": "MOVIMIENTO SALVACIÓN NACIONAL",
+      "color": "#7C3AED",
+      "votes": 0
+    },
+    {
+      "code": "0055",
+      "nombre": "FRENTE AMPLIO UNITARIO",
+      "color": "#600E39",
+      "votes": 0
+    },
+    {
+      "code": "0039",
+      "nombre": "CREEMOS",
+      "color": "#BFDD09",
+      "votes": 0
+    },
+    {
+      "code": "0170",
+      "nombre": "COALICIÓN FUERZA CIUDADANA",
+      "color": "#1941C2",
+      "votes": 0
+    },
+    {
+      "code": "0040",
+      "nombre": "LA LISTA DE OVIEDO - CON TODA POR COLOMBIA",
+      "color": "#BFD7B6",
+      "votes": 0
+    },
+    {
+      "code": "0018",
+      "nombre": "PARTIDO POLÍTICO OXÍGENO",
+      "color": "#0E7025",
+      "votes": 0
+    },
+    {
+      "code": "0033",
+      "nombre": "PATRIOTAS",
+      "color": "#1DFB69",
+      "votes": 0
+    },
+    {
+      "code": "0034",
+      "nombre": "COLOMBIA SEGURA Y PRÓSPERA",
+      "color": "#9E3A69",
+      "votes": 0
+    }
+  ],
+  "all_indigena": [
+    {
+      "code": "0011",
+      "nombre": "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"",
+      "color": "#0F766E",
+      "votes": 0
+    },
+    {
+      "code": "0006",
+      "nombre": "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"",
+      "color": "#9A3412",
+      "votes": 0
+    },
+    {
+      "code": "0188",
+      "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
+      "color": "#6D28D9",
+      "votes": 0
+    },
+    {
+      "code": "0285",
+      "nombre": "ASOCIACIÓN DE AUTORIDADES TRADICIONALES INDÍGENAS",
+      "color": "#811EC5",
+      "votes": 0
+    },
+    {
+      "code": "0300",
+      "nombre": "MOVIMIENTO SI",
+      "color": "#E538E8",
+      "votes": 0
+    },
+    {
+      "code": "0234",
+      "nombre": "ASOCIACIÓN DE CABILDOS INDÍGENAS POR COLOMBIA",
+      "color": "#0B5C59",
+      "votes": 0
+    },
+    {
+      "code": "0306",
+      "nombre": "ASOCIACIÓN NACIONAL INDÍGENA DE COLOMBIA \"ANIC\"",
+      "color": "#659A02",
+      "votes": 0
+    },
+    {
+      "code": "0347",
+      "nombre": "CABILDO INDÍGENA TEVIS",
+      "color": "#1C1C80",
+      "votes": 0
+    },
+    {
+      "code": "0237",
+      "nombre": "ACMIZSAM",
+      "color": "#F2459B",
+      "votes": 0
+    },
+    {
+      "code": "0252",
+      "nombre": "TRIETNICO GOBERNATIVO TRIGO",
+      "color": "#FDC418",
+      "votes": 0
+    }
+  ],
   "parties": [
     {
       "code": "0092",
