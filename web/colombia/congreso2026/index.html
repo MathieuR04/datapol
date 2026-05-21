@@ -251,7 +251,7 @@
     .party-row:hover { background: var(--terra-lt); }
     .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
     .party-top { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 4px; }
-    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 62px; text-align: right; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
     .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
     .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
     .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
@@ -1030,7 +1030,7 @@
     // Pre-election: if all party votes are 0, still show parties from the JSON with 0%
     const allZero = parties.length === 0 || parties.every(c => !c.votes);
     const partySource = allZero
-      ? (currentMode==="indigena" ? indigenaParties : nationalParties || []).map(p=>({name:p.nombre,color:p.color,votes:0}))
+      ? (currentMode==="indigena" ? indigenaParties : nationalParties || []).map(p=>({name:p.display_name||p.nombre,color:p.color,votes:0}))
       : parties;
     document.getElementById("d-parties").innerHTML = partySource.map(c=>{
       const col=partyColor(c.name,c.color);
@@ -1112,10 +1112,11 @@
         const col=partyColor(p.nombre,p.color);
         const pct=totalValid?(p.votes/totalValid*100).toFixed(1):"0.0";
         const barW=(p.votes/maxV*100).toFixed(1);
+        const label=p.display_name||p.nombre;
         return `<div class="party-row" data-party="${p.nombre.replace(/"/g,'&quot;')}">
           <div class="party-top">
             <span class="party-pct" style="color:${col}">${pct}%</span>
-            <span class="party-name">${p.nombre}</span>
+            <span class="party-name">${label}</span>
             <span class="party-votes">${fmtN(p.votes)}</span>
           </div>
           <div class="party-bar-wrap">
@@ -1277,7 +1278,7 @@
       if (!best || votes > best.votes) {
         const code = col.replace(prefix, "");
         const info = partyByCode[code] || {};
-        best = { col, code, votes, nombre: info.nombre || code, color: info.color || "#888" };
+        best = { col, code, votes, nombre: info.nombre || code, displayName: info.display_name || info.nombre || code, color: info.color || "#888" };
       }
     });
     return best;
@@ -1320,7 +1321,7 @@
               <span class="dept-name" style="font-size:9px">${name}</span>
               <span class="dept-votes">${fmtN(vot)}</span>
             </div>
-            <div class="dept-winner">${winner ? winner.nombre : ""} <span style="color:var(--dim)">${pct}</span></div>
+            <div class="dept-winner">${winner ? (winner.displayName||winner.nombre) : ""} <span style="color:var(--dim)">${pct}</span></div>
           </div>`;
         }).join("");
 
@@ -1337,12 +1338,12 @@
             if (!votes) return;
             const code  = col.replace(prefix, "");
             const info  = partyByCode[code] || {};
-            partyEntries.push({ name: info.nombre || code, color: info.color || "#888", votes });
+            partyEntries.push({ name: info.display_name || info.nombre || code, color: info.color || "#888", votes });
           });
           partyEntries.sort((a, b) => b.votes - a.votes);
           const fakeFeat = { properties: {
             dept_name_reg:    name,
-            winner:           winner ? winner.nombre : "",
+            winner:           winner ? (winner.displayName||winner.nombre) : "",
             winner_color:     winner ? winner.color  : "#888",
             votantes:         r.votantes,
             censo:            meta.censo || 0,
