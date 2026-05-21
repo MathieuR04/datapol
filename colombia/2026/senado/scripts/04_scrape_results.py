@@ -14,6 +14,7 @@ import json
 import pandas as pd
 import time
 from pathlib import Path
+from typing import Optional
 
 OUT = Path(__file__).parent.parent / "data"
 METADATA = Path(__file__).parent.parent.parent / "metadata"
@@ -102,7 +103,7 @@ def parse_puesto_json(code: str, data: dict) -> dict:
 
 
 async def fetch_one(session: aiohttp.ClientSession, sem: asyncio.Semaphore,
-                    code: str) -> tuple[str, dict | None, str | None]:
+                    code: str) -> tuple[str, Optional[dict], Optional[str]]:
     url = BASE_URL.format(code=code)
     async with sem:
         for attempt in range(2):
@@ -180,7 +181,10 @@ def puestos_needing_update() -> list[str]:
 
 
 def scrape(update_mode: bool = False):
-    master = pd.read_csv(METADATA / "colombia_2026_municipio_electoral_roll.csv", dtype=str)
+    # Puesto codes come from the mesa electoral roll (unique puesto_code column)
+    mesa_roll = pd.read_csv(METADATA / "colombia_2026_mesa_electoral_roll.csv",
+                            dtype=str, usecols=["puesto_code"])
+    all_puesto_codes = mesa_roll["puesto_code"].drop_duplicates().tolist()
 
     if update_mode:
         codes = puestos_needing_update()
@@ -189,7 +193,7 @@ def scrape(update_mode: bool = False):
             return
         print(f"Update mode: {len(codes):,} puestos not yet fully escrutados …")
     else:
-        codes = master["puesto_code"].tolist()
+        codes = all_puesto_codes
         print(f"Scraping {len(codes):,} puestos (national + exterior) …")
 
     results, errors = asyncio.run(scrape_all(codes))

@@ -21,6 +21,7 @@ import json
 import pandas as pd
 import time
 from pathlib import Path
+from typing import Optional
 
 OUT = Path(__file__).parent.parent / "data"
 METADATA = Path(__file__).parent.parent.parent / "metadata"
@@ -36,7 +37,7 @@ CONCURRENCY = 80
 TIMEOUT = 45
 
 
-def build_mesa_codes(master: pd.DataFrame, puesto_filter: set[str] | None = None) -> list[tuple[str, str, int]]:
+def build_mesa_codes(master: pd.DataFrame, puesto_filter: Optional[set] = None) -> list[tuple[str, str, int]]:
     """
     Return list of (mesa_code, puesto_code, mesa_num) for all mesas to scrape.
     If puesto_filter is given, only include those puestos.
@@ -82,7 +83,7 @@ def parse_mesa_json(mesa_code: str, puesto_code: str, mesa_num: int, data: dict)
 
 async def fetch_one(session: aiohttp.ClientSession, sem: asyncio.Semaphore,
                     mesa_code: str, puesto_code: str, mesa_num: int
-                    ) -> tuple[str, str, int, dict | None, str | None]:
+                    ) -> tuple[str, str, int, Optional[dict], Optional[str]]:
     url = BASE_URL.format(code=mesa_code)
     async with sem:
         for attempt in range(2):
@@ -138,7 +139,7 @@ async def scrape_all(mesa_tuples: list[tuple[str, str, int]]):
     return results, errors
 
 
-def load_existing() -> pd.DataFrame | None:
+def load_existing() -> Optional[pd.DataFrame]:
     path = OUT / "resultados_mesas.csv"
     if path.exists():
         print(f"  Loading existing {path.name} …")
