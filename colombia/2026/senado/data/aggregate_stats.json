@@ -1,23 +1,23 @@
 {
-  "total_votantes": 0,
+  "total_votantes": 20900614,
   "nacional": {
-    "votantes": 0,
-    "votos_validos": 0,
-    "votos_blanco": 0,
-    "votos_nulos": 0,
-    "votos_no_marcados": 0,
-    "mesas_escrutadas": 0,
+    "votantes": 20492278,
+    "votos_validos": 19423187,
+    "votos_blanco": 616998,
+    "votos_nulos": 573572,
+    "votos_no_marcados": 495519,
+    "mesas_escrutadas": 126093,
     "mesas_total": 126647,
-    "censo": 42112284
+    "censo": 41287084
   },
   "indigena": {
-    "votantes": 0,
-    "votos_validos": 0,
-    "votos_blanco": 0,
-    "votos_nulos": 0,
-    "votos_no_marcados": 0,
-    "mesas_escrutadas": 0,
+    "votantes": 408336,
+    "votos_validos": 303979,
+    "votos_blanco": 58539,
+    "votos_nulos": 49967,
+    "votos_no_marcados": 54390,
+    "mesas_escrutadas": 126093,
     "mesas_total": 126647,
-    "censo": 42112284
+    "censo": 41287084
   }
 }
