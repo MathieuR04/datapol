@@ -52,7 +52,7 @@ def aggregate():
 
     # Load master for geography
     master = {}
-    with open(METADATA / "colombia_2026_electoral_roll.csv") as f:
+    with open(METADATA / "colombia_2026_municipio_electoral_roll.csv") as f:
         for row in csv.DictReader(f):
             master[row["puesto_code"]] = row
 

@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 
 OUT = Path(__file__).parent.parent / "data"
+METADATA = Path(__file__).parent.parent.parent / "metadata"
 OUT.mkdir(parents=True, exist_ok=True)
 
 BASE_URL = "https://resultadospreccongreso2026.registraduria.gov.co/json/ACT/SE/{code}.json"
@@ -179,7 +180,7 @@ def puestos_needing_update() -> list[str]:
 
 
 def scrape(update_mode: bool = False):
-    master = pd.read_csv(OUT / "colombia_2026_electoral_roll.csv", dtype=str)
+    master = pd.read_csv(METADATA / "colombia_2026_municipio_electoral_roll.csv", dtype=str)
 
     if update_mode:
         codes = puestos_needing_update()

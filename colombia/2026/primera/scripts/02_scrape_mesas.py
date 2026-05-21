@@ -143,7 +143,7 @@ def puestos_needing_update() -> list[str]:
 
 def scrape(update_mode: bool = False):
     # Load shared puestos_master (same tables as Senado)
-    master_path = METADATA / "colombia_2026_electoral_roll.csv"
+    master_path = METADATA / "colombia_2026_municipio_electoral_roll.csv"
     codes = []
     with open(master_path) as f:
         reader = csv.DictReader(f)

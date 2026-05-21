@@ -30,7 +30,7 @@ import csv
 import time
 from pathlib import Path
 
-SHARED = Path(__file__).parent.parent.parent.parent / "shared" / "data" / "processed"
+METADATA = Path(__file__).parent.parent.parent / "metadata"
 OUT = Path(__file__).parent.parent / "data"
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -151,7 +151,7 @@ def scrape(update_mode: bool = False):
     # Get unique municipio codes from puestos_master (excludes exterior)
     codes = []
     seen  = set()
-    with open(METADATA / "colombia_2026_electoral_roll.csv") as f:
+    with open(METADATA / "colombia_2026_municipio_electoral_roll.csv") as f:
         for row in csv.DictReader(f):
             if row["is_exterior"] == "True": continue
             code = row["mpio_reg_code_7"]

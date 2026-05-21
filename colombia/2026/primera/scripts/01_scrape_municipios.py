@@ -183,7 +183,7 @@ def scrape(update_mode: bool = False):
     cand_lookup = load_candidate_lookup()   # codpar → code string
 
     codes, seen = [], set()
-    with open(METADATA / "colombia_2026_electoral_roll.csv") as f:
+    with open(METADATA / "colombia_2026_municipio_electoral_roll.csv") as f:
         for row in csv.DictReader(f):
             if row["is_exterior"] == "True": continue
             code = row["mpio_reg_code_7"]

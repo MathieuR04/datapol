@@ -41,7 +41,7 @@ def load_data():
     cand_codes = [c["code"] for c in candidates]
 
     master = {}
-    with open(METADATA / "colombia_2026_electoral_roll.csv") as f:
+    with open(METADATA / "colombia_2026_municipio_electoral_roll.csv") as f:
         for row in csv.DictReader(f):
             master[row["puesto_code"]] = row
 

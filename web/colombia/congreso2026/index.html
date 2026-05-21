@@ -1180,7 +1180,8 @@
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
-  const BASE = "../../../colombia/2026/senado/data/";
+  const BASE     = "../../../colombia/2026/senado/data/";
+  const METADATA = "../../../colombia/2026/metadata/";
   Promise.all([
     fetch(BASE+"colombia_2026_municipio_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
     fetch(BASE+"colombia_2026_dept_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
@@ -1245,7 +1246,22 @@
       return obj;
     });
   }
-  let _exteriorRows = null; // cached CSV parse — only fetch once
+  let _exteriorRows = null;     // cached exterior rows (filtered from national CSV)
+  let _rollByCode   = null;     // cached electoral roll: mpio_reg_code_7 → row
+
+  // Load electoral roll once; returns a Promise resolving to the lookup map
+  function loadRoll() {
+    if (_rollByCode) return Promise.resolve(_rollByCode);
+    return fetch(METADATA + "colombia_2026_municipio_electoral_roll.csv")
+      .then(r => r.text())
+      .then(text => {
+        const rows = parseCSV(text);
+        _rollByCode = {};
+        rows.forEach(r => { _rollByCode[r.mpio_reg_code_7] = r; });
+        return _rollByCode;
+      })
+      .catch(() => { _rollByCode = {}; return _rollByCode; });
+  }
 
   function buildExteriorList() {
     const el = document.getElementById("view-exterior");
@@ -1260,18 +1276,19 @@
       return;
     }
 
-    // Nacional mode — render from cache or fetch
-    const render = rows => {
+    // Nacional mode — render rows (joined with electoral roll for names)
+    const render = (rows, roll) => {
       const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
       const partyByCode = {};
       (nationalParties || []).forEach(p => { partyByCode[p.code] = p; });
 
       el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
         rows.map((r, idx) => {
-          const col = partyColor(r.winner, r.winner_color);
-          const name = r.mpio_name || r.dept_name || "—";
-          const vot = parseInt(r.votantes) || 0;
-          const pct = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+          const meta  = (roll || {})[r.mpio_reg_code_7] || {};
+          const name  = meta.mpio_name || "—";
+          const col   = partyColor(r.winner, r.winner_color);
+          const vot   = parseInt(r.votantes) || 0;
+          const pct   = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
           return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
             <div class="dept-top">
               <div class="dept-swatch" style="background:${col}"></div>
@@ -1284,21 +1301,23 @@
 
       el.querySelectorAll(".ext-row").forEach(row => {
         row.addEventListener("click", () => {
-          const r = rows[parseInt(row.dataset.extidx)];
+          const r    = rows[parseInt(row.dataset.extidx)];
+          const meta = (roll || {})[r.mpio_reg_code_7] || {};
+          const name = meta.mpio_name || "—";
           const partyEntries = [];
           Object.keys(r).forEach(col => {
             if (!col.startsWith("party_")) return;
-            const code = col.replace("party_", "");
+            const code  = col.replace("party_", "");
             const votes = parseInt(r[col]) || 0;
             if (!votes) return;
-            const info = partyByCode[code] || {};
+            const info  = partyByCode[code] || {};
             partyEntries.push({ name: info.nombre || code, color: partyColor(info.nombre || "", info.color || ""), votes });
           });
           partyEntries.sort((a, b) => b.votes - a.votes);
           const fakeFeat = { properties: {
-            dept_name_reg: r.mpio_name || r.dept_name || "—",
+            dept_name_reg: name,
             winner: r.winner, winner_color: r.winner_color,
-            votantes: r.votantes, censo: r.censo || 0,
+            votantes: r.votantes, censo: meta.censo || 0,
             votos_validos: r.votos_validos, votos_blanco: r.votos_blanco,
             votos_nulos: r.votos_nulos, votos_no_marcados: r.votos_no_marcados,
             mesas_escrutadas: r.mesas_escrutadas, mesas_total: r.mesas_total,
@@ -1309,21 +1328,30 @@
       });
     };
 
-    if (_exteriorRows) { render(_exteriorRows); return; }
+    // If already cached, render immediately (still need roll for name lookup)
+    if (_exteriorRows) {
+      loadRoll().then(roll => render(_exteriorRows, roll));
+      return;
+    }
 
     el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
-    fetch(BASE + "resultados_exterior.csv")
-      .then(r => r.text())
-      .then(text => {
-        _exteriorRows = parseCSV(text);
-        _exteriorRows.sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
-        render(_exteriorRows);
-      })
-      .catch(() => {
-        el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
-          Datos del exterior no disponibles.<br>Ejecuta 05_aggregate.py primero.
-        </div>`;
-      });
+
+    // Fetch national CSV + electoral roll in parallel
+    Promise.all([
+      fetch(BASE + "results/colombia_2026_municipio_senado_nacional.csv").then(r => r.text()),
+      loadRoll(),
+    ]).then(([text, roll]) => {
+      const allRows = parseCSV(text);
+      // Exterior rows: mpio_reg_code_7 starts with "88"
+      _exteriorRows = allRows
+        .filter(r => String(r.mpio_reg_code_7 || "").startsWith("88"))
+        .sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
+      render(_exteriorRows, roll);
+    }).catch(() => {
+      el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
+        Datos del exterior no disponibles.<br>Ejecuta el pipeline primero.
+      </div>`;
+    });
   }
 
   // ── Controls ───────────────────────────────────────────────────────────────

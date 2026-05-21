@@ -15,6 +15,7 @@ import pandas as pd
 from pathlib import Path
 
 OUT = Path(__file__).parent.parent / "data"
+METADATA = Path(__file__).parent.parent.parent / "metadata"
 
 def load_party_lookup() -> dict:
     with open(OUT / "parties.json") as f:
@@ -51,7 +52,7 @@ def aggregate():
     print("Loading data …")
     party_lookup = load_party_lookup()
     results = pd.read_csv(OUT / "resultados_puestos.csv", dtype={"puesto_code": str})
-    master  = pd.read_csv(OUT / "colombia_2026_electoral_roll.csv",  dtype=str)
+    master  = pd.read_csv(METADATA / "colombia_2026_municipio_electoral_roll.csv",  dtype=str)
     mpio_bridge = pd.read_csv(OUT / "mpio_bridge.csv",  dtype=str)
 
     # Merge master info into results
