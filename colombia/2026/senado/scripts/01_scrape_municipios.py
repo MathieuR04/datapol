@@ -192,6 +192,16 @@ def scrape(update_mode=False):
     party_cols = sorted(k for k in all_keys if k.startswith("party_"))
     indig_cols = sorted(k for k in all_keys if k.startswith("indig_"))
 
+    # Ensure every electoral-roll code has a row (zeros for 404s / missing)
+    scraped_codes = {r["mpio_reg_code_7"] for r in results}
+    for c in all_codes:
+        if c not in scraped_codes:
+            results.append({"mpio_reg_code_7": c})   # all numeric fields default to 0 via write_csv
+
+    # Sort to match electoral roll order
+    order = {c: i for i, c in enumerate(all_codes)}
+    results.sort(key=lambda r: order.get(r["mpio_reg_code_7"], 9999))
+
     # ── Nacional CSV ──────────────────────────────────────────────────────────
     nat_fields = (
         ["mpio_reg_code_7", "votantes", "votos_nulos", "votos_no_marcados",
@@ -204,9 +214,8 @@ def scrape(update_mode=False):
     print(f"Saved nacional:  {len(results):,} rows  "
           f"({len(results)-n_ext} national + {n_ext} exterior)")
 
-    # ── Indigena CSV (only rows with any indigenous votes) ────────────────────
-    ind_rows = [r for r in results
-                if any(int(r.get(k) or 0) > 0 for k in indig_cols)]
+    # ── Indigena CSV — all 1,189 rows, zeros where no indigenous voting ───────
+    ind_rows = results   # full set; no filtering
 
     ind_out = []
     for r in ind_rows:
