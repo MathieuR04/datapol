@@ -1246,10 +1246,10 @@
       return obj;
     });
   }
-  let _exteriorRows = null;     // cached exterior rows (filtered from national CSV)
-  let _rollByCode   = null;     // cached electoral roll: mpio_reg_code_7 → row
+  // exterior row cache keyed by mode ("nacional" / "indigena")
+  const _exteriorCache = {};
+  let   _rollByCode    = null;
 
-  // Load electoral roll once; returns a Promise resolving to the lookup map
   function loadRoll() {
     if (_rollByCode) return Promise.resolve(_rollByCode);
     return fetch(METADATA + "colombia_2026_municipio_electoral_roll.csv")
@@ -1263,90 +1263,113 @@
       .catch(() => { _rollByCode = {}; return _rollByCode; });
   }
 
+  // Compute winner from raw party columns — returns {name, color, votes}
+  function computeWinner(r, prefix, partyByCode) {
+    let best = null;
+    Object.keys(r).forEach(col => {
+      if (!col.startsWith(prefix)) return;
+      const votes = parseInt(r[col]) || 0;
+      if (!best || votes > best.votes) {
+        const code = col.replace(prefix, "");
+        const info = partyByCode[code] || {};
+        best = { col, code, votes, nombre: info.nombre || code, color: info.color || "#888" };
+      }
+    });
+    return best;
+  }
+
   function buildExteriorList() {
     const el = document.getElementById("view-exterior");
     if (!el) return;
 
-    // Indigenous constituency has no overseas voting
-    if (currentMode === "indigena") {
-      el.innerHTML = `<div style="padding:0.9rem 0.75rem;font-size:10px;color:var(--muted);line-height:1.6;border-bottom:1px solid var(--border)">
-        La circunscripción especial indígena no tiene votación en el exterior.<br>
-        El voto indígena es exclusivamente territorial.
-      </div>`;
-      return;
-    }
+    const isInd      = currentMode === "indigena";
+    const prefix     = isInd ? "indig_" : "party_";
+    const parties    = isInd ? (indigenaParties || []) : (nationalParties || []);
+    const csvFile    = isInd
+      ? "results/colombia_2026_municipio_senado_indigena.csv"
+      : "results/colombia_2026_municipio_senado_nacional.csv";
+    const votCol     = isInd ? "votantes" : "votantes";  // both CSVs use "votantes"
 
-    // Nacional mode — render rows (joined with electoral roll for names)
+    const partyByCode = {};
+    parties.forEach(p => { partyByCode[p.code] = p; });
+
     const render = (rows, roll) => {
-      const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
-      const partyByCode = {};
-      (nationalParties || []).forEach(p => { partyByCode[p.code] = p; });
+      // For indigena, filter to rows with any votes; for nacional always all exterior
+      const visible = isInd
+        ? rows.filter(r => Object.keys(r).some(k => k.startsWith("indig_") && parseInt(r[k]) > 0))
+        : rows;
 
-      el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
-        rows.map((r, idx) => {
-          const meta  = (roll || {})[r.mpio_reg_code_7] || {};
-          const name  = meta.mpio_name || "—";
-          const col   = partyColor(r.winner, r.winner_color);
-          const vot   = parseInt(r.votantes) || 0;
-          const pct   = vot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+      const totalVot = visible.reduce((s, r) => s + (parseInt(r[votCol]) || 0), 0);
+
+      el.innerHTML = `<div class="sect-head">${visible.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
+        visible.map((r, idx) => {
+          const meta    = (roll || {})[r.mpio_reg_code_7] || {};
+          const name    = meta.mpio_name || "—";
+          const winner  = computeWinner(r, prefix, partyByCode);
+          const col     = winner ? winner.color : "#ccc";
+          const vot     = parseInt(r[votCol]) || 0;
+          const pct     = totalVot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
           return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
             <div class="dept-top">
               <div class="dept-swatch" style="background:${col}"></div>
               <span class="dept-name" style="font-size:9px">${name}</span>
               <span class="dept-votes">${fmtN(vot)}</span>
             </div>
-            <div class="dept-winner">${r.winner || ""} <span style="color:var(--dim)">${pct}</span></div>
+            <div class="dept-winner">${winner ? winner.nombre : ""} <span style="color:var(--dim)">${pct}</span></div>
           </div>`;
         }).join("");
 
       el.querySelectorAll(".ext-row").forEach(row => {
         row.addEventListener("click", () => {
-          const r    = rows[parseInt(row.dataset.extidx)];
-          const meta = (roll || {})[r.mpio_reg_code_7] || {};
-          const name = meta.mpio_name || "—";
+          const r      = visible[parseInt(row.dataset.extidx)];
+          const meta   = (roll || {})[r.mpio_reg_code_7] || {};
+          const name   = meta.mpio_name || "—";
+          const winner = computeWinner(r, prefix, partyByCode);
           const partyEntries = [];
           Object.keys(r).forEach(col => {
-            if (!col.startsWith("party_")) return;
-            const code  = col.replace("party_", "");
+            if (!col.startsWith(prefix)) return;
             const votes = parseInt(r[col]) || 0;
             if (!votes) return;
+            const code  = col.replace(prefix, "");
             const info  = partyByCode[code] || {};
-            partyEntries.push({ name: info.nombre || code, color: partyColor(info.nombre || "", info.color || ""), votes });
+            partyEntries.push({ name: info.nombre || code, color: info.color || "#888", votes });
           });
           partyEntries.sort((a, b) => b.votes - a.votes);
           const fakeFeat = { properties: {
-            dept_name_reg: name,
-            winner: r.winner, winner_color: r.winner_color,
-            votantes: r.votantes, censo: meta.censo || 0,
-            votos_validos: r.votos_validos, votos_blanco: r.votos_blanco,
-            votos_nulos: r.votos_nulos, votos_no_marcados: r.votos_no_marcados,
-            mesas_escrutadas: r.mesas_escrutadas, mesas_total: r.mesas_total,
-            top5_candidates: JSON.stringify(partyEntries),
+            dept_name_reg:    name,
+            winner:           winner ? winner.nombre : "",
+            winner_color:     winner ? winner.color  : "#888",
+            votantes:         r.votantes,
+            censo:            meta.censo || 0,
+            votos_validos:    r.votos_validos,
+            votos_blanco:     r.votos_blanco,
+            votos_nulos:      r.votos_nulos,
+            votos_no_marcados: r.votos_no_marcados,
+            mesas_escrutadas: r.mesas_escrutadas,
+            mesas_total:      r.mesas_total,
+            top5_candidates:  JSON.stringify(partyEntries),
           }};
           showDetail(fakeFeat, "dept");
         });
       });
     };
 
-    // If already cached, render immediately (still need roll for name lookup)
-    if (_exteriorRows) {
-      loadRoll().then(roll => render(_exteriorRows, roll));
+    if (_exteriorCache[currentMode]) {
+      loadRoll().then(roll => render(_exteriorCache[currentMode], roll));
       return;
     }
 
     el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
 
-    // Fetch national CSV + electoral roll in parallel
     Promise.all([
-      fetch(BASE + "results/colombia_2026_municipio_senado_nacional.csv").then(r => r.text()),
+      fetch(BASE + csvFile).then(r => r.text()),
       loadRoll(),
     ]).then(([text, roll]) => {
       const allRows = parseCSV(text);
-      // Exterior rows: mpio_reg_code_7 starts with "88"
-      _exteriorRows = allRows
+      _exteriorCache[currentMode] = allRows
         .filter(r => String(r.mpio_reg_code_7 || "").startsWith("88"))
-        .sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
-      render(_exteriorRows, roll);
+        .sort((a, b) => (parseInt(b[votCol]) || 0) - (parseInt(a[votCol]) || 0));
+      render(_exteriorCache[currentMode], roll);
     }).catch(() => {
       el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
         Datos del exterior no disponibles.<br>Ejecuta el pipeline primero.
