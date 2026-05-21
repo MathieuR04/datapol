@@ -3,60 +3,60 @@
     "code": "0011",
     "nombre": "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"",
     "color": "#E30613",
-    "votes": 88294
+    "votes": 42637
   },
   {
     "code": "0006",
     "nombre": "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"",
     "color": "#C05B16",
-    "votes": 72927
-  },
-  {
-    "code": "0188",
-    "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
-    "color": "#DA5403",
-    "votes": 56060
+    "votes": 26300
   },
   {
     "code": "0285",
     "nombre": "ASOCIACIÓN DE AUTORIDADES TRADICIONALES INDÍGENAS",
     "color": "#811EC5",
-    "votes": 16628
+    "votes": 5038
+  },
+  {
+    "code": "0188",
+    "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
+    "color": "#DA5403",
+    "votes": 4546
   },
   {
     "code": "0300",
     "nombre": "MOVIMIENTO SI",
     "color": "#E538E8",
-    "votes": 3001
+    "votes": 1664
   },
   {
     "code": "0234",
     "nombre": "ASOCIACIÓN DE CABILDOS INDÍGENAS POR COLOMBIA",
     "color": "#0B5C59",
-    "votes": 2644
+    "votes": 1641
   },
   {
     "code": "0306",
     "nombre": "ASOCIACIÓN NACIONAL INDÍGENA DE COLOMBIA \"ANIC\"",
     "color": "#659A02",
-    "votes": 2434
+    "votes": 1433
   },
   {
     "code": "0347",
     "nombre": "CABILDO INDÍGENA TEVIS",
     "color": "#1C1C80",
-    "votes": 1413
+    "votes": 748
   },
   {
     "code": "0237",
     "nombre": "ACMIZSAM",
     "color": "#F2459B",
-    "votes": 1067
+    "votes": 644
   },
   {
     "code": "0252",
     "nombre": "TRIETNICO GOBERNATIVO TRIGO",
     "color": "#FDC418",
-    "votes": 972
+    "votes": 633
   }
 ]

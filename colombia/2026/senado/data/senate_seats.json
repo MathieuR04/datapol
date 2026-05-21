@@ -4913,27 +4913,27 @@
       "code": "0011",
       "nombre": "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"",
       "color": "#0F766E",
-      "votes": 88294,
-      "vote_pct": 35.97,
+      "votes": 42637,
+      "vote_pct": 49.99,
       "seats": 1,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
           "name": "MARTHA ISABEL PERALTA EPIEYU",
-          "votes": 61098,
+          "votes": 30553,
           "elected": true
         },
         {
           "rank": 2,
-          "name": "JULIO CESAR ESTRADA CORDERO",
-          "votes": 8157,
+          "name": "NELSON CUCUÑAME LULIGO",
+          "votes": 3503,
           "elected": false
         },
         {
           "rank": 3,
-          "name": "NELSON CUCUÑAME LULIGO",
-          "votes": 7576,
+          "name": "JULIO CESAR ESTRADA CORDERO",
+          "votes": 3090,
           "elected": false
         }
       ]
@@ -4942,56 +4942,27 @@
       "code": "0006",
       "nombre": "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"",
       "color": "#9A3412",
-      "votes": 72927,
-      "vote_pct": 29.71,
+      "votes": 26300,
+      "vote_pct": 30.84,
       "seats": 1,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
-          "name": "JESUS OMERO CUASAPUD CHASPUENGAL",
-          "votes": 37609,
+          "name": "RUBEN MARINO BORJE",
+          "votes": 19409,
           "elected": true
         },
         {
           "rank": 2,
-          "name": "RUBEN MARINO BORJE",
-          "votes": 24567,
+          "name": "JESUS OMERO CUASAPUD CHASPUENGAL",
+          "votes": 3323,
           "elected": false
         },
         {
           "rank": 3,
           "name": "MARIA ESPERANZA TARAPUEZ GUEPUD",
-          "votes": 3797,
-          "elected": false
-        }
-      ]
-    },
-    {
-      "code": "0188",
-      "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
-      "color": "#6D28D9",
-      "votes": 56060,
-      "vote_pct": 22.84,
-      "seats": 0,
-      "list_type": "open",
-      "candidates": [
-        {
-          "rank": 1,
-          "name": "JOSE WILMAN TUMBO CHEPE",
-          "votes": 44702,
-          "elected": false
-        },
-        {
-          "rank": 2,
-          "name": "MANUEL JESUS MAVISOY JUAGIBIOY",
-          "votes": 4507,
-          "elected": false
-        },
-        {
-          "rank": 3,
-          "name": "LUZ EMILSE PANCHI",
-          "votes": 1516,
+          "votes": 1089,
           "elected": false
         }
       ]
@@ -5000,27 +4971,56 @@
       "code": "0285",
       "nombre": "ASOCIACIÓN DE AUTORIDADES TRADICIONALES INDÍGENAS",
       "color": "#811EC5",
-      "votes": 16628,
-      "vote_pct": 6.77,
+      "votes": 5038,
+      "vote_pct": 5.91,
       "seats": 0,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
           "name": "RICHARD HUMBERTO FUELANTALA DELGADO",
-          "votes": 9992,
+          "votes": 2136,
           "elected": false
         },
         {
           "rank": 2,
           "name": "ANTONIO DE JESUS GUEVARA BETANCUR",
-          "votes": 2412,
+          "votes": 947,
           "elected": false
         },
         {
           "rank": 3,
           "name": "ZUNILDA AMAYA URIANA",
-          "votes": 1447,
+          "votes": 864,
+          "elected": false
+        }
+      ]
+    },
+    {
+      "code": "0188",
+      "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
+      "color": "#6D28D9",
+      "votes": 4546,
+      "vote_pct": 5.33,
+      "seats": 0,
+      "list_type": "open",
+      "candidates": [
+        {
+          "rank": 1,
+          "name": "JOSE WILMAN TUMBO CHEPE",
+          "votes": 1875,
+          "elected": false
+        },
+        {
+          "rank": 2,
+          "name": "MANUEL JESUS MAVISOY JUAGIBIOY",
+          "votes": 1173,
+          "elected": false
+        },
+        {
+          "rank": 3,
+          "name": "LUZ EMILSE PANCHI",
+          "votes": 594,
           "elected": false
         }
       ]
