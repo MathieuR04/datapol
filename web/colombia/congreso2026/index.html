@@ -250,8 +250,8 @@
     .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
     .party-row:hover { background: var(--terra-lt); }
     .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
-    .party-top { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 4px; }
-    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; }
+    .party-top { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 4px; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 62px; text-align: right; }
     .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
     .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
     .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
@@ -1027,7 +1027,12 @@
     // Party list
     let parties=[];
     try{parties=JSON.parse(p.top5_candidates||"[]");}catch(e){}
-    document.getElementById("d-parties").innerHTML = parties.filter(c=>c.votes>0).map(c=>{
+    // Pre-election: if all party votes are 0, still show parties from the JSON with 0%
+    const allZero = parties.length === 0 || parties.every(c => !c.votes);
+    const partySource = allZero
+      ? (currentMode==="indigena" ? indigenaParties : nationalParties || []).map(p=>({name:p.nombre,color:p.color,votes:0}))
+      : parties;
+    document.getElementById("d-parties").innerHTML = partySource.map(c=>{
       const col=partyColor(c.name,c.color);
       return `<div class="detail-party">
         <span class="detail-party-pct" style="color:${col}">${pct(c.votes,vv)}</span>
@@ -1306,7 +1311,7 @@
           const meta    = (roll || {})[r.mpio_reg_code_7] || {};
           const name    = meta.mpio_name || "—";
           const winner  = computeWinner(r, prefix, partyByCode);
-          const col     = winner ? winner.color : "#ccc";
+          const col     = winner ? partyColor(winner.nombre, winner.color) : "#ccc";
           const vot     = parseInt(r[votCol]) || 0;
           const pct     = totalVot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
           return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
