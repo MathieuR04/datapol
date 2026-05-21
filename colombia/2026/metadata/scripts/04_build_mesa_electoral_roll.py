@@ -75,6 +75,8 @@ def build_mesa_roll() -> pd.DataFrame:
                 "mesa_code":        f"{code}{i:06d}",
                 "puesto_code":      code,
                 "mesa_num":         i,
+                "num_mesas":        1,          # each row IS one mesa
+                "censo":            None,        # populated by 05_scrape_mesa_censo.py
                 "puesto_name":      p["n"],
                 "zona_code":        zona_code,
                 "zona_name":        zona_node["n"] if zona_node else "",
