@@ -1066,34 +1066,50 @@
   }
   document.getElementById("detail-back").addEventListener("click", hideDetail);
 
-  // ── Stats ─────────────────────────────────────────────────────────────────
-  // Header always shows overall election stats (independent of active tab)
+  // ── Stats — computed from GeoJSON features (single source of truth) ────────
+  function sumFeatures(features, key) {
+    return features.reduce((s, f) => s + (parseInt(f.properties?.[key]) || 0), 0);
+  }
+
+  // Header: always nacional (censo, total votantes, mesas progress)
   function updateHeaderStats() {
-    if (!seatsData) return;
-    const s = seatsData.stats_nacional;
-    const pct = s.mesas_total ? s.mesas_escrutadas / s.mesas_total : 0;
-    // Order: Censo | Votantes | Participación (= nac votantes / censo)
-    document.getElementById("hs-censo").textContent   = fmtN(s.censo);
-    document.getElementById("hs-votes").textContent   = fmtN(seatsData.total_votantes);
-    document.getElementById("hs-turnout").textContent = s.censo ? (seatsData.total_votantes / s.censo * 100).toFixed(1) + "%" : "—";
+    const feats = mpioNatData?.features || [];
+    const roll  = _rollByCode || {};
+
+    const censo     = Object.values(roll).reduce((s, r) => s + (parseInt(r.censo) || 0), 0);
+    const votantes  = sumFeatures(feats, "votantes");
+    const mesaEsc   = sumFeatures(feats, "mesas_escrutadas");
+    const mesaTot   = sumFeatures(feats, "mesas_total");
+    const pct       = mesaTot ? mesaEsc / mesaTot : 0;
+
+    document.getElementById("hs-censo").textContent   = fmtN(censo);
+    document.getElementById("hs-votes").textContent   = fmtN(votantes);
+    document.getElementById("hs-turnout").textContent = censo ? (votantes / censo * 100).toFixed(1) + "%" : "—";
     document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
-    document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
+    document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(mesaEsc)}/${fmtN(mesaTot)}`;
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
   }
 
-  // Bottom bar is constituency-specific
+  // Bottom bar: constituency-specific, summed from GeoJSON features
   function updateBottomBar(mode) {
-    if (!seatsData) return;
-    const s = mode === "indigena" ? seatsData.stats_indigena : seatsData.stats_nacional;
-    document.getElementById("bb-votantes").textContent    = fmtN(s.votantes);
-    document.getElementById("bb-nomarcados").textContent  = fmtN(s.votos_no_marcados);
-    document.getElementById("bb-nulos").textContent       = fmtN(s.votos_nulos);
-    document.getElementById("bb-blanco").textContent      = fmtN(s.votos_blanco);
-    document.getElementById("bb-mesas").textContent       = `${fmtN(s.mesas_escrutadas)}/${fmtN(s.mesas_total)}`;
-    // Municipios reported vs total
-    const mpioSrc = (mode === "indigena" ? mpioIndData : mpioNatData)?.features || [];
-    const reported = mpioSrc.filter(f => (parseInt(f.properties?.mesas_escrutadas) || 0) > 0).length;
-    document.getElementById("bb-mpios").textContent = `${reported}/${mpioSrc.length}`;
+    const isInd  = mode === "indigena";
+    const feats  = (isInd ? mpioIndData : mpioNatData)?.features || [];
+
+    const votantes  = sumFeatures(feats, "votantes");
+    const noMarcado = sumFeatures(feats, "votos_no_marcados");
+    const nulos     = sumFeatures(feats, "votos_nulos");
+    const blanco    = sumFeatures(feats, "votos_blanco");
+    const mesaEsc   = sumFeatures(feats, "mesas_escrutadas");
+    const mesaTot   = sumFeatures(feats, "mesas_total");
+
+    document.getElementById("bb-votantes").textContent   = fmtN(votantes);
+    document.getElementById("bb-nomarcados").textContent = fmtN(noMarcado);
+    document.getElementById("bb-nulos").textContent      = fmtN(nulos);
+    document.getElementById("bb-blanco").textContent     = fmtN(blanco);
+    document.getElementById("bb-mesas").textContent      = `${fmtN(mesaEsc)}/${fmtN(mesaTot)}`;
+
+    const reported = feats.filter(f => (parseInt(f.properties?.mesas_escrutadas) || 0) > 0).length;
+    document.getElementById("bb-mpios").textContent = `${reported}/${feats.length}`;
   }
 
   // ── Party sidebar ─────────────────────────────────────────────────────────
@@ -1115,9 +1131,8 @@
       display_name: (metaByNombre[p.nombre]?.display_name) || "",
     }));
 
-    const totalValid = currentMode==="indigena"
-      ? (seatsData?.stats_indigena?.votos_validos || 0)
-      : (seatsData?.stats_nacional?.votos_validos  || 0);
+    const featsForValid = (currentMode==="indigena" ? mpioIndData : mpioNatData)?.features || [];
+    const totalValid = sumFeatures(featsForValid, "votos_validos");
     const top = parties.slice(0,20);
     const maxV = top[0]?.votes||1;
 
@@ -1510,7 +1525,7 @@
       </div>`;
     });
 
-    const indTotalValid = seatsData.stats_indigena?.votos_validos || seatsData.indigena.reduce((s,p)=>s+p.votes,0);
+    const indTotalValid = sumFeatures(mpioIndData?.features || [], "votos_validos") || seatsData.indigena.reduce((s,p)=>s+p.votes,0);
     h+=`<div class="res-section-head" style="margin-top:1.25rem">Circunscripción Especial Indígena
       <span class="res-section-sub">2 escaños · ${f(indTotalValid)} votos válidos</span></div>`;
     seatsData.indigena.forEach(p=>{

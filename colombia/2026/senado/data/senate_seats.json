@@ -1,8 +1,7 @@
 {
-  "total_valid": 0,
-  "votos_blanco_nacional": 0,
   "threshold_pct": 3.0,
   "threshold_votes": 0,
+  "total_valid": 0,
   "seats_total": 103,
   "seats_nacional": 100,
   "seats_indigena": 2,
@@ -344,26 +343,5 @@
   "oposicion": {
     "seats": 1,
     "note": "Estatuto de la Oposición — asignado tras segunda vuelta presidencial"
-  },
-  "stats_nacional": {
-    "votantes": 0,
-    "censo": 41287084,
-    "votos_validos": 0,
-    "votos_blanco": 0,
-    "votos_nulos": 0,
-    "votos_no_marcados": 0,
-    "mesas_total": 126647,
-    "mesas_escrutadas": 126093
-  },
-  "stats_indigena": {
-    "votantes": 0,
-    "votos_validos": 0,
-    "votos_blanco": 0,
-    "votos_nulos": 0,
-    "votos_no_marcados": 0,
-    "mesas_total": 126647,
-    "mesas_escrutadas": 126093
-  },
-  "total_votantes": 0,
-  "total_censo": 41287084
+  }
 }
