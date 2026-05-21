@@ -4913,8 +4913,8 @@
       "code": "0011",
       "nombre": "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"",
       "color": "#0F766E",
-      "votes": 42616,
-      "vote_pct": 50.01,
+      "votes": 88294,
+      "vote_pct": 35.97,
       "seats": 1,
       "list_type": "open",
       "candidates": [
@@ -4942,8 +4942,8 @@
       "code": "0006",
       "nombre": "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"",
       "color": "#9A3412",
-      "votes": 26294,
-      "vote_pct": 30.85,
+      "votes": 72927,
+      "vote_pct": 29.71,
       "seats": 1,
       "list_type": "open",
       "candidates": [
@@ -4968,40 +4968,11 @@
       ]
     },
     {
-      "code": "0285",
-      "nombre": "ASOCIACIÓN DE AUTORIDADES TRADICIONALES INDÍGENAS",
-      "color": "#811EC5",
-      "votes": 5032,
-      "vote_pct": 5.9,
-      "seats": 0,
-      "list_type": "open",
-      "candidates": [
-        {
-          "rank": 1,
-          "name": "RICHARD HUMBERTO FUELANTALA DELGADO",
-          "votes": 9992,
-          "elected": false
-        },
-        {
-          "rank": 2,
-          "name": "ANTONIO DE JESUS GUEVARA BETANCUR",
-          "votes": 2412,
-          "elected": false
-        },
-        {
-          "rank": 3,
-          "name": "ZUNILDA AMAYA URIANA",
-          "votes": 1447,
-          "elected": false
-        }
-      ]
-    },
-    {
       "code": "0188",
       "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
       "color": "#6D28D9",
-      "votes": 4520,
-      "vote_pct": 5.3,
+      "votes": 56060,
+      "vote_pct": 22.84,
       "seats": 0,
       "list_type": "open",
       "candidates": [
@@ -5021,6 +4992,35 @@
           "rank": 3,
           "name": "LUZ EMILSE PANCHI",
           "votes": 1516,
+          "elected": false
+        }
+      ]
+    },
+    {
+      "code": "0285",
+      "nombre": "ASOCIACIÓN DE AUTORIDADES TRADICIONALES INDÍGENAS",
+      "color": "#811EC5",
+      "votes": 16628,
+      "vote_pct": 6.77,
+      "seats": 0,
+      "list_type": "open",
+      "candidates": [
+        {
+          "rank": 1,
+          "name": "RICHARD HUMBERTO FUELANTALA DELGADO",
+          "votes": 9992,
+          "elected": false
+        },
+        {
+          "rank": 2,
+          "name": "ANTONIO DE JESUS GUEVARA BETANCUR",
+          "votes": 2412,
+          "elected": false
+        },
+        {
+          "rank": 3,
+          "name": "ZUNILDA AMAYA URIANA",
+          "votes": 1447,
           "elected": false
         }
       ]
