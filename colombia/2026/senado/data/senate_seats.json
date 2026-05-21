@@ -4913,27 +4913,27 @@
       "code": "0011",
       "nombre": "MOVIMIENTO ALTERNATIVO INDÍGENA Y SOCIAL \"MAIS\"",
       "color": "#0F766E",
-      "votes": 42637,
-      "vote_pct": 49.99,
+      "votes": 42616,
+      "vote_pct": 50.01,
       "seats": 1,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
           "name": "MARTHA ISABEL PERALTA EPIEYU",
-          "votes": 30553,
+          "votes": 61098,
           "elected": true
         },
         {
           "rank": 2,
-          "name": "NELSON CUCUÑAME LULIGO",
-          "votes": 3503,
+          "name": "JULIO CESAR ESTRADA CORDERO",
+          "votes": 8157,
           "elected": false
         },
         {
           "rank": 3,
-          "name": "JULIO CESAR ESTRADA CORDERO",
-          "votes": 3090,
+          "name": "NELSON CUCUÑAME LULIGO",
+          "votes": 7576,
           "elected": false
         }
       ]
@@ -4942,27 +4942,27 @@
       "code": "0006",
       "nombre": "MOVIMIENTO AUTORIDADES INDÍGENAS DE COLOMBIA \"AICO\"",
       "color": "#9A3412",
-      "votes": 26300,
-      "vote_pct": 30.84,
+      "votes": 26294,
+      "vote_pct": 30.85,
       "seats": 1,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
-          "name": "RUBEN MARINO BORJE",
-          "votes": 19409,
+          "name": "JESUS OMERO CUASAPUD CHASPUENGAL",
+          "votes": 37609,
           "elected": true
         },
         {
           "rank": 2,
-          "name": "JESUS OMERO CUASAPUD CHASPUENGAL",
-          "votes": 3323,
+          "name": "RUBEN MARINO BORJE",
+          "votes": 24567,
           "elected": false
         },
         {
           "rank": 3,
           "name": "MARIA ESPERANZA TARAPUEZ GUEPUD",
-          "votes": 1089,
+          "votes": 3797,
           "elected": false
         }
       ]
@@ -4971,27 +4971,27 @@
       "code": "0285",
       "nombre": "ASOCIACIÓN DE AUTORIDADES TRADICIONALES INDÍGENAS",
       "color": "#811EC5",
-      "votes": 5038,
-      "vote_pct": 5.91,
+      "votes": 5032,
+      "vote_pct": 5.9,
       "seats": 0,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
           "name": "RICHARD HUMBERTO FUELANTALA DELGADO",
-          "votes": 2136,
+          "votes": 9992,
           "elected": false
         },
         {
           "rank": 2,
           "name": "ANTONIO DE JESUS GUEVARA BETANCUR",
-          "votes": 947,
+          "votes": 2412,
           "elected": false
         },
         {
           "rank": 3,
           "name": "ZUNILDA AMAYA URIANA",
-          "votes": 864,
+          "votes": 1447,
           "elected": false
         }
       ]
@@ -5000,27 +5000,27 @@
       "code": "0188",
       "nombre": "MOVIMIENTO UNIDAD EN MINGA POR COLOMBIA",
       "color": "#6D28D9",
-      "votes": 4546,
-      "vote_pct": 5.33,
+      "votes": 4520,
+      "vote_pct": 5.3,
       "seats": 0,
       "list_type": "open",
       "candidates": [
         {
           "rank": 1,
           "name": "JOSE WILMAN TUMBO CHEPE",
-          "votes": 1875,
+          "votes": 44702,
           "elected": false
         },
         {
           "rank": 2,
           "name": "MANUEL JESUS MAVISOY JUAGIBIOY",
-          "votes": 1173,
+          "votes": 4507,
           "elected": false
         },
         {
           "rank": 3,
           "name": "LUZ EMILSE PANCHI",
-          "votes": 594,
+          "votes": 1516,
           "elected": false
         }
       ]
