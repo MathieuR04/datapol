@@ -1609,17 +1609,14 @@
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = paths;
 
-    // Axis labels: show ~5 evenly spaced edge values
-    const step = Math.max(1, Math.floor(edges.length / 5));
-    const labelIdxs = [];
-    for (let i = 0; i < edges.length; i += step) labelIdxs.push(i);
-    if (!labelIdxs.includes(edges.length - 1)) labelIdxs.push(edges.length - 1);
-    axis.innerHTML = edges.map((e, i) => {
-      if (!labelIdxs.includes(i)) return "";
-      const pct = PAD/W + (i / n) * (1 - 2*PAD/W);
-      return `<span style="position:relative;left:${(pct*100).toFixed(1)}%">${e > 0 ? "+" : ""}${e.toFixed(1)}pp</span>`;
-    }).filter(Boolean).join("");
-    axis.style.position = "relative";
+    // Axis labels: 5 evenly-spaced labels using flex space-between
+    const m = edges.length - 1;
+    const keyIdxs = [0, Math.round(m/4), Math.round(m/2), Math.round(3*m/4), m];
+    axis.style.position = "";
+    axis.innerHTML = keyIdxs.map(i => {
+      const e = edges[i];
+      return `<span>${e > 0 ? "+" : ""}${e.toFixed(1)}pp</span>`;
+    }).join("");
 
     // Footer: left vs right names
     foot.innerHTML = `
