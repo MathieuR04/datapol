@@ -256,7 +256,7 @@
       overflow: hidden;
     }
     /* Panel tabs */
-    .panel-tabs { display: flex; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.42rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
     .ptab.active { color: var(--terra); border-bottom-color: var(--terra); }
     .ptab:hover:not(.active) { color: var(--text); }
@@ -272,6 +272,7 @@
     .party-top { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 4px; }
     .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
     .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
+    .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
     .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
     .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
     .party-bar { height: 100%; border-radius: 1px; }
@@ -345,21 +346,6 @@
       flex-direction: column;
       gap: 1.5rem;
     }
-
-    /* Pre-election banner */
-    .pre-banner {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--terra);
-      border-radius: 3px;
-      padding: 0.65rem 0.85rem;
-      font-size: 10px;
-      color: var(--muted);
-      line-height: 1.6;
-      display: none;
-    }
-    .pre-banner.show { display: block; }
-    .pre-banner strong { color: var(--terra); }
 
     /* Needle section */
     .needle-section {
@@ -676,12 +662,6 @@
 <!-- Pronóstico view -->
 <div id="pronostico-view">
   <div class="pron-inner">
-
-    <div class="pre-banner" id="pre-banner">
-      <strong>Estimación pre-electoral basada en encuestas.</strong><br>
-      Se actualizará en tiempo real el 31 de mayo de 2026.
-      Los porcentajes reflejan el promedio de encuestas recientes (AtlasIntel, may-2026).
-    </div>
 
     <!-- Needle gauge -->
     <div class="needle-section" id="needle-section">
@@ -1205,6 +1185,9 @@
   function switchPanelTab(tab) {
     currentPanelTab = tab;
     previousTab     = tab;
+    // Dismiss detail overlay if open (clicking a tab should always return to list view)
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
     document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
@@ -1235,7 +1218,10 @@
         return `<div class="party-row" data-cand="${c.nombre.replace(/"/g, '&quot;')}">
           <div class="party-top">
             <span class="party-pct" style="color:${col}">${pct}%</span>
-            <span class="party-name">${c.nombre}</span>
+            <div style="flex:1;min-width:0">
+              <div class="party-name">${c.nombre}</div>
+              <div class="party-sub">${c.partido || ''}</div>
+            </div>
             <span class="party-votes">${fmtN(c.votes)}</span>
           </div>
           <div class="party-bar-wrap">
@@ -1464,8 +1450,9 @@
   function switchMode(mode) {
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
     const isMap = mode === "mapa";
-    document.getElementById("mapa-body").style.display    = isMap ? "flex" : "none";
-    document.getElementById("pronostico-view").style.display = isMap ? "none" : "flex";
+    document.getElementById("mapa-body").style.display       = isMap ? "flex"  : "none";
+    document.getElementById("pronostico-view").style.display = isMap ? "none"  : "flex";
+    document.getElementById("bottombar").style.display       = isMap ? "flex"  : "none";
     if (isMap) {
       setTimeout(() => map.invalidateSize(), 50);
     }
@@ -1621,11 +1608,9 @@
     axis.style.position = "relative";
 
     // Footer: left vs right names
-    const leftN  = (battle.left_nombre  || "—").split(" ").slice(-1)[0];
-    const rightN = (battle.right_nombre || "—").split(" ").slice(-1)[0];
     foot.innerHTML = `
-      <span style="color:${rightColor}">← ${rightN} adelante</span>
-      <span style="color:${leftColor}">${leftN} adelante →</span>`;
+      <span style="color:${rightColor}">← ${battle.right_nombre || "—"} adelante</span>
+      <span style="color:${leftColor}">${battle.left_nombre || "—"} adelante →</span>`;
   }
 
   // ── Pronóstico view ───────────────────────────────────────────────────────
@@ -1633,10 +1618,6 @@
     if (!forecastData) return;
     const fd = forecastData;
     const isLive = (fd.pct_mesas || 0) > 0;
-
-    // Pre-election banner
-    const banner = document.getElementById("pre-banner");
-    banner.classList.toggle("show", !isLive);
 
     // Source note
     document.getElementById("pron-source-note").textContent = isLive
@@ -1662,15 +1643,13 @@
       const scale = 1000000;
       renderNeedle(marginPct * scale, ciLowPct * scale, ciHighPct * scale, candLeft, candRight);
 
-      const leftName  = (candLeft.nombre  || "—").split(" ").slice(-1)[0];
-      const rightName = (candRight.nombre || "—").split(" ").slice(-1)[0];
-      document.getElementById("needle-left-name").textContent  = leftName;
+      document.getElementById("needle-left-name").textContent  = candLeft.nombre  || "—";
       document.getElementById("needle-left-name").style.color  = candLeft.color || "#888";
       document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
       document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
       document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
 
-      document.getElementById("needle-right-name").textContent = rightName;
+      document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
       document.getElementById("needle-right-name").style.color = candRight.color || "#888";
       document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
       document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
