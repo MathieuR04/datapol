@@ -1671,7 +1671,9 @@
 
       const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
       document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
-      document.getElementById("needle-center-ci").textContent   = isLive ? `IC: [${diffFmt(ciLowPct)}, ${diffFmt(ciHighPct)}]` : "";
+      const ciLowFmt  = (ciLowPct  >= 0 ? "+" : "") + ciLowPct.toFixed(1)  + "pp";
+      const ciHighFmt = (ciHighPct >= 0 ? "+" : "") + ciHighPct.toFixed(1) + "pp";
+      document.getElementById("needle-center-ci").textContent = `IC 95%: [${ciLowFmt}, ${ciHighFmt}]`;
     }
 
     // ── Margin distribution ──

@@ -74,8 +74,8 @@ def histogram(values: list[float], edges: list[float]) -> list[int]:
 
 def write_empty_forecast(candidates: list[dict]) -> None:
     """Write forecast.json for the pre-election zero state."""
-    # Flat histogram edges: -50 to +50 pct, 21 edges = 20 bins
-    edges  = [round(-50.0 + i * 5.0, 1) for i in range(HIST_BINS + 1)]
+    # Flat histogram: ±20 pp, 20 bins of 2 pp each
+    edges  = [round(-20.0 + i * 2.0, 1) for i in range(HIST_BINS + 1)]
     counts = [N_SIMS // HIST_BINS] * HIST_BINS
 
     cand_out = []
@@ -88,26 +88,28 @@ def write_empty_forecast(candidates: list[dict]) -> None:
             "votes_current":     0,
             "vote_pct_current":  0.0,
             "vote_pct_projected": 0.0,
-            "ci_low_pct":        0.0,
-            "ci_high_pct":       0.0,
+            "ci_low_pct":        -10.0 if i == 1 else 0.0,  # 2nd-place candidate CI
+            "ci_high_pct":        10.0 if i == 1 else 0.0,
             "prob_runoff":       100.0 if i < 2 else 0.0,
         })
 
+    # Battle: 2nd vs 3rd candidate (the interesting contest for the runoff spot)
+    c2, c3 = candidates[1], candidates[2]
     out = {
         "pct_mesas":     0.0,
         "n_simulations": N_SIMS,
         "timestamp":     datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "candidates":    cand_out,
         "battle": {
-            "left_code":            candidates[0]["code"],
-            "right_code":           candidates[1]["code"],
-            "left_nombre":          candidates[0].get("nombre", candidates[0]["code"]),
-            "right_nombre":         candidates[1].get("nombre", candidates[1]["code"]),
-            "left_color":           candidates[0].get("color", "#888"),
-            "right_color":          candidates[1].get("color", "#888"),
+            "left_code":            c2["code"],
+            "right_code":           c3["code"],
+            "left_nombre":          c2.get("nombre", c2["code"]),
+            "right_nombre":         c3.get("nombre", c3["code"]),
+            "left_color":           c2.get("color", "#888"),
+            "right_color":          c3.get("color", "#888"),
             "margin_pct_projected": 0.0,
-            "ci_low_pct":           0.0,
-            "ci_high_pct":          0.0,
+            "ci_low_pct":          -10.0,
+            "ci_high_pct":          10.0,
             "margin_distribution": {
                 "edges":  edges,
                 "counts": counts,
@@ -179,10 +181,11 @@ def run_forecast(candidates: list[dict], rows: list[dict],
     pct_mesas = round(counted_mesas / max(total_mesas, 1) * 100, 2)
     total_current_valid_safe = max(total_current_valid, 1)
 
-    # Rank candidates by prob_runoff for battle selection
+    # Rank candidates by prob_runoff for battle selection.
+    # Battle = 2nd vs 3rd most likely: the interesting contest for the runoff spot.
     by_prob = sorted(cand_codes, key=lambda c: runoff_counts.get(c, 0), reverse=True)
-    battle_left  = by_prob[0] if len(by_prob) > 0 else cand_codes[0]
-    battle_right = by_prob[1] if len(by_prob) > 1 else cand_codes[1]
+    battle_left  = by_prob[1] if len(by_prob) > 1 else cand_codes[1]
+    battle_right = by_prob[2] if len(by_prob) > 2 else cand_codes[2]
 
     # Histogram for margin distribution
     if margins:
