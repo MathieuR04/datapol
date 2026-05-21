@@ -624,10 +624,12 @@
     <div class="panel-tabs" id="panel-tabs">
       <button class="ptab active" data-ptab="candidatos">Candidatos</button>
       <button class="ptab" data-ptab="deptos">Deptos</button>
+      <button class="ptab" data-ptab="exterior">Exterior</button>
     </div>
     <div class="panel-scroll" id="panel-scroll">
       <div id="panel-candidatos"></div>
       <div id="panel-deptos" style="display:none"></div>
+      <div id="panel-exterior" style="display:none"></div>
     </div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
@@ -1148,6 +1150,8 @@
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
     document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
+    document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
+    if (tab === "exterior") buildExteriorList();
   }
   document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
 
@@ -1226,7 +1230,141 @@
     });
   }
 
-  // ── (Exterior tab removed — included in aggregate national totals) ────────
+  // ── Exterior consulados panel ─────────────────────────────────────────────
+  const METADATA = "../../../colombia/2026/metadata/";
+
+  function parseCSVLine(line) {
+    const result = []; let cur = "", inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ""; }
+      else { cur += c; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  function parseCSV(text) {
+    const lines = text.trim().split("\n");
+    const headers = parseCSVLine(lines[0]);
+    return lines.slice(1).filter(l => l.trim()).map(line => {
+      const cols = parseCSVLine(line);
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = cols[i] !== undefined ? cols[i] : "");
+      return obj;
+    });
+  }
+
+  let _exteriorRows = null;
+  let _rollByCode   = null;
+
+  function loadRoll() {
+    if (_rollByCode) return Promise.resolve(_rollByCode);
+    return fetch(METADATA + "colombia_2026_municipio_electoral_roll.csv")
+      .then(r => r.text())
+      .then(text => {
+        const rows = parseCSV(text);
+        _rollByCode = {};
+        rows.forEach(r => { _rollByCode[r.mpio_reg_code_7] = r; });
+        return _rollByCode;
+      })
+      .catch(() => { _rollByCode = {}; return _rollByCode; });
+  }
+
+  function buildExteriorList() {
+    const el = document.getElementById("panel-exterior");
+    if (!el) return;
+
+    const candByCode = {};
+    (candidatesData || []).forEach(c => { candByCode[c.code] = c; });
+
+    const render = (rows, roll) => {
+      const totalVot = rows.reduce((s, r) => s + (parseInt(r.votantes) || 0), 0);
+
+      el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votantes en el exterior</div>` +
+        rows.map((r, idx) => {
+          const meta   = (roll || {})[r.mpio_reg_code_7] || {};
+          const name   = meta.mpio_name || "—";
+          const vot    = parseInt(r.votantes) || 0;
+          const pct    = totalVot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+          // Find winner among cand_ columns
+          let winner = null;
+          Object.keys(r).forEach(col => {
+            if (!col.startsWith("cand_")) return;
+            const votes = parseInt(r[col]) || 0;
+            if (!winner || votes > winner.votes) {
+              const code = col.replace("cand_", "");
+              const info = candByCode[code] || {};
+              winner = { code, votes, nombre: info.nombre || code, color: info.color || "#888" };
+            }
+          });
+          const col = winner ? (winner.color || "#ccc") : "#ccc";
+          return `<div class="dept-row ext-row" data-extidx="${idx}" style="cursor:pointer">
+            <div class="dept-top">
+              <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+              <span class="dept-name" style="font-size:9px">${name}</span>
+              <span class="dept-votes">${fmtN(vot)}</span>
+            </div>
+            <div class="dept-winner">${winner ? winner.nombre : ""} <span style="color:var(--dim)">${pct}</span></div>
+          </div>`;
+        }).join("");
+
+      el.querySelectorAll(".ext-row").forEach(row => {
+        row.addEventListener("click", () => {
+          const r      = rows[parseInt(row.dataset.extidx)];
+          const meta   = (roll || {})[r.mpio_reg_code_7] || {};
+          const name   = meta.mpio_name || "—";
+          const candEntries = [];
+          Object.keys(r).forEach(col => {
+            if (!col.startsWith("cand_")) return;
+            const votes = parseInt(r[col]) || 0;
+            if (!votes) return;
+            const code = col.replace("cand_", "");
+            const info = candByCode[code] || {};
+            candEntries.push({ name: info.nombre || code, color: info.color || "#888", votes });
+          });
+          candEntries.sort((a, b) => b.votes - a.votes);
+          const winner = candEntries[0] || null;
+          const fakeFeat = { properties: {
+            dept_name_reg:    name,
+            winner:           winner ? winner.name : "",
+            winner_color:     winner ? winner.color : "#888",
+            votantes:         r.votantes,
+            censo:            meta.censo || 0,
+            votos_validos:    r.votos_validos,
+            votos_blanco:     r.votos_blanco,
+            votos_nulos:      r.votos_nulos,
+            votos_no_marcados: r.votos_no_marcados,
+            mesas_escrutadas: r.mesas_escrutadas,
+            mesas_total:      meta.num_mesas || 0,
+            top5_candidates:  JSON.stringify(candEntries),
+          }};
+          showDetail(fakeFeat, "dept");
+        });
+      });
+    };
+
+    if (_exteriorRows) {
+      loadRoll().then(roll => render(_exteriorRows, roll));
+      return;
+    }
+
+    el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
+
+    Promise.all([
+      fetch(BASE + "results/colombia_2026_municipio_primera.csv").then(r => r.text()),
+      loadRoll(),
+    ]).then(([text, roll]) => {
+      _exteriorRows = parseCSV(text)
+        .filter(r => String(r.mpio_reg_code_7 || "").startsWith("88"))
+        .sort((a, b) => (parseInt(b.votantes) || 0) - (parseInt(a.votantes) || 0));
+      render(_exteriorRows, roll);
+    }).catch(() => {
+      el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
+        Datos del exterior no disponibles.<br>Ejecuta el pipeline primero.
+      </div>`;
+    });
+  }
 
   // ── Controls ──────────────────────────────────────────────────────────────
   document.querySelectorAll(".level-btn").forEach(btn => {
@@ -1538,6 +1676,7 @@
     updateBottomBar();
     buildCandList();
     buildDeptList();
+    buildExteriorList();
 
     if (mpioData || deptData) {
       render();
