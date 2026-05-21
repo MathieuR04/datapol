@@ -265,15 +265,16 @@
     .panel-scroll::-webkit-scrollbar-track { background: transparent; }
     .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
     .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
-    /* Candidate tab rows */
-    .cand-row { display: flex; align-items: center; gap: 0.45rem; padding: 0.38rem 0.75rem; border-bottom: 1px solid var(--border); }
-    .cand-row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .cand-row-info { flex: 1; min-width: 0; }
-    .cand-row-name { font-size: 10px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cand-row-partido { font-size: 8.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cand-row-right { text-align: right; flex-shrink: 0; }
-    .cand-row-votes { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); }
-    .cand-row-pct { font-size: 8px; color: var(--muted); }
+    /* Candidate sidebar rows — identical style to senado party rows */
+    .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .party-row:hover { background: var(--terra-lt); }
+    .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .party-top { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 4px; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
+    .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+    .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
+    .party-bar { height: 100%; border-radius: 1px; }
     /* Exterior tab rows */
     .ext-row { padding: 0.38rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.4rem; }
     .ext-row-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
@@ -306,6 +307,16 @@
     .dkpi-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1.1; color: var(--text); margin-top: 1px; }
     .dkpi-val.hi { color: var(--terra); }
     .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.75rem 0.2rem; flex-shrink: 0; }
+    /* Breakdown table */
+    .detail-breakdown { flex-shrink: 0; border-bottom: 1px solid var(--border); }
+    .dbreak-row { display: flex; align-items: center; padding: 0.28rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .dbreak-row:last-child { border-bottom: none; }
+    .dbreak-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+    .dbreak-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); min-width: 64px; text-align: right; }
+    .dbreak-pct { font-size: 9px; color: var(--muted); min-width: 42px; text-align: right; padding-left: 0.5rem; }
+    .dbreak-row.total { background: var(--surface); }
+    .dbreak-row.total .dbreak-label { color: var(--text); font-weight: 700; }
+    .dbreak-row.total .dbreak-val { color: var(--terra); }
 
     /* Candidate bar in detail */
     .detail-cand { display: flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.75rem; border-bottom: 1px solid var(--border); }
@@ -639,6 +650,7 @@
         <div class="detail-winner-tag" id="d-winner-tag"></div>
       </div>
       <div class="detail-kpi-row" id="d-kpis"></div>
+      <div class="detail-breakdown" id="d-breakdown"></div>
       <div class="detail-sect-head">Candidatos</div>
       <div id="d-candidates"></div>
     </div>
@@ -648,17 +660,17 @@
 
 <!-- Bottom bar -->
 <div class="bottombar" id="bottombar">
-  <div class="bbar-item"><span class="bbar-label">Mesas</span><span class="bbar-val" id="bb-mesas">—</span></div>
-  <div class="bbar-sep"></div>
-  <div class="bbar-item"><span class="bbar-label">Votos válidos</span><span class="bbar-val" id="bb-validos">—</span></div>
-  <div class="bbar-sep"></div>
-  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
-  <div class="bbar-sep"></div>
-  <div class="bbar-item"><span class="bbar-label">Nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-item"><span class="bbar-label">Votantes</span><span class="bbar-val hi" id="bb-votantes">—</span></div>
   <div class="bbar-sep"></div>
   <div class="bbar-item"><span class="bbar-label">No marcados</span><span class="bbar-val" id="bb-nomarcados">—</span></div>
   <div class="bbar-sep"></div>
-  <div class="bbar-item"><span class="bbar-label">Participación</span><span class="bbar-val hi" id="bb-participacion">—</span></div>
+  <div class="bbar-item"><span class="bbar-label">Votos nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Mesas</span><span class="bbar-val" id="bb-mesas">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Municipios</span><span class="bbar-val" id="bb-mpios">—</span></div>
 </div>
 
 <!-- Pronóstico view -->
@@ -797,10 +809,12 @@
   L.tileLayer(TILE.url, TILE.opts).addTo(map);
 
   // ── State ────────────────────────────────────────────────────────────────
-  let currentView     = "winner";
-  let currentLevel    = "dept";
-  let currentPanelTab = "candidatos";
-  let activeLayer     = null;
+  let currentView      = "winner";
+  let currentLevel     = "dept";
+  let currentPanelTab  = "candidatos";
+  let previousTab      = "candidatos";
+  let selectedCandidate = null;
+  let activeLayer      = null;
   let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
   let deptBoundsMap = {}, deptFeatMap = {};
 
@@ -810,6 +824,19 @@
   const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
 
   // ── Style functions ───────────────────────────────────────────────────────
+  function getCandShare(props, candName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
+    const entry = top5.find(c => c.name === candName);
+    const vv = parseInt(props.votos_validos) || 1;
+    return entry ? entry.votes / vv : 0;
+  }
+
+  function candColor(candName) {
+    const cand = (candidatesData || []).find(c => c.nombre === candName);
+    return cand ? cand.color : "#9a8878";
+  }
+
   function styleMpio(feat) {
     const p = feat.properties || {};
     let fill = "#e0d8cc";
@@ -819,6 +846,9 @@
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    } else if (currentView === "candidate" && selectedCandidate) {
+      const share = getCandShare(p, selectedCandidate);
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(share / 0.6, 0.7));
     }
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
   }
@@ -832,6 +862,9 @@
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    } else if (currentView === "candidate" && selectedCandidate) {
+      const share = getCandShare(p, selectedCandidate);
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(share / 0.6, 0.7));
     }
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
@@ -1049,6 +1082,7 @@
   // ── Detail panel ──────────────────────────────────────────────────────────
   function showDetail(feat, type) {
     const p = feat.properties || {};
+    document.querySelectorAll(".ptab").forEach(t => t.classList.remove("active"));
     document.getElementById("panel-scroll").style.display = "none";
     document.getElementById("detail-panel").classList.add("active");
 
@@ -1058,30 +1092,56 @@
     document.getElementById("d-mpio").textContent = name;
 
     const wt = document.getElementById("d-winner-tag");
-    if (p.winner && p.winner_color) {
-      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${p.winner_color}"></div>${p.winner}`;
-    } else {
-      wt.textContent = "Sin datos";
-    }
+    if (p.winner) {
+      const col = p.winner_color || candColor(p.winner);
+      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
+    } else { wt.textContent = "Sin datos"; }
 
-    // KPIs
+    // Derived values
     const vv  = parseInt(p.votos_validos) || 0;
     const vt  = parseInt(p.votantes) || 0;
     const cen = parseInt(p.censo) || 0;
+    const bla = parseInt(p.votos_blanco) || 0;
+    const nul = parseInt(p.votos_nulos) || 0;
+    const nom = parseInt(p.votos_no_marcados) || Math.max(0, vt - vv - nul);
     const meE = parseInt(p.mesas_escrutadas) || 0;
     const meT = parseInt(p.mesas_total) || 0;
+    const vpar = Math.max(0, vv - bla);
     const pct = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + "%" : "—";
 
     document.getElementById("d-kpis").innerHTML = `
       <div class="dkpi"><div class="dkpi-label">Censo</div><div class="dkpi-val">${fmtN(cen)}</div></div>
       <div class="dkpi"><div class="dkpi-label">Votantes</div><div class="dkpi-val">${fmtN(vt)}</div></div>
       <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${pct(vt, cen)}</div></div>
-      <div class="dkpi"><div class="dkpi-label">Mesas</div><div class="dkpi-val">${fmtN(meE)}/${fmtN(meT)}</div></div>`;
+      <div class="dkpi"><div class="dkpi-label">Mesas cont.</div><div class="dkpi-val">${fmtN(meE)}/${fmtN(meT)}</div></div>`;
 
-    // Candidates
-    let candidates = [];
-    try { candidates = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
-    document.getElementById("d-candidates").innerHTML = candidates.map(c => {
+    // Breakdown rows (like senado)
+    const bkRows = [
+      ["No marcados", nom, pct(nom, vt)],
+      ["Votos nulos",  nul, pct(nul, vt)],
+      ["En blanco",    bla, pct(bla, vt)],
+      ["Candidatos",  vpar, pct(vpar, vt)],
+    ];
+    document.getElementById("d-breakdown").innerHTML =
+      bkRows.map(([l, v, p]) => `<div class="dbreak-row">
+        <span class="dbreak-label">${l}</span>
+        <span class="dbreak-val">${fmtN(v)}</span>
+        <span class="dbreak-pct">${p}</span>
+      </div>`).join("") +
+      `<div class="dbreak-row total">
+        <span class="dbreak-label">Votos válidos</span>
+        <span class="dbreak-val">${fmtN(vv)}</span>
+        <span class="dbreak-pct">${pct(vv, vt)}</span>
+      </div>`;
+
+    // Candidates — always show list; if all zero use candidatesData with 0%
+    let cands = [];
+    try { cands = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
+    const allZero = cands.length === 0 || cands.every(c => !c.votes);
+    const candSource = allZero
+      ? (candidatesData || []).map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
+      : cands;
+    document.getElementById("d-candidates").innerHTML = candSource.map(c => {
       const col = c.color || "#9a8878";
       return `<div class="detail-cand">
         <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, vv)}</span>
@@ -1089,12 +1149,14 @@
         <span class="detail-cand-name">${c.name}</span>
         <span class="detail-cand-votes">${fmtN(c.votes)}</span>
       </div>`;
-    }).join("") || `<div style="padding:0.75rem;font-size:10px;color:var(--muted)">Sin datos de candidatos.</div>`;
+    }).join("");
   }
 
   function hideDetail() {
     document.getElementById("detail-panel").classList.remove("active");
     document.getElementById("panel-scroll").style.display = "";
+    // Re-activate the correct tab
+    document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
     if (activeLayer) {
       if (BUBBLE_VIEWS.has(currentView)) {
         const isDept = currentLevel === "dept";
@@ -1128,25 +1190,21 @@
   // ── Bottom bar ────────────────────────────────────────────────────────────
   function updateBottomBar() {
     const s = aggStats || {};
-    const mesaEsc = s.mesas_escrutadas || 0;
-    const mesaTot = s.mesas_total || 0;
-    const validos = s.votos_validos || 0;
-    const blanco  = s.votos_blanco || 0;
-    const nulos   = s.votos_nulos || 0;
-    const nomarc  = s.votos_no_marcados || 0;
-    const censo   = s.censo || 0;
-    const votan   = s.votantes || 0;
-    document.getElementById("bb-mesas").textContent        = mesaTot ? `${fmtN(mesaEsc)} / ${fmtN(mesaTot)}` : "—";
-    document.getElementById("bb-validos").textContent      = validos ? fmtN(validos) : "—";
-    document.getElementById("bb-blanco").textContent       = validos ? `${fmtN(blanco)} (${(blanco/validos*100).toFixed(1)}%)` : "—";
-    document.getElementById("bb-nulos").textContent        = nulos   ? fmtN(nulos)   : "—";
-    document.getElementById("bb-nomarcados").textContent   = nomarc  ? fmtN(nomarc)  : "—";
-    document.getElementById("bb-participacion").textContent = (censo && votan) ? (votan/censo*100).toFixed(1) + "%" : "—";
+    document.getElementById("bb-votantes").textContent   = fmtN(s.votantes          || 0);
+    document.getElementById("bb-nomarcados").textContent = fmtN(s.votos_no_marcados  || 0);
+    document.getElementById("bb-nulos").textContent      = fmtN(s.votos_nulos        || 0);
+    document.getElementById("bb-blanco").textContent     = fmtN(s.votos_blanco       || 0);
+    document.getElementById("bb-mesas").textContent      = `${fmtN(s.mesas_escrutadas||0)}/${fmtN(s.mesas_total||0)}`;
+
+    const reported = (mpioData?.features || []).filter(f => (parseInt(f.properties?.mesas_escrutadas) || 0) > 0).length;
+    const total    = (mpioData?.features || []).length;
+    document.getElementById("bb-mpios").textContent = `${reported}/${total || "—"}`;
   }
 
   // ── Panel tab switching ───────────────────────────────────────────────────
   function switchPanelTab(tab) {
     currentPanelTab = tab;
+    previousTab     = tab;
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
     document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
@@ -1159,35 +1217,51 @@
   function buildCandList() {
     const el = document.getElementById("panel-candidatos");
     const cands = candidatesData || [];
-    const isLive = (aggStats?.mesas_escrutadas || 0) > 0;
 
-    // Build vote totals lookup from aggStats.candidates
     const voteMap = {};
     (aggStats?.candidates || []).forEach(c => { voteMap[c.code] = c.votes || 0; });
-
     const totalVV = aggStats?.votos_validos || 0;
 
-    // Merge metadata + votes, sort by votes desc (or keep order pre-election)
-    const merged = cands.map(c => ({...c, votes: voteMap[c.code] || 0}));
-    const sorted = isLive
-      ? merged.slice().sort((a, b) => b.votes - a.votes)
-      : merged;
+    const merged = cands.map(c => ({ ...c, votes: voteMap[c.code] || 0 }));
+    const isLive = (aggStats?.mesas_escrutadas || 0) > 0;
+    const sorted = isLive ? merged.slice().sort((a, b) => b.votes - a.votes) : merged;
+    const maxV   = sorted[0]?.votes || 1;
 
-    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos${isLive ? ' · ' + fmtN(totalVV) + ' votos válidos' : ''}</div>` +
+    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos · ${fmtN(totalVV)} votos válidos</div>` +
       sorted.map(c => {
-        const pct = isLive && totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) + "%" : "—";
-        return `<div class="cand-row">
-          <div class="cand-row-dot" style="background:${c.color || '#9a8878'}"></div>
-          <div class="cand-row-info">
-            <div class="cand-row-name">${c.nombre}</div>
-            <div class="cand-row-partido">${c.partido || ''}</div>
+        const col   = c.color || "#9a8878";
+        const pct   = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
+        const barW  = (c.votes / maxV * 100).toFixed(1);
+        return `<div class="party-row" data-cand="${c.nombre.replace(/"/g, '&quot;')}">
+          <div class="party-top">
+            <span class="party-pct" style="color:${col}">${pct}%</span>
+            <span class="party-name">${c.nombre}</span>
+            <span class="party-votes">${fmtN(c.votes)}</span>
           </div>
-          <div class="cand-row-right">
-            <div class="cand-row-votes">${isLive ? fmtN(c.votes) : '—'}</div>
-            <div class="cand-row-pct">${pct}</div>
+          <div class="party-bar-wrap">
+            <div class="party-bar" style="width:${barW}%;background:${col}"></div>
           </div>
         </div>`;
       }).join("");
+
+    // Click candidate → choropleth
+    el.querySelectorAll(".party-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const name = row.dataset.cand;
+        if (selectedCandidate === name) {
+          selectedCandidate = null;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+          currentView = "winner";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+        } else {
+          selectedCandidate = name;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.toggle("selected", r.dataset.cand === name));
+          currentView = "candidate";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+        }
+        render();
+      });
+    });
   }
 
   // ── Dept sidebar ──────────────────────────────────────────────────────────

@@ -1,11 +1,11 @@
 {
   "pct_mesas": 0.0,
   "n_simulations": 10000,
-  "timestamp": "2026-05-21T19:16:20Z",
+  "timestamp": "2026-05-21T19:37:45Z",
   "candidates": [
     {
       "code": "cepeda",
-      "nombre": "Iván Cepeda Castro",
+      "nombre": "IVÁN CEPEDA CASTRO",
       "partido": "Pacto Histórico",
       "color": "#9D174D",
       "votes_current": 0,
@@ -17,7 +17,7 @@
     },
     {
       "code": "valencia",
-      "nombre": "Paloma Valencia Laserna",
+      "nombre": "PALOMA VALENCIA LASERNA",
       "partido": "Gran Consulta por Colombia",
       "color": "#1D4ED8",
       "votes_current": 0,
@@ -29,7 +29,7 @@
     },
     {
       "code": "delaespriella",
-      "nombre": "Abelardo De La Espriella",
+      "nombre": "ABELARDO DE LA ESPRIELLA",
       "partido": "Defensores de la Patria",
       "color": "#1E293B",
       "votes_current": 0,
@@ -41,7 +41,7 @@
     },
     {
       "code": "claudialopez",
-      "nombre": "Claudia López",
+      "nombre": "CLAUDIA LÓPEZ",
       "partido": "Imparables",
       "color": "#047857",
       "votes_current": 0,
@@ -53,7 +53,7 @@
     },
     {
       "code": "barreras",
-      "nombre": "Roy Barreras",
+      "nombre": "ROY BARRERAS",
       "partido": "Frente por la Vida",
       "color": "#D97706",
       "votes_current": 0,
@@ -65,7 +65,7 @@
     },
     {
       "code": "fajardo",
-      "nombre": "Sergio Fajardo",
+      "nombre": "SERGIO FAJARDO",
       "partido": "Dignidad y Compromiso",
       "color": "#65A30D",
       "votes_current": 0,
@@ -77,7 +77,7 @@
     },
     {
       "code": "caicedo",
-      "nombre": "Carlos Caicedo",
+      "nombre": "CARLOS CAICEDO",
       "partido": "Fuerza Ciudadana",
       "color": "#E53935",
       "votes_current": 0,
@@ -89,7 +89,7 @@
     },
     {
       "code": "lizcano",
-      "nombre": "Óscar Lizcano",
+      "nombre": "ÓSCAR LIZCANO",
       "partido": "Coalición F.A.M.I.L.I.A.",
       "color": "#7C2D12",
       "votes_current": 0,
@@ -101,7 +101,7 @@
     },
     {
       "code": "uribe",
-      "nombre": "Miguel Uribe Londoño",
+      "nombre": "MIGUEL URIBE LONDOÑO",
       "partido": "Partido Demócrata Colombiano",
       "color": "#1E3A5F",
       "votes_current": 0,
@@ -113,7 +113,7 @@
     },
     {
       "code": "botero",
-      "nombre": "Santiago Botero",
+      "nombre": "SANTIAGO BOTERO",
       "partido": "Romper el Sistema",
       "color": "#374151",
       "votes_current": 0,
@@ -125,7 +125,7 @@
     },
     {
       "code": "macollins",
-      "nombre": "Sondra Macollins",
+      "nombre": "SONDRA MACOLLINS",
       "partido": "Movimiento Ciudadano",
       "color": "#9333EA",
       "votes_current": 0,
@@ -137,7 +137,7 @@
     },
     {
       "code": "matamoros",
-      "nombre": "Gustavo Matamoros",
+      "nombre": "GUSTAVO MATAMOROS",
       "partido": "Movimiento Independiente",
       "color": "#B45309",
       "votes_current": 0,
@@ -149,7 +149,7 @@
     },
     {
       "code": "claralopez",
-      "nombre": "Clara López Obregón",
+      "nombre": "CLARA LÓPEZ OBREGÓN",
       "partido": "Polo Democrático",
       "color": "#991B1B",
       "votes_current": 0,
@@ -163,8 +163,8 @@
   "battle": {
     "left_code": "cepeda",
     "right_code": "valencia",
-    "left_nombre": "Iván Cepeda Castro",
-    "right_nombre": "Paloma Valencia Laserna",
+    "left_nombre": "IVÁN CEPEDA CASTRO",
+    "right_nombre": "PALOMA VALENCIA LASERNA",
     "left_color": "#9D174D",
     "right_color": "#1D4ED8",
     "margin_pct_projected": 0.0,
