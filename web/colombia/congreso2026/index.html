@@ -1073,11 +1073,12 @@
   }
 
   function updateHeaderStats() {
-    const s = aggStats?.nacional || {};
-    const votantes = s.votantes   || 0;
-    const censo    = s.censo      || 0;
+    const s        = aggStats?.nacional || {};
+    const censo    = s.censo            || 0;
     const mesaEsc  = s.mesas_escrutadas || 0;
     const mesaTot  = s.mesas_total      || 0;
+    // Votantes = nacional + indígena (both circunscripciones count toward participation)
+    const votantes = aggStats?.total_votantes || s.votantes || 0;
     const pct      = mesaTot ? mesaEsc / mesaTot : 0;
 
     document.getElementById("hs-censo").textContent   = fmtN(censo);

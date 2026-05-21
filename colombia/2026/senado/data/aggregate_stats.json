@@ -1,4 +1,5 @@
 {
+  "total_votantes": 20900614,
   "nacional": {
     "votantes": 20492278,
     "votos_validos": 19423187,
@@ -7,7 +8,7 @@
     "votos_no_marcados": 495519,
     "mesas_escrutadas": 126093,
     "mesas_total": 126647,
-    "censo": 42112284
+    "censo": 41287084
   },
   "indigena": {
     "votantes": 408336,
@@ -17,6 +18,6 @@
     "votos_no_marcados": 54390,
     "mesas_escrutadas": 126093,
     "mesas_total": 126647,
-    "censo": 42112284
+    "censo": 41287084
   }
 }
