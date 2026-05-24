@@ -4,90 +4,103 @@
     "nombre": "IVÁN CEPEDA CASTRO",
     "partido": "Pacto Histórico",
     "color": "#9D174D",
-    "vp": "Aida Quilcué"
+    "vp": "Aida Quilcué",
+    "image_id": "cepeda"
   },
   {
     "code": "valencia",
     "nombre": "PALOMA VALENCIA LASERNA",
     "partido": "Gran Consulta por Colombia",
     "color": "#1D4ED8",
-    "vp": "Juan Daniel Oviedo"
+    "vp": "Juan Daniel Oviedo",
+    "image_id": "valencia"
   },
   {
     "code": "delaespriella",
     "nombre": "ABELARDO DE LA ESPRIELLA",
     "partido": "Defensores de la Patria",
     "color": "#1E293B",
-    "vp": "José Manuel Restrepo"
+    "vp": "José Manuel Restrepo",
+    "image_id": "abelardo"
   },
   {
     "code": "claudialopez",
     "nombre": "CLAUDIA LÓPEZ",
     "partido": "Imparables",
     "color": "#047857",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "barreras",
     "nombre": "ROY BARRERAS",
     "partido": "Frente por la Vida",
     "color": "#D97706",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "fajardo",
     "nombre": "SERGIO FAJARDO",
     "partido": "Dignidad y Compromiso",
     "color": "#65A30D",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "caicedo",
     "nombre": "CARLOS CAICEDO",
     "partido": "Fuerza Ciudadana",
     "color": "#E53935",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "lizcano",
     "nombre": "ÓSCAR LIZCANO",
     "partido": "Coalición F.A.M.I.L.I.A.",
     "color": "#7C2D12",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "uribe",
     "nombre": "MIGUEL URIBE LONDOÑO",
     "partido": "Partido Demócrata Colombiano",
     "color": "#1E3A5F",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "botero",
     "nombre": "SANTIAGO BOTERO",
     "partido": "Romper el Sistema",
     "color": "#374151",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "macollins",
     "nombre": "SONDRA MACOLLINS",
     "partido": "Movimiento Ciudadano",
     "color": "#9333EA",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "matamoros",
     "nombre": "GUSTAVO MATAMOROS",
     "partido": "Movimiento Independiente",
     "color": "#B45309",
-    "vp": null
+    "vp": null,
+    "image_id": null
   },
   {
     "code": "claralopez",
     "nombre": "CLARA LÓPEZ OBREGÓN",
     "partido": "Polo Democrático",
     "color": "#991B1B",
-    "vp": null
+    "vp": null,
+    "image_id": null
   }
 ]

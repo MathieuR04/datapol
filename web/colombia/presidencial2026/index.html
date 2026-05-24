@@ -276,6 +276,12 @@
     .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
     .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
     .party-bar { height: 100%; border-radius: 1px; }
+    /* Candidate photo — sidebar & needle */
+    .cand-photo { object-fit: cover; flex-shrink: 0; border-radius: 4px; display: block; }
+    .cand-photo-placeholder { flex-shrink: 0; border-radius: 4px; background: var(--sand); }
+    .needle-photo-wrap { display: flex; justify-content: center; margin-bottom: 5px; }
+    .needle-photo-wrap .cand-photo,
+    .needle-photo-wrap .cand-photo-placeholder { border-radius: 6px; }
     /* Exterior tab rows */
     .ext-row { padding: 0.38rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.4rem; }
     .ext-row-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
@@ -681,6 +687,7 @@
       </div>
       <div class="needle-labels">
         <div class="needle-label left">
+          <div class="needle-photo-wrap" id="needle-left-photo"></div>
           <div class="needle-label-name" id="needle-left-name">—</div>
           <div class="needle-label-prob" id="needle-left-prob">—%</div>
           <div class="needle-label-probsub">prob. 2da vuelta</div>
@@ -692,6 +699,7 @@
           <div class="needle-center-ci" id="needle-center-ci"></div>
         </div>
         <div class="needle-label right">
+          <div class="needle-photo-wrap" id="needle-right-photo"></div>
           <div class="needle-label-name" id="needle-right-name">—</div>
           <div class="needle-label-prob" id="needle-right-prob">—%</div>
           <div class="needle-label-probsub">prob. 2da vuelta</div>
@@ -802,6 +810,26 @@
   let candidatesData = null, aggStats = null, forecastData = null;
 
   const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
+
+  // ── Candidate photo helper ────────────────────────────────────────────────
+  // Images live at ../../../colombia/2026/primera/data/images/<image_id>.jpg
+  // relative to this HTML file.
+  const IMAGES_BASE = "../../../colombia/2026/primera/data/images/";
+
+  function candPhotoHtml(imageId, w, h) {
+    const ph = `<div class="cand-photo-placeholder" style="width:${w}px;height:${h}px"></div>`;
+    if (!imageId) return ph;
+    const src = IMAGES_BASE + imageId + ".jpg";
+    // onerror falls back to placeholder if file absent
+    const esc = s => s.replace(/"/g, '&quot;');
+    return `<img class="cand-photo" src="${src}" width="${w}" height="${h}" `
+         + `onerror="this.outerHTML='${esc(ph)}'" alt="">`;
+  }
+
+  // Look up image_id from candidatesData by candidate code
+  function imageIdByCode(code) {
+    return (candidatesData || []).find(c => c.code === code)?.image_id || null;
+  }
 
   // ── Style functions ───────────────────────────────────────────────────────
   function getCandShare(props, candName) {
@@ -1229,8 +1257,10 @@
         const col   = c.color || "#9a8878";
         const pct   = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
         const barW  = (c.votes / maxV * 100).toFixed(1);
+        const photoHtml = candPhotoHtml(c.image_id || null, 36, 48);
         return `<div class="party-row" data-cand="${c.nombre.replace(/"/g, '&quot;')}">
           <div class="party-top">
+            ${photoHtml}
             <span class="party-pct" style="color:${col}">${pct}%</span>
             <div style="flex:1;min-width:0">
               <div class="party-name">${c.nombre}</div>
@@ -1528,17 +1558,18 @@
 
     // Dark base track
     svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
-    // Left half color (candLeft, dim)
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.22","butt"));
+    // Left half color (candLeft, dim) — 0.38 so color is clearly visible
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.38","butt"));
     // Right half color (candRight, dim)
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.22","butt"));
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.38","butt"));
 
     // CI band: bright arc spanning the confidence interval
     if (Math.abs(ciArcL - ciArcR) > 0.01) {
       const aL = Math.max(ciArcL, ciArcR);
       const aR = Math.min(ciArcL, ciArcR);
+      // Use whichever candidate is ahead; at exact tie use left
       const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
-      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aL,aR), ciCol, "18", "0.52", "butt"));
+      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aL,aR), ciCol, "18", "0.68", "butt"));
     }
 
     // Center tick (tie mark)
@@ -1659,12 +1690,14 @@
       document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
       document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
       document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
+      document.getElementById("needle-left-photo").innerHTML   = candPhotoHtml(imageIdByCode(candLeft.code), 52, 69);
 
       document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
       document.getElementById("needle-right-name").style.color = candRight.color || "#888";
       document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
       document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
       document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes_current || 0) + " votos" : "—";
+      document.getElementById("needle-right-photo").innerHTML   = candPhotoHtml(imageIdByCode(candRight.code), 52, 69);
 
       const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
       document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
