@@ -266,22 +266,30 @@
     .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
     .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
     /* Candidate sidebar rows — identical style to senado party rows */
+    /* ── Sidebar rows without photo (original format) ── */
     .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
     .party-row:hover { background: var(--terra-lt); }
     .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
-    .party-top { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 4px; }
+    .party-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 4px; }
     .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
     .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
     .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
     .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
     .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
     .party-bar { height: 100%; border-radius: 1px; }
-    /* Candidate photo — sidebar & needle */
-    .cand-photo { object-fit: cover; flex-shrink: 0; border-radius: 4px; display: block; }
-    .cand-photo-placeholder { flex-shrink: 0; border-radius: 4px; background: var(--sand); }
-    .needle-photo-wrap { display: flex; justify-content: center; margin-bottom: 5px; }
-    .needle-photo-wrap .cand-photo,
-    .needle-photo-wrap .cand-photo-placeholder { border-radius: 6px; }
+    /* ── Sidebar rows WITH photo ── */
+    .party-row--photo { padding: 0; }
+    .party-row--photo:hover { background: var(--terra-lt); }
+    .party-row--photo.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .sidebar-photo-inner { display: flex; align-items: stretch; }
+    .sidebar-cand-photo { width: 62px; flex-shrink: 0; object-fit: cover; object-position: top center; display: block; }
+    .sidebar-photo-text { flex: 1; min-width: 0; padding: 0.45rem 0.6rem; display: flex; flex-direction: column; justify-content: center; }
+    .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
+    /* ── Needle photos beside gauge ── */
+    .needle-gauge-row { display: flex; align-items: flex-end; justify-content: center; gap: 0; }
+    .needle-side-photo { width: 90px; flex-shrink: 0; display: block; object-fit: cover; object-position: top center; }
+    .needle-side-placeholder { width: 90px; flex-shrink: 0; }
+    .needle-side-photo-wrap { width: 90px; flex-shrink: 0; display: flex; align-items: flex-end; }
     /* Exterior tab rows */
     .ext-row { padding: 0.38rem 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.4rem; }
     .ext-row-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
@@ -672,22 +680,25 @@
     <!-- Needle gauge -->
     <div class="needle-section" id="needle-section">
       <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
-      <div class="needle-wrap">
-        <svg id="needle-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet">
-          <!-- Needle line -->
-          <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
-                stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- Needle pivot -->
-          <circle cx="150" cy="148" r="5" fill="#1a1209"/>
-          <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
-          <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
-                font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
-                fill="var(--muted)"></text>
-        </svg>
+      <div class="needle-gauge-row">
+        <div id="needle-left-photo" class="needle-side-placeholder"></div>
+        <div class="needle-wrap">
+          <svg id="needle-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet">
+            <!-- Needle line -->
+            <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Needle pivot -->
+            <circle cx="150" cy="148" r="5" fill="#1a1209"/>
+            <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
+            <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
+                  font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
+                  fill="var(--muted)"></text>
+          </svg>
+        </div>
+        <div id="needle-right-photo" class="needle-side-placeholder"></div>
       </div>
       <div class="needle-labels">
         <div class="needle-label left">
-          <div class="needle-photo-wrap" id="needle-left-photo"></div>
           <div class="needle-label-name" id="needle-left-name">—</div>
           <div class="needle-label-prob" id="needle-left-prob">—%</div>
           <div class="needle-label-probsub">prob. 2da vuelta</div>
@@ -699,7 +710,6 @@
           <div class="needle-center-ci" id="needle-center-ci"></div>
         </div>
         <div class="needle-label right">
-          <div class="needle-photo-wrap" id="needle-right-photo"></div>
           <div class="needle-label-name" id="needle-right-name">—</div>
           <div class="needle-label-prob" id="needle-right-prob">—%</div>
           <div class="needle-label-probsub">prob. 2da vuelta</div>
@@ -816,14 +826,11 @@
   // relative to this HTML file.
   const IMAGES_BASE = "../../../colombia/2026/primera/data/images/";
 
-  function candPhotoHtml(imageId, w, h) {
-    const ph = `<div class="cand-photo-placeholder" style="width:${w}px;height:${h}px"></div>`;
-    if (!imageId) return ph;
-    const src = IMAGES_BASE + imageId + ".jpg";
-    // onerror falls back to placeholder if file absent
-    const esc = s => s.replace(/"/g, '&quot;');
-    return `<img class="cand-photo" src="${src}" width="${w}" height="${h}" `
-         + `onerror="this.outerHTML='${esc(ph)}'" alt="">`;
+  function candPhotoHtml(imageId, w, h, cssClass) {
+    if (!imageId) return "";
+    const cls = cssClass || "needle-side-photo";
+    const src = IMAGES_BASE + imageId + ".png";
+    return `<img class="${cls}" src="${src}" width="${w}" height="${h}" onerror="this.style.display='none'" alt="">`;
   }
 
   // Look up image_id from candidatesData by candidate code
@@ -1254,13 +1261,31 @@
 
     el.innerHTML = `<div class="sect-head">${sorted.length} candidatos · ${fmtN(totalVV)} votos válidos</div>` +
       sorted.map(c => {
-        const col   = c.color || "#9a8878";
-        const pct   = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
-        const barW  = (c.votes / maxV * 100).toFixed(1);
-        const photoHtml = candPhotoHtml(c.image_id || null, 36, 48);
-        return `<div class="party-row" data-cand="${c.nombre.replace(/"/g, '&quot;')}">
+        const col  = c.color || "#9a8878";
+        const pct  = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
+        const barW = (c.votes / maxV * 100).toFixed(1);
+        const dn   = c.nombre.replace(/"/g, '&quot;');
+
+        if (c.image_id) {
+          const src = IMAGES_BASE + c.image_id + ".png";
+          return `<div class="party-row party-row--photo" data-cand="${dn}">
+            <div class="sidebar-photo-inner">
+              <img class="sidebar-cand-photo" src="${src}" onerror="this.style.display='none'" alt="">
+              <div class="sidebar-photo-text">
+                <span class="party-pct-big" style="color:${col}">${pct}%</span>
+                <div class="party-name">${c.nombre}</div>
+                <div class="party-sub">${c.partido || ''}</div>
+              </div>
+              <span class="party-votes" style="align-self:center;padding-right:0.5rem">${fmtN(c.votes)}</span>
+            </div>
+            <div class="party-bar-wrap">
+              <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+            </div>
+          </div>`;
+        }
+
+        return `<div class="party-row" data-cand="${dn}">
           <div class="party-top">
-            ${photoHtml}
             <span class="party-pct" style="color:${col}">${pct}%</span>
             <div style="flex:1;min-width:0">
               <div class="party-name">${c.nombre}</div>
@@ -1690,14 +1715,22 @@
       document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
       document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
       document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
-      document.getElementById("needle-left-photo").innerHTML   = candPhotoHtml(imageIdByCode(candLeft.code), 52, 69);
+
+      // Photos beside the gauge — inject img directly into side divs
+      const leftPhotoEl  = document.getElementById("needle-left-photo");
+      const rightPhotoEl = document.getElementById("needle-right-photo");
+      const leftImgHtml  = candPhotoHtml(imageIdByCode(candLeft.code),  90, 120, "needle-side-photo");
+      const rightImgHtml = candPhotoHtml(imageIdByCode(candRight.code), 90, 120, "needle-side-photo");
+      leftPhotoEl.innerHTML  = leftImgHtml  || "";
+      rightPhotoEl.innerHTML = rightImgHtml || "";
+      leftPhotoEl.className  = leftImgHtml  ? "needle-side-photo-wrap" : "needle-side-placeholder";
+      rightPhotoEl.className = rightImgHtml ? "needle-side-photo-wrap" : "needle-side-placeholder";
 
       document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
       document.getElementById("needle-right-name").style.color = candRight.color || "#888";
       document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
       document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
       document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes_current || 0) + " votos" : "—";
-      document.getElementById("needle-right-photo").innerHTML   = candPhotoHtml(imageIdByCode(candRight.code), 52, 69);
 
       const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
       document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
