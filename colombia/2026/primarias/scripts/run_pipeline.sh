@@ -35,4 +35,23 @@ echo "==> 04 — Aggregate national stats"
 python3 04_aggregate_stats.py
 
 echo ""
+echo "==> Git — commit and push"
+REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+TIMESTAMP="$(date '+%Y-%m-%d %H:%M')"
+MODE_LABEL="${UPDATE_FLAG:+update}${UPDATE_FLAG:-full}"
+git add \
+  colombia/2026/primarias/data/results/ \
+  colombia/2026/primarias/data/*.json \
+  colombia/2026/primarias/data/*.geojson \
+  2>/dev/null || true
+if git diff --cached --quiet; then
+  echo "  Nothing to commit — data unchanged."
+else
+  git commit -m "data: Primarias 2026 results ${MODE_LABEL} — ${TIMESTAMP}"
+  git push
+  echo "  Pushed to remote."
+fi
+
+echo ""
 echo "Done."
