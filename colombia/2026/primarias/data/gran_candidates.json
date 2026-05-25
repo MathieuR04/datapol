@@ -3,63 +3,63 @@
     "code": "000005",
     "nombre": "PALOMA SUSANA VALENCIA LASERNA",
     "partido": "Gran Consulta por Colombia",
-    "color": "#1D4ED8",
-    "image_id": null
+    "color": "#DC2626",
+    "image_id": "valencia"
   },
   {
     "code": "000009",
     "nombre": "JUAN DANIEL OVIEDO ARANGO",
     "partido": "Gran Consulta por Colombia",
-    "color": "#2563EB",
+    "color": "#16A34A",
     "image_id": null
   },
   {
     "code": "000004",
     "nombre": "JUAN MANUEL GALAN PACHON",
     "partido": "Gran Consulta por Colombia",
-    "color": "#3B82F6",
+    "color": "#1D4ED8",
     "image_id": null
   },
   {
     "code": "000006",
     "nombre": "JUAN CARLOS PINZON BUENO",
     "partido": "Gran Consulta por Colombia",
-    "color": "#60A5FA",
+    "color": "#7C3AED",
     "image_id": null
   },
   {
     "code": "000003",
     "nombre": "VICTORIA EUGENIA DAVILA HOYOS",
     "partido": "Gran Consulta por Colombia",
-    "color": "#93C5FD",
+    "color": "#DB2777",
     "image_id": null
   },
   {
     "code": "000008",
     "nombre": "ENRIQUE PEÑALOSA LONDOÑO",
     "partido": "Gran Consulta por Colombia",
-    "color": "#BFDBFE",
+    "color": "#D97706",
     "image_id": null
   },
   {
     "code": "000007",
     "nombre": "ANIBAL GAVIRIA CORREA",
     "partido": "Gran Consulta por Colombia",
-    "color": "#1E40AF",
+    "color": "#0891B2",
     "image_id": null
   },
   {
     "code": "000002",
     "nombre": "DAVID ANDRES LUNA SANCHEZ",
     "partido": "Gran Consulta por Colombia",
-    "color": "#3730A3",
+    "color": "#65A30D",
     "image_id": null
   },
   {
     "code": "000001",
     "nombre": "MAURICIO CARDENAS SANTAMARIA",
     "partido": "Gran Consulta por Colombia",
-    "color": "#4F46E5",
+    "color": "#EA580C",
     "image_id": null
   }
 ]

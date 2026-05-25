@@ -3,35 +3,35 @@
     "code": "000003",
     "nombre": "ROY LEONARDO BARRERAS MONTEALEGRE",
     "partido": "Frente por la Vida",
-    "color": "#D97706",
+    "color": "#DC2626",
     "image_id": null
   },
   {
     "code": "000005",
     "nombre": "DANIEL QUINTERO CALLE",
     "partido": "Frente por la Vida",
-    "color": "#F59E0B",
+    "color": "#1D4ED8",
     "image_id": null
   },
   {
     "code": "000002",
     "nombre": "EDISON LUCIO TORRES MORENO",
     "partido": "Frente por la Vida",
-    "color": "#FBBF24",
+    "color": "#16A34A",
     "image_id": null
   },
   {
     "code": "000004",
     "nombre": "MARTHA VIVIANA BERNAL AMAYA",
     "partido": "Frente por la Vida",
-    "color": "#FCD34D",
+    "color": "#DB2777",
     "image_id": null
   },
   {
     "code": "000001",
     "nombre": "HECTOR ELIAS PINEDA SALAZAR",
     "partido": "Frente por la Vida",
-    "color": "#FDE68A",
+    "color": "#D97706",
     "image_id": null
   }
 ]
