@@ -181,18 +181,48 @@ def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
 # ── Update helpers ─────────────────────────────────────────────────────────────
 
 def codes_needing_update() -> list[str]:
-    """Return mpio codes that are incomplete or errored."""
+    """
+    Return mpio codes that need re-fetching.
+
+    A municipio is flagged if ANY of the following is true:
+      1. mesas_escrutadas < mesas_total (or mesas_total == 0) in interconsultas CSV
+      2. A consulta has positive total votes but zero candidate breakdown
+         (happens when the scraper ran before individual counts were ready)
+      3. The code appeared in the errors file from a previous run
+    """
     codes: set[str] = set()
 
+    # Load interconsultas CSV — used for checks 1 and 2
     inter_path = RESULTS / "colombia_2026_municipio_primarias_interconsultas.csv"
+    inter_data: dict[str, dict] = {}
     if inter_path.exists():
         with open(inter_path) as f:
             for row in csv.DictReader(f):
+                code = row["mpio_reg_code_7"]
+                inter_data[code] = row
                 me = int(row.get("mesas_escrutadas") or 0)
                 mt = int(row.get("mesas_total")      or 0)
                 if me < mt or mt == 0:
-                    codes.add(row["mpio_reg_code_7"])
+                    codes.add(code)
 
+    # Check 2: per-consulta CSVs — has consulta total but no candidate votes
+    for codpar, (slug, _prefix) in CONSULTAS.items():
+        cand_path = RESULTS / f"colombia_2026_municipio_primarias_{slug}.csv"
+        if not cand_path.exists():
+            continue
+        with open(cand_path) as f:
+            for row in csv.DictReader(f):
+                code = row["mpio_reg_code_7"]
+                if code in codes:
+                    continue   # already scheduled
+                cand_keys = [k for k in row if k.startswith(f"cand_{codpar}_")]
+                has_cand_votes = any(int(row.get(k) or 0) > 0 for k in cand_keys)
+                if not has_cand_votes:
+                    inter_row = inter_data.get(code, {})
+                    if int(inter_row.get(f"consulta_{codpar}") or 0) > 0:
+                        codes.add(code)
+
+    # Check 3: previous errors
     err_path = OUT / "scrape_errors_primarias.csv"
     if err_path.exists():
         with open(err_path) as f:
@@ -202,9 +232,13 @@ def codes_needing_update() -> list[str]:
     return list(codes)
 
 
-def merge_with_existing(fresh: list[dict], fresh_codes: set[str],
-                        existing_path: Path) -> list[dict]:
-    """Combine freshly-scraped rows with unchanged existing rows."""
+def merge_csv(fresh: list[dict], fresh_codes: set[str],
+              existing_path: Path) -> list[dict]:
+    """
+    Combine freshly-scraped rows with the unchanged rows from an existing CSV.
+    Each CSV is merged independently so that per-consulta candidate columns are
+    preserved from the correct file (not overwritten with zeros from interconsultas).
+    """
     if not existing_path.exists():
         return fresh
     with open(existing_path) as f:
@@ -229,7 +263,7 @@ def scrape(update_mode: bool = False) -> None:
 
     codes = codes_needing_update() if update_mode else all_codes
     if update_mode and not codes:
-        print("All municipios fully escrutados — nothing to update.")
+        print("All municipios complete — nothing to update.")
         return
 
     print(f"{'Update' if update_mode else 'Full'} scrape: "
@@ -249,43 +283,47 @@ def scrape(update_mode: bool = False) -> None:
         return
 
     fresh_codes = {r["mpio_reg_code_7"] for r in results}
+    order       = {c: i for i, c in enumerate(all_codes)}
 
-    # In update mode, merge with existing data
-    if update_mode:
-        inter_path = RESULTS / "colombia_2026_municipio_primarias_interconsultas.csv"
-        old_rows   = merge_with_existing(results, fresh_codes, inter_path)
-        results    = old_rows   # replace with merged set for consistent output
-
-    # Collect all column names from scraped data
-    all_keys = set()
+    # Collect candidate/consulta column names from freshly scraped data only
+    # (old-CSV rows don't know about new candidate columns yet)
+    fresh_keys = set()
     for r in results:
-        all_keys.update(r.keys())
+        fresh_keys.update(r.keys())
 
-    # Sort candidate/consulta columns
-    cand_cols = {codpar: sorted(k for k in all_keys if k.startswith(f"cand_{codpar}_"))
-                 for codpar in CONSULTAS}
+    cand_cols  = {codpar: sorted(k for k in fresh_keys if k.startswith(f"cand_{codpar}_"))
+                  for codpar in CONSULTAS}
     inter_cols = [f"consulta_{cp}" for cp in sorted(CONSULTAS)]
 
-    # Fill missing rows (zeros for 404 / missing municipios)
-    scraped = {r["mpio_reg_code_7"] for r in results}
-    for c in all_codes:
-        if c not in scraped:
-            results.append({"mpio_reg_code_7": c})
+    # In a full scrape, add zero-stub rows for codes that returned 404/error
+    zero_stubs: list[dict] = []
+    if not update_mode:
+        scraped = {r["mpio_reg_code_7"] for r in results}
+        zero_stubs = [{"mpio_reg_code_7": c} for c in all_codes if c not in scraped]
 
-    # Sort by electoral roll order
-    order = {c: i for i, c in enumerate(all_codes)}
-    results.sort(key=lambda r: order.get(r["mpio_reg_code_7"], 9999))
+    def sorted_rows(rows: list[dict]) -> list[dict]:
+        return sorted(rows, key=lambda r: order.get(r["mpio_reg_code_7"], 9999))
 
     # ── Write per-consulta CSVs ───────────────────────────────────────────────
+    # In update mode, merge fresh rows with the *per-consulta* CSV so that
+    # existing candidate data for unchanged municipios is preserved.
     for codpar, (slug, _prefix) in CONSULTAS.items():
-        fields = COMMON_FIELDS + cand_cols[codpar]
         path   = RESULTS / f"colombia_2026_municipio_primarias_{slug}.csv"
-        write_csv(path, results, fields)
+        fields = COMMON_FIELDS + cand_cols[codpar]
+        if update_mode:
+            rows = sorted_rows(merge_csv(results, fresh_codes, path))
+        else:
+            rows = sorted_rows(results + zero_stubs)
+        write_csv(path, rows, fields)
 
     # ── Write interconsultas CSV ──────────────────────────────────────────────
-    inter_fields = COMMON_FIELDS + inter_cols
     inter_path   = RESULTS / "colombia_2026_municipio_primarias_interconsultas.csv"
-    write_csv(inter_path, results, inter_fields)
+    inter_fields = COMMON_FIELDS + inter_cols
+    if update_mode:
+        inter_rows = sorted_rows(merge_csv(results, fresh_codes, inter_path))
+    else:
+        inter_rows = sorted_rows(results + zero_stubs)
+    write_csv(inter_path, inter_rows, inter_fields)
 
 
 if __name__ == "__main__":

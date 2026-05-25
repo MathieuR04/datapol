@@ -671,10 +671,12 @@
         (p,v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} mesas pendientes`
       );
     } else if (currentView === "votos") {
-      document.getElementById("bl-title").textContent = "Votos válidos";
+      // For per-consulta tabs, bubble size = votes cast in that consulta only
+      const isInter = currentConsulta === "interconsultas";
+      document.getElementById("bl-title").textContent = isInter ? "Votos válidos" : "Votos en consulta";
       renderBubbles(
-        p => parseInt(p.votos_validos)||0,
-        (p,v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} votos válidos`
+        p => isInter ? (parseInt(p.votos_validos)||0) : (parseInt(p.consulta_votes_total)||0),
+        (p,v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} ${isInter ? "votos válidos" : "votos en consulta"}`
       );
     } else {
       renderChoropleth();
@@ -823,16 +825,20 @@
     try { cands = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
     const allZero = cands.length === 0 || cands.every(c => !c.votes);
     const candSource = allZero
-      ? candData().map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
+      ? candData().map(c => ({ name: c.nombre || c.display_name, color: c.color, votes: 0 }))
       : cands;
 
     const isInter = currentConsulta === "interconsultas";
     document.getElementById("d-cand-head").textContent = isInter ? "Por consulta" : "Candidatos";
 
+    // Denominator: for per-consulta, use consulta total so percentages add to ~100%
+    const cvtDetail = parseInt(p.consulta_votes_total) || 0;
+    const candDenom = (!isInter && cvtDetail > 0) ? cvtDetail : vv;
+
     document.getElementById("d-candidates").innerHTML = candSource.map(c => {
       const col = c.color || "#9a8878";
       return `<div class="detail-cand">
-        <span class="detail-cand-pct" style="color:${col}">${pct(c.votes,vv)}</span>
+        <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, candDenom)}</span>
         <div class="detail-cand-dot" style="background:${col}"></div>
         <span class="detail-cand-name">${c.name}</span>
         <span class="detail-cand-votes">${fmtN(c.votes)}</span>
@@ -914,17 +920,14 @@
     const sorted = isLive ? merged.slice().sort((a,b) => b.votes - a.votes) : merged;
     const maxV   = sorted[0]?.votes || 1;
 
-    // Header: for per-consulta, show consulta total instead of all valid votes
-    let consultaTotal = totalVV;
-    if (!isInter) {
-      const slug = currentConsulta;
-      consultaTotal = (s[slug] || {}).total || totalVV;
-    }
+    // Denominator: per-consulta uses that consulta's total so % adds to ~100%
+    const consultaTotal = isInter ? totalVV : ((s[currentConsulta] || {}).total || totalVV);
+    const pctDenom = consultaTotal || totalVV || 1;
 
     el.innerHTML = `<div class="sect-head">${sorted.length} ${isInter ? "consultas" : "candidatos"} · ${fmtN(consultaTotal)} ${isInter ? "votos válidos" : "votos en consulta"}</div>` +
       sorted.map(c => {
         const col  = c.color || "#9a8878";
-        const pct  = totalVV > 0 ? (c.votes/totalVV*100).toFixed(1) : "0.0";
+        const pct  = pctDenom > 0 ? (c.votes/pctDenom*100).toFixed(1) : "0.0";
         const barW = (c.votes/maxV*100).toFixed(1);
         const dn   = (c.nombre || c.display_name || "").replace(/"/g,'&quot;');
 
