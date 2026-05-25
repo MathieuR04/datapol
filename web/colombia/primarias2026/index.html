@@ -56,7 +56,7 @@
     .nav-pill { font-size: 8px; background: #333; color: #666; border-radius: 2px; padding: 1px 5px; margin-left: 4px; }
 
     /* ── Consulta tab bar ─────────────────────────────────────────────────── */
-    .mode-bar { background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; height: 28px; gap: 0; flex-shrink: 0; overflow-x: auto; }
+    .mode-bar { background: var(--bg); border-bottom: 2px solid var(--text); display: flex; align-items: center; padding: 0 1.25rem; height: 28px; gap: 0; flex-shrink: 0; overflow-x: auto; }
     .mode-bar::-webkit-scrollbar { display: none; }
     .mode-tab { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.3rem 0.75rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; white-space: nowrap; flex-shrink: 0; }
     .mode-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -240,9 +240,9 @@
 <!-- Consulta tabs -->
 <div class="mode-bar" id="consulta-bar">
   <button class="mode-tab active" data-consulta="interconsultas">Interconsultas</button>
-  <button class="mode-tab" data-consulta="soluciones">Soluciones</button>
+  <button class="mode-tab" data-consulta="soluciones">Consulta de las Soluciones</button>
   <button class="mode-tab" data-consulta="gran">Gran Consulta</button>
-  <button class="mode-tab" data-consulta="frente">Frente</button>
+  <button class="mode-tab" data-consulta="frente">Frente por la Vida</button>
 </div>
 
 <!-- Header -->
@@ -250,7 +250,7 @@
   <div>
     <div class="header-title">🇨🇴 Primarias · Colombia 2026</div>
   </div>
-  <div class="header-sub" id="header-sub">Consultas presidenciales<br>Registraduría Nacional</div>
+  <div class="header-sub" id="header-sub">Resultados por municipio<br>Registraduría Nacional</div>
   <div class="header-progress">
     <div class="hp-labels">
       <span>Mesas escrutadas</span>
@@ -1089,10 +1089,7 @@
     // Update view buttons active state
     document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
 
-    // Update header subtitle
-    const meta = CONSULTA_META[slug];
-    document.getElementById("header-sub").innerHTML =
-      `${meta.label}<br><span style="font-size:8px">Registraduría Nacional</span>`;
+    // (header-sub stays fixed: "Resultados por municipio / Registraduría Nacional")
 
     // Clear all layers and rebuild
     clearLayers();
