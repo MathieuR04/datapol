@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Colombia — Primarias 2026 | Datapol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f5f0e8;
+      --surface:  #ede8df;
+      --border:   #cfc0ab;
+      --border2:  #bfb0a0;
+      --text:     #1a1209;
+      --muted:    #7a6858;
+      --dim:      #b0a090;
+      --terra:    #c4603a;
+      --terra-dk: #8b3c1f;
+      --terra-lt: #f0e4d8;
+      --sand:     #d9c9b4;
+      /* Per-consulta accent colors (updated via JS) */
+      --accent:   #c4603a;
+      --accent-lt: #f0e4d8;
+    }
+    html { height: 100%; }
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────────── */
+    .nav {
+      background: var(--text);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      height: 32px;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .nav-brand { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; color: var(--sand); letter-spacing: 0.05em; margin-right: 1rem; text-decoration: none; }
+    .nav-sep { width: 1px; height: 14px; background: #333; margin: 0 0.6rem; }
+    .nav-item { font-size: 9px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #555; padding: 0 0.5rem; cursor: pointer; text-decoration: none; transition: color 0.15s; }
+    .nav-item.active { color: var(--terra); }
+    .nav-item:hover:not(.active) { color: #999; }
+    .nav-pill { font-size: 8px; background: #333; color: #666; border-radius: 2px; padding: 1px 5px; margin-left: 4px; }
+
+    /* ── Consulta tab bar ─────────────────────────────────────────────────── */
+    .consulta-bar {
+      background: var(--bg);
+      border-bottom: 2px solid var(--text);
+      display: flex;
+      align-items: stretch;
+      padding: 0;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+    .consulta-bar::-webkit-scrollbar { display: none; }
+    .ctab {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 1.1rem;
+      height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .ctab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .ctab:hover:not(.active) { color: var(--text); }
+    .ctab-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.45rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-shrink: 0;
+    }
+    .header-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 18px; letter-spacing: 0.04em; line-height: 1; white-space: nowrap; }
+    .header-sub { font-size: 9px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; border-left: 2px solid var(--accent); padding-left: 0.6rem; line-height: 1.5; }
+    .header-progress { flex: 1; max-width: 280px; display: flex; flex-direction: column; gap: 4px; }
+    .hp-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); letter-spacing: 0.04em; }
+    .hp-bar { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .hp-fill { height: 100%; background: var(--terra); border-radius: 2px; transition: width 0.5s; }
+    .live-tag { display: none; align-items: center; gap: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.07em; color: var(--terra); border: 1px solid var(--terra); padding: 0.2rem 0.5rem; border-radius: 2px; flex-shrink: 0; }
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--terra); animation: blink 1.4s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .header-stats { display: flex; gap: 1.25rem; margin-left: auto; }
+    .hstat { display: flex; flex-direction: column; align-items: flex-end; }
+    .hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .hstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; color: var(--text); }
+    .hstat-val.hi { color: var(--terra); }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .body { display: flex; flex: 1; min-height: 0; }
+
+    /* ── Map ──────────────────────────────────────────────────────────────── */
+    .map-wrap { flex: 1; position: relative; min-width: 0; }
+    #map { width: 100%; height: 100%; background: #e8e0d4; }
+    .leaflet-container { background: #e8e0d4; }
+    .leaflet-control-zoom a { background: var(--bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    .leaflet-control-zoom a:hover { background: var(--surface) !important; }
+    .leaflet-control-attribution { background: rgba(245,240,232,0.9) !important; color: var(--dim) !important; font-size: 9px !important; }
+    .leaflet-control-attribution a { color: var(--dim) !important; }
+
+    .map-controls { position: absolute; bottom: 0.75rem; left: 0.75rem; z-index: 800; display: flex; flex-direction: column; gap: 0.35rem; }
+    .ctrl-row { display: flex; gap: 0.3rem; }
+    .view-btn, .level-btn { background: rgba(245,240,232,0.92); border: 1px solid var(--border); color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 2px; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.15s; white-space: nowrap; }
+    .level-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .view-btn.active  { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .view-btn:hover:not(.active), .level-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .ctrl-label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0 0.1rem; }
+    .ctrl-label.geo  { color: var(--text); }
+    .ctrl-label.data { color: var(--accent); }
+
+    #loading { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; gap: 0.75rem; }
+    #loading p { color: var(--muted); font-size: 11px; }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--sand); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .bubble-legend { position: absolute; bottom: 0.75rem; right: 0.5rem; z-index: 800; background: rgba(245,240,232,0.92); border: 1px solid var(--border); border-radius: 3px; padding: 0.5rem 0.7rem; font-size: 9px; color: var(--muted); display: none; backdrop-filter: blur(4px); }
+    .bubble-legend.show { display: block; }
+    .bubble-legend-title { font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .bubble-legend-items { display: flex; align-items: flex-end; gap: 0.75rem; }
+    .bl-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .bl-circle { border-radius: 50%; border: 1px solid #999; background: rgba(196,96,58,0.25); }
+    .bl-label { font-size: 8px; }
+
+    .map-topbar { position: absolute; top: 10px; left: 44px; z-index: 800; }
+    .btn-fullview { background: rgba(245,240,232,0.93); border: 1px solid var(--border2); color: var(--text); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.28rem 0.9rem; border-radius: 2px; cursor: pointer; backdrop-filter: blur(4px); white-space: nowrap; transition: color 0.15s; }
+    .btn-fullview:hover { color: var(--accent); }
+
+    /* ── Panel ────────────────────────────────────────────────────────────── */
+    .panel { width: 280px; min-width: 280px; background: var(--surface); border-left: 2px solid var(--text); display: flex; flex-direction: column; overflow: hidden; }
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+    .ptab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .ptab:hover:not(.active) { color: var(--text); }
+    .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+    .panel-scroll::-webkit-scrollbar { width: 3px; }
+    .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+    .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
+
+    /* Sidebar rows */
+    .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .party-row:hover { background: var(--terra-lt); }
+    .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--accent); }
+    .party-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 4px; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
+    .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
+    .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+    .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
+    .party-bar { height: 100%; border-radius: 1px; }
+    /* Rows WITH photo */
+    .party-row--photo { padding: 0; }
+    .party-row--photo:hover { background: var(--terra-lt); }
+    .party-row--photo.selected { background: var(--terra-lt); border-left: 3px solid var(--accent); }
+    .sidebar-photo-inner { display: flex; align-items: stretch; }
+    .sidebar-cand-photo { width: 62px; flex-shrink: 0; object-fit: cover; object-position: top center; display: block; }
+    .sidebar-photo-text { flex: 1; min-width: 0; padding: 0.45rem 0.6rem; display: flex; flex-direction: column; justify-content: center; }
+    .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
+
+    /* Dept rows */
+    .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .dept-row:hover { background: var(--terra-lt); }
+    .dept-top { display: flex; align-items: center; gap: 0.4rem; }
+    .dept-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
+    .dept-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
+    .dept-votes { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .dept-winner { font-size: 9px; color: var(--muted); margin-top: 2px; padding-left: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Detail panel */
+    .detail-panel { display: none; flex-direction: column; overflow-y: auto; flex: 1; }
+    .detail-panel.active { display: flex; }
+    .detail-panel::-webkit-scrollbar { width: 3px; }
+    .detail-panel::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .detail-back { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: color 0.15s; }
+    .detail-back:hover { color: var(--accent); }
+    .detail-hero { padding: 0.65rem 0.75rem 0.45rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; letter-spacing: 0.03em; }
+    .detail-winner-tag { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--terra-dk); }
+    .detail-winner-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .detail-kpi-row { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .dkpi { flex: 1; padding: 0.4rem 0.6rem; border-right: 1px solid var(--border); }
+    .dkpi:last-child { border-right: none; }
+    .dkpi-label { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .dkpi-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1.1; color: var(--text); margin-top: 1px; }
+    .dkpi-val.hi { color: var(--accent); }
+    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.75rem 0.2rem; flex-shrink: 0; }
+    .detail-breakdown { flex-shrink: 0; border-bottom: 1px solid var(--border); }
+    .dbreak-row { display: flex; align-items: center; padding: 0.28rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .dbreak-row:last-child { border-bottom: none; }
+    .dbreak-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+    .dbreak-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); min-width: 64px; text-align: right; }
+    .dbreak-pct { font-size: 9px; color: var(--muted); min-width: 42px; text-align: right; padding-left: 0.5rem; }
+    .dbreak-row.total { background: var(--surface); }
+    .dbreak-row.total .dbreak-label { color: var(--text); font-weight: 700; }
+    .dbreak-row.total .dbreak-val { color: var(--accent); }
+    .detail-cand { display: flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .detail-cand-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .detail-cand-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .detail-cand-name { font-size: 9.5px; color: var(--text); flex: 1; line-height: 1.2; }
+    .detail-cand-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
+
+    /* ── Bottom bar ──────────────────────────────────────────────────────── */
+    .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
+    .bottombar::-webkit-scrollbar { display: none; }
+    .bbar-item { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    .bbar-label { font-size: 8px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #4a4a3a; }
+    .bbar-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; color: var(--sand); }
+    .bbar-val.hi { color: var(--terra); }
+    .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
+
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      body { overflow: auto; }
+      .body { flex-direction: column; }
+      .map-wrap { height: 55vw; min-height: 280px; flex: none; }
+      .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
+      .header-sub, .live-tag { display: none !important; }
+      .header-stats { display: none !important; }
+      .header-progress { max-width: none; flex: 1; display: flex !important; }
+      .header-title { font-size: 14px; }
+      .view-btn, .level-btn { font-size: 7px; padding: 0.18rem 0.4rem; letter-spacing: 0.03em; }
+      .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav">
+  <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
+  <div class="nav-sep"></div>
+  <a class="nav-item" href="/datapol/web/colombia/congreso2026/">Senado</a>
+  <span class="nav-item active">Primarias</span>
+  <a class="nav-item" href="/datapol/web/colombia/presidencial2026/">1ra Vuelta</a>
+  <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
+</div>
+
+<!-- Consulta tabs -->
+<div class="consulta-bar" id="consulta-bar">
+  <button class="ctab active" data-consulta="interconsultas">
+    <div class="ctab-dot" style="background:#c4603a"></div>
+    Interconsultas
+  </button>
+  <button class="ctab" data-consulta="soluciones">
+    <div class="ctab-dot" style="background:#7C3AED"></div>
+    Soluciones
+  </button>
+  <button class="ctab" data-consulta="gran">
+    <div class="ctab-dot" style="background:#1D4ED8"></div>
+    Gran Consulta
+  </button>
+  <button class="ctab" data-consulta="frente">
+    <div class="ctab-dot" style="background:#D97706"></div>
+    Frente
+  </button>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header-title">🇨🇴 Primarias · Colombia 2026</div>
+  </div>
+  <div class="header-sub" id="header-sub">Consultas presidenciales<br>Registraduría Nacional</div>
+  <div class="header-progress">
+    <div class="hp-labels">
+      <span>Mesas escrutadas</span>
+      <span id="hp-label">—</span>
+    </div>
+    <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+  <div class="header-stats">
+    <div class="hstat">
+      <span class="hstat-label">Censo</span>
+      <span class="hstat-val" id="hs-censo">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Votantes</span>
+      <span class="hstat-val" id="hs-votes">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Participación</span>
+      <span class="hstat-val hi" id="hs-turnout">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- Body -->
+<div class="body">
+
+  <!-- Map -->
+  <div class="map-wrap">
+    <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
+
+    <div class="map-topbar" id="map-topbar" style="display:none">
+      <button class="btn-fullview" id="btn-fullview">← Colombia</button>
+    </div>
+
+    <div class="map-controls">
+      <div class="ctrl-group">
+        <span class="ctrl-label geo">Geografía</span>
+        <div class="ctrl-row">
+          <button class="level-btn active" data-level="dept">Departamento</button>
+          <button class="level-btn" data-level="municipio">Municipio</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row" id="view-btns">
+          <button class="view-btn active" data-view="winner">Ganador</button>
+          <button class="view-btn" data-view="turnout">Participación</button>
+          <button class="view-btn" data-view="votos">Votos válidos</button>
+          <button class="view-btn" data-view="mesas">Mesas restantes</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-legend" id="bubble-legend">
+      <div class="bubble-legend-title" id="bl-title">Mesas faltantes</div>
+      <div class="bubble-legend-items" id="bl-items"></div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <!-- Panel -->
+  <div class="panel">
+    <div class="panel-tabs" id="panel-tabs">
+      <button class="ptab active" data-ptab="candidatos">Candidatos</button>
+      <button class="ptab" data-ptab="deptos">Deptos</button>
+    </div>
+    <div class="panel-scroll" id="panel-scroll">
+      <div id="panel-candidatos"></div>
+      <div id="panel-deptos" style="display:none"></div>
+    </div>
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-back" id="detail-back">← Volver</div>
+      <div class="detail-hero">
+        <div class="detail-mpio" id="d-mpio">—</div>
+        <div class="detail-winner-tag" id="d-winner-tag"></div>
+      </div>
+      <div class="detail-kpi-row" id="d-kpis"></div>
+      <div class="detail-breakdown" id="d-breakdown"></div>
+      <div class="detail-sect-head" id="d-cand-head">Candidatos / Consultas</div>
+      <div id="d-candidates"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom bar -->
+<div class="bottombar">
+  <div class="bbar-item"><span class="bbar-label">Votantes</span><span class="bbar-val hi" id="bb-votantes">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">No marcados</span><span class="bbar-val" id="bb-nomarcados">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Votos nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Mesas</span><span class="bbar-val" id="bb-mesas">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Municipios</span><span class="bbar-val" id="bb-mpios">—</span></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  // ── Formatting ─────────────────────────────────────────────────────────────
+  const fmtN = n => (n == null || n === "" || isNaN(n)) ? "—" : parseInt(n).toLocaleString("es-CO");
+  const fmtP = n => (n == null || n === "" || isNaN(n)) ? "—" : parseFloat(n).toFixed(1) + "%";
+
+  // ── Color helpers ──────────────────────────────────────────────────────────
+  function lerp(a, b, t) {
+    const p = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+    const [r1,g1,b1] = p(a), [r2,g2,b2] = p(b);
+    return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
+  }
+
+  // Strength scaled by winner share within the consulta's own vote pool.
+  // Uses consulta_votes_total from GeoJSON (sum of cand/consulta votes in that view).
+  // 8% → 0.28 (faint), 50% → 0.88 (saturated).
+  function winnerStrength(winnerVotes, denominator) {
+    const share = Math.min((winnerVotes || 0) / Math.max(denominator || 1, 1), 1);
+    const t = Math.pow(Math.max(0, (share - 0.08) / 0.42), 0.7);
+    return 0.28 + Math.min(t, 1) * 0.60;
+  }
+
+  function blendWithBg(hex, strength) {
+    strength = strength == null ? 0.72 : strength;
+    try {
+      const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+      const bg = [245,240,232];
+      return `rgb(${Math.round(r*strength+bg[0]*(1-strength))},${Math.round(g*strength+bg[1]*(1-strength))},${Math.round(b*strength+bg[2]*(1-strength))})`;
+    } catch(e) { return "#d9c9b4"; }
+  }
+
+  function turnoutColor(pct, maxPct) {
+    if (pct == null || isNaN(pct) || pct === 0) return "#e0d8cc";
+    const stops = [[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
+    const scaled = maxPct ? Math.min(pct / maxPct * 85, 85) : pct;
+    for (let i=1; i<stops.length; i++) {
+      if (scaled <= stops[i][0]) {
+        const t = (scaled-stops[i-1][0])/(stops[i][0]-stops[i-1][0]);
+        return lerp(stops[i-1][1], stops[i][1], t);
+      }
+    }
+    return stops[stops.length-1][1];
+  }
+
+  // ── Centroid helper ────────────────────────────────────────────────────────
+  function centroid(feat) {
+    const g = feat.geometry;
+    let coords = g.type === "MultiPolygon"
+      ? g.coordinates.reduce((a, poly) => a.concat(poly[0]), [])
+      : g.coordinates[0];
+    let minLat=Infinity,maxLat=-Infinity,minLng=Infinity,maxLng=-Infinity;
+    coords.forEach(([lng,lat]) => {
+      if(lat<minLat)minLat=lat; if(lat>maxLat)maxLat=lat;
+      if(lng<minLng)minLng=lng; if(lng>maxLng)maxLng=lng;
+    });
+    return [(minLat+maxLat)/2,(minLng+maxLng)/2];
+  }
+
+  // ── Consulta metadata ──────────────────────────────────────────────────────
+  const CONSULTA_META = {
+    interconsultas: { label: "Interconsultas",        color: "#c4603a", slug: "interconsultas" },
+    soluciones:     { label: "Consulta de las Soluciones", color: "#7C3AED", slug: "soluciones" },
+    gran:           { label: "Gran Consulta por Colombia", color: "#1D4ED8", slug: "gran" },
+    frente:         { label: "Frente por la Vida",    color: "#D97706", slug: "frente" },
+  };
+
+  // ── Data ───────────────────────────────────────────────────────────────────
+  // consulta slug → { mpio, dept, candidates }
+  const DATA = {
+    interconsultas: { mpio: null, dept: null, candidates: null },
+    soluciones:     { mpio: null, dept: null, candidates: null },
+    gran:           { mpio: null, dept: null, candidates: null },
+    frente:         { mpio: null, dept: null, candidates: null },
+  };
+  let aggStats = null;
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  let currentConsulta   = "interconsultas";
+  let currentView       = "winner";
+  let currentLevel      = "dept";
+  let currentPanelTab   = "candidatos";
+  let previousTab       = "candidatos";
+  let selectedCandidate = null;
+  let activeLayer       = null;
+  let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
+  let deptBoundsMap = {}, deptFeatMap = {};
+
+  const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
+
+  // Active consulta helpers
+  function mpioData()  { return DATA[currentConsulta].mpio;       }
+  function deptData()  { return DATA[currentConsulta].dept;       }
+  function candData()  { return DATA[currentConsulta].candidates || []; }
+  function accentColor() { return CONSULTA_META[currentConsulta].color; }
+
+  // ── Images ─────────────────────────────────────────────────────────────────
+  const IMAGES_BASE = "../../../colombia/2026/primarias/data/images/";
+  function imageIdByCode(code) {
+    return (candData()).find(c => c.code === code)?.image_id || null;
+  }
+
+  // ── CSS accent color swap ──────────────────────────────────────────────────
+  function applyAccent(color) {
+    document.documentElement.style.setProperty("--accent", color);
+    // Approximate light version: blend with bg at 15%
+    document.documentElement.style.setProperty("--accent-lt", "#f0e4d8");
+  }
+
+  // ── Map setup ──────────────────────────────────────────────────────────────
+  const map = L.map("map", {
+    center: [4.5, -74.2], zoom: window.innerWidth <= 700 ? 4 : 5.5,
+    zoomControl: true, attributionControl: true,
+    zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80,
+    doubleClickZoom: false
+  });
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+    attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14
+  }).addTo(map);
+
+  function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
+
+  // ── Style functions ────────────────────────────────────────────────────────
+  function getCandShare(props, candName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
+    const entry = top5.find(c => c.name === candName);
+    const vv = parseInt(props.votos_validos) || 1;
+    return entry ? entry.votes / vv : 0;
+  }
+
+  function candColorByName(candName) {
+    const cand = candData().find(c => c.nombre === candName);
+    return cand ? cand.color : "#9a8878";
+  }
+
+  function styleMpio(feat) {
+    const p = feat.properties || {};
+    let fill = "#e0d8cc";
+    if (currentView === "winner") {
+      const wv    = parseInt(p.winner_votes) || 0;
+      const denom = parseInt(p.consulta_votes_total) || parseInt(p.votos_validos) || 0;
+      if (wv > 0 && p.winner_color) {
+        fill = blendWithBg(p.winner_color, winnerStrength(wv, denom));
+      }
+    } else if (currentView === "turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    } else if (currentView === "candidate" && selectedCandidate) {
+      const share = getCandShare(p, selectedCandidate);
+      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(share / 0.5, 0.7));
+    }
+    return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
+  }
+
+  function styleDept(feat) {
+    const p = feat.properties || {};
+    let fill = "#e0d8cc";
+    if (currentView === "winner") {
+      const wv    = parseInt(p.winner_votes) || 0;
+      const denom = parseInt(p.consulta_votes_total) || parseInt(p.votos_validos) || 0;
+      if (wv > 0 && p.winner_color) {
+        fill = blendWithBg(p.winner_color, Math.min(winnerStrength(wv, denom) + 0.06, 0.92));
+      }
+    } else if (currentView === "turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    } else if (currentView === "candidate" && selectedCandidate) {
+      const share = getCandShare(p, selectedCandidate);
+      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(share / 0.5, 0.7));
+    }
+    return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
+  }
+
+  // ── Clear all layers ───────────────────────────────────────────────────────
+  function clearLayers() {
+    [mpioLayer, deptLayer, deptBoundaryLayer, bubbleLayer].forEach(l => {
+      if (l) map.removeLayer(l);
+    });
+    mpioLayer = deptLayer = deptBoundaryLayer = bubbleLayer = null;
+    deptBoundsMap = {}; deptFeatMap = {};
+  }
+
+  // ── Choropleth ─────────────────────────────────────────────────────────────
+  function renderChoropleth() {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    document.getElementById("bubble-legend").classList.remove("show");
+
+    const mpio = mpioData(), dept = deptData();
+    if (currentLevel === "municipio") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (!mpioLayer && mpio) {
+        mpioLayer = L.geoJSON(mpio, { style: styleMpio, onEachFeature: onEachMpio, smoothFactor: 0 }).addTo(map);
+      } else if (mpioLayer) {
+        mpioLayer.setStyle(styleMpio);
+      }
+      if (!deptBoundaryLayer && dept) {
+        deptBoundaryLayer = L.geoJSON(dept, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+    } else {
+      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (!deptLayer && dept) {
+        deptLayer = L.geoJSON(dept, { style: styleDept, onEachFeature: onEachDept, smoothFactor: 0 }).addTo(map);
+      } else if (deptLayer) {
+        deptLayer.setStyle(styleDept);
+      }
+    }
+  }
+
+  // ── Bubbles ────────────────────────────────────────────────────────────────
+  function renderBubbles(valueKey, labelFn) {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    const mpio = mpioData(), dept = deptData();
+
+    if (currentLevel === "municipio") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (!mpioLayer && mpio) {
+        mpioLayer = L.geoJSON(mpio, { style: styleMpio, onEachFeature: onEachMpio, smoothFactor: 0 }).addTo(map);
+      }
+      if (mpioLayer) mpioLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
+      if (!deptBoundaryLayer && dept) {
+        deptBoundaryLayer = L.geoJSON(dept, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" }, interactive: false
+        }).addTo(map);
+      }
+    } else {
+      if (mpioLayer) { map.removeLayer(mpioLayer); mpioLayer = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (!deptLayer && dept) {
+        deptLayer = L.geoJSON(dept, { style: styleDept, onEachFeature: onEachDept, smoothFactor: 0 }).addTo(map);
+      }
+      if (deptLayer) deptLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 1.5, color: "#1a1209" }));
+    }
+
+    const source = currentLevel === "municipio" ? mpio : dept;
+    if (!source) return;
+    const features = source.features.filter(f => valueKey(f.properties || {}) > 0);
+    const values   = features.map(f => valueKey(f.properties || {}));
+    const maxVal   = Math.max(...values, 1);
+    const maxR     = currentLevel === "dept" ? 30 : 18;
+
+    bubbleLayer = L.layerGroup();
+    features.forEach(feat => {
+      const val = valueKey(feat.properties || {});
+      if (!val) return;
+      const r      = Math.max(2, Math.sqrt(val / maxVal) * maxR);
+      const latlng = centroid(feat);
+      const marker = L.circleMarker(latlng, { radius: r, fillColor: "#c4603a", fillOpacity: 0.45, weight: 0.8, color: "#8b3c1f" });
+      marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
+      marker.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        showDetail(feat, currentLevel === "municipio" ? "municipio" : "dept");
+        document.getElementById("map-topbar").style.display = "block";
+      });
+      marker.addTo(bubbleLayer);
+    });
+    bubbleLayer.addTo(map);
+
+    const legend = document.getElementById("bubble-legend");
+    legend.classList.add("show");
+    const sizes = [maxVal, maxVal/4, maxVal/16].filter(v => v > 0);
+    document.getElementById("bl-items").innerHTML = sizes.map(v => {
+      const r = Math.max(2, Math.sqrt(v/maxVal)*maxR), d = r*2;
+      return `<div class="bl-item"><div class="bl-circle" style="width:${d}px;height:${d}px"></div><span class="bl-label">${fmtN(Math.round(v))}</span></div>`;
+    }).join("");
+  }
+
+  // ── Render dispatcher ──────────────────────────────────────────────────────
+  function render() {
+    if (currentView === "mesas") {
+      document.getElementById("bl-title").textContent = "Mesas faltantes";
+      renderBubbles(
+        p => Math.max(0, (parseInt(p.mesas_total)||0) - (parseInt(p.mesas_escrutadas)||0)),
+        (p,v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} mesas pendientes`
+      );
+    } else if (currentView === "votos") {
+      document.getElementById("bl-title").textContent = "Votos válidos";
+      renderBubbles(
+        p => parseInt(p.votos_validos)||0,
+        (p,v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} votos válidos`
+      );
+    } else {
+      renderChoropleth();
+    }
+    if (activeLayer) activeLayer.setStyle({ weight: 2, color: accentColor(), fillOpacity: 1 });
+  }
+
+  // ── Feature interactions ───────────────────────────────────────────────────
+  function onEachMpio(feat, layer) {
+    layer.on({
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return;
+        if (e.target !== activeLayer) e.target.setStyle({ weight: 1.2, color: "#1a1209", fillOpacity: 1 });
+      },
+      mouseout(e) {
+        if (e.target === activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView))
+          e.target.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" });
+        else
+          mpioLayer?.resetStyle(e.target);
+      },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if (activeLayer === e.target) {
+          mpioLayer?.resetStyle(e.target);
+          activeLayer = null;
+          map.setView([4.5,-74.2], defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if (activeLayer) {
+          if (BUBBLE_VIEWS.has(currentView)) activeLayer.setStyle({ fillColor:"transparent",fillOpacity:0,weight:0.3,color:"#cfc0ab" });
+          else (mpioLayer||deptLayer)?.resetStyle(activeLayer);
+        }
+        activeLayer = e.target;
+        e.target.setStyle({ weight: 2, color: accentColor(), fillOpacity: 1 });
+        showDetail(feat, "municipio");
+        map.fitBounds(e.target.getBounds(), { padding: [60, 60] });
+        document.getElementById("map-topbar").style.display = "block";
+      }
+    });
+  }
+
+  function onEachDept(feat, layer) {
+    const key = (feat.properties||{}).name||"";
+    if (key) { deptBoundsMap[key] = layer.getBounds(); deptFeatMap[key] = feat; }
+    layer.on({
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return;
+        if (e.target !== activeLayer) e.target.setStyle({ weight: 2.5, color: accentColor(), fillOpacity: 1 });
+      },
+      mouseout(e) {
+        if (e.target === activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) e.target.setStyle({ fillColor:"transparent",fillOpacity:0,weight:1.5,color:"#1a1209" });
+        else deptLayer?.resetStyle(e.target);
+      },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if (activeLayer === e.target) {
+          deptLayer?.resetStyle(e.target);
+          activeLayer = null;
+          map.setView([4.5,-74.2], defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if (activeLayer) {
+          if (BUBBLE_VIEWS.has(currentView)) activeLayer.setStyle({ fillColor:"transparent",fillOpacity:0,weight:1.5,color:"#1a1209" });
+          else deptLayer?.resetStyle(activeLayer);
+        }
+        activeLayer = e.target;
+        e.target.setStyle({ weight: 2.5, color: accentColor(), fillOpacity: 1 });
+        showDetail(feat, "dept");
+        map.fitBounds(e.target.getBounds(), { padding: [40, 40] });
+        document.getElementById("map-topbar").style.display = "block";
+      }
+    });
+  }
+
+  map.on("click", hideDetail);
+
+  document.getElementById("btn-fullview").addEventListener("click", () => {
+    map.setView([4.5,-74.2], defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+    hideDetail();
+  });
+  map.on("zoomend", () => {
+    if (map.getZoom() <= defZoom()+0.3) document.getElementById("map-topbar").style.display = "none";
+  });
+
+  // ── Detail panel ───────────────────────────────────────────────────────────
+  function showDetail(feat, type) {
+    const p = feat.properties || {};
+    document.querySelectorAll(".ptab").forEach(t => t.classList.remove("active"));
+    document.getElementById("panel-scroll").style.display = "none";
+    document.getElementById("detail-panel").classList.add("active");
+
+    const name = type === "dept"
+      ? (p.dept_name_reg || p.NOMBRE_DPT || "—")
+      : (p.mpio_name_reg || p.mpio_name_dane || "—");
+    document.getElementById("d-mpio").textContent = name;
+
+    const wt = document.getElementById("d-winner-tag");
+    if (p.winner) {
+      const col = p.winner_color || "#888";
+      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
+    } else { wt.textContent = "Sin datos"; }
+
+    const vv  = parseInt(p.votos_validos) || 0;
+    const vt  = parseInt(p.votantes) || 0;
+    const cen = parseInt(p.censo) || 0;
+    const bla = parseInt(p.votos_blanco) || 0;
+    const nul = parseInt(p.votos_nulos) || 0;
+    const nom = parseInt(p.votos_no_marcados) || Math.max(0, vt - vv - nul);
+    const meE = parseInt(p.mesas_escrutadas) || 0;
+    const meT = parseInt(p.mesas_total) || 0;
+    const pct = (n, d) => d > 0 ? (n/d*100).toFixed(1)+"%" : "—";
+
+    document.getElementById("d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Censo</div><div class="dkpi-val">${fmtN(cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Votantes</div><div class="dkpi-val">${fmtN(vt)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${pct(vt,cen)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Mesas cont.</div><div class="dkpi-val">${fmtN(meE)}/${fmtN(meT)}</div></div>`;
+
+    // Votes breakdown (shared across all tabs)
+    const cvt = parseInt(p.consulta_votes_total) || Math.max(0, vv - bla);
+    document.getElementById("d-breakdown").innerHTML = [
+      ["No marcados", nom, pct(nom, vt)],
+      ["Votos nulos",  nul, pct(nul, vt)],
+      ["En blanco",    bla, pct(bla, vv)],
+      ["Votos partido", cvt, pct(cvt, vv)],
+    ].map(([l,v,p]) => `<div class="dbreak-row">
+      <span class="dbreak-label">${l}</span>
+      <span class="dbreak-val">${fmtN(v)}</span>
+      <span class="dbreak-pct">${p}</span>
+    </div>`).join("") +
+    `<div class="dbreak-row total">
+      <span class="dbreak-label">Votos válidos</span>
+      <span class="dbreak-val">${fmtN(vv)}</span>
+      <span class="dbreak-pct">${pct(vv,vt)}</span>
+    </div>`;
+
+    // Candidates/consultas from top5_candidates
+    let cands = [];
+    try { cands = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
+    const allZero = cands.length === 0 || cands.every(c => !c.votes);
+    const candSource = allZero
+      ? candData().map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
+      : cands;
+
+    const isInter = currentConsulta === "interconsultas";
+    document.getElementById("d-cand-head").textContent = isInter ? "Por consulta" : "Candidatos";
+
+    document.getElementById("d-candidates").innerHTML = candSource.map(c => {
+      const col = c.color || "#9a8878";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${col}">${pct(c.votes,vv)}</span>
+        <div class="detail-cand-dot" style="background:${col}"></div>
+        <span class="detail-cand-name">${c.name}</span>
+        <span class="detail-cand-votes">${fmtN(c.votes)}</span>
+      </div>`;
+    }).join("");
+  }
+
+  function hideDetail() {
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor:"transparent",fillOpacity:0,weight:isDept?1.5:0.3,color:isDept?"#1a1209":"#cfc0ab" });
+      } else {
+        mpioLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+    }
+  }
+  document.getElementById("detail-back").addEventListener("click", hideDetail);
+
+  // ── Header stats ───────────────────────────────────────────────────────────
+  function updateHeaderStats() {
+    const s = aggStats || {};
+    const censo    = s.censo || 0;
+    const mesaEsc  = s.mesas_escrutadas || 0;
+    const mesaTot  = s.mesas_total || 0;
+    const votantes = s.votantes || 0;
+    const pct      = mesaTot ? mesaEsc / mesaTot : 0;
+    document.getElementById("hs-censo").textContent   = censo    ? fmtN(censo)    : "—";
+    document.getElementById("hs-votes").textContent   = votantes ? fmtN(votantes) : "—";
+    document.getElementById("hs-turnout").textContent = (censo && votantes) ? (votantes/censo*100).toFixed(1)+"%" : "—";
+    document.getElementById("hp-fill").style.width    = (pct*100).toFixed(1)+"%";
+    document.getElementById("hp-label").textContent   = `${(pct*100).toFixed(1)}% · ${fmtN(mesaEsc)}/${fmtN(mesaTot)}`;
+    if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+  }
+
+  // ── Bottom bar ─────────────────────────────────────────────────────────────
+  function updateBottomBar() {
+    const s = aggStats || {};
+    document.getElementById("bb-votantes").textContent   = fmtN(s.votantes          || 0);
+    document.getElementById("bb-nomarcados").textContent = fmtN(s.votos_no_marcados  || 0);
+    document.getElementById("bb-nulos").textContent      = fmtN(s.votos_nulos        || 0);
+    document.getElementById("bb-blanco").textContent     = fmtN(s.votos_blanco       || 0);
+    document.getElementById("bb-mesas").textContent      = `${fmtN(s.mesas_escrutadas||0)}/${fmtN(s.mesas_total||0)}`;
+
+    const src = mpioData();
+    const reported = src ? src.features.filter(f => (parseInt(f.properties?.mesas_escrutadas)||0) > 0).length : 0;
+    const total    = src ? src.features.length : 0;
+    document.getElementById("bb-mpios").textContent = total ? `${reported}/${total}` : "—";
+  }
+
+  // ── Candidates sidebar ─────────────────────────────────────────────────────
+  function buildCandList() {
+    const el = document.getElementById("panel-candidatos");
+    const cands = candData();
+    const s = aggStats || {};
+    const totalVV = s.votos_validos || 0;
+    const isInter = currentConsulta === "interconsultas";
+
+    // Build voteMap: {candidate.code → votes}
+    const voteMap = {};
+    if (isInter) {
+      const ic = s.interconsultas || {};
+      voteMap["30"] = ic.consulta_30 || 0;
+      voteMap["31"] = ic.consulta_31 || 0;
+      voteMap["32"] = ic.consulta_32 || 0;
+    } else {
+      const slug = currentConsulta;
+      const cData = (s[slug] || {}).candidates || {};
+      Object.entries(cData).forEach(([code, info]) => { voteMap[code] = info.votes || 0; });
+    }
+
+    const merged = cands.map(c => ({ ...c, votes: voteMap[c.code] || 0 }));
+    const isLive = (s.mesas_escrutadas || 0) > 0;
+    const sorted = isLive ? merged.slice().sort((a,b) => b.votes - a.votes) : merged;
+    const maxV   = sorted[0]?.votes || 1;
+
+    // Header: for per-consulta, show consulta total instead of all valid votes
+    let consultaTotal = totalVV;
+    if (!isInter) {
+      const slug = currentConsulta;
+      consultaTotal = (s[slug] || {}).total || totalVV;
+    }
+
+    el.innerHTML = `<div class="sect-head">${sorted.length} ${isInter ? "consultas" : "candidatos"} · ${fmtN(consultaTotal)} ${isInter ? "votos válidos" : "votos en consulta"}</div>` +
+      sorted.map(c => {
+        const col  = c.color || "#9a8878";
+        const pct  = totalVV > 0 ? (c.votes/totalVV*100).toFixed(1) : "0.0";
+        const barW = (c.votes/maxV*100).toFixed(1);
+        const dn   = (c.nombre || c.display_name || "").replace(/"/g,'&quot;');
+
+        if (c.image_id) {
+          const src = IMAGES_BASE + c.image_id + ".png";
+          return `<div class="party-row party-row--photo" data-cand="${dn}">
+            <div class="sidebar-photo-inner">
+              <img class="sidebar-cand-photo" src="${src}" onerror="this.style.display='none'" alt="">
+              <div class="sidebar-photo-text">
+                <span class="party-pct-big" style="color:${col}">${pct}%</span>
+                <div class="party-name">${c.nombre || c.display_name}</div>
+                <div class="party-sub">${c.partido || ''}</div>
+              </div>
+              <span class="party-votes" style="align-self:center;padding-right:0.5rem">${fmtN(c.votes)}</span>
+            </div>
+            <div class="party-bar-wrap">
+              <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+            </div>
+          </div>`;
+        }
+
+        return `<div class="party-row" data-cand="${dn}">
+          <div class="party-top">
+            <span class="party-pct" style="color:${col}">${pct}%</span>
+            <div style="flex:1;min-width:0">
+              <div class="party-name">${c.nombre || c.display_name}</div>
+              <div class="party-sub">${c.partido || c.nombre || ''}</div>
+            </div>
+            <span class="party-votes">${fmtN(c.votes)}</span>
+          </div>
+          <div class="party-bar-wrap">
+            <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+          </div>
+        </div>`;
+      }).join("");
+
+    // Click → candidate choropleth (not available for interconsultas)
+    el.querySelectorAll(".party-row").forEach(row => {
+      if (isInter) return; // interconsultas: no per-candidate filter
+      row.addEventListener("click", () => {
+        const name = row.dataset.cand;
+        if (selectedCandidate === name) {
+          selectedCandidate = null;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+          currentView = "winner";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+        } else {
+          selectedCandidate = name;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.toggle("selected", r.dataset.cand === name));
+          currentView = "candidate";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+        }
+        render();
+      });
+    });
+  }
+
+  // ── Dept sidebar ───────────────────────────────────────────────────────────
+  function buildDeptList() {
+    const dept = deptData();
+    if (!dept) return;
+    const features = dept.features.slice().sort((a,b) =>
+      (parseInt(b.properties?.votos_validos)||0) - (parseInt(a.properties?.votos_validos)||0)
+    );
+    const el = document.getElementById("panel-deptos");
+    el.innerHTML = `<div class="sect-head">${features.length} departamentos</div>` +
+      features.map(feat => {
+        const p = feat.properties || {};
+        const name = p.dept_name_reg || p.NOMBRE_DPT || p.name || "—";
+        const col  = p.winner_color || "#9a8878";
+        return `<div class="dept-row" data-deptkey="${p.name||''}">
+          <div class="dept-top">
+            <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+            <span class="dept-name">${name}</span>
+            <span class="dept-votes">${fmtN(p.votos_validos)}</span>
+          </div>
+          <div class="dept-winner">${p.winner || `${fmtN((parseInt(p.mesas_total)||0)-(parseInt(p.mesas_escrutadas)||0))} mesas restantes`}</div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".dept-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const key  = row.dataset.deptkey;
+        const feat = deptFeatMap[key];
+        if (!feat) return;
+        if (currentLevel !== "dept") {
+          currentLevel = "dept";
+          document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === "dept"));
+          render();
+        }
+        const bounds = deptBoundsMap[key];
+        if (bounds) { map.fitBounds(bounds, {padding:[40,40]}); document.getElementById("map-topbar").style.display = "block"; }
+        showDetail(feat, "dept");
+      });
+    });
+  }
+
+  // ── Panel tab switching ────────────────────────────────────────────────────
+  function switchPanelTab(tab) {
+    currentPanelTab = tab;
+    previousTab     = tab;
+    document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
+    document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
+    document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor:"transparent",fillOpacity:0,weight:isDept?1.5:0.3,color:isDept?"#1a1209":"#cfc0ab" });
+      } else { mpioLayer?.resetStyle(activeLayer); deptLayer?.resetStyle(activeLayer); }
+      activeLayer = null;
+    }
+    map.setView([4.5,-74.2], defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+  }
+  document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
+
+  // ── Consulta tab switching ─────────────────────────────────────────────────
+  function switchConsulta(slug) {
+    currentConsulta   = slug;
+    selectedCandidate = null;
+    currentView       = "winner";
+
+    // Accent color
+    const color = accentColor();
+    applyAccent(color);
+
+    // Update active ctab
+    document.querySelectorAll(".ctab").forEach(t => t.classList.toggle("active", t.dataset.consulta === slug));
+
+    // Update view buttons active state
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+
+    // Update header subtitle
+    const meta = CONSULTA_META[slug];
+    document.getElementById("header-sub").innerHTML =
+      `${meta.label}<br><span style="font-size:8px">Registraduría Nacional</span>`;
+
+    // Clear all layers and rebuild
+    clearLayers();
+    activeLayer = null;
+    deptBoundsMap = {}; deptFeatMap = {};
+
+    // Rebuild panel
+    buildCandList();
+    buildDeptList();
+
+    // Close detail if open
+    hideDetail();
+    switchPanelTab("candidatos");
+
+    render();
+    updateBottomBar();
+  }
+
+  document.querySelectorAll(".ctab").forEach(t => {
+    t.addEventListener("click", () => {
+      if (t.dataset.consulta !== currentConsulta) switchConsulta(t.dataset.consulta);
+    });
+  });
+
+  // ── View / level controls ──────────────────────────────────────────────────
+  document.querySelectorAll(".level-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentLevel = btn.dataset.level;
+      document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === currentLevel));
+      activeLayer = null;
+      document.getElementById("map-topbar").style.display = "none";
+      hideDetail();
+      render();
+    });
+  });
+
+  document.querySelectorAll(".view-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentView = btn.dataset.view;
+      selectedCandidate = null;
+      document.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+      document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === currentView));
+      render();
+    });
+  });
+
+  // ── Data loading ───────────────────────────────────────────────────────────
+  const BASE = "../../../colombia/2026/primarias/data/";
+
+  function safeJson(url) {
+    return fetch(url).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }).catch(() => null);
+  }
+
+  Promise.all([
+    // Aggregate stats (shared)
+    safeJson(BASE + "aggregate_stats.json"),
+    // Candidates/parties JSONs
+    safeJson(BASE + "interconsultas_parties.json"),
+    safeJson(BASE + "soluciones_candidates.json"),
+    safeJson(BASE + "gran_candidates.json"),
+    safeJson(BASE + "frente_candidates.json"),
+    // GeoJSONs — interconsultas
+    safeJson(BASE + "colombia_2026_municipio_primarias_interconsultas.geojson"),
+    safeJson(BASE + "colombia_2026_dept_primarias_interconsultas.geojson"),
+    // GeoJSONs — soluciones
+    safeJson(BASE + "colombia_2026_municipio_primarias_soluciones.geojson"),
+    safeJson(BASE + "colombia_2026_dept_primarias_soluciones.geojson"),
+    // GeoJSONs — gran
+    safeJson(BASE + "colombia_2026_municipio_primarias_gran.geojson"),
+    safeJson(BASE + "colombia_2026_dept_primarias_gran.geojson"),
+    // GeoJSONs — frente
+    safeJson(BASE + "colombia_2026_municipio_primarias_frente.geojson"),
+    safeJson(BASE + "colombia_2026_dept_primarias_frente.geojson"),
+  ]).then(([agg, interCands, solCands, granCands, frenteCands,
+            interMpio, interDept, solMpio, solDept,
+            granMpio, granDept, frenteMpio, frenteDept]) => {
+
+    aggStats = agg;
+
+    DATA.interconsultas = { mpio: interMpio,  dept: interDept,  candidates: interCands  };
+    DATA.soluciones     = { mpio: solMpio,    dept: solDept,    candidates: solCands    };
+    DATA.gran           = { mpio: granMpio,   dept: granDept,   candidates: granCands   };
+    DATA.frente         = { mpio: frenteMpio, dept: frenteDept, candidates: frenteCands };
+
+    // Pre-populate deptFeatMap for default consulta
+    if (interDept) {
+      interDept.features.forEach(f => {
+        const key = (f.properties||{}).name || "";
+        if (key) deptFeatMap[key] = f;
+      });
+    }
+
+    updateHeaderStats();
+    updateBottomBar();
+    buildCandList();
+    buildDeptList();
+
+    const hasData = interMpio || interDept;
+    if (hasData) {
+      render();
+    } else {
+      document.getElementById("loading").innerHTML =
+        `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:220px">
+          Mapa no disponible.<br>Ejecuta el pipeline (scripts 01–03) primero.
+        </p>`;
+      document.getElementById("loading").style.background = "transparent";
+    }
+
+    document.getElementById("loading").style.display = "none";
+
+  }).catch(err => {
+    console.error(err);
+    document.getElementById("loading").innerHTML =
+      `<p style="color:#c4603a;font-weight:700">${err.message}</p>
+       <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts de procesamiento primero.</p>`;
+  });
+
+})();
+</script>
+</body>
+</html>
