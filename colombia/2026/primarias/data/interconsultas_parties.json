@@ -1,0 +1,26 @@
+[
+  {
+    "code": "31",
+    "slug": "gran",
+    "nombre": "Gran Consulta por Colombia",
+    "display_name": "Gran Consulta por Colombia",
+    "color": "#1D4ED8",
+    "votes_nat": 5857395
+  },
+  {
+    "code": "30",
+    "slug": "soluciones",
+    "nombre": "Consulta de las Soluciones",
+    "display_name": "Consulta de las Soluciones",
+    "color": "#7C3AED",
+    "votes_nat": 618705
+  },
+  {
+    "code": "32",
+    "slug": "frente",
+    "nombre": "Frente por la Vida",
+    "display_name": "Frente por la Vida",
+    "color": "#D97706",
+    "votes_nat": 595978
+  }
+]
