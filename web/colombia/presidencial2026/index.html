@@ -756,6 +756,16 @@
     const [r1,g1,b1] = p(a), [r2,g2,b2] = p(b);
     return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
   }
+  // Returns a blend strength (0–1) scaled by winner's vote share.
+  // In a 13-candidate field the winner might have only 12–15%; we still
+  // want that to produce a visible (if light) color, while 40%+ produces
+  // a near-saturated color. Range: 8% share → ~0.28 strength; 50% → ~0.88.
+  function winnerStrength(winnerVotes, votosValidos) {
+    const share = Math.min((winnerVotes || 0) / Math.max(votosValidos || 1, 1), 1);
+    const t = Math.pow(Math.max(0, (share - 0.08) / 0.42), 0.7);
+    return 0.28 + Math.min(t, 1) * 0.60;
+  }
+
   function blendWithBg(hex, strength) {
     strength = strength == null ? 0.72 : strength;
     try {
@@ -856,8 +866,9 @@
     const p = feat.properties || {};
     let fill = "#e0d8cc";
     if (currentView === "winner") {
-      if ((parseInt(p.winner_votes) || 0) > 0 && p.winner_color) {
-        fill = blendWithBg(p.winner_color, 0.72);
+      const wv = parseInt(p.winner_votes) || 0;
+      if (wv > 0 && p.winner_color) {
+        fill = blendWithBg(p.winner_color, winnerStrength(wv, parseInt(p.votos_validos) || 0));
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
@@ -872,8 +883,10 @@
     const p = feat.properties || {};
     let fill = "#e0d8cc";
     if (currentView === "winner") {
-      if ((parseInt(p.winner_votes) || 0) > 0 && p.winner_color) {
-        fill = blendWithBg(p.winner_color, 0.80);
+      const wv = parseInt(p.winner_votes) || 0;
+      if (wv > 0 && p.winner_color) {
+        // Depts are larger polygons — nudge strength slightly higher so colours read clearly
+        fill = blendWithBg(p.winner_color, Math.min(winnerStrength(wv, parseInt(p.votos_validos) || 0) + 0.06, 0.92));
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
