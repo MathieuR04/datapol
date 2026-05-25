@@ -369,13 +369,42 @@
     return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
   }
 
-  // Strength scaled by winner share within the consulta's own vote pool.
-  // Uses consulta_votes_total from GeoJSON (sum of cand/consulta votes in that view).
-  // 8% → 0.28 (faint), 50% → 0.88 (saturated).
-  function winnerStrength(winnerVotes, denominator) {
+  // Dynamic-range winner strength: maps [rangeMin, rangeMax] → [0.20, 0.88].
+  // Range is computed per-render from the actual data so that even when one
+  // candidate dominates everywhere (e.g. 60–95%), variation is still visible.
+  function winnerStrength(winnerVotes, denominator, range) {
     const share = Math.min((winnerVotes || 0) / Math.max(denominator || 1, 1), 1);
-    const t = Math.pow(Math.max(0, (share - 0.08) / 0.42), 0.7);
-    return 0.28 + Math.min(t, 1) * 0.60;
+    if (share === 0) return 0;
+    const mn = (range && range.min != null) ? range.min : 0;
+    const mx = (range && range.max != null) ? range.max : 1;
+    const t  = mx > mn ? Math.max(0, (share - mn) / (mx - mn)) : 0.5;
+    return 0.20 + Math.min(Math.pow(t, 0.65), 1) * 0.68;
+  }
+
+  // Compute the winner-share range [p5, p95] from a feature array.
+  // Using percentiles avoids outliers pushing everything to one extreme.
+  function computeWinnerRange(features) {
+    const shares = [];
+    features.forEach(f => {
+      const p  = f.properties || {};
+      const wv = parseInt(p.winner_votes) || 0;
+      const dn = parseInt(p.consulta_votes_total) || parseInt(p.votos_validos) || 0;
+      if (wv > 0 && dn > 0) shares.push(wv / dn);
+    });
+    if (shares.length < 3) return { min: 0, max: 1 };
+    shares.sort((a, b) => a - b);
+    const p5  = shares[Math.floor(shares.length * 0.05)];
+    const p95 = shares[Math.floor(shares.length * 0.95)];
+    // Keep a bit of room so the darkest region doesn't go fully black
+    return { min: Math.max(0, p5 * 0.95), max: Math.min(p95 * 1.02, 1) };
+  }
+
+  // Look up the live color for a winner/candidate name from the current candData().
+  // Overrides the color baked into GeoJSON at build time.
+  function liveColor(name) {
+    if (!name) return null;
+    const cand = candData().find(c => (c.nombre || c.display_name || "") === name);
+    return cand ? cand.color : null;
   }
 
   function blendWithBg(hex, strength) {
@@ -442,6 +471,8 @@
   let activeLayer       = null;
   let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
   let deptBoundsMap = {}, deptFeatMap = {};
+  let winnerShareRange  = { min: 0, max: 1 }; // updated each render for dynamic coloring
+  let candViewMaxShare  = 1;                  // max candidate share across features
 
   const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
 
@@ -482,8 +513,13 @@
     let top5 = [];
     try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
     const entry = top5.find(c => c.name === candName);
-    const vv = parseInt(props.votos_validos) || 1;
-    return entry ? entry.votes / vv : 0;
+    if (!entry) return 0;
+    // For per-consulta tabs use consulta_votes_total so share is within-consulta fraction
+    const isInter = currentConsulta === "interconsultas";
+    const denom   = isInter
+      ? (parseInt(props.votos_validos) || 1)
+      : (parseInt(props.consulta_votes_total) || parseInt(props.votos_validos) || 1);
+    return entry.votes / denom;
   }
 
   function candColorByName(candName) {
@@ -497,14 +533,16 @@
     if (currentView === "winner") {
       const wv    = parseInt(p.winner_votes) || 0;
       const denom = parseInt(p.consulta_votes_total) || parseInt(p.votos_validos) || 0;
-      if (wv > 0 && p.winner_color) {
-        fill = blendWithBg(p.winner_color, winnerStrength(wv, denom));
+      const color = liveColor(p.winner) || p.winner_color;
+      if (wv > 0 && color) {
+        fill = blendWithBg(color, winnerStrength(wv, denom, winnerShareRange));
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
-      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(share / 0.5, 0.7));
+      const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
+      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(t, 0.6));
     }
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
   }
@@ -515,14 +553,16 @@
     if (currentView === "winner") {
       const wv    = parseInt(p.winner_votes) || 0;
       const denom = parseInt(p.consulta_votes_total) || parseInt(p.votos_validos) || 0;
-      if (wv > 0 && p.winner_color) {
-        fill = blendWithBg(p.winner_color, Math.min(winnerStrength(wv, denom) + 0.06, 0.92));
+      const color = liveColor(p.winner) || p.winner_color;
+      if (wv > 0 && color) {
+        fill = blendWithBg(color, Math.min(winnerStrength(wv, denom, winnerShareRange) + 0.06, 0.94));
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
-      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(share / 0.5, 0.7));
+      const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
+      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(t, 0.6));
     }
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
@@ -540,6 +580,20 @@
   function renderChoropleth() {
     if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
     document.getElementById("bubble-legend").classList.remove("show");
+
+    // Pre-compute dynamic ranges so style functions can use them
+    if (currentView === "winner") {
+      const src = currentLevel === "municipio" ? mpioData() : deptData();
+      if (src) winnerShareRange = computeWinnerRange(src.features);
+    }
+    if (currentView === "candidate" && selectedCandidate) {
+      const src = currentLevel === "municipio" ? mpioData() : deptData();
+      if (src) {
+        const shares = src.features.map(f => getCandShare(f.properties || {}, selectedCandidate));
+        const maxS   = Math.max(...shares.filter(s => s > 0), 0.01);
+        candViewMaxShare = maxS;
+      }
+    }
 
     const mpio = mpioData(), dept = deptData();
     if (currentLevel === "municipio") {
@@ -744,7 +798,7 @@
 
     const wt = document.getElementById("d-winner-tag");
     if (p.winner) {
-      const col = p.winner_color || "#888";
+      const col = liveColor(p.winner) || p.winner_color || "#888";
       wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
     } else { wt.textContent = "Sin datos"; }
 
@@ -797,8 +851,12 @@
     const cvtDetail = parseInt(p.consulta_votes_total) || 0;
     const candDenom = (!isInter && cvtDetail > 0) ? cvtDetail : vv;
 
+    // Build a live color lookup by name to override GeoJSON-baked colors
+    const liveColorMap = {};
+    candData().forEach(c => { liveColorMap[c.nombre || c.display_name || ""] = c.color; });
+
     document.getElementById("d-candidates").innerHTML = candSource.map(c => {
-      const col = c.color || "#9a8878";
+      const col = liveColorMap[c.name] || c.color || "#9a8878";
       return `<div class="detail-cand">
         <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, candDenom)}</span>
         <div class="detail-cand-dot" style="background:${col}"></div>
