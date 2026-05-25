@@ -756,14 +756,39 @@
     const [r1,g1,b1] = p(a), [r2,g2,b2] = p(b);
     return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
   }
-  // Returns a blend strength (0–1) scaled by winner's vote share.
-  // In a 13-candidate field the winner might have only 12–15%; we still
-  // want that to produce a visible (if light) color, while 40%+ produces
-  // a near-saturated color. Range: 8% share → ~0.28 strength; 50% → ~0.88.
-  function winnerStrength(winnerVotes, votosValidos) {
+  // Dynamic-range winner strength: maps [rangeMin, rangeMax] → [0.20, 0.88].
+  // Range is computed per-render from p5–p95 of actual winner shares so that
+  // even when one candidate dominates everywhere, variation stays visible.
+  function winnerStrength(winnerVotes, votosValidos, range) {
     const share = Math.min((winnerVotes || 0) / Math.max(votosValidos || 1, 1), 1);
-    const t = Math.pow(Math.max(0, (share - 0.08) / 0.42), 0.7);
-    return 0.28 + Math.min(t, 1) * 0.60;
+    if (share === 0) return 0;
+    const mn = (range && range.min != null) ? range.min : 0;
+    const mx = (range && range.max != null) ? range.max : 1;
+    const t  = mx > mn ? Math.max(0, (share - mn) / (mx - mn)) : 0.5;
+    return 0.20 + Math.min(Math.pow(t, 0.65), 1) * 0.68;
+  }
+
+  // Compute p5–p95 of winner shares for dynamic color range.
+  function computeWinnerRange(features) {
+    const shares = [];
+    features.forEach(f => {
+      const p  = f.properties || {};
+      const wv = parseInt(p.winner_votes) || 0;
+      const dn = parseInt(p.votos_validos) || 0;
+      if (wv > 0 && dn > 0) shares.push(wv / dn);
+    });
+    if (shares.length < 3) return { min: 0, max: 1 };
+    shares.sort((a, b) => a - b);
+    const p5  = shares[Math.floor(shares.length * 0.05)];
+    const p95 = shares[Math.floor(shares.length * 0.95)];
+    return { min: Math.max(0, p5 * 0.95), max: Math.min(p95 * 1.02, 1) };
+  }
+
+  // Look up live color from candidatesData, overriding the GeoJSON-baked value.
+  function liveColor(name) {
+    if (!name) return null;
+    const cand = (candidatesData || []).find(c => c.nombre === name);
+    return cand ? cand.color : null;
   }
 
   function blendWithBg(hex, strength) {
@@ -824,6 +849,8 @@
   let selectedCandidate = null;
   let activeLayer      = null;
   let mpioLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
+  let winnerShareRange = { min: 0, max: 1 }; // updated each render for dynamic coloring
+  let candViewMaxShare = 1;                   // max candidate share across features
   let deptBoundsMap = {}, deptFeatMap = {};
 
   let mpioData = null, deptData = null;
@@ -858,23 +885,24 @@
   }
 
   function candColor(candName) {
-    const cand = (candidatesData || []).find(c => c.nombre === candName);
-    return cand ? cand.color : "#9a8878";
+    return liveColor(candName) || ((candidatesData || []).find(c => c.nombre === candName)?.color) || "#9a8878";
   }
 
   function styleMpio(feat) {
     const p = feat.properties || {};
     let fill = "#e0d8cc";
     if (currentView === "winner") {
-      const wv = parseInt(p.winner_votes) || 0;
-      if (wv > 0 && p.winner_color) {
-        fill = blendWithBg(p.winner_color, winnerStrength(wv, parseInt(p.votos_validos) || 0));
+      const wv    = parseInt(p.winner_votes) || 0;
+      const color = liveColor(p.winner) || p.winner_color;
+      if (wv > 0 && color) {
+        fill = blendWithBg(color, winnerStrength(wv, parseInt(p.votos_validos) || 0, winnerShareRange));
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
-      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(share / 0.6, 0.7));
+      const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.6));
     }
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
   }
@@ -883,16 +911,17 @@
     const p = feat.properties || {};
     let fill = "#e0d8cc";
     if (currentView === "winner") {
-      const wv = parseInt(p.winner_votes) || 0;
-      if (wv > 0 && p.winner_color) {
-        // Depts are larger polygons — nudge strength slightly higher so colours read clearly
-        fill = blendWithBg(p.winner_color, Math.min(winnerStrength(wv, parseInt(p.votos_validos) || 0) + 0.06, 0.92));
+      const wv    = parseInt(p.winner_votes) || 0;
+      const color = liveColor(p.winner) || p.winner_color;
+      if (wv > 0 && color) {
+        fill = blendWithBg(color, Math.min(winnerStrength(wv, parseInt(p.votos_validos) || 0, winnerShareRange) + 0.06, 0.94));
       }
     } else if (currentView === "turnout") {
       fill = turnoutColor(parseFloat(p.turnout_pct), 70);
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
-      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(share / 0.6, 0.7));
+      const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.6));
     }
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
@@ -901,6 +930,19 @@
   function renderChoropleth() {
     if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
     document.getElementById("bubble-legend").classList.remove("show");
+
+    // Pre-compute dynamic ranges so style functions can use them
+    if (currentView === "winner") {
+      const src = currentLevel === "municipio" ? mpioData : deptData;
+      if (src) winnerShareRange = computeWinnerRange(src.features);
+    }
+    if (currentView === "candidate" && selectedCandidate) {
+      const src = currentLevel === "municipio" ? mpioData : deptData;
+      if (src) {
+        const shares = src.features.map(f => getCandShare(f.properties || {}, selectedCandidate));
+        candViewMaxShare = Math.max(...shares.filter(s => s > 0), 0.01);
+      }
+    }
 
     if (currentLevel === "municipio") {
       if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
@@ -1121,7 +1163,7 @@
 
     const wt = document.getElementById("d-winner-tag");
     if (p.winner) {
-      const col = p.winner_color || candColor(p.winner);
+      const col = liveColor(p.winner) || p.winner_color || candColor(p.winner);
       wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
     } else { wt.textContent = "Sin datos"; }
 
@@ -1170,7 +1212,7 @@
       ? (candidatesData || []).map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
       : cands;
     document.getElementById("d-candidates").innerHTML = candSource.map(c => {
-      const col = c.color || "#9a8878";
+      const col = liveColor(c.name) || c.color || "#9a8878";
       return `<div class="detail-cand">
         <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, vv)}</span>
         <div class="detail-cand-dot" style="background:${col}"></div>
