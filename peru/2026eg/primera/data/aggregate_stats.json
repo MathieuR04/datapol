@@ -1,13 +1,13 @@
 {
   "n_distritos": 2102,
-  "num_electores": 0,
-  "votos_emitidos": 20172139,
+  "num_electores": 27325432,
+  "votos_emitidos": 20167745,
   "votos_validos": 16738039,
   "votos_blancos": 2372895,
   "votos_nulos": 1056811,
-  "actas_contabilizadas": 92791,
-  "actas_total": 92791,
-  "participacion_pct": 2017213900.0,
+  "actas_contabilizadas": 92766,
+  "actas_total": 92766,
+  "participacion_pct": 73.81,
   "actas_pct": 100.0,
   "candidatos": [
     {
@@ -17,7 +17,7 @@
       "color": "#EA580C",
       "votos": 2877678,
       "pct_validos": 17.192,
-      "pct_emitidos": 14.266
+      "pct_emitidos": 14.269
     },
     {
       "codigo": "10",
@@ -26,7 +26,7 @@
       "color": "#166534",
       "votos": 2015114,
       "pct_validos": 12.039,
-      "pct_emitidos": 9.99
+      "pct_emitidos": 9.992
     },
     {
       "codigo": "35",
@@ -35,7 +35,7 @@
       "color": "#1E3A8A",
       "votos": 1993905,
       "pct_validos": 11.912,
-      "pct_emitidos": 9.884
+      "pct_emitidos": 9.887
     },
     {
       "codigo": "16",
@@ -44,7 +44,7 @@
       "color": "#FBBF24",
       "votos": 1837517,
       "pct_validos": 10.978,
-      "pct_emitidos": 9.109
+      "pct_emitidos": 9.111
     },
     {
       "codigo": "14",
@@ -53,7 +53,7 @@
       "color": "#D97706",
       "votos": 1698903,
       "pct_validos": 10.15,
-      "pct_emitidos": 8.422
+      "pct_emitidos": 8.424
     },
     {
       "codigo": "23",
@@ -62,7 +62,7 @@
       "color": "#EAB308",
       "votos": 1326717,
       "pct_validos": 7.926,
-      "pct_emitidos": 6.577
+      "pct_emitidos": 6.578
     },
     {
       "codigo": "02",
@@ -71,7 +71,7 @@
       "color": "#16A34A",
       "votos": 1221272,
       "pct_validos": 7.296,
-      "pct_emitidos": 6.054
+      "pct_emitidos": 6.056
     },
     {
       "codigo": "33",
@@ -80,7 +80,7 @@
       "color": "#DB2777",
       "votos": 571170,
       "pct_validos": 3.412,
-      "pct_emitidos": 2.831
+      "pct_emitidos": 2.832
     },
     {
       "codigo": "31",
@@ -89,7 +89,7 @@
       "color": "#059669",
       "votos": 560792,
       "pct_validos": 3.35,
-      "pct_emitidos": 2.78
+      "pct_emitidos": 2.781
     },
     {
       "codigo": "21",
@@ -98,7 +98,7 @@
       "color": "#6366F1",
       "votos": 307880,
       "pct_validos": 1.839,
-      "pct_emitidos": 1.526
+      "pct_emitidos": 1.527
     },
     {
       "codigo": "32",
@@ -107,7 +107,7 @@
       "color": "#0369A1",
       "votos": 266768,
       "pct_validos": 1.594,
-      "pct_emitidos": 1.322
+      "pct_emitidos": 1.323
     },
     {
       "codigo": "25",
@@ -125,7 +125,7 @@
       "color": "#0284C7",
       "votos": 192516,
       "pct_validos": 1.15,
-      "pct_emitidos": 0.954
+      "pct_emitidos": 0.955
     },
     {
       "codigo": "12",
@@ -134,7 +134,7 @@
       "color": "#991B1B",
       "votos": 161248,
       "pct_validos": 0.963,
-      "pct_emitidos": 0.799
+      "pct_emitidos": 0.8
     },
     {
       "codigo": "20",
@@ -161,7 +161,7 @@
       "color": "#E11D48",
       "votos": 143908,
       "pct_validos": 0.86,
-      "pct_emitidos": 0.713
+      "pct_emitidos": 0.714
     },
     {
       "codigo": "03",
@@ -206,7 +206,7 @@
       "color": "#A855F7",
       "votos": 82196,
       "pct_validos": 0.491,
-      "pct_emitidos": 0.407
+      "pct_emitidos": 0.408
     },
     {
       "codigo": "38",
@@ -305,7 +305,7 @@
       "color": "#22C55E",
       "votos": 17648,
       "pct_validos": 0.105,
-      "pct_emitidos": 0.087
+      "pct_emitidos": 0.088
     },
     {
       "codigo": "30",

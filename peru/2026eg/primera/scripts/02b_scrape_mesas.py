@@ -61,7 +61,7 @@ RESULTS.mkdir(parents=True, exist_ok=True)
 
 BASE_URL      = "https://resultadoelectoral.onpe.gob.pe/presentacion-backend"
 ID_ELECCION   = 10          # Presidencial
-TOTAL_MESAS   = 92_766      # national + exterior sequential range
+TOTAL_MESAS   = 92_791      # national + exterior sequential range
 
 MESA_CSV   = RESULTS / "peru_2026eg_mesa_primera.csv"
 CKPT_FILE  = RESULTS / ".mesa_checkpoint.json"
@@ -155,6 +155,9 @@ def parse_acta(acta: dict, codcan_map: dict, cand_cols: list) -> dict:
     ever_E   = any(s.get("codigoEstadoActa") == "E" for s in timeline)
     errores  = " | ".join(filter(None, (
         s.get("descripcionEstadoActaResolucion") for s in timeline)))
+
+    if not codigo or codigo == "000000":
+        return None
 
     row = {
         "codigo_mesa":         codigo,
@@ -333,6 +336,73 @@ def run(start: int, end: int, n_workers: int, codcan_map: dict, cand_cols: list)
     print(f"\nDone: {ok_count:,} mesas with presidencial acta  →  {MESA_CSV.name}")
 
 
+# ── Retry-nulls run ─────────────────────────────────────────────────────────────
+
+def run_retry_nulls(n_workers: int, codcan_map: dict, cand_cols: list,
+                    upper: int = TOTAL_MESAS):
+    """Re-fetch codes that previously returned 204/null + any unchecked codes above old range."""
+    done     = load_checkpoint()          # all codes ever tried (zero-padded strings)
+    csv_rows = load_existing_rows()       # codes that actually yielded a row
+    csv_codes = set(csv_rows.keys())
+
+    # Codes tried but returned null
+    nulls = sorted(done - csv_codes, key=lambda c: int(c))
+    # Codes never tried (above old range)
+    untried = [str(i).zfill(6) for i in range(1, upper + 1)
+               if str(i).zfill(6) not in done]
+    todo = nulls + untried
+
+    print(f"\n{'='*60}")
+    print(f"ONPE 2026 Scraper — Retry-Nulls Run")
+    print(f"  Prev nulls (204 / no data): {len(nulls):,}")
+    print(f"  Unchecked codes:            {len(untried):,}")
+    print(f"  Total to retry:             {len(todo):,}")
+    print(f"{'='*60}\n")
+
+    if not todo:
+        print("Nothing to retry.")
+        return
+
+    workers = [Worker(i) for i in range(n_workers)]
+    new_rows = []
+    t0 = time.time()
+
+    with ThreadPoolExecutor(max_workers=n_workers) as pool:
+        futures = {
+            pool.submit(workers[i % n_workers].process, int(c), codcan_map, cand_cols): c
+            for i, c in enumerate(todo)
+        }
+        for req_n, future in enumerate(as_completed(futures), 1):
+            codigo = futures[future]
+            try:
+                _, row = future.result()
+            except Exception as e:
+                print(f"\n  Error on {codigo}: {e}")
+                row = None
+
+            done.add(codigo)
+            if row is not None:
+                csv_rows[codigo] = row
+                new_rows.append(row)
+
+            if req_n % 500 == 0 or req_n == len(todo):
+                elapsed = time.time() - t0
+                rate    = req_n / elapsed if elapsed else 0
+                eta     = (len(todo) - req_n) / rate if rate else 0
+                print(f"  [{req_n:5d}/{len(todo)}]  found={len(new_rows)}"
+                      f"  {rate:.0f}/s  eta={eta:.0f}s")
+
+            if req_n % BATCH_PAUSE_N == 0:
+                print(f"  Pausing {BATCH_PAUSE_S}s …")
+                time.sleep(BATCH_PAUSE_S)
+
+    # Rewrite full CSV and update checkpoint
+    rewrite_csv(csv_rows, cand_cols)
+    save_checkpoint(done)
+    print(f"\nRetry complete: {len(new_rows):,} new rows found  →  {MESA_CSV.name}")
+    print(f"Total mesas in CSV: {len(csv_rows):,}")
+
+
 # ── Update run ──────────────────────────────────────────────────────────────────
 
 def run_update(n_workers: int, codcan_map: dict, cand_cols: list):
@@ -395,12 +465,15 @@ def main():
     p.add_argument("--start",   type=int, default=1,           help="First mesa number (default: 1)")
     p.add_argument("--end",     type=int, default=TOTAL_MESAS, help=f"Last mesa number (default: {TOTAL_MESAS})")
     p.add_argument("--workers", type=int, default=10,          help="Parallel workers (default: 10)")
-    p.add_argument("--update",  action="store_true",           help="Re-fetch non-Contabilizada actas")
+    p.add_argument("--update",       action="store_true", help="Re-fetch non-Contabilizada actas")
+    p.add_argument("--retry-nulls",  action="store_true", help="Re-fetch codes that previously returned 204 + unchecked codes above old range")
     args = p.parse_args()
 
     codcan_map, cand_cols = load_candidates()
 
-    if args.update:
+    if args.retry_nulls:
+        run_retry_nulls(n_workers=args.workers, codcan_map=codcan_map, cand_cols=cand_cols)
+    elif args.update:
         run_update(n_workers=args.workers, codcan_map=codcan_map, cand_cols=cand_cols)
     else:
         run(start=args.start, end=args.end, n_workers=args.workers,
