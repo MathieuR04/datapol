@@ -338,66 +338,74 @@
       padding: 1.25rem 1.5rem 2rem;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
+    .needle-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem 0.75rem;
+    }
+    .needle-title {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-align: center; margin-bottom: 0.65rem;
+    }
+    .needle-wrap { position: relative; width: 100%; max-width: 360px; margin: 0 auto; }
+    #needle-svg { display: block; width: 100%; height: auto; }
+    .needle-labels {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem;
+      margin-top: 0.5rem; align-items: start;
+    }
+    .needle-label.left { text-align: left; }
+    .needle-label.right { text-align: right; }
+    .needle-label-name { font-size: 11px; font-weight: 700; }
+    .needle-label-prob { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; }
+    .needle-label-probsub { font-size: 8px; color: var(--muted); }
+    .needle-label-votes { font-size: 9px; color: var(--muted); margin-top: 2px; }
+    .needle-center-block { text-align: center; padding-top: 0.4rem; }
+    .needle-center-diff { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; color: var(--text); }
+    .needle-center-sub { font-size: 8px; color: var(--muted); margin-top: 2px; }
+    .needle-center-ci { font-size: 8px; color: var(--dim); margin-top: 1px; }
+    .needle-gauge-row { display: flex; align-items: flex-end; justify-content: center; gap: 0; }
+    .needle-side-photo { width: 90px; flex-shrink: 0; display: block; object-fit: cover; object-position: top center; }
+    .needle-side-placeholder { width: 90px; flex-shrink: 0; }
+    .needle-side-photo-wrap { width: 90px; flex-shrink: 0; display: flex; align-items: flex-end; }
     .pron-section-head {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 16px;
-      letter-spacing: 0.05em;
-      color: var(--text);
-      border-bottom: 2px solid var(--text);
-      padding-bottom: 0.3rem;
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; letter-spacing: 0.05em;
+      color: var(--text); border-bottom: 2px solid var(--text); padding-bottom: 0.3rem;
+      display: flex; align-items: baseline; gap: 0.75rem;
     }
     .pron-section-sub {
-      font-family: 'Inter', sans-serif;
-      font-size: 9px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      font-weight: 400;
+      font-family: 'Inter', sans-serif; font-size: 9px; color: var(--muted);
+      letter-spacing: 0.04em; font-weight: 400; text-transform: none;
     }
+    .pron-prob-note { font-size: 8.5px; color: var(--dim); font-style: italic; padding: 0.3rem 0; margin-bottom: 0.15rem; }
     .cand-prob-list { display: flex; flex-direction: column; gap: 0; }
-    .cand-prob-row {
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
+    .cand-prob-row { padding: 0.65rem 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
     .cand-prob-top { display: flex; align-items: center; gap: 0.5rem; }
     .cand-prob-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .cand-prob-nameblock { flex: 1; min-width: 0; }
     .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); }
     .cand-prob-partido { font-size: 9px; color: var(--muted); }
     .cand-prob-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
-    .cand-prob-pct-val {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 26px;
-      line-height: 1;
-    }
+    .cand-prob-pct-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 30px; line-height: 1; }
     .cand-prob-pct-label { font-size: 7.5px; color: var(--muted); letter-spacing: 0.04em; }
-    .cand-prob-bar-wrap { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
-    .cand-prob-bar { height: 100%; border-radius: 2px; }
-    .cand-prob-votes { font-size: 9px; color: var(--muted); }
     .sv-badge {
       font-size: 7.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
       background: var(--terra-lt); color: var(--terra-dk); border: 1px solid var(--terra);
       border-radius: 2px; padding: 1px 5px; margin-top: 2px;
     }
-    .pron-progress {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.75rem 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-    .pron-progress-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); }
-    .pron-progress-bar { height: 6px; background: var(--sand); border-radius: 3px; overflow: hidden; }
-    .pron-progress-fill { height: 100%; background: var(--terra); border-radius: 3px; }
+    .cand-prob-bar-wrap { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .cand-prob-bar { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    .cand-prob-bottom { display: flex; align-items: center; gap: 0.5rem; font-size: 9px; color: var(--muted); }
+    .cand-prob-votes { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); }
+    .cand-prob-ci { font-size: 8px; color: var(--dim); }
+    .pron-note { font-size: 9px; color: var(--dim); line-height: 1.7; font-style: italic; border-top: 1px solid var(--border); padding-top: 0.75rem; }
+    .margin-dist-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.85rem 1rem 0.55rem; }
+    .margin-dist-title { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; text-align: center; }
+    #margin-dist-svg { display: block; width: 100%; overflow: visible; }
+    .margin-dist-axis { display: flex; justify-content: space-between; font-size: 8px; color: var(--dim); margin-top: 2px; padding: 0 2px; }
+    .margin-dist-foot { display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 0.45rem; padding: 0 2px; }
 
     /* ── Bottom bar ──────────────────────────────────────────────────────── */
     .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
@@ -556,20 +564,67 @@
 <!-- Pronóstico view -->
 <div id="pronostico-view">
   <div class="pron-inner">
-    <div class="pron-progress" id="pron-progress">
-      <div class="pron-progress-labels">
-        <span>Actas contabilizadas</span>
-        <span id="pron-actas-label">—</span>
+
+    <!-- Needle gauge -->
+    <div class="needle-section" id="needle-section">
+      <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-gauge-row">
+        <div id="needle-left-photo" class="needle-side-placeholder"></div>
+        <div class="needle-wrap">
+          <svg id="needle-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet">
+            <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="150" cy="148" r="5" fill="#1a1209"/>
+            <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
+            <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
+                  font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
+                  fill="var(--muted)"></text>
+          </svg>
+        </div>
+        <div id="needle-right-photo" class="needle-side-placeholder"></div>
       </div>
-      <div class="pron-progress-bar"><div class="pron-progress-fill" id="pron-actas-fill" style="width:0%"></div></div>
+      <div class="needle-labels">
+        <div class="needle-label left">
+          <div class="needle-label-name" id="needle-left-name">—</div>
+          <div class="needle-label-prob" id="needle-left-prob">—%</div>
+          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-votes" id="needle-left-votes">—</div>
+        </div>
+        <div class="needle-center-block">
+          <div class="needle-center-diff" id="needle-center-diff">—</div>
+          <div class="needle-center-sub">margen proy. (pp)</div>
+          <div class="needle-center-ci" id="needle-center-ci"></div>
+        </div>
+        <div class="needle-label right">
+          <div class="needle-label-name" id="needle-right-name">—</div>
+          <div class="needle-label-prob" id="needle-right-prob">—%</div>
+          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-votes" id="needle-right-votes">—</div>
+        </div>
+      </div>
     </div>
+
+    <!-- Margin distribution -->
+    <div class="margin-dist-wrap" id="margin-dist-wrap">
+      <div class="margin-dist-title">Distribución del margen proyectado entre 2º y 3er puesto</div>
+      <svg id="margin-dist-svg" viewBox="0 0 480 80" preserveAspectRatio="none"></svg>
+      <div class="margin-dist-axis" id="margin-dist-axis"></div>
+      <div class="margin-dist-foot" id="margin-dist-foot"></div>
+    </div>
+
+    <!-- Candidate bars -->
     <div>
       <div class="pron-section-head">
-        Proyección de resultados
-        <span class="pron-section-sub" id="pron-source-note"></span>
+        Probabilidades de segunda vuelta
+        <span class="pron-section-sub" id="pron-source-note">Escrutinio</span>
       </div>
-      <div class="cand-prob-list" id="pron-cand-list"></div>
+      <div class="pron-prob-note">Cada candidato tiene su propia probabilidad de clasificar. La suma ronda el 200% porque exactamente 2 candidatos pasan a segunda vuelta.</div>
+      <div class="cand-prob-list" id="cand-prob-list"></div>
     </div>
+
+    <!-- Methodology note -->
+    <div class="pron-note" id="pron-note" style="display:none"></div>
+
   </div>
 </div>
 
@@ -1289,49 +1344,195 @@
     });
   });
 
-  // ── Pronóstico rendering ──────────────────────────────────────────────────
+  // ── Needle gauge ──────────────────────────────────────────────────────────
   let forecastData = null;
 
+  function buildNeedleArc(cx, cy, r, startAngle, endAngle) {
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy - r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy - r * Math.sin(endAngle);
+    const large = Math.abs(endAngle - startAngle) > Math.PI ? 1 : 0;
+    const sweep = endAngle < startAngle ? 1 : 0;
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
+  }
+
+  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight) {
+    const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
+    const niceMax = (() => {
+      const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
+      for (const f of [1, 1.5, 2, 2.5, 5, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
+      return mag * 10;
+    })();
+    const MAX_RANGE = niceMax;
+    const cx = 150, cy = 148, r = 90;
+    const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
+    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE);
+    const needleA = toAngle(diffVotes);
+    const ciArcL  = toAngle(ciHiVotes);
+    const ciArcR  = toAngle(ciLowVotes);
+    const startA = Math.PI, endA = 0, midA = Math.PI / 2;
+    const svg = document.getElementById("needle-svg");
+    svg.querySelectorAll("path, line.needle-arc-path").forEach(e => e.remove());
+    function mkPath(d, stroke, width, opacity, linecap) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      el.setAttribute("d", d); el.setAttribute("fill", "none");
+      el.setAttribute("stroke", stroke); el.setAttribute("stroke-width", width || "18");
+      el.setAttribute("stroke-linecap", linecap || "butt");
+      if (opacity) el.setAttribute("opacity", opacity);
+      return el;
+    }
+    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.38","butt"));
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.38","butt"));
+    if (Math.abs(ciArcL - ciArcR) > 0.01) {
+      const aL = Math.max(ciArcL, ciArcR);
+      const aR = Math.min(ciArcL, ciArcR);
+      const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
+      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aL,aR), ciCol, "18", "0.68", "butt"));
+    }
+    const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    tick.setAttribute("x1", cx); tick.setAttribute("y1", cy-r-11);
+    tick.setAttribute("x2", cx); tick.setAttribute("y2", cy-r+11);
+    tick.setAttribute("stroke", "#bbb"); tick.setAttribute("stroke-width", "1.5");
+    svg.appendChild(tick);
+    const nxEnd = cx + (r-8) * Math.cos(needleA);
+    const nyEnd = cy - (r-8) * Math.sin(needleA);
+    const needleLine = svg.querySelector("#needle-line");
+    needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
+    needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
+    svg.querySelector("#needle-pct-text").textContent = "";
+  }
+
+  function fmtVoteDiff(v) {
+    const s = v >= 0 ? "+" : "−";
+    const a = Math.abs(v);
+    if (a >= 1000000) return `${s}${(a/1000000).toFixed(2)}M`;
+    if (a >= 100000)  return `${s}${Math.round(a/1000)}k`;
+    if (a >= 1000)    return `${s}${(a/1000).toFixed(1)}k`;
+    return `${s}${a}`;
+  }
+
+  function renderMarginDist(battle) {
+    const dist = battle?.margin_distribution;
+    if (!dist || !dist.edges || !dist.counts) return;
+    const { edges, counts } = dist;
+    const svg  = document.getElementById("margin-dist-svg");
+    const axis = document.getElementById("margin-dist-axis");
+    const foot = document.getElementById("margin-dist-foot");
+    const W = 480, H = 72, PAD = 2;
+    const maxCount = Math.max(...counts, 1);
+    const n = counts.length;
+    const barW = (W - PAD * 2) / n;
+    const leftColor  = battle.left_color  || "#1E293B";
+    const rightColor = battle.right_color || "#1D4ED8";
+    const zeroEdge = edges.findIndex(e => e >= 0);
+    let paths = "";
+    counts.forEach((c, i) => {
+      const x    = PAD + i * barW;
+      const barH = Math.max(1, (c / maxCount) * H);
+      const y    = H - barH;
+      const midEdge = (edges[i] + (edges[i+1] ?? edges[i])) / 2;
+      const col = midEdge > 0 ? leftColor : midEdge < 0 ? rightColor : "#888";
+      const op  = midEdge === 0 ? "0.35" : "0.65";
+      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.8).toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="${op}"/>`;
+    });
+    const zeroX = zeroEdge >= 0 ? (PAD + zeroEdge * barW).toFixed(1) : (W / 2).toFixed(1);
+    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>`;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = paths;
+    const m = edges.length - 1;
+    const keyIdxs = [0, Math.round(m/4), Math.round(m/2), Math.round(3*m/4), m];
+    axis.innerHTML = keyIdxs.map(i => {
+      const e = edges[i];
+      return `<span>${e > 0 ? "+" : ""}${e.toFixed(1)}pp</span>`;
+    }).join("");
+    foot.innerHTML = `
+      <span style="color:${rightColor}">← ${battle.right_nombre || "—"} adelante</span>
+      <span style="color:${leftColor}">${battle.left_nombre || "—"} adelante →</span>`;
+  }
+
+  // ── Pronóstico rendering ──────────────────────────────────────────────────
   function renderPronostico() {
     if (!forecastData) return;
     const fd = forecastData;
-    const pct = fd.pct_contabilizadas || 0;
-    const acE = fd.actas_contabilizadas || 0;
-    const acT = fd.actas_total || 0;
+    const isLive = (fd.pct_mesas || 0) > 0;
 
-    document.getElementById("pron-actas-fill").style.width = pct.toFixed(1) + "%";
-    document.getElementById("pron-actas-label").textContent = `${pct.toFixed(1)}% · ${fmtN(acE)}/${fmtN(acT)}`;
-    document.getElementById("pron-source-note").textContent =
-      pct >= 100 ? "Escrutinio completo" : `${pct.toFixed(1)}% actas · proyección por acta`;
+    document.getElementById("pron-source-note").textContent = isLive
+      ? `${fd.pct_mesas.toFixed(1)}% actas · ${(fd.n_simulations || 0).toLocaleString("es-PE")} simulaciones`
+      : `${(fd.n_simulations || 0).toLocaleString("es-PE")} simulaciones · pronóstico previo`;
 
-    const totalProj = fd.votos_validos_proj || 1;
-    const cands = (fd.candidatos || []);
-    const maxPct = cands[0]?.pct_proj || 1;
+    const cands = (fd.candidates || []).slice().sort((a, b) => (b.prob_runoff||0) - (a.prob_runoff||0));
+    const c2 = cands[1], c3 = cands[2];
 
-    document.getElementById("pron-cand-list").innerHTML = cands.map((c, i) => {
-      const col  = c.color || "#9a8878";
-      const pctV = c.pct_proj.toFixed(2);
-      const barW = (c.pct_proj / maxPct * 100).toFixed(1);
-      const isSV = i < 2;
+    // Needle
+    const battle = fd.battle || {};
+    if (battle.left_code && battle.right_code) {
+      const candLeft  = fd.candidates?.find(c => c.code === battle.left_code)  || c2 || {};
+      const candRight = fd.candidates?.find(c => c.code === battle.right_code) || c3 || {};
+      const marginPct  = battle.margin_pct_projected ?? 0;
+      const ciLowPct   = battle.ci_low_pct  ?? (marginPct - 5);
+      const ciHighPct  = battle.ci_high_pct ?? (marginPct + 5);
+      const scale = 1000000;
+      renderNeedle(marginPct * scale, ciLowPct * scale, ciHighPct * scale, candLeft, candRight);
+      document.getElementById("needle-left-name").textContent  = candLeft.nombre  || "—";
+      document.getElementById("needle-left-name").style.color  = candLeft.color || "#888";
+      document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
+      document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
+      document.getElementById("needle-left-photo").innerHTML  = "";
+      document.getElementById("needle-right-photo").innerHTML = "";
+      document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
+      document.getElementById("needle-right-name").style.color = candRight.color || "#888";
+      document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
+      document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes_current || 0) + " votos" : "—";
+      const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
+      document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
+      const ciLowFmt  = (ciLowPct  >= 0 ? "+" : "") + ciLowPct.toFixed(1)  + "pp";
+      const ciHighFmt = (ciHighPct >= 0 ? "+" : "") + ciHighPct.toFixed(1) + "pp";
+      document.getElementById("needle-center-ci").textContent = `IC 95%: [${ciLowFmt}, ${ciHighFmt}]`;
+    }
+
+    renderMarginDist(battle);
+
+    // Candidate probability bars
+    const list = document.getElementById("cand-prob-list");
+    list.innerHTML = cands.map((c, i) => {
+      const isSV   = i < 2;
+      const prob   = c.prob_runoff ?? 0;
+      const votes  = c.votes_current || 0;
+      const ciLow  = c.ci_low_pct  ?? 0;
+      const ciHigh = c.ci_high_pct ?? 0;
+      const voteDisplay = isLive
+        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · proy. ${(c.vote_pct_projected||0).toFixed(1)}%`
+        : `<span class="cand-prob-votes">—</span> sin datos`;
+      const ciStr  = isLive ? `<span class="cand-prob-ci">[IC ${ciLow.toFixed(1)}–${ciHigh.toFixed(1)}%]</span>` : "";
       return `<div class="cand-prob-row">
         <div class="cand-prob-top">
-          <div class="cand-prob-dot" style="background:${col}"></div>
+          <div class="cand-prob-dot" style="background:${c.color||'#888'}"></div>
           <div class="cand-prob-nameblock">
-            <div class="cand-prob-name">${c.nombre}</div>
+            <div class="cand-prob-name">${c.nombre || c.code}</div>
             <div class="cand-prob-partido">${c.partido || ''}</div>
           </div>
           <div class="cand-prob-right">
-            <span class="cand-prob-pct-val" style="color:${col}">${pctV}%</span>
-            <span class="cand-prob-pct-label">votos válidos</span>
+            <span class="cand-prob-pct-val" style="color:${c.color||'#888'}">${prob.toFixed(0)}%</span>
+            <span class="cand-prob-pct-label">prob. 2da vuelta</span>
             ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
           </div>
         </div>
         <div class="cand-prob-bar-wrap">
-          <div class="cand-prob-bar" style="width:${barW}%;background:${col}"></div>
+          <div class="cand-prob-bar" style="width:${prob.toFixed(1)}%;background:${c.color||'#888'}"></div>
         </div>
-        <div class="cand-prob-votes">${fmtN(c.votos_proj)} votos proyectados · reportados ${c.pct_rep.toFixed(2)}%</div>
+        <div class="cand-prob-bottom">${voteDisplay} ${ciStr}</div>
       </div>`;
     }).join("");
+
+    const note = document.getElementById("pron-note");
+    note.style.display = "block";
+    note.textContent = isLive
+      ? `Proyección calculada con ${(fd.n_simulations||0).toLocaleString("es-PE")} simulaciones bootstrap (${fd.pct_mesas.toFixed(1)}% de actas contabilizadas). La distribución del margen muestra la probabilidad de cada rango de diferencia entre el 2º y 3er candidato al final del escrutinio.`
+      : "Pronóstico en estado inicial — sin actas contabilizadas.";
   }
 
   // ── Mode switching ────────────────────────────────────────────────────────
