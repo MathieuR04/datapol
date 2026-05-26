@@ -60,7 +60,7 @@ def compute_winner(row, cand_cols: list[str], cand_lkp: dict):
     return None, None, 0
 
 
-def top5_json(row, cand_cols: list[str], cand_lkp: dict) -> str:
+def all_candidates_json(row, cand_cols: list[str], cand_lkp: dict) -> str:
     entries = []
     for col in cand_cols:
         v = int(row.get(col) or 0)
@@ -71,8 +71,7 @@ def top5_json(row, cand_cols: list[str], cand_lkp: dict) -> str:
         entries.append({"name":  info.get("nombre", code),
                         "color": info.get("color", "#888"),
                         "votes": v})
-    top5 = sorted(entries, key=lambda x: -x["votes"])[:5]
-    return json.dumps(top5, ensure_ascii=False)
+    return json.dumps(sorted(entries, key=lambda x: -x["votes"]), ensure_ascii=False)
 
 
 def enrich(df: pd.DataFrame, cand_cols: list[str], cand_lkp: dict,
@@ -106,8 +105,8 @@ def enrich(df: pd.DataFrame, cand_cols: list[str], cand_lkp: dict,
     df["winner"]       = winners.map(lambda x: x[0])
     df["winner_color"] = winners.map(lambda x: x[1])
     df["winner_votes"] = winners.map(lambda x: x[2])
-    df["top5_candidates"] = df.apply(
-        lambda r: top5_json(r, cand_cols, cand_lkp), axis=1)
+    df["all_candidates"] = df.apply(
+        lambda r: all_candidates_json(r, cand_cols, cand_lkp), axis=1)
 
     return df
 
@@ -119,7 +118,7 @@ def build_geojson(df: pd.DataFrame, geo_path: Path, key_col: str,
 
     keep = ["votos_validos", "votos_blancos", "votos_nulos", "votos_emitidos",
             "num_electores", "num_mesas", "actas_contabilizadas", "actas_total",
-            "turnout_pct", "winner", "winner_votes", "winner_color", "top5_candidates"]
+            "turnout_pct", "winner", "winner_votes", "winner_color", "all_candidates"]
 
     result_dict = df.set_index(key_col).to_dict(orient="index")
     matched, kept = 0, []
@@ -168,8 +167,8 @@ def build_agg(df: pd.DataFrame, group_col: str, cand_cols: list[str],
     agg["winner"]       = winners.map(lambda x: x[0])
     agg["winner_color"] = winners.map(lambda x: x[1])
     agg["winner_votes"] = winners.map(lambda x: x[2])
-    agg["top5_candidates"] = agg.apply(
-        lambda r: top5_json(r, agg_cand_cols, cand_lkp), axis=1)
+    agg["all_candidates"] = agg.apply(
+        lambda r: all_candidates_json(r, agg_cand_cols, cand_lkp), axis=1)
 
     build_geojson(agg, geo_path, group_col, out_path)
 

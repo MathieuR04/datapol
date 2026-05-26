@@ -727,7 +727,7 @@
   let previousTab      = "candidatos";
   let selectedCandidate = null;
   let activeLayer      = null;
-  let distLayer = null, provLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
+  let distLayer = null, provLayer = null, deptLayer = null, deptBoundaryLayer = null, provBoundaryLayer = null, bubbleLayer = null;
   let winnerShareRange = { min: 0, max: 1 };
   let candViewMaxShare = 1;
   let deptBoundsMap = {}, deptFeatMap = {};
@@ -739,9 +739,9 @@
 
   // ── Style functions ───────────────────────────────────────────────────────
   function getCandShare(props, candName) {
-    let top5 = [];
-    try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
-    const entry = top5.find(c => c.name === candName);
+    let allCands = [];
+    try { allCands = JSON.parse(props.all_candidates || "[]"); } catch(e) {}
+    const entry = allCands.find(c => c.name === candName);
     const vv = parseInt(props.votos_validos) || 1;
     return entry ? entry.votes / vv : 0;
   }
@@ -792,15 +792,22 @@
       if (!distLayer) {
         distLayer = L.geoJSON(distData, { style: styleDist, onEachFeature: (f,l) => onEachFeature(f,l,"distrito"), smoothFactor: 0 }).addTo(map);
       } else { distLayer.setStyle(styleDist); }
+      if (!provBoundaryLayer && provData) {
+        provBoundaryLayer = L.geoJSON(provData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
       if (!deptBoundaryLayer) {
         deptBoundaryLayer = L.geoJSON(deptData, {
-          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
           interactive: false, smoothFactor: 0
         }).addTo(map);
       }
     } else if (currentLevel === "provincia") {
       if (deptLayer)  { map.removeLayer(deptLayer);  deptLayer  = null; }
       if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
       if (!deptBoundaryLayer) {
         deptBoundaryLayer = L.geoJSON(deptData, {
           style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
@@ -813,6 +820,7 @@
     } else {
       if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
       if (provLayer)  { map.removeLayer(provLayer);  provLayer  = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
       if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
       if (!deptLayer) {
         deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: (f,l) => onEachFeature(f,l,"dept"), smoothFactor: 0 }).addTo(map);
@@ -833,12 +841,16 @@
       if (provLayer) { map.removeLayer(provLayer); provLayer = null; }
       if (!distLayer) distLayer = L.geoJSON(distData, { style: styleDist, onEachFeature: (f,l) => onEachFeature(f,l,"distrito"), smoothFactor: 0 }).addTo(map);
       distLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
+      if (!provBoundaryLayer && provData) {
+        provBoundaryLayer = L.geoJSON(provData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" }, interactive: false }).addTo(map);
+      }
       if (!deptBoundaryLayer) {
-        deptBoundaryLayer = L.geoJSON(deptData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" }, interactive: false }).addTo(map);
+        deptBoundaryLayer = L.geoJSON(deptData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" }, interactive: false }).addTo(map);
       }
     } else if (currentLevel === "provincia") {
       if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
       if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
       if (!provLayer) provLayer = L.geoJSON(provData, { style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
       provLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
       if (!deptBoundaryLayer) {
@@ -847,6 +859,7 @@
     } else {
       if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
       if (provLayer) { map.removeLayer(provLayer); provLayer = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
       if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
       if (!deptLayer) deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: (f,l) => onEachFeature(f,l,"dept"), smoothFactor: 0 }).addTo(map);
       deptLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 1.5, color: "#1a1209" }));
@@ -1038,7 +1051,7 @@
       </div>`;
 
     let cands = [];
-    try { cands = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
+    try { cands = JSON.parse(p.all_candidates || "[]"); } catch(e) {}
     const allZero = cands.length === 0 || cands.every(c => !c.votes);
     const candSource = allZero
       ? (candidatesData || []).map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
@@ -1237,44 +1250,83 @@
 
     el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
 
-    // Load exterior rows directly from the district CSV
-    fetch(BASE + "results/peru_2026eg_distrito_primera.csv")
-      .then(r => r.text())
-      .then(text => {
-        const lines = text.trim().split("\n");
-        const headers = lines[0].split(",");
-        const rows = lines.slice(1).filter(l => l.trim()).map(line => {
-          const cols = line.split(",");
-          const obj = {};
-          headers.forEach((h, i) => obj[h.trim()] = cols[i] !== undefined ? cols[i].trim() : "");
-          return obj;
-        });
-        _exteriorRows = rows
-          .filter(r => String(r.ubigeo_distrito || "").startsWith("9"))
-          .sort((a, b) => (parseInt(b.votos_emitidos) || 0) - (parseInt(a.votos_emitidos) || 0));
-        renderExteriorRows(el, _exteriorRows);
-      })
-      .catch(() => {
-        el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
-          Datos del exterior no disponibles.
-        </div>`;
+    const parseCSV = text => {
+      const lines = text.trim().split("\n");
+      const headers = lines[0].split(",");
+      return lines.slice(1).filter(l => l.trim()).map(line => {
+        const cols = line.split(",");
+        const obj = {};
+        headers.forEach((h, i) => obj[h.trim()] = cols[i] !== undefined ? cols[i].trim() : "");
+        return obj;
       });
+    };
+
+    // Load district CSV + electoral roll to get country names
+    Promise.all([
+      fetch(BASE + "results/peru_2026eg_distrito_primera.csv").then(r => r.text()),
+      fetch(BASE + "../../../../peru/2026eg/metadata/peru_2026_distrito_electoral_roll.csv").then(r => r.text())
+    ])
+    .then(([csvText, rollText]) => {
+      const distRows = parseCSV(csvText).filter(r => String(r.ubigeo_distrito || "").startsWith("9"));
+      const roll = parseCSV(rollText);
+
+      // Build lookup: ubigeo_distrito → {ubigeo_provincia, nombre_provincia}
+      const rollLkp = {};
+      roll.filter(r => r.is_exterior === "True").forEach(r => {
+        rollLkp[r.ubigeo_distrito] = { ubigeo_provincia: r.ubigeo_provincia, nombre_provincia: r.nombre_provincia };
+      });
+
+      // Aggregate district rows up to country (ubigeo_provincia) level
+      const byProv = {};
+      distRows.forEach(r => {
+        const info = rollLkp[r.ubigeo_distrito] || {};
+        const provKey = info.ubigeo_provincia || r.ubigeo_distrito;
+        if (!byProv[provKey]) {
+          byProv[provKey] = {
+            ubigeo_provincia:     provKey,
+            nombre_provincia:     info.nombre_provincia || r.ubigeo_distrito,
+            votos_emitidos:       0, votos_validos: 0,
+            votos_blancos:        0, votos_nulos: 0,
+            actas_contabilizadas: 0, actas_total: 0,
+            _candVotes: {}
+          };
+        }
+        const g = byProv[provKey];
+        g.votos_emitidos       += parseInt(r.votos_emitidos)       || 0;
+        g.votos_validos        += parseInt(r.votos_validos)        || 0;
+        g.votos_blancos        += parseInt(r.votos_blancos)        || 0;
+        g.votos_nulos          += parseInt(r.votos_nulos)          || 0;
+        g.actas_contabilizadas += parseInt(r.actas_contabilizadas) || 0;
+        g.actas_total          += parseInt(r.actas_total)          || 0;
+        Object.keys(r).forEach(col => {
+          if (!col.startsWith("cand_")) return;
+          g._candVotes[col] = (g._candVotes[col] || 0) + (parseInt(r[col]) || 0);
+        });
+      });
+
+      _exteriorRows = Object.values(byProv)
+        .sort((a, b) => b.votos_emitidos - a.votos_emitidos);
+      renderExteriorRows(el, _exteriorRows);
+    })
+    .catch(() => {
+      el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
+        Datos del exterior no disponibles.
+      </div>`;
+    });
   }
 
   function renderExteriorRows(el, rows) {
     const candByCode = {};
     (candidatesData || []).forEach(c => { candByCode[c.codigo] = c; });
 
-    const totalVot = rows.reduce((s, r) => s + (parseInt(r.votos_emitidos) || 0), 0);
+    const totalVot = rows.reduce((s, r) => s + (r.votos_emitidos || 0), 0);
 
-    el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votos en el exterior</div>` +
+    el.innerHTML = `<div class="sect-head">${rows.length} países · ${fmtN(totalVot)} votos en el exterior</div>` +
       rows.map((r, idx) => {
-        const vot = parseInt(r.votos_emitidos) || 0;
+        const vot = r.votos_emitidos || 0;
         const pct = totalVot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
         let winner = null;
-        Object.keys(r).forEach(col => {
-          if (!col.startsWith("cand_")) return;
-          const votes = parseInt(r[col]) || 0;
+        Object.entries(r._candVotes || {}).forEach(([col, votes]) => {
           if (!winner || votes > winner.votes) {
             const code = col.replace("cand_", "");
             const info = candByCode[code] || {};
@@ -1285,7 +1337,7 @@
         return `<div class="dept-row" data-extidx="${idx}" style="cursor:pointer">
           <div class="dept-top">
             <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
-            <span class="dept-name" style="font-size:9px">${r.ubigeo_distrito}</span>
+            <span class="dept-name" style="font-size:9px">${r.nombre_provincia}</span>
             <span class="dept-votes">${fmtN(vot)}</span>
           </div>
           <div class="dept-winner">${winner ? winner.nombre : ""} <span style="color:var(--dim)">${pct}</span></div>
@@ -1296,9 +1348,7 @@
       row.addEventListener("click", () => {
         const r = rows[parseInt(row.dataset.extidx)];
         const candEntries = [];
-        Object.keys(r).forEach(col => {
-          if (!col.startsWith("cand_")) return;
-          const votes = parseInt(r[col]) || 0;
+        Object.entries(r._candVotes || {}).forEach(([col, votes]) => {
           if (!votes) return;
           const code = col.replace("cand_", "");
           const info = candByCode[code] || {};
@@ -1307,7 +1357,7 @@
         candEntries.sort((a, b) => b.votes - a.votes);
         const winner = candEntries[0] || null;
         const fakeFeat = { properties: {
-          nombre_dept:            r.ubigeo_distrito,
+          nombre_dept:            r.nombre_provincia,
           winner:                 winner ? winner.name : "",
           winner_color:           winner ? winner.color : "#888",
           votos_emitidos:         r.votos_emitidos,
@@ -1317,7 +1367,7 @@
           votos_nulos:            r.votos_nulos,
           actas_contabilizadas:   r.actas_contabilizadas,
           actas_total:            r.actas_total,
-          top5_candidates:        JSON.stringify(candEntries),
+          all_candidates:         JSON.stringify(candEntries),
         }};
         showDetail(fakeFeat, "dept");
       });
