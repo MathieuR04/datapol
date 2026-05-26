@@ -294,8 +294,11 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     cand_3rd    = base_ranked[2]
 
     total_sim   = len(margins)
+    # winners_2nd contains column names ("cand_10") — compare with column names here
     prob_2nd    = sum(1 for w in winners_2nd if w == cand_2nd) / total_sim * 100
     prob_3rd    = sum(1 for w in winners_2nd if w == cand_3rd) / total_sim * 100
+    # Note: cand_2nd / cand_3rd are column names ("cand_10") throughout the internal logic;
+    # they're converted to plain codigos only in the output dict below.
 
     mean_margin = sum(margins) / len(margins)
     ci_lo       = int(percentile(margins, 2.5))
@@ -327,8 +330,8 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
         "n_sims":               total_sim,
         "candidates":           cand_summary,
         "battle": {
-            "cand_2nd":          cand_2nd,
-            "cand_3rd":          cand_3rd,
+            "cand_2nd":          cand_by_col[cand_2nd]["codigo"],   # just "10", not "cand_10"
+            "cand_3rd":          cand_by_col[cand_3rd]["codigo"],
             "nombre_2nd":        cand_by_col[cand_2nd].get("nombre", ""),
             "nombre_3rd":        cand_by_col[cand_3rd].get("nombre", ""),
             "color_2nd":         cand_by_col[cand_2nd].get("color", "#888"),
