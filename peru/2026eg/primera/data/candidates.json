@@ -1,0 +1,254 @@
+[
+  {
+    "codigo": "08",
+    "nombre": "KEIKO SOFIA FUJIMORI HIGUCHI",
+    "partido": "FUERZA POPULAR",
+    "color": "#EA580C",
+    "codcan": 8
+  },
+  {
+    "codigo": "10",
+    "nombre": "ROBERTO HELBERT SANCHEZ PALOMINO",
+    "partido": "JUNTOS POR EL PERÚ",
+    "color": "#DC2626",
+    "codcan": 10
+  },
+  {
+    "codigo": "35",
+    "nombre": "RAFAEL BERNARDO LÓPEZ ALIAGA CAZORLA",
+    "partido": "RENOVACIÓN POPULAR",
+    "color": "#1E3A8A",
+    "codcan": 35
+  },
+  {
+    "codigo": "16",
+    "nombre": "JORGE NIETO MONTESINOS",
+    "partido": "PARTIDO DEL BUEN GOBIERNO",
+    "color": "#7C3AED",
+    "codcan": 16
+  },
+  {
+    "codigo": "14",
+    "nombre": "RICARDO PABLO BELMONT CASSINELLI",
+    "partido": "PARTIDO CÍVICO OBRAS",
+    "color": "#D97706",
+    "codcan": 14
+  },
+  {
+    "codigo": "23",
+    "nombre": "CARLOS GONSALO ALVAREZ LOAYZA",
+    "partido": "PARTIDO PAÍS PARA TODOS",
+    "color": "#0891B2",
+    "codcan": 23
+  },
+  {
+    "codigo": "02",
+    "nombre": "PABLO ALFONSO LOPEZ CHAU NAVA",
+    "partido": "AHORA NACIÓN - AN",
+    "color": "#16A34A",
+    "codcan": 2
+  },
+  {
+    "codigo": "33",
+    "nombre": "MARIA SOLEDAD PEREZ TELLO",
+    "partido": "PRIMERO LA GENTE",
+    "color": "#DB2777",
+    "codcan": 33
+  },
+  {
+    "codigo": "31",
+    "nombre": "ALFONSO CARLOS ESPA Y GARCES-ALVEAR",
+    "partido": "PARTIDO SICREO",
+    "color": "#059669",
+    "codcan": 31
+  },
+  {
+    "codigo": "21",
+    "nombre": "LUIS FERNANDO OLIVERA VEGA",
+    "partido": "PARTIDO FRENTE DE LA ESPERANZA 2021",
+    "color": "#6366F1",
+    "codcan": 21
+  },
+  {
+    "codigo": "32",
+    "nombre": "JOSE LEON LUNA GALVEZ",
+    "partido": "PODEMOS PERÚ",
+    "color": "#0369A1",
+    "codcan": 32
+  },
+  {
+    "codigo": "25",
+    "nombre": "YONHY LESCANO ANCIETA",
+    "partido": "PARTIDO POLÍTICO COOPERACIÓN POPULAR",
+    "color": "#B45309",
+    "codcan": 25
+  },
+  {
+    "codigo": "01",
+    "nombre": "CESAR ACUÑA PERALTA",
+    "partido": "ALIANZA PARA EL PROGRESO",
+    "color": "#0284C7",
+    "codcan": 1
+  },
+  {
+    "codigo": "12",
+    "nombre": "PITTER ENRIQUE VALDERRAMA PEÑA",
+    "partido": "PARTIDO APRISTA PERUANO",
+    "color": "#991B1B",
+    "codcan": 12
+  },
+  {
+    "codigo": "20",
+    "nombre": "GEORGE PATRICK FORSYTH SOMMER",
+    "partido": "PARTIDO DEMOCRÁTICO SOMOS PERÚ",
+    "color": "#2563EB",
+    "codcan": 20
+  },
+  {
+    "codigo": "24",
+    "nombre": "HERBERT CALLER GUTIERREZ",
+    "partido": "PARTIDO PATRIÓTICO DEL PERÚ",
+    "color": "#65A30D",
+    "codcan": 24
+  },
+  {
+    "codigo": "29",
+    "nombre": "MARIO ENRIQUE VIZCARRA CORNEJO",
+    "partido": "PARTIDO POLÍTICO PERÚ PRIMERO",
+    "color": "#E11D48",
+    "codcan": 29
+  },
+  {
+    "codigo": "03",
+    "nombre": "RONALD DARWIN ATENCIO SOTOMAYOR",
+    "partido": "ALIANZA ELECTORAL VENCEREMOS",
+    "color": "#F59E0B",
+    "codcan": 3
+  },
+  {
+    "codigo": "37",
+    "nombre": "ROSARIO DEL PILAR FERNANDEZ BAZAN",
+    "partido": "UN CAMINO DIFERENTE",
+    "color": "#8B5CF6",
+    "codcan": 37
+  },
+  {
+    "codigo": "17",
+    "nombre": "CHARLIE CARRASCO SALAZAR",
+    "partido": "PARTIDO DEMÓCRATA UNIDO PERÚ",
+    "color": "#64748B",
+    "codcan": 17
+  },
+  {
+    "codigo": "27",
+    "nombre": "VLADIMIR ROY CERRON ROJAS",
+    "partido": "PARTIDO POLÍTICO NACIONAL PERÚ LIBRE",
+    "color": "#EF4444",
+    "codcan": 27
+  },
+  {
+    "codigo": "22",
+    "nombre": "MESIAS ANTONIO GUEVARA AMASIFUEN",
+    "partido": "PARTIDO MORADO",
+    "color": "#A855F7",
+    "codcan": 22
+  },
+  {
+    "codigo": "38",
+    "nombre": "ROBERTO ENRIQUE CHIABRA LEON",
+    "partido": "UNIDAD NACIONAL",
+    "color": "#334155",
+    "codcan": 38
+  },
+  {
+    "codigo": "18",
+    "nombre": "ALEX GONZALES CASTILLO",
+    "partido": "PARTIDO DEMÓCRATA VERDE",
+    "color": "#15803D",
+    "codcan": 18
+  },
+  {
+    "codigo": "26",
+    "nombre": "WOLFGANG MARIO GROZO COSTA",
+    "partido": "PARTIDO POLÍTICO INTEGRIDAD DEMOCRÁTICA",
+    "color": "#06B6D4",
+    "codcan": 26
+  },
+  {
+    "codigo": "11",
+    "nombre": "RAFAEL JORGE BELAUNDE LLOSA",
+    "partido": "LIBERTAD POPULAR",
+    "color": "#84CC16",
+    "codcan": 11
+  },
+  {
+    "codigo": "07",
+    "nombre": "JOSE DANIEL WILLIAMS ZAPATA",
+    "partido": "AVANZA PAÍS - PARTIDO DE INTEGRACIÓN SOCIAL",
+    "color": "#F97316",
+    "codcan": 7
+  },
+  {
+    "codigo": "28",
+    "nombre": "FRANCISCO ERNESTO DIEZ-CANSECO TÁVARA",
+    "partido": "PARTIDO POLÍTICO PERÚ ACCIÓN",
+    "color": "#78350F",
+    "codcan": 28
+  },
+  {
+    "codigo": "09",
+    "nombre": "FIORELLA GIANNINA MOLINELLI ARISTONDO",
+    "partido": "FUERZA Y LIBERTAD",
+    "color": "#C026D3",
+    "codcan": 9
+  },
+  {
+    "codigo": "05",
+    "nombre": "ALVARO GONZALO PAZ DE LA BARRA FREIGEIRO",
+    "partido": "FE EN EL PERÚ",
+    "color": "#14B8A6",
+    "codcan": 5
+  },
+  {
+    "codigo": "19",
+    "nombre": "ARMANDO JOAQUIN MASSE FERNANDEZ",
+    "partido": "PARTIDO DEMOCRATICO FEDERAL",
+    "color": "#94A3B8",
+    "codcan": 19
+  },
+  {
+    "codigo": "36",
+    "nombre": "ANTONIO ORTIZ VILLANO",
+    "partido": "SALVEMOS AL PERÚ",
+    "color": "#22C55E",
+    "codcan": 36
+  },
+  {
+    "codigo": "30",
+    "nombre": "WALTER GILMER CHIRINOS PURIZAGA",
+    "partido": "PARTIDO POLÍTICO PRIN",
+    "color": "#A16207",
+    "codcan": 30
+  },
+  {
+    "codigo": "04",
+    "nombre": "CARLOS ERNESTO JAICO CARRANZA",
+    "partido": "PERÚ MODERNO",
+    "color": "#818CF8",
+    "codcan": 4
+  },
+  {
+    "codigo": "15",
+    "nombre": "NAPOLEON BECERRA GARCIA",
+    "partido": "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE - PERÚ",
+    "color": "#1F2937",
+    "codcan": 15
+  },
+  {
+    "codigo": "34",
+    "nombre": "PAUL DAVIS JAIMES BLANCO",
+    "partido": "PROGRESEMOS",
+    "color": "#6B7280",
+    "codcan": 34
+  }
+]

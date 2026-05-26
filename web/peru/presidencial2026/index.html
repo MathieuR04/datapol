@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Perú — 1ª Vuelta 2026 | Datapol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f5f0e8;
+      --surface:  #ede8df;
+      --border:   #cfc0ab;
+      --border2:  #bfb0a0;
+      --text:     #1a1209;
+      --muted:    #7a6858;
+      --dim:      #b0a090;
+      --terra:    #c4603a;
+      --terra-dk: #8b3c1f;
+      --terra-lt: #f0e4d8;
+      --sand:     #d9c9b4;
+    }
+    html { height: 100%; }
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────────── */
+    .nav {
+      background: var(--text);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      height: 32px;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 14px;
+      color: var(--sand);
+      letter-spacing: 0.05em;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+    .nav-sep { width: 1px; height: 14px; background: #333; margin: 0 0.6rem; }
+    .nav-item {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #555;
+      padding: 0 0.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--terra); }
+    .nav-item:hover:not(.active) { color: #999; }
+    .nav-pill {
+      font-size: 8px;
+      background: #333;
+      color: #666;
+      border-radius: 2px;
+      padding: 1px 5px;
+      margin-left: 4px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .header {
+      background: var(--bg);
+      border-bottom: 2px solid var(--text);
+      padding: 0.55rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .header-sub {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-left: 2px solid var(--terra);
+      padding-left: 0.6rem;
+      line-height: 1.5;
+    }
+    .header-progress {
+      flex: 1;
+      max-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hp-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .hp-bar { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .hp-fill { height: 100%; background: var(--terra); border-radius: 2px; transition: width 0.5s; }
+    .live-tag {
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--terra);
+      border: 1px solid var(--terra);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--terra); animation: blink 1.4s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .header-stats { display: flex; gap: 1.25rem; margin-left: auto; }
+    .hstat { display: flex; flex-direction: column; align-items: flex-end; }
+    .hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .hstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; color: var(--text); }
+    .hstat-val.hi { color: var(--terra); }
+
+    /* ── Mode bar ─────────────────────────────────────────────────────────── */
+    .mode-bar { background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; height: 28px; gap: 0; flex-shrink: 0; }
+    .mode-tab { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.3rem 0.75rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+    .mode-tab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .mode-tab:hover:not(.active) { color: var(--text); }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .body { display: flex; flex: 1; min-height: 0; }
+
+    /* ── Map ──────────────────────────────────────────────────────────────── */
+    .map-wrap { flex: 1; position: relative; min-width: 0; }
+    #map { width: 100%; height: 100%; background: #e8e0d4; }
+    .leaflet-container { background: #e8e0d4; }
+    .leaflet-control-zoom a { background: var(--bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    .leaflet-control-zoom a:hover { background: var(--surface) !important; }
+    .leaflet-control-attribution { background: rgba(245,240,232,0.9) !important; color: var(--dim) !important; font-size: 9px !important; }
+    .leaflet-control-attribution a { color: var(--dim) !important; }
+
+    /* Map controls overlay */
+    .map-controls {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 0.75rem;
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .ctrl-row { display: flex; gap: 0.3rem; }
+    .view-btn, .level-btn {
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .level-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .view-btn.active  { background: var(--terra); color: #fff; border-color: var(--terra); }
+    .view-btn:hover:not(.active), .level-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+    /* Map control group labels */
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .ctrl-label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0 0.1rem; }
+    .ctrl-label.geo  { color: var(--text); }
+    .ctrl-label.data { color: var(--terra); }
+
+    /* Loading */
+    #loading { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; gap: 0.75rem; }
+    #loading p { color: var(--muted); font-size: 11px; }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--sand); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Bubble legend */
+    .bubble-legend {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.5rem;
+      z-index: 800;
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.5rem 0.7rem;
+      font-size: 9px;
+      color: var(--muted);
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+    .bubble-legend.show { display: block; }
+    .bubble-legend-title { font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .bubble-legend-items { display: flex; align-items: flex-end; gap: 0.75rem; }
+    .bl-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .bl-circle { border-radius: 50%; border: 1px solid #999; background: rgba(196,96,58,0.25); }
+    .bl-label { font-size: 8px; }
+
+    /* Full-view back button */
+    .map-topbar {
+      position: absolute;
+      top: 10px;
+      left: 44px;
+      z-index: 800;
+    }
+    .btn-fullview {
+      background: rgba(245,240,232,0.93);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.9rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .btn-fullview:hover { color: var(--terra); }
+
+    /* ── Panel ────────────────────────────────────────────────────────────── */
+    .panel {
+      width: 280px;
+      min-width: 280px;
+      background: var(--surface);
+      border-left: 2px solid var(--text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    /* Panel tabs */
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+    .ptab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .ptab:hover:not(.active) { color: var(--text); }
+    .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+    .panel-scroll::-webkit-scrollbar { width: 3px; }
+    .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+    .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
+    .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .party-row:hover { background: var(--terra-lt); }
+    .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .party-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 4px; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
+    .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
+    .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+    .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
+    .party-bar { height: 100%; border-radius: 1px; }
+
+    /* Dept rows */
+    .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .dept-row:hover { background: var(--terra-lt); }
+    .dept-top { display: flex; align-items: center; gap: 0.4rem; }
+    .dept-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
+    .dept-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
+    .dept-votes { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .dept-winner { font-size: 9px; color: var(--muted); margin-top: 2px; padding-left: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Detail panel */
+    .detail-panel { display: none; flex-direction: column; overflow-y: auto; flex: 1; }
+    .detail-panel.active { display: flex; }
+    .detail-panel::-webkit-scrollbar { width: 3px; }
+    .detail-panel::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .detail-back { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: color 0.15s; }
+    .detail-back:hover { color: var(--terra); }
+    .detail-hero { padding: 0.65rem 0.75rem 0.45rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; letter-spacing: 0.03em; }
+    .detail-winner-tag { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--terra-dk); }
+    .detail-winner-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .detail-kpi-row { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .dkpi { flex: 1; padding: 0.4rem 0.6rem; border-right: 1px solid var(--border); }
+    .dkpi:last-child { border-right: none; }
+    .dkpi-label { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .dkpi-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1.1; color: var(--text); margin-top: 1px; }
+    .dkpi-val.hi { color: var(--terra); }
+    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.75rem 0.2rem; flex-shrink: 0; }
+    .detail-breakdown { flex-shrink: 0; border-bottom: 1px solid var(--border); }
+    .dbreak-row { display: flex; align-items: center; padding: 0.28rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .dbreak-row:last-child { border-bottom: none; }
+    .dbreak-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+    .dbreak-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); min-width: 64px; text-align: right; }
+    .dbreak-pct { font-size: 9px; color: var(--muted); min-width: 42px; text-align: right; padding-left: 0.5rem; }
+    .dbreak-row.total { background: var(--surface); }
+    .dbreak-row.total .dbreak-label { color: var(--text); font-weight: 700; }
+    .dbreak-row.total .dbreak-val { color: var(--terra); }
+
+    /* Candidate bar in detail */
+    .detail-cand { display: flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .detail-cand-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .detail-cand-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .detail-cand-name { font-size: 9.5px; color: var(--text); flex: 1; line-height: 1.2; }
+    .detail-cand-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
+
+    /* ── Pronóstico view ─────────────────────────────────────────────────── */
+    #pronostico-view {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg);
+      min-height: 0;
+    }
+    #pronostico-view::-webkit-scrollbar { width: 3px; }
+    #pronostico-view::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .pron-inner {
+      max-width: 680px;
+      width: 100%;
+      align-self: center;
+      padding: 1.25rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .pron-section-head {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      border-bottom: 2px solid var(--text);
+      padding-bottom: 0.3rem;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .pron-section-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      font-weight: 400;
+    }
+    .cand-prob-list { display: flex; flex-direction: column; gap: 0; }
+    .cand-prob-row {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .cand-prob-top { display: flex; align-items: center; gap: 0.5rem; }
+    .cand-prob-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .cand-prob-nameblock { flex: 1; min-width: 0; }
+    .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); }
+    .cand-prob-partido { font-size: 9px; color: var(--muted); }
+    .cand-prob-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+    .cand-prob-pct-val {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+    .cand-prob-pct-label { font-size: 7.5px; color: var(--muted); letter-spacing: 0.04em; }
+    .cand-prob-bar-wrap { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .cand-prob-bar { height: 100%; border-radius: 2px; }
+    .cand-prob-votes { font-size: 9px; color: var(--muted); }
+    .sv-badge {
+      font-size: 7.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      background: var(--terra-lt); color: var(--terra-dk); border: 1px solid var(--terra);
+      border-radius: 2px; padding: 1px 5px; margin-top: 2px;
+    }
+    .pron-progress {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .pron-progress-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); }
+    .pron-progress-bar { height: 6px; background: var(--sand); border-radius: 3px; overflow: hidden; }
+    .pron-progress-fill { height: 100%; background: var(--terra); border-radius: 3px; }
+
+    /* ── Bottom bar ──────────────────────────────────────────────────────── */
+    .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
+    .bottombar::-webkit-scrollbar { display: none; }
+    .bbar-item { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    .bbar-label { font-size: 8px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #4a4a3a; }
+    .bbar-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; color: var(--sand); }
+    .bbar-val.hi { color: var(--terra); }
+    .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
+
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      body { overflow: auto; }
+      .body { flex-direction: column; }
+      .map-wrap { height: 55vw; min-height: 280px; flex: none; }
+      .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
+      .header-sub, .live-tag { display: none !important; }
+      .header-stats { display: none !important; }
+      .header-progress { max-width: none; flex: 1; display: flex !important; }
+      .header-title { font-size: 15px; }
+      .map-controls { gap: 0.2rem; }
+      .ctrl-group { gap: 0.1rem; }
+      .ctrl-row { gap: 0.15rem; flex-wrap: wrap; }
+      .ctrl-label { font-size: 6px; }
+      .view-btn, .level-btn { font-size: 7px; padding: 0.18rem 0.4rem; letter-spacing: 0.03em; }
+      .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav">
+  <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
+  <div class="nav-sep"></div>
+  <span class="nav-item active">1ra Vuelta</span>
+  <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
+</div>
+
+<!-- Mode bar -->
+<div class="mode-bar">
+  <button class="mode-tab active" data-mode="mapa">Mapa</button>
+  <button class="mode-tab" data-mode="pronostico">Pronóstico</button>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header-title">🇵🇪 1ra Vuelta · Perú 2026</div>
+  </div>
+  <div class="header-sub">Resultados por distrito<br>ONPE</div>
+  <div class="header-progress">
+    <div class="hp-labels">
+      <span>Actas contabilizadas</span>
+      <span id="hp-label">—</span>
+    </div>
+    <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+  <div class="header-stats">
+    <div class="hstat">
+      <span class="hstat-label">Electores</span>
+      <span class="hstat-val" id="hs-censo">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Votos emitidos</span>
+      <span class="hstat-val" id="hs-votes">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Participación</span>
+      <span class="hstat-val hi" id="hs-turnout">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- Body (Mapa mode) -->
+<div class="body" id="mapa-body">
+
+  <!-- Map -->
+  <div class="map-wrap">
+    <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
+
+    <div class="map-topbar" id="map-topbar" style="display:none">
+      <button class="btn-fullview" id="btn-fullview">← Perú</button>
+    </div>
+
+    <div class="map-controls">
+      <div class="ctrl-group">
+        <span class="ctrl-label geo">Geografía</span>
+        <div class="ctrl-row">
+          <button class="level-btn active" data-level="dept">Departamento</button>
+          <button class="level-btn" data-level="provincia">Provincia</button>
+          <button class="level-btn" data-level="distrito">Distrito</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row" id="view-btns">
+          <button class="view-btn active" data-view="winner">Candidato</button>
+          <button class="view-btn" data-view="turnout">Participación</button>
+          <button class="view-btn" data-view="votos">Votos válidos</button>
+          <button class="view-btn" data-view="actas">Actas restantes</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-legend" id="bubble-legend">
+      <div class="bubble-legend-title" id="bl-title">Actas faltantes</div>
+      <div class="bubble-legend-items" id="bl-items"></div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <!-- Panel -->
+  <div class="panel">
+    <div class="panel-tabs" id="panel-tabs">
+      <button class="ptab active" data-ptab="candidatos">Candidatos</button>
+      <button class="ptab" data-ptab="deptos">Deptos</button>
+      <button class="ptab" data-ptab="exterior">Exterior</button>
+    </div>
+    <div class="panel-scroll" id="panel-scroll">
+      <div id="panel-candidatos"></div>
+      <div id="panel-deptos" style="display:none"></div>
+      <div id="panel-exterior" style="display:none"></div>
+    </div>
+    <!-- Detail overlay -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-back" id="detail-back">← Volver</div>
+      <div class="detail-hero">
+        <div class="detail-mpio" id="d-mpio">—</div>
+        <div class="detail-winner-tag" id="d-winner-tag"></div>
+      </div>
+      <div class="detail-kpi-row" id="d-kpis"></div>
+      <div class="detail-breakdown" id="d-breakdown"></div>
+      <div class="detail-sect-head">Candidatos</div>
+      <div id="d-candidates"></div>
+    </div>
+  </div>
+
+</div><!-- end .body -->
+
+<!-- Bottom bar -->
+<div class="bottombar" id="bottombar">
+  <div class="bbar-item"><span class="bbar-label">Emitidos</span><span class="bbar-val hi" id="bb-emitidos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Votos nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Actas</span><span class="bbar-val" id="bb-actas">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Distritos</span><span class="bbar-val" id="bb-distritos">—</span></div>
+</div>
+
+<!-- Pronóstico view -->
+<div id="pronostico-view">
+  <div class="pron-inner">
+    <div class="pron-progress" id="pron-progress">
+      <div class="pron-progress-labels">
+        <span>Actas contabilizadas</span>
+        <span id="pron-actas-label">—</span>
+      </div>
+      <div class="pron-progress-bar"><div class="pron-progress-fill" id="pron-actas-fill" style="width:0%"></div></div>
+    </div>
+    <div>
+      <div class="pron-section-head">
+        Proyección de resultados
+        <span class="pron-section-sub" id="pron-source-note"></span>
+      </div>
+      <div class="cand-prob-list" id="pron-cand-list"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+
+  // ── Formatting ───────────────────────────────────────────────────────────
+  const fmtN = n => (n == null || n === "" || isNaN(n)) ? "—" : parseInt(n).toLocaleString("es-PE");
+  const fmtP = n => (n == null || n === "" || isNaN(n)) ? "—" : parseFloat(n).toFixed(1) + "%";
+
+  // ── Color helpers ────────────────────────────────────────────────────────
+  function lerp(a, b, t) {
+    const p = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+    const [r1,g1,b1] = p(a), [r2,g2,b2] = p(b);
+    return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
+  }
+  function winnerStrength(winnerVotes, votosValidos, range) {
+    const share = Math.min((winnerVotes || 0) / Math.max(votosValidos || 1, 1), 1);
+    if (share === 0) return 0;
+    const mn = (range && range.min != null) ? range.min : 0;
+    const mx = (range && range.max != null) ? range.max : 1;
+    const t  = mx > mn ? Math.max(0, (share - mn) / (mx - mn)) : 0.5;
+    return 0.20 + Math.min(Math.pow(t, 0.65), 1) * 0.68;
+  }
+  function computeWinnerRange(features) {
+    const shares = [];
+    features.forEach(f => {
+      const p  = f.properties || {};
+      const wv = parseInt(p.winner_votes) || 0;
+      const dn = parseInt(p.votos_validos) || 0;
+      if (wv > 0 && dn > 0) shares.push(wv / dn);
+    });
+    if (shares.length < 3) return { min: 0, max: 1 };
+    shares.sort((a, b) => a - b);
+    const p5  = shares[Math.floor(shares.length * 0.05)];
+    const p95 = shares[Math.floor(shares.length * 0.95)];
+    return { min: Math.max(0, p5 * 0.95), max: Math.min(p95 * 1.02, 1) };
+  }
+  function liveColor(name) {
+    if (!name) return null;
+    const cand = (candidatesData || []).find(c => c.nombre === name);
+    return cand ? cand.color : null;
+  }
+  function blendWithBg(hex, strength) {
+    strength = strength == null ? 0.72 : strength;
+    try {
+      const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+      const bg = [245,240,232];
+      return `rgb(${Math.round(r*strength+bg[0]*(1-strength))},${Math.round(g*strength+bg[1]*(1-strength))},${Math.round(b*strength+bg[2]*(1-strength))})`;
+    } catch(e) { return "#d9c9b4"; }
+  }
+  function turnoutColor(pct, maxPct) {
+    if (pct == null || isNaN(pct) || pct === 0) return "#e0d8cc";
+    const stops = [[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
+    const scaled = maxPct ? Math.min(pct / maxPct * 85, 85) : pct;
+    for (let i=1; i<stops.length; i++) {
+      if (scaled <= stops[i][0]) {
+        const t = (scaled - stops[i-1][0]) / (stops[i][0] - stops[i-1][0]);
+        return lerp(stops[i-1][1], stops[i][1], t);
+      }
+    }
+    return stops[stops.length-1][1];
+  }
+
+  // ── Centroid of a GeoJSON feature ────────────────────────────────────────
+  function centroid(feat) {
+    const g = feat.geometry;
+    let coords = g.type === "MultiPolygon"
+      ? g.coordinates.reduce((a, poly) => a.concat(poly[0]), [])
+      : g.coordinates[0];
+    let minLat=Infinity, maxLat=-Infinity, minLng=Infinity, maxLng=-Infinity;
+    coords.forEach(([lng, lat]) => {
+      if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
+      if (lng < minLng) minLng = lng; if (lng > maxLng) maxLng = lng;
+    });
+    return [(minLat+maxLat)/2, (minLng+maxLng)/2];
+  }
+
+  // ── Map setup ─────────────────────────────────────────────────────────────
+  const TILE = {
+    url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+    opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 }
+  };
+  function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
+  const HOME_CENTER = [-9.0, -75.5];
+  const MAP_OPTS = {
+    center: HOME_CENTER, zoom: defZoom(),
+    zoomControl: true, attributionControl: true,
+    zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80,
+    doubleClickZoom: false
+  };
+  const map = L.map("map", MAP_OPTS);
+  L.tileLayer(TILE.url, TILE.opts).addTo(map);
+
+  // ── State ────────────────────────────────────────────────────────────────
+  let currentView      = "winner";
+  let currentLevel     = "dept";
+  let currentPanelTab  = "candidatos";
+  let previousTab      = "candidatos";
+  let selectedCandidate = null;
+  let activeLayer      = null;
+  let distLayer = null, provLayer = null, deptLayer = null, deptBoundaryLayer = null, bubbleLayer = null;
+  let winnerShareRange = { min: 0, max: 1 };
+  let candViewMaxShare = 1;
+  let deptBoundsMap = {}, deptFeatMap = {};
+
+  let distData = null, provData = null, deptData = null;
+  let candidatesData = null, aggStats = null;
+
+  const BUBBLE_VIEWS = new Set(["actas", "votos"]);
+
+  // ── Style functions ───────────────────────────────────────────────────────
+  function getCandShare(props, candName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
+    const entry = top5.find(c => c.name === candName);
+    const vv = parseInt(props.votos_validos) || 1;
+    return entry ? entry.votes / vv : 0;
+  }
+  function candColor(candName) {
+    return liveColor(candName) || ((candidatesData || []).find(c => c.nombre === candName)?.color) || "#9a8878";
+  }
+
+  function styleFeature(feat, isDept) {
+    const p = feat.properties || {};
+    let fill = "#e0d8cc";
+    if (currentView === "winner") {
+      const wv    = parseInt(p.winner_votes) || 0;
+      const color = liveColor(p.winner) || p.winner_color;
+      if (wv > 0 && color) {
+        const strength = winnerStrength(wv, parseInt(p.votos_validos) || 0, winnerShareRange);
+        fill = blendWithBg(color, isDept ? Math.min(strength + 0.06, 0.94) : strength);
+      }
+    } else if (currentView === "turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    } else if (currentView === "candidate" && selectedCandidate) {
+      const share = getCandShare(p, selectedCandidate);
+      const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.6));
+    }
+    if (isDept) return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
+    return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
+  }
+
+  const styleDist  = feat => styleFeature(feat, false);
+  const styleProv  = feat => styleFeature(feat, false);
+  const styleDept  = feat => styleFeature(feat, true);
+
+  // ── Render choropleth ─────────────────────────────────────────────────────
+  function renderChoropleth() {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    document.getElementById("bubble-legend").classList.remove("show");
+
+    const srcData = currentLevel === "distrito" ? distData : currentLevel === "provincia" ? provData : deptData;
+    if (currentView === "winner" && srcData) winnerShareRange = computeWinnerRange(srcData.features);
+    if (currentView === "candidate" && selectedCandidate && srcData) {
+      const shares = srcData.features.map(f => getCandShare(f.properties || {}, selectedCandidate));
+      candViewMaxShare = Math.max(...shares.filter(s => s > 0), 0.01);
+    }
+
+    if (currentLevel === "distrito") {
+      if (deptLayer)  { map.removeLayer(deptLayer);  deptLayer  = null; }
+      if (provLayer)  { map.removeLayer(provLayer);  provLayer  = null; }
+      if (!distLayer) {
+        distLayer = L.geoJSON(distData, { style: styleDist, onEachFeature: (f,l) => onEachFeature(f,l,"distrito"), smoothFactor: 0 }).addTo(map);
+      } else { distLayer.setStyle(styleDist); }
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+    } else if (currentLevel === "provincia") {
+      if (deptLayer)  { map.removeLayer(deptLayer);  deptLayer  = null; }
+      if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+      if (!provLayer) {
+        provLayer = L.geoJSON(provData, { style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
+      } else { provLayer.setStyle(styleProv); }
+    } else {
+      if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
+      if (provLayer)  { map.removeLayer(provLayer);  provLayer  = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (!deptLayer) {
+        deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: (f,l) => onEachFeature(f,l,"dept"), smoothFactor: 0 }).addTo(map);
+      } else { deptLayer.setStyle(styleDept); }
+    }
+  }
+
+  // ── Render bubbles ────────────────────────────────────────────────────────
+  function renderBubbles(valueKey, labelFn) {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+
+    const isDept = currentLevel === "dept";
+    const activeGeoData = currentLevel === "distrito" ? distData : currentLevel === "provincia" ? provData : deptData;
+
+    // Ensure base choropleth layer is visible (transparent)
+    if (currentLevel === "distrito") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (provLayer) { map.removeLayer(provLayer); provLayer = null; }
+      if (!distLayer) distLayer = L.geoJSON(distData, { style: styleDist, onEachFeature: (f,l) => onEachFeature(f,l,"distrito"), smoothFactor: 0 }).addTo(map);
+      distLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" }, interactive: false }).addTo(map);
+      }
+    } else if (currentLevel === "provincia") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
+      if (!provLayer) provLayer = L.geoJSON(provData, { style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
+      provLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
+      if (!deptBoundaryLayer) {
+        deptBoundaryLayer = L.geoJSON(deptData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" }, interactive: false }).addTo(map);
+      }
+    } else {
+      if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
+      if (provLayer) { map.removeLayer(provLayer); provLayer = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (!deptLayer) deptLayer = L.geoJSON(deptData, { style: styleDept, onEachFeature: (f,l) => onEachFeature(f,l,"dept"), smoothFactor: 0 }).addTo(map);
+      deptLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 1.5, color: "#1a1209" }));
+    }
+
+    const features = activeGeoData.features.filter(f => valueKey(f.properties || {}) > 0);
+    const values = features.map(f => valueKey(f.properties || {}));
+    const maxVal = Math.max(...values, 1);
+    const maxR = isDept ? 30 : 18;
+
+    bubbleLayer = L.layerGroup();
+    features.forEach(feat => {
+      const val = valueKey(feat.properties || {});
+      if (!val) return;
+      const r = Math.max(2, Math.sqrt(val / maxVal) * maxR);
+      const latlng = centroid(feat);
+      const marker = L.circleMarker(latlng, {
+        radius: r, fillColor: "#c4603a", fillOpacity: 0.45,
+        weight: 0.8, color: "#8b3c1f"
+      });
+      marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
+      marker.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        showDetail(feat, currentLevel);
+        document.getElementById("map-topbar").style.display = "block";
+      });
+      marker.addTo(bubbleLayer);
+    });
+    bubbleLayer.addTo(map);
+
+    const legend = document.getElementById("bubble-legend");
+    legend.classList.add("show");
+    const sizes = [maxVal, maxVal/4, maxVal/16].filter(v => v > 0);
+    document.getElementById("bl-items").innerHTML = sizes.map(v => {
+      const r = Math.max(2, Math.sqrt(v / maxVal) * maxR);
+      const d = r * 2;
+      return `<div class="bl-item">
+        <div class="bl-circle" style="width:${d}px;height:${d}px"></div>
+        <span class="bl-label">${fmtN(Math.round(v))}</span>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Render dispatcher ─────────────────────────────────────────────────────
+  function featName(p) {
+    return p.nombre_distrito || p.nombre_provincia || p.nombre_dept || "—";
+  }
+  function render() {
+    if (currentView === "actas") {
+      document.getElementById("bl-title").textContent = "Actas faltantes";
+      renderBubbles(
+        p => Math.max(0, (parseInt(p.actas_total) || 0) - (parseInt(p.actas_contabilizadas) || 0)),
+        (p, v) => `<b>${featName(p)}</b><br>${fmtN(v)} actas pendientes`
+      );
+    } else if (currentView === "votos") {
+      document.getElementById("bl-title").textContent = "Votos válidos";
+      renderBubbles(
+        p => parseInt(p.votos_validos) || 0,
+        (p, v) => `<b>${featName(p)}</b><br>${fmtN(v)} votos válidos`
+      );
+    } else {
+      renderChoropleth();
+    }
+    if (activeLayer) activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
+  }
+
+  // ── Feature interactions ──────────────────────────────────────────────────
+  function onEachFeature(feat, layer, type) {
+    if (type === "dept") {
+      const key = (feat.properties || {}).ubigeo_dept || "";
+      if (key) {
+        deptBoundsMap[key] = layer.getBounds();
+        deptFeatMap[key] = feat;
+      }
+    }
+    layer.on({
+      mouseover(e) {
+        if (BUBBLE_VIEWS.has(currentView)) return;
+        if (e.target !== activeLayer) {
+          const w = type === "dept" ? 2.5 : 1.2;
+          e.target.setStyle({ weight: w, color: type === "dept" ? "#c4603a" : "#1a1209", fillOpacity: 1 });
+        }
+      },
+      mouseout(e) {
+        if (e.target === activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) {
+          const isDept = type === "dept";
+          e.target.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+        } else {
+          deptLayer?.resetStyle(e.target);
+          provLayer?.resetStyle(e.target);
+          distLayer?.resetStyle(e.target);
+        }
+      },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        if (activeLayer === e.target) {
+          deptLayer?.resetStyle(e.target);
+          provLayer?.resetStyle(e.target);
+          distLayer?.resetStyle(e.target);
+          activeLayer = null;
+          map.setView(HOME_CENTER, defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if (activeLayer) {
+          if (BUBBLE_VIEWS.has(currentView)) {
+            const isDept = type === "dept";
+            activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+          } else {
+            deptLayer?.resetStyle(activeLayer);
+            provLayer?.resetStyle(activeLayer);
+            distLayer?.resetStyle(activeLayer);
+          }
+        }
+        activeLayer = e.target;
+        const w = type === "dept" ? 2.5 : 2;
+        e.target.setStyle({ weight: w, color: "#c4603a", fillOpacity: 1 });
+        showDetail(feat, type);
+        const pad = type === "dept" ? [40, 40] : [60, 60];
+        map.fitBounds(e.target.getBounds(), { padding: pad });
+        document.getElementById("map-topbar").style.display = "block";
+      }
+    });
+  }
+
+  map.on("click", hideDetail);
+
+  document.getElementById("btn-fullview").addEventListener("click", () => {
+    map.setView(HOME_CENTER, defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+    hideDetail();
+  });
+  map.on("zoomend", () => {
+    if (map.getZoom() <= defZoom() + 0.3) document.getElementById("map-topbar").style.display = "none";
+  });
+
+  // ── Detail panel ──────────────────────────────────────────────────────────
+  function showDetail(feat, type) {
+    const p = feat.properties || {};
+    document.querySelectorAll(".ptab").forEach(t => t.classList.remove("active"));
+    document.getElementById("panel-scroll").style.display = "none";
+    document.getElementById("detail-panel").classList.add("active");
+
+    const name = type === "dept"
+      ? (p.nombre_dept || "—")
+      : type === "provincia"
+      ? (p.nombre_provincia || "—")
+      : (p.nombre_distrito || "—");
+    document.getElementById("d-mpio").textContent = name;
+
+    const wt = document.getElementById("d-winner-tag");
+    if (p.winner) {
+      const col = liveColor(p.winner) || p.winner_color || candColor(p.winner);
+      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
+    } else { wt.textContent = "Sin datos"; }
+
+    const vv  = parseInt(p.votos_validos)        || 0;
+    const ve  = parseInt(p.votos_emitidos)        || 0;
+    const elec= parseInt(p.num_electores)         || 0;
+    const vb  = parseInt(p.votos_blancos)         || 0;
+    const vn  = parseInt(p.votos_nulos)           || 0;
+    const acE = parseInt(p.actas_contabilizadas)  || 0;
+    const acT = parseInt(p.actas_total)           || 0;
+    const pct = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + "%" : "—";
+
+    document.getElementById("d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Electores</div><div class="dkpi-val">${fmtN(elec)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Emitidos</div><div class="dkpi-val">${fmtN(ve)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${elec > 0 ? pct(ve, elec) : "—"}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Actas cont.</div><div class="dkpi-val">${fmtN(acE)}/${fmtN(acT)}</div></div>`;
+
+    const bkRows = [
+      ["Votos nulos",  vn, pct(vn, ve)],
+      ["En blanco",    vb, pct(vb, ve)],
+      ["Candidatos",   vv, pct(vv, ve)],
+    ];
+    document.getElementById("d-breakdown").innerHTML =
+      bkRows.map(([l, v, pp]) => `<div class="dbreak-row">
+        <span class="dbreak-label">${l}</span>
+        <span class="dbreak-val">${fmtN(v)}</span>
+        <span class="dbreak-pct">${pp}</span>
+      </div>`).join("") +
+      `<div class="dbreak-row total">
+        <span class="dbreak-label">Votos emitidos</span>
+        <span class="dbreak-val">${fmtN(ve)}</span>
+        <span class="dbreak-pct">${pct(ve, elec > 0 ? elec : ve)}</span>
+      </div>`;
+
+    let cands = [];
+    try { cands = JSON.parse(p.top5_candidates || "[]"); } catch(e) {}
+    const allZero = cands.length === 0 || cands.every(c => !c.votes);
+    const candSource = allZero
+      ? (candidatesData || []).map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
+      : cands;
+    document.getElementById("d-candidates").innerHTML = candSource.map(c => {
+      const col = liveColor(c.name) || c.color || "#9a8878";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, vv)}</span>
+        <div class="detail-cand-dot" style="background:${col}"></div>
+        <span class="detail-cand-name">${c.name}</span>
+        <span class="detail-cand-votes">${fmtN(c.votes)}</span>
+      </div>`;
+    }).join("");
+  }
+
+  function hideDetail() {
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        distLayer?.resetStyle(activeLayer);
+        provLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+    }
+  }
+  document.getElementById("detail-back").addEventListener("click", hideDetail);
+
+  // ── Header stats ──────────────────────────────────────────────────────────
+  function updateHeaderStats() {
+    const s = aggStats || {};
+    const elec  = s.num_electores || 0;
+    const acE   = s.actas_contabilizadas || 0;
+    const acT   = s.actas_total || 0;
+    const emit  = s.votos_emitidos || 0;
+    const pct   = acT ? acE / acT : 0;
+    document.getElementById("hs-censo").textContent   = elec ? fmtN(elec) : "—";
+    document.getElementById("hs-votes").textContent   = emit ? fmtN(emit) : "—";
+    document.getElementById("hs-turnout").textContent = (elec && emit) ? (emit / elec * 100).toFixed(1) + "%" : "—";
+    document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
+    document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(acE)}/${fmtN(acT)}`;
+    if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+  }
+
+  // ── Bottom bar ────────────────────────────────────────────────────────────
+  function updateBottomBar() {
+    const s = aggStats || {};
+    document.getElementById("bb-emitidos").textContent = fmtN(s.votos_emitidos  || 0);
+    document.getElementById("bb-nulos").textContent    = fmtN(s.votos_nulos     || 0);
+    document.getElementById("bb-blanco").textContent   = fmtN(s.votos_blancos   || 0);
+    document.getElementById("bb-actas").textContent    = `${fmtN(s.actas_contabilizadas||0)}/${fmtN(s.actas_total||0)}`;
+
+    const reported = (distData?.features || []).filter(f => (parseInt(f.properties?.actas_contabilizadas) || 0) > 0).length;
+    const total    = (distData?.features || []).length;
+    document.getElementById("bb-distritos").textContent = `${reported}/${total || "—"}`;
+  }
+
+  // ── Panel tab switching ───────────────────────────────────────────────────
+  function switchPanelTab(tab) {
+    currentPanelTab = tab;
+    previousTab     = tab;
+    document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
+    document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
+    document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
+    document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
+    document.getElementById("detail-panel").classList.remove("active");
+    document.getElementById("panel-scroll").style.display = "";
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        distLayer?.resetStyle(activeLayer);
+        provLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+    }
+    map.setView(HOME_CENTER, defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+    if (tab === "exterior") buildExteriorList();
+  }
+  document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
+
+  // ── Candidatos sidebar ────────────────────────────────────────────────────
+  function buildCandList() {
+    const el = document.getElementById("panel-candidatos");
+    const cands = candidatesData || [];
+
+    const voteMap = {};
+    (aggStats?.candidatos || []).forEach(c => { voteMap[c.codigo] = c.votos || 0; });
+    const totalVV = aggStats?.votos_validos || 0;
+
+    const merged = cands.map(c => ({ ...c, votes: voteMap[c.codigo] || 0 }));
+    const isLive = (aggStats?.actas_contabilizadas || 0) > 0;
+    const sorted = isLive ? merged.slice().sort((a, b) => b.votes - a.votes) : merged;
+    const maxV   = sorted[0]?.votes || 1;
+
+    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos · ${fmtN(totalVV)} votos válidos</div>` +
+      sorted.map(c => {
+        const col  = c.color || "#9a8878";
+        const pct  = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
+        const barW = (c.votes / maxV * 100).toFixed(1);
+        const dn   = c.nombre.replace(/"/g, '&quot;');
+        return `<div class="party-row" data-cand="${dn}">
+          <div class="party-top">
+            <span class="party-pct" style="color:${col}">${pct}%</span>
+            <div style="flex:1;min-width:0">
+              <div class="party-name">${c.nombre}</div>
+              <div class="party-sub">${c.partido || ''}</div>
+            </div>
+            <span class="party-votes">${fmtN(c.votes)}</span>
+          </div>
+          <div class="party-bar-wrap">
+            <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+          </div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".party-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const name = row.dataset.cand;
+        if (selectedCandidate === name) {
+          selectedCandidate = null;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+          currentView = "winner";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+        } else {
+          selectedCandidate = name;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.toggle("selected", r.dataset.cand === name));
+          currentView = "candidate";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+        }
+        render();
+      });
+    });
+  }
+
+  // ── Dept sidebar ──────────────────────────────────────────────────────────
+  function buildDeptList() {
+    if (!deptData) return;
+    const features = deptData.features.slice().sort((a, b) =>
+      (parseInt(b.properties?.votos_validos) || 0) - (parseInt(a.properties?.votos_validos) || 0)
+    );
+    const el = document.getElementById("panel-deptos");
+    el.innerHTML = `<div class="sect-head">${features.length} departamentos</div>` +
+      features.map(feat => {
+        const p = feat.properties || {};
+        const name = p.nombre_dept || "—";
+        const col = p.winner_color || "#9a8878";
+        return `<div class="dept-row" data-deptkey="${p.ubigeo_dept || ''}">
+          <div class="dept-top">
+            <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+            <span class="dept-name">${name}</span>
+            <span class="dept-votes">${fmtN(p.votos_validos)}</span>
+          </div>
+          <div class="dept-winner">${p.winner || `${fmtN((parseInt(p.actas_total)||0)-(parseInt(p.actas_contabilizadas)||0))} actas restantes`}</div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".dept-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const key = row.dataset.deptkey;
+        const feat = deptFeatMap[key];
+        if (!feat) return;
+        if (currentLevel !== "dept") {
+          currentLevel = "dept";
+          document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === "dept"));
+          render();
+        }
+        const bounds = deptBoundsMap[key];
+        if (bounds) { map.fitBounds(bounds, { padding: [40, 40] }); document.getElementById("map-topbar").style.display = "block"; }
+        showDetail(feat, "dept");
+      });
+    });
+  }
+
+  // ── Exterior panel ────────────────────────────────────────────────────────
+  let _exteriorRows = null;
+
+  function buildExteriorList() {
+    const el = document.getElementById("panel-exterior");
+    if (!el) return;
+
+    if (_exteriorRows !== null) {
+      renderExteriorRows(el, _exteriorRows);
+      return;
+    }
+
+    el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
+
+    // Load exterior rows directly from the district CSV
+    fetch(BASE + "results/peru_2026eg_distrito_primera.csv")
+      .then(r => r.text())
+      .then(text => {
+        const lines = text.trim().split("\n");
+        const headers = lines[0].split(",");
+        const rows = lines.slice(1).filter(l => l.trim()).map(line => {
+          const cols = line.split(",");
+          const obj = {};
+          headers.forEach((h, i) => obj[h.trim()] = cols[i] !== undefined ? cols[i].trim() : "");
+          return obj;
+        });
+        _exteriorRows = rows
+          .filter(r => String(r.ubigeo_distrito || "").startsWith("9"))
+          .sort((a, b) => (parseInt(b.votos_emitidos) || 0) - (parseInt(a.votos_emitidos) || 0));
+        renderExteriorRows(el, _exteriorRows);
+      })
+      .catch(() => {
+        el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
+          Datos del exterior no disponibles.
+        </div>`;
+      });
+  }
+
+  function renderExteriorRows(el, rows) {
+    const candByCode = {};
+    (candidatesData || []).forEach(c => { candByCode[c.codigo] = c; });
+
+    const totalVot = rows.reduce((s, r) => s + (parseInt(r.votos_emitidos) || 0), 0);
+
+    el.innerHTML = `<div class="sect-head">${rows.length} circunscripciones · ${fmtN(totalVot)} votos en el exterior</div>` +
+      rows.map((r, idx) => {
+        const vot = parseInt(r.votos_emitidos) || 0;
+        const pct = totalVot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+        let winner = null;
+        Object.keys(r).forEach(col => {
+          if (!col.startsWith("cand_")) return;
+          const votes = parseInt(r[col]) || 0;
+          if (!winner || votes > winner.votes) {
+            const code = col.replace("cand_", "");
+            const info = candByCode[code] || {};
+            winner = { code, votes, nombre: info.nombre || code, color: info.color || "#888" };
+          }
+        });
+        const col = winner ? (winner.color || "#ccc") : "#ccc";
+        return `<div class="dept-row" data-extidx="${idx}" style="cursor:pointer">
+          <div class="dept-top">
+            <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+            <span class="dept-name" style="font-size:9px">${r.ubigeo_distrito}</span>
+            <span class="dept-votes">${fmtN(vot)}</span>
+          </div>
+          <div class="dept-winner">${winner ? winner.nombre : ""} <span style="color:var(--dim)">${pct}</span></div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".dept-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const r = rows[parseInt(row.dataset.extidx)];
+        const candEntries = [];
+        Object.keys(r).forEach(col => {
+          if (!col.startsWith("cand_")) return;
+          const votes = parseInt(r[col]) || 0;
+          if (!votes) return;
+          const code = col.replace("cand_", "");
+          const info = candByCode[code] || {};
+          candEntries.push({ name: info.nombre || code, color: info.color || "#888", votes });
+        });
+        candEntries.sort((a, b) => b.votes - a.votes);
+        const winner = candEntries[0] || null;
+        const fakeFeat = { properties: {
+          nombre_dept:            r.ubigeo_distrito,
+          winner:                 winner ? winner.name : "",
+          winner_color:           winner ? winner.color : "#888",
+          votos_emitidos:         r.votos_emitidos,
+          num_electores:          0,
+          votos_validos:          r.votos_validos,
+          votos_blancos:          r.votos_blancos,
+          votos_nulos:            r.votos_nulos,
+          actas_contabilizadas:   r.actas_contabilizadas,
+          actas_total:            r.actas_total,
+          top5_candidates:        JSON.stringify(candEntries),
+        }};
+        showDetail(fakeFeat, "dept");
+      });
+    });
+  }
+
+  // ── Controls ──────────────────────────────────────────────────────────────
+  document.querySelectorAll(".level-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentLevel = btn.dataset.level;
+      document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === currentLevel));
+      activeLayer = null;
+      document.getElementById("map-topbar").style.display = "none";
+      hideDetail();
+      render();
+    });
+  });
+
+  document.querySelectorAll(".view-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentView = btn.dataset.view;
+      document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === currentView));
+      render();
+    });
+  });
+
+  // ── Pronóstico rendering ──────────────────────────────────────────────────
+  let forecastData = null;
+
+  function renderPronostico() {
+    if (!forecastData) return;
+    const fd = forecastData;
+    const pct = fd.pct_contabilizadas || 0;
+    const acE = fd.actas_contabilizadas || 0;
+    const acT = fd.actas_total || 0;
+
+    document.getElementById("pron-actas-fill").style.width = pct.toFixed(1) + "%";
+    document.getElementById("pron-actas-label").textContent = `${pct.toFixed(1)}% · ${fmtN(acE)}/${fmtN(acT)}`;
+    document.getElementById("pron-source-note").textContent =
+      pct >= 100 ? "Escrutinio completo" : `${pct.toFixed(1)}% actas · proyección por acta`;
+
+    const totalProj = fd.votos_validos_proj || 1;
+    const cands = (fd.candidatos || []);
+    const maxPct = cands[0]?.pct_proj || 1;
+
+    document.getElementById("pron-cand-list").innerHTML = cands.map((c, i) => {
+      const col  = c.color || "#9a8878";
+      const pctV = c.pct_proj.toFixed(2);
+      const barW = (c.pct_proj / maxPct * 100).toFixed(1);
+      const isSV = i < 2;
+      return `<div class="cand-prob-row">
+        <div class="cand-prob-top">
+          <div class="cand-prob-dot" style="background:${col}"></div>
+          <div class="cand-prob-nameblock">
+            <div class="cand-prob-name">${c.nombre}</div>
+            <div class="cand-prob-partido">${c.partido || ''}</div>
+          </div>
+          <div class="cand-prob-right">
+            <span class="cand-prob-pct-val" style="color:${col}">${pctV}%</span>
+            <span class="cand-prob-pct-label">votos válidos</span>
+            ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
+          </div>
+        </div>
+        <div class="cand-prob-bar-wrap">
+          <div class="cand-prob-bar" style="width:${barW}%;background:${col}"></div>
+        </div>
+        <div class="cand-prob-votes">${fmtN(c.votos_proj)} votos proyectados · reportados ${c.pct_rep.toFixed(2)}%</div>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Mode switching ────────────────────────────────────────────────────────
+  function switchMode(mode) {
+    document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
+    const isMap = mode === "mapa";
+    document.getElementById("mapa-body").style.display       = isMap ? "flex"  : "none";
+    document.getElementById("pronostico-view").style.display = isMap ? "none"  : "flex";
+    document.getElementById("bottombar").style.display       = isMap ? "flex"  : "none";
+    if (isMap) setTimeout(() => map.invalidateSize(), 50);
+    if (mode === "pronostico") renderPronostico();
+  }
+  document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
+
+  // ── Load data ──────────────────────────────────────────────────────────────
+  const BASE = "../../../peru/2026eg/primera/data/";
+  Promise.all([
+    fetch(BASE + "candidates.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+    fetch(BASE + "aggregate_stats.json").then(r => r.json()).catch(() => null),
+    fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
+    fetch(BASE + "peru_2026eg_distrito_primera.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "peru_2026eg_provincia_primera.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "peru_2026eg_departamento_primera.geojson").then(r => r.json()).catch(() => null),
+  ]).then(([cands, agg, forecast, distGeo, provGeo, deptGeo]) => {
+    candidatesData = cands;
+    aggStats       = agg;
+    forecastData   = forecast;
+
+    if (distGeo) distData = distGeo;
+    if (provGeo) provData = provGeo;
+    if (deptGeo) {
+      deptData = deptGeo;
+      deptGeo.features.forEach(f => {
+        const key = (f.properties || {}).ubigeo_dept || "";
+        if (key) { deptFeatMap[key] = f; }
+      });
+    }
+
+    updateHeaderStats();
+    updateBottomBar();
+    buildCandList();
+    buildDeptList();
+
+    if (deptData || provData || distData) {
+      render();
+    } else {
+      document.getElementById("loading").innerHTML =
+        `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:220px">
+          Mapa no disponible.<br>GeoJSON se genera con los scripts de procesamiento.
+        </p>`;
+      document.getElementById("loading").style.background = "transparent";
+    }
+
+    document.getElementById("loading").style.display = "none";
+  }).catch(err => {
+    document.getElementById("loading").innerHTML =
+      `<p style="color:#c4603a;font-weight:700">${err.message}</p>
+       <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts de procesamiento primero.</p>`;
+  });
+
+})();
+</script>
+</body>
+</html>
