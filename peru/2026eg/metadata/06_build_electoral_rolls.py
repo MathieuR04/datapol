@@ -91,6 +91,7 @@ MESA_ROLL_FIELDS = [
     "ubigeo_dept",     "nombre_dept",
     "is_exterior",
     "electores_habiles",
+    "codigo_local_votacion", "nombre_local_votacion",
 ]
 
 with open(MESA_ROLL, "w", newline="") as f:
@@ -100,15 +101,17 @@ with open(MESA_ROLL, "w", newline="") as f:
         u = row["ubigeo_distrito"]
         dl = dist_lkp.get(u, {})
         w.writerow({
-            "codigo_mesa":      row["codigo_mesa"],
-            "ubigeo_distrito":  u,
-            "nombre_distrito":  dl.get("nombre_distrito", ""),
-            "ubigeo_provincia": dl.get("ubigeo_provincia", ""),
-            "nombre_provincia": dl.get("nombre_provincia", ""),
-            "ubigeo_dept":      dl.get("ubigeo_dept", ""),
-            "nombre_dept":      dl.get("nombre_dept", ""),
-            "is_exterior":      dl.get("is_exterior", ""),
-            "electores_habiles": row.get("electores_habiles", 0),
+            "codigo_mesa":           row["codigo_mesa"],
+            "ubigeo_distrito":       u,
+            "nombre_distrito":       dl.get("nombre_distrito", ""),
+            "ubigeo_provincia":      dl.get("ubigeo_provincia", ""),
+            "nombre_provincia":      dl.get("nombre_provincia", ""),
+            "ubigeo_dept":           dl.get("ubigeo_dept", ""),
+            "nombre_dept":           dl.get("nombre_dept", ""),
+            "is_exterior":           dl.get("is_exterior", ""),
+            "electores_habiles":     row.get("electores_habiles", 0),
+            "codigo_local_votacion": row.get("codigo_local_votacion", ""),
+            "nombre_local_votacion": row.get("nombre_local_votacion", ""),
         })
 
 print(f"  {len(mesa_rows):,} mesas  →  {MESA_ROLL.name}")

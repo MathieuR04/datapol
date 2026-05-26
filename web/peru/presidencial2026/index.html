@@ -340,6 +340,7 @@
       flex-direction: column;
       gap: 1.5rem;
     }
+    .needle-mesas-note { font-size: 8px; color: var(--dim); text-align: center; margin-top: -0.3rem; margin-bottom: 0.5rem; }
     .needle-section {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -568,6 +569,7 @@
     <!-- Needle gauge -->
     <div class="needle-section" id="needle-section">
       <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-mesas-note" id="needle-mesas-note"></div>
       <div class="needle-gauge-row">
         <div id="needle-left-photo" class="needle-side-placeholder"></div>
         <div class="needle-wrap">
@@ -592,7 +594,7 @@
         </div>
         <div class="needle-center-block">
           <div class="needle-center-diff" id="needle-center-diff">—</div>
-          <div class="needle-center-sub">margen proy. (pp)</div>
+          <div class="needle-center-sub">margen proyectado (votos)</div>
           <div class="needle-center-ci" id="needle-center-ci"></div>
         </div>
         <div class="needle-label right">
@@ -1474,8 +1476,11 @@
     const maxCount = Math.max(...counts, 1);
     const n = counts.length;
     const barW = (W - PAD * 2) / n;
-    const leftColor  = battle.left_color  || "#1E293B";
-    const rightColor = battle.right_color || "#1D4ED8";
+    // Support both new (cand_2nd/color_2nd) and legacy (left_code/left_color) structures
+    const color2nd   = battle.color_2nd   || battle.left_color   || "#1E293B";
+    const color3rd   = battle.color_3rd   || battle.right_color  || "#1D4ED8";
+    const nombre2nd  = battle.nombre_2nd  || battle.left_nombre  || "—";
+    const nombre3rd  = battle.nombre_3rd  || battle.right_nombre || "—";
     const zeroEdge = edges.findIndex(e => e >= 0);
     let paths = "";
     counts.forEach((c, i) => {
@@ -1483,7 +1488,7 @@
       const barH = Math.max(1, (c / maxCount) * H);
       const y    = H - barH;
       const midEdge = (edges[i] + (edges[i+1] ?? edges[i])) / 2;
-      const col = midEdge > 0 ? leftColor : midEdge < 0 ? rightColor : "#888";
+      const col = midEdge > 0 ? color2nd : midEdge < 0 ? color3rd : "#888";
       const op  = midEdge === 0 ? "0.35" : "0.65";
       paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.8).toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="${op}"/>`;
     });
@@ -1495,74 +1500,104 @@
     const keyIdxs = [0, Math.round(m/4), Math.round(m/2), Math.round(3*m/4), m];
     axis.innerHTML = keyIdxs.map(i => {
       const e = edges[i];
-      return `<span>${e > 0 ? "+" : ""}${e.toFixed(1)}pp</span>`;
+      return `<span>${fmtVoteDiff(e)}</span>`;
     }).join("");
     foot.innerHTML = `
-      <span style="color:${rightColor}">← ${battle.right_nombre || "—"} adelante</span>
-      <span style="color:${leftColor}">${battle.left_nombre || "—"} adelante →</span>`;
+      <span style="color:${color3rd}">← ${nombre3rd.split(" ")[0]} adelante</span>
+      <span style="color:${color2nd}">${nombre2nd.split(" ")[0]} adelante →</span>`;
   }
 
   // ── Pronóstico rendering ──────────────────────────────────────────────────
   function renderPronostico() {
     if (!forecastData) return;
     const fd = forecastData;
-    const isLive = (fd.pct_mesas || 0) > 0;
+    // Support both new (pct_actas) and legacy (pct_mesas) field names
+    const pctActas   = fd.pct_actas    ?? fd.pct_mesas    ?? 0;
+    const nSims      = fd.n_sims       ?? fd.n_simulations ?? 0;
+    const mesasCont  = fd.mesas_contabilizadas ?? 0;
+    const isLive     = pctActas > 0;
 
     document.getElementById("pron-source-note").textContent = isLive
-      ? `${fd.pct_mesas.toFixed(1)}% actas · ${(fd.n_simulations || 0).toLocaleString("es-PE")} simulaciones`
-      : `${(fd.n_simulations || 0).toLocaleString("es-PE")} simulaciones · pronóstico previo`;
+      ? `${pctActas.toFixed(1)}% actas · ${nSims.toLocaleString("es-PE")} simulaciones`
+      : `${nSims.toLocaleString("es-PE")} simulaciones · pronóstico previo`;
 
-    const cands = (fd.candidates || []).slice().sort((a, b) => (b.prob_runoff||0) - (a.prob_runoff||0));
-    const c2 = cands[1], c3 = cands[2];
+    // Mesas count note
+    const mesasNote = document.getElementById("needle-mesas-note");
+    if (mesasNote) {
+      mesasNote.textContent = isLive && mesasCont > 0
+        ? `${mesasCont.toLocaleString("es-PE")} mesas incluidas en el análisis`
+        : "";
+    }
 
-    // Needle
+    const cands = (fd.candidates || []).slice().sort((a, b) => (b.votes||0) - (a.votes||0));
+
+    // Needle — use new vote-based fields, fall back to legacy pct-scaled
     const battle = fd.battle || {};
-    if (battle.left_code && battle.right_code) {
-      const candLeft  = fd.candidates?.find(c => c.code === battle.left_code)  || c2 || {};
-      const candRight = fd.candidates?.find(c => c.code === battle.right_code) || c3 || {};
-      const marginPct  = battle.margin_pct_projected ?? 0;
-      const ciLowPct   = battle.ci_low_pct  ?? (marginPct - 5);
-      const ciHighPct  = battle.ci_high_pct ?? (marginPct + 5);
-      const scale = 1000000;
-      renderNeedle(marginPct * scale, ciLowPct * scale, ciHighPct * scale, candLeft, candRight);
-      document.getElementById("needle-left-name").textContent  = candLeft.nombre  || "—";
-      document.getElementById("needle-left-name").style.color  = candLeft.color || "#888";
-      document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
-      document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
-      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
-      document.getElementById("needle-left-photo").innerHTML  = "";
-      document.getElementById("needle-right-photo").innerHTML = "";
-      document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
-      document.getElementById("needle-right-name").style.color = candRight.color || "#888";
-      document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
-      document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
-      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes_current || 0) + " votos" : "—";
-      const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
-      document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
-      const ciLowFmt  = (ciLowPct  >= 0 ? "+" : "") + ciLowPct.toFixed(1)  + "pp";
-      const ciHighFmt = (ciHighPct >= 0 ? "+" : "") + ciHighPct.toFixed(1) + "pp";
-      document.getElementById("needle-center-ci").textContent = `IC 95%: [${ciLowFmt}, ${ciHighFmt}]`;
+    const hasBattle = battle.cand_2nd || battle.left_code;
+    if (hasBattle) {
+      // New structure
+      const cand2nd = fd.candidates?.find(c => c.codigo === battle.cand_2nd)
+                   || fd.candidates?.find(c => c.code   === battle.left_code)
+                   || cands[1] || {};
+      const cand3rd = fd.candidates?.find(c => c.codigo === battle.cand_3rd)
+                   || fd.candidates?.find(c => c.code   === battle.right_code)
+                   || cands[2] || {};
+
+      // Margin in votes (new) or scaled from pct (legacy)
+      let marginV, ciLoV, ciHiV;
+      if (battle.mean_margin_votes !== undefined) {
+        marginV = battle.mean_margin_votes;
+        ciLoV   = battle.ci_lo_votes;
+        ciHiV   = battle.ci_hi_votes;
+      } else {
+        // Legacy: pct → scale to rough votes
+        const scale = 1_000_000;
+        marginV = (battle.margin_pct_projected ?? 0) * scale;
+        ciLoV   = (battle.ci_low_pct  ?? marginV/scale - 3) * scale;
+        ciHiV   = (battle.ci_high_pct ?? marginV/scale + 3) * scale;
+      }
+
+      const prob2nd = battle.prob_2nd_pct ?? cand2nd.prob_runoff ?? 0;
+      const prob3rd = battle.prob_3rd_pct ?? cand3rd.prob_runoff ?? 0;
+
+      renderNeedle(marginV, ciLoV, ciHiV, cand2nd, cand3rd);
+
+      document.getElementById("needle-left-name").textContent  = cand2nd.nombre || "—";
+      document.getElementById("needle-left-name").style.color  = cand2nd.color  || "#888";
+      document.getElementById("needle-left-prob").textContent  = prob2nd.toFixed(0) + "%";
+      document.getElementById("needle-left-prob").style.color  = cand2nd.color  || "#888";
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(cand2nd.votes || 0) + " votos" : "—";
+      document.getElementById("needle-left-photo").innerHTML   = "";
+      document.getElementById("needle-right-photo").innerHTML  = "";
+      document.getElementById("needle-right-name").textContent = cand3rd.nombre || "—";
+      document.getElementById("needle-right-name").style.color = cand3rd.color  || "#888";
+      document.getElementById("needle-right-prob").textContent = prob3rd.toFixed(0) + "%";
+      document.getElementById("needle-right-prob").style.color = cand3rd.color  || "#888";
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(cand3rd.votes || 0) + " votos" : "—";
+
+      document.getElementById("needle-center-diff").textContent =
+        isLive ? fmtVoteDiff(marginV) : "—";
+      document.getElementById("needle-center-ci").textContent =
+        isLive ? `IC 95%: [${fmtVoteDiff(ciLoV)}, ${fmtVoteDiff(ciHiV)}]` : "";
     }
 
     renderMarginDist(battle);
 
-    // Candidate probability bars
+    // Candidate probability bars — data from mesa CSV (via forecast.json candidates)
     const list = document.getElementById("cand-prob-list");
     list.innerHTML = cands.map((c, i) => {
-      const isSV   = i < 2;
-      const prob   = c.prob_runoff ?? 0;
-      const votes  = c.votes_current || 0;
-      const ciLow  = c.ci_low_pct  ?? 0;
-      const ciHigh = c.ci_high_pct ?? 0;
+      const isSV  = i < 2;
+      const prob  = c.prob_runoff ?? (i === 0 ? 100 : i < 2 ? (battle.prob_2nd_pct ?? 0) : 0);
+      const votes = c.votes || 0;
+      const pctEm = c.pct_emitidos ?? c.vote_pct_projected ?? 0;
       const voteDisplay = isLive
-        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · proy. ${(c.vote_pct_projected||0).toFixed(1)}%`
+        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · ${pctEm.toFixed(1)}%`
         : `<span class="cand-prob-votes">—</span> sin datos`;
-      const ciStr  = isLive ? `<span class="cand-prob-ci">[IC ${ciLow.toFixed(1)}–${ciHigh.toFixed(1)}%]</span>` : "";
       return `<div class="cand-prob-row">
         <div class="cand-prob-top">
           <div class="cand-prob-dot" style="background:${c.color||'#888'}"></div>
           <div class="cand-prob-nameblock">
-            <div class="cand-prob-name">${c.nombre || c.code}</div>
+            <div class="cand-prob-name">${c.nombre || c.codigo || c.code}</div>
             <div class="cand-prob-partido">${c.partido || ''}</div>
           </div>
           <div class="cand-prob-right">
@@ -1574,15 +1609,15 @@
         <div class="cand-prob-bar-wrap">
           <div class="cand-prob-bar" style="width:${prob.toFixed(1)}%;background:${c.color||'#888'}"></div>
         </div>
-        <div class="cand-prob-bottom">${voteDisplay} ${ciStr}</div>
+        <div class="cand-prob-bottom">${voteDisplay}</div>
       </div>`;
     }).join("");
 
     const note = document.getElementById("pron-note");
     note.style.display = "block";
     note.textContent = isLive
-      ? `Proyección calculada con ${(fd.n_simulations||0).toLocaleString("es-PE")} simulaciones bootstrap (${fd.pct_mesas.toFixed(1)}% de actas contabilizadas). La distribución del margen muestra la probabilidad de cada rango de diferencia entre el 2º y 3er candidato al final del escrutinio.`
-      : "Pronóstico en estado inicial — sin actas contabilizadas.";
+      ? `Proyección bayesiana jerárquica con ${nSims.toLocaleString("es-PE")} simulaciones (${pctActas.toFixed(1)}% de mesas contabilizadas). El margen se mide en votos entre el 2º y 3er candidato. El IC 95% cubre el rango esperado del resultado final.`
+      : "Pronóstico en estado inicial — sin mesas contabilizadas.";
   }
 
   // ── Mode switching ────────────────────────────────────────────────────────

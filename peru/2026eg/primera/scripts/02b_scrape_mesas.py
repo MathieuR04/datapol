@@ -21,6 +21,7 @@ OUTPUT
 One row per mesa that exists and has a presidencial acta.
 Columns:
   codigo_mesa, ubigeo_distrito,
+  codigo_local_votacion, nombre_local_votacion,
   electores_habiles, votos_emitidos, votos_validos, votos_blancos, votos_nulos,
   actas_total (always 1), actas_contabilizadas (1 if estado==C else 0),
   estado_acta, ever_E, descripcion_error,
@@ -160,18 +161,20 @@ def parse_acta(acta: dict, codcan_map: dict, cand_cols: list) -> dict:
         return None
 
     row = {
-        "codigo_mesa":         codigo,
-        "ubigeo_distrito":     ubigeo,
-        "electores_habiles":   int(acta.get("totalElectoresHabiles") or 0),
-        "votos_emitidos":      int(acta.get("totalVotosEmitidos")    or 0),
-        "votos_validos":       int(acta.get("totalVotosValidos")     or 0),
-        "votos_blancos":       0,
-        "votos_nulos":         0,
-        "actas_total":         1,
-        "actas_contabilizadas": 1 if estado == "C" else 0,
-        "estado_acta":         estado,
-        "ever_E":              ever_E,
-        "descripcion_error":   errores,
+        "codigo_mesa":              codigo,
+        "ubigeo_distrito":          ubigeo,
+        "codigo_local_votacion":    str(acta.get("codigoLocalVotacion") or "").strip(),
+        "nombre_local_votacion":    str(acta.get("nombreLocalVotacion") or "").strip(),
+        "electores_habiles":        int(acta.get("totalElectoresHabiles") or 0),
+        "votos_emitidos":           int(acta.get("totalVotosEmitidos")    or 0),
+        "votos_validos":            int(acta.get("totalVotosValidos")     or 0),
+        "votos_blancos":            0,
+        "votos_nulos":              0,
+        "actas_total":              1,
+        "actas_contabilizadas":     1 if estado == "C" else 0,
+        "estado_acta":              estado,
+        "ever_E":                   ever_E,
+        "descripcion_error":        errores,
     }
     for col in cand_cols:
         row[col] = 0
@@ -210,6 +213,7 @@ def save_checkpoint(done: set):
 def _fields(cand_cols: list) -> list:
     return (
         ["codigo_mesa", "ubigeo_distrito",
+         "codigo_local_votacion", "nombre_local_votacion",
          "electores_habiles", "votos_emitidos", "votos_validos",
          "votos_blancos", "votos_nulos",
          "actas_total", "actas_contabilizadas",
@@ -465,13 +469,23 @@ def main():
     p.add_argument("--start",   type=int, default=1,           help="First mesa number (default: 1)")
     p.add_argument("--end",     type=int, default=TOTAL_MESAS, help=f"Last mesa number (default: {TOTAL_MESAS})")
     p.add_argument("--workers", type=int, default=10,          help="Parallel workers (default: 10)")
-    p.add_argument("--update",       action="store_true", help="Re-fetch non-Contabilizada actas")
-    p.add_argument("--retry-nulls",  action="store_true", help="Re-fetch codes that previously returned 204 + unchecked codes above old range")
+    p.add_argument("--update",        action="store_true", help="Re-fetch non-Contabilizada actas")
+    p.add_argument("--retry-nulls",   action="store_true", help="Re-fetch codes that previously returned 204 + unchecked codes above old range")
+    p.add_argument("--full-refresh",  action="store_true", help="Clear checkpoint + CSV and re-scrape everything from scratch (picks up new columns)")
     args = p.parse_args()
 
     codcan_map, cand_cols = load_candidates()
 
-    if args.retry_nulls:
+    if args.full_refresh:
+        print("Full refresh: clearing checkpoint and CSV …")
+        CKPT_FILE.unlink(missing_ok=True)
+        MESA_CSV.unlink(missing_ok=True)
+        run(start=1, end=92766, n_workers=args.workers,
+            codcan_map=codcan_map, cand_cols=cand_cols)
+        # Also scrape exterior range
+        run(start=900001, end=904703, n_workers=args.workers,
+            codcan_map=codcan_map, cand_cols=cand_cols)
+    elif args.retry_nulls:
         run_retry_nulls(n_workers=args.workers, codcan_map=codcan_map, cand_cols=cand_cols)
     elif args.update:
         run_update(n_workers=args.workers, codcan_map=codcan_map, cand_cols=cand_cols)
