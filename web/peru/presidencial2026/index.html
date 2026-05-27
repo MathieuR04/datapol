@@ -269,6 +269,8 @@
     .party-row:hover { background: var(--terra-lt); }
     .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
     .party-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 4px; }
+    .cand-portrait { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--sand); }
+    .cand-portrait-blank { border: 2px solid; }
     .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
     .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
     .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
@@ -724,6 +726,8 @@
   // Custom panes: fill paths always below border paths regardless of add order
   map.createPane('fillPane');   map.getPane('fillPane').style.zIndex  = 400;
   map.createPane('borderPane'); map.getPane('borderPane').style.zIndex = 401;
+  map.createPane('hoverPane');  map.getPane('hoverPane').style.zIndex  = 402;
+  map.getPane('hoverPane').style.pointerEvents = 'none';
 
   // ── State ────────────────────────────────────────────────────────────────
   let currentView      = "winner";
@@ -739,6 +743,7 @@
 
   let distData = null, provData = null, deptData = null;
   let candidatesData = null, aggStats = null;
+  let hoverLayer = null, selectLayer = null;   // highlight layers in hoverPane
 
   const BUBBLE_VIEWS = new Set(["actas", "votos"]);
 
@@ -769,7 +774,7 @@
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
       const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
-      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.6));
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 1.5));
     }
     if (isDept) return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
@@ -957,7 +962,42 @@
     } else {
       renderChoropleth();
     }
-    if (activeLayer) activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
+    // Redraw the selection highlight in hoverPane so it persists across redraws
+    if (activeLayer && selectLayer) {
+      map.removeLayer(selectLayer); selectLayer = null;
+    }
+    if (activeLayer) {
+      activeLayer.setStyle({ fillOpacity: 1 });
+      selectLayer = L.geoJSON(activeLayer.feature, {
+        pane: 'hoverPane',
+        style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
+        interactive: false
+      }).addTo(map);
+    }
+  }
+
+  // ── Highlight helpers ─────────────────────────────────────────────────────
+  function showHover(feat) {
+    if (hoverLayer) { map.removeLayer(hoverLayer); hoverLayer = null; }
+    hoverLayer = L.geoJSON(feat, {
+      pane: 'hoverPane',
+      style: { fillColor: 'transparent', fillOpacity: 0, weight: 2.5, color: '#c4603a' },
+      interactive: false
+    }).addTo(map);
+  }
+  function clearHover() {
+    if (hoverLayer) { map.removeLayer(hoverLayer); hoverLayer = null; }
+  }
+  function showSelect(feat) {
+    if (selectLayer) { map.removeLayer(selectLayer); selectLayer = null; }
+    selectLayer = L.geoJSON(feat, {
+      pane: 'hoverPane',
+      style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
+      interactive: false
+    }).addTo(map);
+  }
+  function clearSelect() {
+    if (selectLayer) { map.removeLayer(selectLayer); selectLayer = null; }
   }
 
   // ── Feature interactions ──────────────────────────────────────────────────
@@ -973,13 +1013,13 @@
       mouseover(e) {
         if (BUBBLE_VIEWS.has(currentView)) return;
         if (e.target !== activeLayer) {
-          // fillOpacity highlights the hovered feature; bringToFront() is safe
-          // because fillPane (z:400) can never go above borderPane (z:401)
           e.target.setStyle({ fillOpacity: 1 });
-          e.target.bringToFront();
+          e.target.bringToFront();    // safe: stays within fillPane (z:400)
+          showHover(e.target.feature);
         }
       },
       mouseout(e) {
+        clearHover();
         if (e.target === activeLayer) return;
         if (BUBBLE_VIEWS.has(currentView)) {
           const isDept = type === "dept";
@@ -992,10 +1032,12 @@
       },
       click(e) {
         L.DomEvent.stopPropagation(e);
+        clearHover();
         if (activeLayer === e.target) {
           deptLayer?.resetStyle(e.target);
           provLayer?.resetStyle(e.target);
           distLayer?.resetStyle(e.target);
+          clearSelect();
           activeLayer = null;
           map.setView(HOME_CENTER, defZoom());
           document.getElementById("map-topbar").style.display = "none";
@@ -1011,10 +1053,11 @@
             provLayer?.resetStyle(activeLayer);
             distLayer?.resetStyle(activeLayer);
           }
+          clearSelect();
         }
         activeLayer = e.target;
-        const w = type === "dept" ? 2.5 : 2;
-        e.target.setStyle({ weight: w, color: "#c4603a", fillOpacity: 1 });
+        e.target.setStyle({ fillOpacity: 1 });
+        showSelect(e.target.feature);
         showDetail(feat, type);
         const pad = type === "dept" ? [40, 40] : [60, 60];
         map.fitBounds(e.target.getBounds(), { padding: pad });
@@ -1119,6 +1162,7 @@
       }
       activeLayer = null;
     }
+    clearSelect();
   }
   document.getElementById("detail-back").addEventListener("click", hideDetail);
 
@@ -1172,6 +1216,7 @@
         deptLayer?.resetStyle(activeLayer);
       }
       activeLayer = null;
+      clearSelect();
     }
     map.setView(HOME_CENTER, defZoom());
     document.getElementById("map-topbar").style.display = "none";
@@ -1199,8 +1244,12 @@
         const pct  = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
         const barW = (c.votes / maxV * 100).toFixed(1);
         const dn   = c.nombre.replace(/"/g, '&quot;');
+        const imgHtml = c.imagen
+          ? `<img class="cand-portrait" src="${BASE}${c.imagen}" alt="" onerror="this.style.display='none'">`
+          : `<div class="cand-portrait cand-portrait-blank" style="border-color:${col}"></div>`;
         return `<div class="party-row" data-cand="${dn}">
           <div class="party-top">
+            ${imgHtml}
             <span class="party-pct" style="color:${col}">${pct}%</span>
             <div style="flex:1;min-width:0">
               <div class="party-name">${c.nombre}</div>
