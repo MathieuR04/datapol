@@ -190,21 +190,47 @@ def aggregate_results(df: pd.DataFrame, group_col: str,
     return agg
 
 
-MIN_POLY_AREA_M2 = 500_000     # 0.5 km²: discard tiny artifact dots
-PERU_CRS        = "EPSG:32718" # WGS 84 / UTM zone 18S  (covers all of Peru)
+PERU_CRS = "EPSG:32718"  # WGS 84 / UTM zone 18S  (covers all of Peru)
+# Minimum relative size of a polygon component to be kept (vs. the largest piece).
+# 5 % keeps real peninsulas/islands (e.g. Chucuito ≈ 40 % of its province)
+# while removing Lake Titicaca island dots (< 1 % of Puno dept).
+MIN_COMPONENT_RATIO = 0.05
 
 
-def _filter_small_polys(geom, min_area_m2: float):
-    """Remove MultiPolygon components smaller than min_area_m2 (in projected CRS)."""
-    from shapely.geometry import MultiPolygon
+def _clean_dissolved(geom):
+    """
+    Two-pass topology cleanup for a dissolved polygon:
+      1. Strip ALL interior rings — province/dept shapes have no real holes;
+         zero-perimeter rings are dissolve artifacts that render as phantom lines.
+      2. Drop exterior polygon components that are < MIN_COMPONENT_RATIO of the
+         largest component — removes stray dots while keeping real islands/
+         peninsulas that are a significant fraction of the feature's area.
+    """
+    import shapely
+    from shapely.geometry import Polygon, MultiPolygon
+
     if geom is None or geom.is_empty:
         return geom
+
+    # 1. Strip interior rings from every polygon piece
+    def _drop_holes(poly: Polygon) -> Polygon:
+        return Polygon(poly.exterior)
+
+    geom_type = geom.geom_type
+    if geom_type == "Polygon":
+        geom = _drop_holes(geom)
+    elif geom_type == "MultiPolygon":
+        geom = MultiPolygon([_drop_holes(p) for p in geom.geoms])
+
+    # 2. Drop small disconnected components
     if geom.geom_type == "MultiPolygon":
-        big = [p for p in geom.geoms if p.area >= min_area_m2]
-        if not big:
-            # Keep the single largest piece rather than nothing
-            big = [max(geom.geoms, key=lambda p: p.area)]
-        return MultiPolygon(big) if len(big) > 1 else big[0]
+        parts = list(geom.geoms)
+        largest = max(p.area for p in parts)
+        kept = [p for p in parts if p.area >= largest * MIN_COMPONENT_RATIO]
+        if not kept:
+            kept = [max(parts, key=lambda p: p.area)]
+        geom = MultiPolygon(kept) if len(kept) > 1 else kept[0]
+
     return geom
 
 
@@ -215,16 +241,19 @@ def build_dissolved_geojson(dist_geo_path: Path, df_agg: pd.DataFrame,
 
     NO simplification, NO buffer-close — dissolved polygons share exact vertex
     coordinates with the source district polygons so borders align perfectly at
-    all zoom levels.  Only step beyond dissolve is filtering out sub-0.5 km²
-    artifact components (e.g. stray dots from water-body boundaries in source).
+    all zoom levels.
 
-    Steps:
-      1. Load district GeoJSON; fix invalid geometries with buffer(0).
-      2. Dissolve by group_col (ubigeo_provincia or ubigeo_dept).
-      3. Project to UTM; filter tiny disconnected polygon components.
-      4. Project back to WGS84.
-      5. Merge with aggregated election data and write GeoJSON.
+    Cleanup pipeline (in UTM for accurate area ratios):
+      1. Snap vertices to 1 m grid before dissolving → shared boundaries become
+         identical → eliminates topology slivers that produce phantom rings.
+      2. Dissolve by group_col.
+      3. Strip interior rings — none are real features; they are degenerate
+         dissolve artifacts that render as "divisory lines".
+      4. Drop polygon components < 5 % of the feature's largest piece →
+         removes stray dots while keeping real geographic islands/peninsulas.
     """
+    import shapely
+
     gdf = gpd.read_file(dist_geo_path)
     if group_col not in gdf.columns:
         raise ValueError(f"'{group_col}' not found in district GeoJSON properties")
@@ -232,13 +261,22 @@ def build_dissolved_geojson(dist_geo_path: Path, df_agg: pd.DataFrame,
     # Fix any invalid source geometries
     gdf.geometry = gdf.geometry.buffer(0)
 
-    # Dissolve — unary_union of all district polygons per group
-    dissolved = gdf[[group_col, "geometry"]].dissolve(by=group_col).reset_index()
+    # ── Project to UTM for metre-scale snapping ────────────────────────────────
+    gdf_m = gdf[[group_col, "geometry"]].to_crs(PERU_CRS)
 
-    # ── Filter artifact dots in metric CRS (no buffer-close — avoids overlaps) ─
-    dissolved = dissolved.to_crs(PERU_CRS)
-    dissolved.geometry = dissolved.geometry.apply(
-        lambda g: _filter_small_polys(g, MIN_POLY_AREA_M2))
+    # Snap all vertices to 1 m grid: forces shared boundaries to identical
+    # floating-point coordinates so dissolve leaves no sub-millimetre slivers.
+    gdf_m.geometry = gdf_m.geometry.apply(
+        lambda g: shapely.make_valid(shapely.set_precision(g, grid_size=1.0))
+    )
+
+    # Dissolve in UTM (shared boundaries are now exact → clean merge)
+    dissolved = gdf_m.dissolve(by=group_col).reset_index()
+
+    # ── Clean up topology artifacts ────────────────────────────────────────────
+    dissolved.geometry = dissolved.geometry.apply(_clean_dissolved)
+
+    # Project back to geographic CRS (no simplification)
     dissolved = dissolved.to_crs("EPSG:4326")
 
     # Carry nombre columns from district gdf if available
