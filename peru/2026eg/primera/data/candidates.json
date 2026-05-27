@@ -4,49 +4,56 @@
     "nombre": "KEIKO SOFIA FUJIMORI HIGUCHI",
     "partido": "FUERZA POPULAR",
     "color": "#EA580C",
-    "codcan": 8
+    "codcan": 8,
+    "imagen": "images/keiko.png"
   },
   {
     "codigo": "10",
     "nombre": "ROBERTO HELBERT SANCHEZ PALOMINO",
     "partido": "JUNTOS POR EL PERÚ",
     "color": "#166534",
-    "codcan": 10
+    "codcan": 10,
+    "imagen": "images/roberto.png"
   },
   {
     "codigo": "35",
     "nombre": "RAFAEL BERNARDO LÓPEZ ALIAGA CAZORLA",
     "partido": "RENOVACIÓN POPULAR",
     "color": "#1E3A8A",
-    "codcan": 35
+    "codcan": 35,
+    "imagen": "images/lopez_aliaga.png"
   },
   {
     "codigo": "16",
     "nombre": "JORGE NIETO MONTESINOS",
     "partido": "PARTIDO DEL BUEN GOBIERNO",
     "color": "#FBBF24",
-    "codcan": 16
+    "codcan": 16,
+    "imagen": "images/nieto.png"
   },
   {
     "codigo": "14",
     "nombre": "RICARDO PABLO BELMONT CASSINELLI",
     "partido": "PARTIDO CÍVICO OBRAS",
     "color": "#D97706",
-    "codcan": 14
+    "codcan": 14,
+    "imagen": "images/belmont.png"
   },
   {
     "codigo": "23",
     "nombre": "CARLOS GONSALO ALVAREZ LOAYZA",
     "partido": "PARTIDO PAÍS PARA TODOS",
     "color": "#EAB308",
-    "codcan": 23
+    "codcan": 23,
+    "imagen": "images/alvarez.png"
   },
   {
     "codigo": "02",
     "nombre": "PABLO ALFONSO LOPEZ CHAU NAVA",
     "partido": "AHORA NACIÓN - AN",
-    "color": "#16A34A",
-    "codcan": 2
+    "color": "#DC2626",
+    "codcan": 2,
+    "imagen": "images/pablo_lopez_chau.png"
   },
   {
     "codigo": "33",

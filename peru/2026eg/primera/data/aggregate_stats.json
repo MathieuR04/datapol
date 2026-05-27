@@ -1,13 +1,13 @@
 {
   "n_distritos": 2102,
-  "num_electores": 27077741,
+  "num_electores": 27311277,
   "votos_emitidos": 20167745,
   "votos_validos": 16738039,
   "votos_blancos": 2372895,
   "votos_nulos": 1056811,
   "actas_contabilizadas": 92766,
   "actas_total": 92766,
-  "participacion_pct": 74.48,
+  "participacion_pct": 73.84,
   "actas_pct": 100.0,
   "candidatos": [
     {
@@ -68,7 +68,7 @@
       "codigo": "02",
       "nombre": "PABLO ALFONSO LOPEZ CHAU NAVA",
       "partido": "AHORA NACIÓN - AN",
-      "color": "#16A34A",
+      "color": "#DC2626",
       "votos": 1221272,
       "pct_validos": 7.296,
       "pct_emitidos": 6.056
