@@ -792,7 +792,9 @@
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
       const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
-      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 1.5));
+      const opacity = Math.pow(t, 0.8) * 0.90;
+      if (isDept) return { fillColor: candColor(selectedCandidate), weight: 1.5, color: "#1a1209", fillOpacity: opacity };
+      return { fillColor: candColor(selectedCandidate), weight: 0.3, color: "#cfc0ab", fillOpacity: opacity };
     }
     if (isDept) return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
@@ -987,7 +989,7 @@
     if (activeLayer) {
       activeLayer.setStyle({ fillOpacity: 1 });
       selectLayer = L.geoJSON(activeLayer.feature, {
-        pane: 'hoverPane',
+        pane: 'hoverPane', smoothFactor: 0,
         style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
         interactive: false
       }).addTo(map);
@@ -998,7 +1000,7 @@
   function showHover(feat) {
     if (hoverLayer) { map.removeLayer(hoverLayer); hoverLayer = null; }
     hoverLayer = L.geoJSON(feat, {
-      pane: 'hoverPane',
+      pane: 'hoverPane', smoothFactor: 0,
       style: { fillColor: 'transparent', fillOpacity: 0, weight: 2.5, color: '#c4603a' },
       interactive: false
     }).addTo(map);
@@ -1009,7 +1011,7 @@
   function showSelect(feat) {
     if (selectLayer) { map.removeLayer(selectLayer); selectLayer = null; }
     selectLayer = L.geoJSON(feat, {
-      pane: 'hoverPane',
+      pane: 'hoverPane', smoothFactor: 0,
       style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
       interactive: false
     }).addTo(map);
