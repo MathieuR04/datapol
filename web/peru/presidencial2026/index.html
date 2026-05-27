@@ -1509,6 +1509,11 @@
   document.querySelectorAll(".view-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       currentView = btn.dataset.view;
+      // Switching to any explicit view deselects candidate choropleth
+      if (selectedCandidate) {
+        selectedCandidate = null;
+        document.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+      }
       document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === currentView));
       render();
     });
