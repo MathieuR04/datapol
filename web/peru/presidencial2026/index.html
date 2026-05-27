@@ -265,18 +265,25 @@
     .panel-scroll::-webkit-scrollbar-track { background: transparent; }
     .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
     .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
+    /* ── Sidebar rows without photo ── */
     .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
     .party-row:hover { background: var(--terra-lt); }
     .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
     .party-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 4px; }
-    .cand-portrait { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--sand); }
-    .cand-portrait-blank { border: 2px solid; }
     .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
     .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
     .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
     .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
     .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
     .party-bar { height: 100%; border-radius: 1px; }
+    /* ── Sidebar rows WITH photo ── */
+    .party-row--photo { padding: 0; }
+    .party-row--photo:hover { background: var(--terra-lt); }
+    .party-row--photo.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .sidebar-photo-inner { display: flex; align-items: stretch; }
+    .sidebar-cand-photo { width: 62px; flex-shrink: 0; object-fit: cover; object-position: top center; display: block; }
+    .sidebar-photo-text { flex: 1; min-width: 0; padding: 0.45rem 0.6rem; display: flex; flex-direction: column; justify-content: center; }
+    .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -746,6 +753,17 @@
   let hoverLayer = null, selectLayer = null;   // highlight layers in hoverPane
 
   const BUBBLE_VIEWS = new Set(["actas", "votos"]);
+
+  // ── Candidate photo helper ────────────────────────────────────────────────
+  function candPhotoHtml(imagen, w, h, cssClass) {
+    if (!imagen) return "";
+    const cls = cssClass || "needle-side-photo";
+    const src = BASE + imagen;
+    return `<img class="${cls}" src="${src}" width="${w}" height="${h}" onerror="this.style.display='none'" alt="">`;
+  }
+  function imagenByCode(codigo) {
+    return (candidatesData || []).find(c => String(c.codigo) === String(codigo))?.imagen || null;
+  }
 
   // ── Style functions ───────────────────────────────────────────────────────
   function getCandShare(props, candName) {
@@ -1244,12 +1262,27 @@
         const pct  = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
         const barW = (c.votes / maxV * 100).toFixed(1);
         const dn   = c.nombre.replace(/"/g, '&quot;');
-        const imgHtml = c.imagen
-          ? `<img class="cand-portrait" src="${BASE}${c.imagen}" alt="" onerror="this.style.display='none'">`
-          : `<div class="cand-portrait cand-portrait-blank" style="border-color:${col}"></div>`;
+
+        if (c.imagen) {
+          const src = `${BASE}${c.imagen}`;
+          return `<div class="party-row party-row--photo" data-cand="${dn}">
+            <div class="sidebar-photo-inner">
+              <img class="sidebar-cand-photo" src="${src}" onerror="this.style.display='none'" alt="">
+              <div class="sidebar-photo-text">
+                <span class="party-pct-big" style="color:${col}">${pct}%</span>
+                <div class="party-name">${c.nombre}</div>
+                <div class="party-sub">${c.partido || ''}</div>
+              </div>
+              <span class="party-votes" style="align-self:center;padding-right:0.5rem">${fmtN(c.votes)}</span>
+            </div>
+            <div class="party-bar-wrap">
+              <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+            </div>
+          </div>`;
+        }
+
         return `<div class="party-row" data-cand="${dn}">
           <div class="party-top">
-            ${imgHtml}
             <span class="party-pct" style="color:${col}">${pct}%</span>
             <div style="flex:1;min-width:0">
               <div class="party-name">${c.nombre}</div>
@@ -1650,8 +1683,15 @@
       document.getElementById("needle-left-prob").textContent  = prob2nd.toFixed(0) + "%";
       document.getElementById("needle-left-prob").style.color  = cand2nd.color  || "#888";
       document.getElementById("needle-left-votes").textContent = isLive ? fmtN(cand2nd.votes || 0) + " votos" : "—";
-      document.getElementById("needle-left-photo").innerHTML   = "";
-      document.getElementById("needle-right-photo").innerHTML  = "";
+      // Photos beside the gauge
+      const leftPhotoEl  = document.getElementById("needle-left-photo");
+      const rightPhotoEl = document.getElementById("needle-right-photo");
+      const leftImgHtml  = candPhotoHtml(imagenByCode(cand2nd.codigo), 90, 120, "needle-side-photo");
+      const rightImgHtml = candPhotoHtml(imagenByCode(cand3rd.codigo), 90, 120, "needle-side-photo");
+      leftPhotoEl.innerHTML  = leftImgHtml  || "";
+      rightPhotoEl.innerHTML = rightImgHtml || "";
+      leftPhotoEl.className  = leftImgHtml  ? "needle-side-photo-wrap" : "needle-side-placeholder";
+      rightPhotoEl.className = rightImgHtml ? "needle-side-photo-wrap" : "needle-side-placeholder";
       document.getElementById("needle-right-name").textContent = cand3rd.nombre || "—";
       document.getElementById("needle-right-name").style.color = cand3rd.color  || "#888";
       document.getElementById("needle-right-prob").textContent = prob3rd.toFixed(0) + "%";

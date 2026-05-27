@@ -1,13 +1,13 @@
 {
   "n_distritos": 2102,
-  "num_electores": 27311277,
+  "num_electores": 27325432,
   "votos_emitidos": 20167745,
   "votos_validos": 16738039,
   "votos_blancos": 2372895,
   "votos_nulos": 1056811,
   "actas_contabilizadas": 92766,
   "actas_total": 92766,
-  "participacion_pct": 73.84,
+  "participacion_pct": 73.81,
   "actas_pct": 100.0,
   "candidatos": [
     {
