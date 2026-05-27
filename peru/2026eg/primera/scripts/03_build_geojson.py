@@ -190,9 +190,7 @@ def aggregate_results(df: pd.DataFrame, group_col: str,
     return agg
 
 
-SIMPLIFY_TOL    = 0.001        # degrees ≈ 111m — invisible at province/dept zoom levels
-BUFFER_CLOSE_M  = 150          # metres: closes topology gaps up to 300m wide
-MIN_POLY_AREA_M2 = 500_000     # 0.5 km²: discard tiny islands / floating dots
+MIN_POLY_AREA_M2 = 500_000     # 0.5 km²: discard tiny artifact dots
 PERU_CRS        = "EPSG:32718" # WGS 84 / UTM zone 18S  (covers all of Peru)
 
 
@@ -215,12 +213,16 @@ def build_dissolved_geojson(dist_geo_path: Path, df_agg: pd.DataFrame,
     """
     Build province or dept GeoJSON by dissolving the district GeoJSON.
 
+    NO simplification, NO buffer-close — dissolved polygons share exact vertex
+    coordinates with the source district polygons so borders align perfectly at
+    all zoom levels.  Only step beyond dissolve is filtering out sub-0.5 km²
+    artifact components (e.g. stray dots from water-body boundaries in source).
+
     Steps:
       1. Load district GeoJSON; fix invalid geometries with buffer(0).
       2. Dissolve by group_col (ubigeo_provincia or ubigeo_dept).
-      3. Project to UTM; buffer-close (±150m) to merge topology gaps from
-         river/lake borders; filter tiny disconnected polygon components.
-      4. Project back to WGS84; simplify to reduce file size.
+      3. Project to UTM; filter tiny disconnected polygon components.
+      4. Project back to WGS84.
       5. Merge with aggregated election data and write GeoJSON.
     """
     gdf = gpd.read_file(dist_geo_path)
@@ -233,22 +235,11 @@ def build_dissolved_geojson(dist_geo_path: Path, df_agg: pd.DataFrame,
     # Dissolve — unary_union of all district polygons per group
     dissolved = gdf[[group_col, "geometry"]].dissolve(by=group_col).reset_index()
 
-    # ── Clean up in a projected metric CRS ─────────────────────────────────────
+    # ── Filter artifact dots in metric CRS (no buffer-close — avoids overlaps) ─
     dissolved = dissolved.to_crs(PERU_CRS)
-
-    # Buffer-close: fills tiny topology gaps left by river / lake borders
-    dissolved.geometry = (dissolved.geometry
-                          .buffer(BUFFER_CLOSE_M)
-                          .buffer(-BUFFER_CLOSE_M))
-
-    # Remove tiny islands / floating dots (artifacts from the source data)
     dissolved.geometry = dissolved.geometry.apply(
         lambda g: _filter_small_polys(g, MIN_POLY_AREA_M2))
-
-    # Project back to geographic CRS and simplify for file size
     dissolved = dissolved.to_crs("EPSG:4326")
-    dissolved.geometry = dissolved.geometry.simplify(
-        SIMPLIFY_TOL, preserve_topology=True)
 
     # Carry nombre columns from district gdf if available
     for col in ["nombre_provincia", "nombre_dept"]:
@@ -338,7 +329,7 @@ def main():
     # Dissolving from the district shapes guarantees:
     #   • no topology gaps between neighbouring polygons
     #   • province borders in district-view overlay align with polygon edges
-    print(f"  (dissolving provinces from districts; simplify={SIMPLIFY_TOL}°) …")
+    print(f"  (dissolving provinces from districts; full resolution) …")
 
     prov_agg = aggregate_results(df_nat, "ubigeo_provincia", cand_cols, cand_lkp)
     build_dissolved_geojson(
