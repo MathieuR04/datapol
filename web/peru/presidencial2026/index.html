@@ -819,17 +819,18 @@
       if (deptLayer)  { map.removeLayer(deptLayer);  deptLayer  = null; }
       if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
       if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
-      // Dept border overlay — always recreate so weight is correct for this level
-      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
-      if (deptData) {
-        deptBoundaryLayer = L.geoJSON(deptData, {
-          style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" },
-          interactive: false, smoothFactor: 0
-        }).addTo(map);
-      }
+      // Province fill first — dept borders must be added AFTER so they draw on top
       if (!provLayer) {
         provLayer = L.geoJSON(provData, { style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
       } else { provLayer.setStyle(styleProv); }
+      // Dept border overlay — always recreate so it sits above province fill
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
     } else {
       if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
       if (provLayer)  { map.removeLayer(provLayer);  provLayer  = null; }
@@ -865,11 +866,12 @@
       if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
       if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
       if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+      // Province fill first, dept borders on top
       if (!provLayer) provLayer = L.geoJSON(provData, { style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
       provLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" }));
       if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
       if (deptData) {
-        deptBoundaryLayer = L.geoJSON(deptData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 1.2, color: "#1a1209" }, interactive: false }).addTo(map);
+        deptBoundaryLayer = L.geoJSON(deptData, { style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" }, interactive: false }).addTo(map);
       }
     } else {
       if (distLayer) { map.removeLayer(distLayer); distLayer = null; }

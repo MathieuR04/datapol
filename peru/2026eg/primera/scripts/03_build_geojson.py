@@ -190,7 +190,24 @@ def aggregate_results(df: pd.DataFrame, group_col: str,
     return agg
 
 
-SIMPLIFY_TOL = 0.001   # degrees ≈ 111m — invisible at province/dept zoom levels
+SIMPLIFY_TOL    = 0.001        # degrees ≈ 111m — invisible at province/dept zoom levels
+BUFFER_CLOSE_M  = 150          # metres: closes topology gaps up to 300m wide
+MIN_POLY_AREA_M2 = 500_000     # 0.5 km²: discard tiny islands / floating dots
+PERU_CRS        = "EPSG:32718" # WGS 84 / UTM zone 18S  (covers all of Peru)
+
+
+def _filter_small_polys(geom, min_area_m2: float):
+    """Remove MultiPolygon components smaller than min_area_m2 (in projected CRS)."""
+    from shapely.geometry import MultiPolygon
+    if geom is None or geom.is_empty:
+        return geom
+    if geom.geom_type == "MultiPolygon":
+        big = [p for p in geom.geoms if p.area >= min_area_m2]
+        if not big:
+            # Keep the single largest piece rather than nothing
+            big = [max(geom.geoms, key=lambda p: p.area)]
+        return MultiPolygon(big) if len(big) > 1 else big[0]
+    return geom
 
 
 def build_dissolved_geojson(dist_geo_path: Path, df_agg: pd.DataFrame,
@@ -199,32 +216,45 @@ def build_dissolved_geojson(dist_geo_path: Path, df_agg: pd.DataFrame,
     Build province or dept GeoJSON by dissolving the district GeoJSON.
 
     Steps:
-      1. Load district GeoJSON into a GeoDataFrame.
+      1. Load district GeoJSON; fix invalid geometries with buffer(0).
       2. Dissolve by group_col (ubigeo_provincia or ubigeo_dept).
-      3. Simplify to reduce file size.
-      4. Merge with aggregated election data.
-      5. Write output GeoJSON.
+      3. Project to UTM; buffer-close (±150m) to merge topology gaps from
+         river/lake borders; filter tiny disconnected polygon components.
+      4. Project back to WGS84; simplify to reduce file size.
+      5. Merge with aggregated election data and write GeoJSON.
     """
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")   # suppress CRS buffer warnings
+    gdf = gpd.read_file(dist_geo_path)
+    if group_col not in gdf.columns:
+        raise ValueError(f"'{group_col}' not found in district GeoJSON properties")
 
-        gdf = gpd.read_file(dist_geo_path)
-        if group_col not in gdf.columns:
-            raise ValueError(f"'{group_col}' not found in district GeoJSON properties")
+    # Fix any invalid source geometries
+    gdf.geometry = gdf.geometry.buffer(0)
 
-        # Dissolve — unary_union of all district polygons per group
-        dissolved = gdf[[group_col, "geometry"]].dissolve(by=group_col).reset_index()
+    # Dissolve — unary_union of all district polygons per group
+    dissolved = gdf[[group_col, "geometry"]].dissolve(by=group_col).reset_index()
 
-        # Simplify to reduce file size (preserve topology to avoid self-intersections)
-        dissolved.geometry = dissolved.geometry.simplify(
-            SIMPLIFY_TOL, preserve_topology=True)
+    # ── Clean up in a projected metric CRS ─────────────────────────────────────
+    dissolved = dissolved.to_crs(PERU_CRS)
 
-        # Carry nombre columns from district gdf if available
-        for col in ["nombre_provincia", "nombre_dept"]:
-            if col in gdf.columns:
-                first = gdf.groupby(group_col)[col].first().reset_index()
-                dissolved = dissolved.merge(first, on=group_col, how="left")
+    # Buffer-close: fills tiny topology gaps left by river / lake borders
+    dissolved.geometry = (dissolved.geometry
+                          .buffer(BUFFER_CLOSE_M)
+                          .buffer(-BUFFER_CLOSE_M))
+
+    # Remove tiny islands / floating dots (artifacts from the source data)
+    dissolved.geometry = dissolved.geometry.apply(
+        lambda g: _filter_small_polys(g, MIN_POLY_AREA_M2))
+
+    # Project back to geographic CRS and simplify for file size
+    dissolved = dissolved.to_crs("EPSG:4326")
+    dissolved.geometry = dissolved.geometry.simplify(
+        SIMPLIFY_TOL, preserve_topology=True)
+
+    # Carry nombre columns from district gdf if available
+    for col in ["nombre_provincia", "nombre_dept"]:
+        if col in gdf.columns:
+            first = gdf.groupby(group_col)[col].first().reset_index()
+            dissolved = dissolved.merge(first, on=group_col, how="left")
 
     # Merge aggregated election data
     keep = ["votos_validos", "votos_blancos", "votos_nulos", "votos_emitidos",
