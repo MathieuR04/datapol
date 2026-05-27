@@ -987,7 +987,7 @@
       map.removeLayer(selectLayer); selectLayer = null;
     }
     if (activeLayer) {
-      activeLayer.setStyle({ fillOpacity: 1 });
+      if (currentView !== "candidate") activeLayer.setStyle({ fillOpacity: 1 });
       selectLayer = L.geoJSON(activeLayer.feature, {
         pane: 'hoverPane', smoothFactor: 0,
         style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
@@ -1033,7 +1033,7 @@
       mouseover(e) {
         if (BUBBLE_VIEWS.has(currentView)) return;
         if (e.target !== activeLayer) {
-          e.target.setStyle({ fillOpacity: 1 });
+          if (currentView !== "candidate") e.target.setStyle({ fillOpacity: 1 });
           e.target.bringToFront();    // safe: stays within fillPane (z:400)
           showHover(e.target.feature);
         }
@@ -1076,7 +1076,7 @@
           clearSelect();
         }
         activeLayer = e.target;
-        e.target.setStyle({ fillOpacity: 1 });
+        if (currentView !== "candidate") e.target.setStyle({ fillOpacity: 1 });
         showSelect(e.target.feature);
         showDetail(feat, type);
         const pad = type === "dept" ? [40, 40] : [60, 60];
