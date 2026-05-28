@@ -1,0 +1,18 @@
+{
+  "total_actas": 92766,
+  "ever_e": 5891,
+  "never_e": 86875,
+  "ever_e_pct": 6.35,
+  "error_counts": {
+    "err_aritmetico": 4958,
+    "err_firmas": 609,
+    "err_impugnada": 469,
+    "err_ilegible": 466,
+    "err_incompleta": 87,
+    "err_reprocesada": 71,
+    "err_extraviada": 61,
+    "err_siniestrada": 59,
+    "err_sin_datos": 47,
+    "err_nulidad": 7
+  }
+}
