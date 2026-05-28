@@ -469,6 +469,7 @@
 <div class="mode-bar">
   <button class="mode-tab active" data-mode="mapa">Mapa</button>
   <button class="mode-tab" data-mode="pronostico">Pronóstico</button>
+  <button class="mode-tab" data-mode="comparacion">Comparación</button>
 </div>
 
 <!-- Header -->
@@ -545,15 +546,15 @@
     <div class="panel-tabs" id="panel-tabs">
       <button class="ptab active" data-ptab="candidatos">Candidatos</button>
       <button class="ptab" data-ptab="deptos">Deptos</button>
-      <button class="ptab" data-ptab="comparacion">Comparación</button>
       <button class="ptab" data-ptab="exterior">Exterior</button>
     </div>
     <div class="panel-scroll" id="panel-scroll">
       <div id="panel-candidatos"></div>
       <div id="panel-deptos" style="display:none"></div>
-      <div id="panel-comparacion" style="display:none"></div>
       <div id="panel-exterior" style="display:none"></div>
     </div>
+    <!-- Comparación mode panel (shown when mode=comparacion) -->
+    <div id="comparacion-panel" style="display:none;flex:1;overflow-y:auto;min-height:0;flex-direction:column;display:none"></div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
       <div class="detail-back" id="detail-back">← Volver</div>
@@ -772,10 +773,10 @@
   let compDistData = null, compProvData = null, compDeptData = null;
 
   const COMPARISONS = {
-    A: { key: "A", label: "Keiko Fujimori 2026 vs 2021",        cand26: "Keiko Fujimori", cand21: "Keiko Fujimori",   color: "#c4603a" },
-    B: { key: "B", label: "Aliaga 2026 vs Aliaga 2021",          cand26: "Rafael López Aliaga", cand21: "López Aliaga 2021", color: "#1a5276" },
-    C: { key: "C", label: "R. Sánchez 2026 vs Castillo 2021",    cand26: "Roberto Sánchez", cand21: "Pedro Castillo",  color: "#c0392b" },
-    D: { key: "D", label: "Jorge Nieto 2026 vs De Soto 2021",    cand26: "Jorge Nieto",    cand21: "Hernando de Soto", color: "#566573" },
+    A: { key: "A", label: "Keiko Fujimori 2026 vs 2021",       cand26: "Keiko Fujimori",      cand21: "Keiko 2021",      color: "#c4603a", imagen: "images/keiko.png" },
+    B: { key: "B", label: "Aliaga 2026 vs Aliaga 2021",        cand26: "Rafael López Aliaga", cand21: "Aliaga 2021",     color: "#1a5276", imagen: "images/lopez_aliaga.png" },
+    C: { key: "C", label: "R. Sánchez 2026 vs Castillo 2021",  cand26: "Roberto Sánchez",     cand21: "Pedro Castillo",  color: "#c0392b", imagen: "images/roberto.png" },
+    D: { key: "D", label: "Jorge Nieto 2026 vs De Soto 2021",  cand26: "Jorge Nieto",         cand21: "Hernando de Soto",color: "#566573", imagen: "images/nieto.png" },
   };
 
   const BUBBLE_VIEWS = new Set(["actas", "votos", "candidate_bubble"]);
@@ -1280,7 +1281,6 @@
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display  = tab === "candidatos"  ? "" : "none";
     document.getElementById("panel-deptos").style.display      = tab === "deptos"      ? "" : "none";
-    document.getElementById("panel-comparacion").style.display = tab === "comparacion" ? "" : "none";
     document.getElementById("panel-exterior").style.display    = tab === "exterior"    ? "" : "none";
     document.getElementById("detail-panel").classList.remove("active");
     document.getElementById("panel-scroll").style.display = "";
@@ -1299,15 +1299,8 @@
     }
     map.setView(HOME_CENTER, defZoom());
     document.getElementById("map-topbar").style.display = "none";
-    if (tab === "exterior")   buildExteriorList();
-    if (tab === "comparacion") {
-      buildCompList();
-      if (selectedComp) renderComp();
-    } else {
-      // leaving comparison tab — restore normal choropleth
-      if (compLayer)  { map.removeLayer(compLayer);  compLayer  = null; }
-      render();
-    }
+    if (tab === "exterior") buildExteriorList();
+    render();
   }
   document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
 
@@ -1831,11 +1824,28 @@
   // ── Mode switching ────────────────────────────────────────────────────────
   function switchMode(mode) {
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
-    const isMap = mode === "mapa";
-    document.getElementById("mapa-body").style.display       = isMap ? "flex"  : "none";
-    document.getElementById("pronostico-view").style.display = isMap ? "none"  : "flex";
-    document.getElementById("bottombar").style.display       = isMap ? "flex"  : "none";
-    if (isMap) setTimeout(() => map.invalidateSize(), 50);
+    const isMap  = mode === "mapa";
+    const isComp = mode === "comparacion";
+    // mapa-body contains the map; show it for both mapa and comparacion modes
+    document.getElementById("mapa-body").style.display       = (isMap || isComp) ? "flex" : "none";
+    document.getElementById("pronostico-view").style.display = (mode === "pronostico") ? "flex" : "none";
+    document.getElementById("bottombar").style.display       = isMap ? "flex" : "none";
+    // Toggle panel sections
+    document.getElementById("panel-tabs").style.display      = isComp ? "none" : "";
+    document.getElementById("panel-scroll").style.display    = isComp ? "none" : "";
+    document.getElementById("comparacion-panel").style.display = isComp ? "flex" : "none";
+    document.getElementById("comparacion-panel").style.flexDirection = "column";
+    if (isMap || isComp) setTimeout(() => map.invalidateSize(), 50);
+    if (isComp) {
+      buildCompList();
+      if (selectedComp) renderComp();
+    } else {
+      // leaving comparison — restore normal map
+      if (compLayer) { map.removeLayer(compLayer); compLayer = null; }
+      if (deptBoundaryLayer && !map.hasLayer(deptBoundaryLayer)) deptBoundaryLayer = null;
+      if (provBoundaryLayer && !map.hasLayer(provBoundaryLayer)) provBoundaryLayer = null;
+      if (isMap) render();
+    }
     if (mode === "pronostico") renderPronostico();
   }
   document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
@@ -1861,7 +1871,7 @@
   }
 
   function buildCompList() {
-    const el = document.getElementById("panel-comparacion");
+    const el = document.getElementById("comparacion-panel");
     if (el.dataset.built === "1") return;
     el.dataset.built = "1";
     el.innerHTML = "";
@@ -1877,9 +1887,16 @@
       const btn = document.createElement("button");
       btn.className = "comp-btn" + (selectedComp === c.key ? " active" : "");
       btn.dataset.comp = c.key;
+      const photoHtml = c.imagen
+        ? `<img src="${BASE}${c.imagen}" width="42" height="56" style="object-fit:cover;object-position:top;border-radius:3px;flex-shrink:0;margin-left:0.5rem" onerror="this.style.display='none'" alt="">`
+        : "";
       btn.innerHTML = `
-        <div class="comp-btn-label">${c.label}</div>
-        <div class="comp-btn-sub">${c.cand26} · ${c.cand21}</div>`;
+        <div style="flex:1;min-width:0">
+          <div class="comp-btn-label">${c.label}</div>
+          <div class="comp-btn-sub">${c.cand26} <span style="color:var(--muted)">vs</span> ${c.cand21}</div>
+        </div>
+        ${photoHtml}`;
+      btn.style.cssText += "display:flex;align-items:center";
       btn.addEventListener("click", () => {
         selectedComp = c.key;
         el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
@@ -1936,16 +1953,24 @@
         layer.on("mouseover", e => {
           layer.setStyle({ weight: 2, color: "#1a1209" });
           const p = feat.properties;
-          const name = p.nombre_dept || p.nombre_provincia || p.nombre_distrito || "—";
-          const diff = p["diff_" + selectedComp];
-          const pct21 = p["pct21_" + selectedComp];
-          const pct26 = p["pct26_" + selectedComp];
-          const sign  = diff > 0 ? "+" : "";
-          const color = diff > 0 ? "#27ae60" : "#c0392b";
+          const name   = p.nombre_dept || p.nombre_provincia || p.nombre_distrito || "—";
+          const diff   = p["diff_"    + selectedComp];
+          const pct21  = p["pct21_"   + selectedComp];
+          const pct26  = p["pct26_"   + selectedComp];
+          const v21    = p["votes21_" + selectedComp];
+          const v26    = p["votes26_" + selectedComp];
+          const vv21   = p["votos_validos_2021"];
+          const vv26   = p["votos_validos"];
+          const sign   = diff > 0 ? "+" : "";
+          const color  = diff > 0 ? "#27ae60" : "#c0392b";
+          const fmt    = n => n != null ? parseInt(n).toLocaleString("es-PE") : "—";
+          const fmtPct = n => n != null ? n.toFixed(1) + "%" : "—";
           layer.bindTooltip(`
             <b>${name}</b><br>
-            ${comp.cand26}: ${pct26 != null ? pct26.toFixed(1) : "—"}%<br>
-            ${comp.cand21}: ${pct21 != null ? pct21.toFixed(1) : "—"}%<br>
+            <span style="color:var(--muted,#888);font-size:9px">2026</span>
+            ${comp.cand26}: ${fmtPct(pct26)} <span style="color:#888">(${fmt(v26)} / ${fmt(vv26)})</span><br>
+            <span style="color:var(--muted,#888);font-size:9px">2021</span>
+            ${comp.cand21}: ${fmtPct(pct21)} <span style="color:#888">(${fmt(v21)} / ${fmt(vv21)})</span><br>
             <span style="color:${color};font-weight:700">${sign}${diff != null ? diff.toFixed(1) : "—"} pp</span>
           `, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
         });

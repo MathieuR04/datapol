@@ -83,8 +83,10 @@ COMPARISONS = {
 
 # ── 2021 CSV columns ────────────────────────────────────────────────────────
 
-COLS_2021 = ["VOTOS_P7", "VOTOS_P11", "VOTOS_P13", "VOTOS_P16",
-             "VOTOS_VB", "VOTOS_VN"]
+# All 18 party columns needed for correct valid-vote denominator
+COLS_2021_ALL_P = [f"VOTOS_P{i}" for i in range(1, 19)]
+COLS_2021_COMP  = ["VOTOS_P7", "VOTOS_P11", "VOTOS_P13", "VOTOS_P16"]
+COLS_2021 = COLS_2021_COMP + ["VOTOS_VB", "VOTOS_VN"]
 
 def _clean(obj):
     if isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
@@ -107,18 +109,19 @@ def load_2021(csv_path: Path) -> pd.DataFrame:
                 continue
             ubigeo = str(row.get("UBIGEO", "")).zfill(6)
             r = {"ubigeo_distrito": ubigeo}
-            for col in COLS_2021:
+            for col in COLS_2021_ALL_P + ["VOTOS_VB", "VOTOS_VN"]:
                 try:    r[col] = int(row.get(col, 0) or 0)
                 except: r[col] = 0
             r["n_elec_habil"] = int(row.get("N_ELEC_HABIL", 0) or 0)
             rows.append(r)
 
     df = pd.DataFrame(rows)
-    grp = df.groupby("ubigeo_distrito")[COLS_2021 + ["n_elec_habil"]].sum().reset_index()
+    all_agg_cols = COLS_2021_ALL_P + ["VOTOS_VB", "VOTOS_VN", "n_elec_habil"]
+    all_agg_cols = [c for c in all_agg_cols if c in df.columns]
+    grp = df.groupby("ubigeo_distrito")[all_agg_cols].sum().reset_index()
 
-    # total valid votes 2021 = sum of all party votes (excluding blanks/nulls)
-    party_cols = [c for c in COLS_2021 if c.startswith("VOTOS_P")]
-    grp["votos_validos_2021"] = grp[party_cols].sum(axis=1)
+    # total valid votes 2021 = sum of ALL 18 party columns (excluding blanks/nulls)
+    grp["votos_validos_2021"] = grp[[c for c in COLS_2021_ALL_P if c in grp.columns]].sum(axis=1)
     print(f"  {len(grp)} districts in 2021 data")
     return grp
 
@@ -210,7 +213,8 @@ def main():
 
     # Build comparison stats per district
     print("\nBuilding comparison stats …")
-    stats = df21[["ubigeo_distrito", "votos_validos_2021"] + COLS_2021].copy()
+    all_2021_cols = [c for c in COLS_2021_ALL_P + ["VOTOS_VB", "VOTOS_VN"] if c in df21.columns]
+    stats = df21[["ubigeo_distrito", "votos_validos_2021"] + all_2021_cols].copy()
     stats = stats.merge(
         df26[["ubigeo_distrito", "votos_validos"] + [f"cand_{c['cand_2026']}" for c in COMPARISONS.values()]],
         on="ubigeo_distrito", how="left"
@@ -220,6 +224,8 @@ def main():
     for key, comp in COMPARISONS.items():
         col21 = comp["col_2021"]
         col26 = f"cand_{comp['cand_2026']}"
+        stats[f"votes21_{key}"] = stats[col21]
+        stats[f"votes26_{key}"] = stats[col26]
         stats[f"pct21_{key}"] = stats[col21] / stats["votos_validos_2021"].replace(0, float("nan")) * 100
         stats[f"pct26_{key}"] = stats[col26] / stats["votos_validos"].replace(0, float("nan")) * 100
         stats[f"diff_{key}"]  = stats[f"pct26_{key}"] - stats[f"pct21_{key}"]
@@ -237,10 +243,13 @@ def main():
 
     # ── District GeoJSON ────────────────────────────────────────────────────
     print("\nBuilding district comparison GeoJSON …")
-    prop_cols = (["ubigeo_distrito", "ubigeo_provincia", "ubigeo_dept"] +
-                 [f"pct21_{k}" for k in COMPARISONS] +
-                 [f"pct26_{k}" for k in COMPARISONS] +
-                 [f"diff_{k}"  for k in COMPARISONS])
+    prop_cols = (["ubigeo_distrito", "ubigeo_provincia", "ubigeo_dept",
+                  "votos_validos_2021", "votos_validos"] +
+                 [f"votes21_{k}" for k in COMPARISONS] +
+                 [f"votes26_{k}" for k in COMPARISONS] +
+                 [f"pct21_{k}"   for k in COMPARISONS] +
+                 [f"pct26_{k}"   for k in COMPARISONS] +
+                 [f"diff_{k}"    for k in COMPARISONS])
     prop_cols = [c for c in prop_cols if c in merged_gdf.columns]
 
     dist_out = merged_gdf[["ubigeo_distrito", "geometry"] + [c for c in prop_cols if c != "ubigeo_distrito"]].copy()
@@ -263,16 +272,22 @@ def main():
         stat_prov = stats.merge(geo_lookup, on="ubigeo_distrito", how="left")
 
         # aggregate vote counts, then recompute pcts
+        all_2021_agg = [c for c in COLS_2021_ALL_P + ["VOTOS_VB", "VOTOS_VN"] if c in stat_prov.columns]
         prov_votes = stat_prov.groupby("ubigeo_provincia").agg(
             {"votos_validos_2021": "sum", "votos_validos": "sum",
-             **{col: "sum" for col in COLS_2021},
+             **{col: "sum" for col in all_2021_agg},
              **{f"cand_{c['cand_2026']}": "sum" for c in COMPARISONS.values()},
              "ubigeo_dept": "first"}
         ).reset_index()
+        # recompute correct denominator (sum of all 18 parties)
+        p_cols_in_prov = [c for c in COLS_2021_ALL_P if c in prov_votes.columns]
+        prov_votes["votos_validos_2021"] = prov_votes[p_cols_in_prov].sum(axis=1)
 
         for key, comp in COMPARISONS.items():
             col21 = comp["col_2021"]
             col26 = f"cand_{comp['cand_2026']}"
+            prov_votes[f"votes21_{key}"] = prov_votes[col21]
+            prov_votes[f"votes26_{key}"] = prov_votes[col26]
             prov_votes[f"pct21_{key}"] = prov_votes[col21] / prov_votes["votos_validos_2021"].replace(0, float("nan")) * 100
             prov_votes[f"pct26_{key}"] = prov_votes[col26] / prov_votes["votos_validos"].replace(0, float("nan")) * 100
             prov_votes[f"diff_{key}"]  = prov_votes[f"pct26_{key}"] - prov_votes[f"pct21_{key}"]
@@ -300,15 +315,21 @@ def main():
         print("Dissolving departments …")
         stat_dept = stats.merge(geo_lookup[["ubigeo_distrito", "ubigeo_dept"]], on="ubigeo_distrito", how="left")
 
+        all_2021_agg_d = [c for c in COLS_2021_ALL_P + ["VOTOS_VB", "VOTOS_VN"] if c in stat_dept.columns]
         dept_votes = stat_dept.groupby("ubigeo_dept").agg(
             {"votos_validos_2021": "sum", "votos_validos": "sum",
-             **{col: "sum" for col in COLS_2021},
+             **{col: "sum" for col in all_2021_agg_d},
              **{f"cand_{c['cand_2026']}": "sum" for c in COMPARISONS.values()}}
         ).reset_index()
+        # recompute correct denominator (sum of all 18 parties)
+        p_cols_in_dept = [c for c in COLS_2021_ALL_P if c in dept_votes.columns]
+        dept_votes["votos_validos_2021"] = dept_votes[p_cols_in_dept].sum(axis=1)
 
         for key, comp in COMPARISONS.items():
             col21 = comp["col_2021"]
             col26 = f"cand_{comp['cand_2026']}"
+            dept_votes[f"votes21_{key}"] = dept_votes[col21]
+            dept_votes[f"votes26_{key}"] = dept_votes[col26]
             dept_votes[f"pct21_{key}"] = dept_votes[col21] / dept_votes["votos_validos_2021"].replace(0, float("nan")) * 100
             dept_votes[f"pct26_{key}"] = dept_votes[col26] / dept_votes["votos_validos"].replace(0, float("nan")) * 100
             dept_votes[f"diff_{key}"]  = dept_votes[f"pct26_{key}"] - dept_votes[f"pct21_{key}"]
