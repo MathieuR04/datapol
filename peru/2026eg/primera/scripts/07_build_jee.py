@@ -180,10 +180,59 @@ for level, gj_path in GEOJSON.items():
                   f, ensure_ascii=False, separators=(",", ":"))
     print(f"  {out_path.name}: {kept} features, {out_path.stat().st_size/1e6:.1f} MB")
 
+# ── Exterior prefixes ─────────────────────────────────────────────────────────
+EXTERIOR_PREFIXES = {"91", "92", "93", "94", "95"}
+EXTERIOR_REGION_NAMES = {
+    "91": "Misiones diplomáticas",
+    "92": "Latinoamérica y Caribe",
+    "93": "Asia y Oceanía",
+    "94": "Europa",
+    "95": "Norteamérica",
+}
+
+df["is_exterior"] = df["ubigeo_distrito"].str[:2].isin(EXTERIOR_PREFIXES)
+df["ext_region"]  = df["ubigeo_distrito"].str[:2].map(EXTERIOR_REGION_NAMES)
+
+def status_summary(sub):
+    ever_e_sub = sub[sub["ever_E_bool"]]
+    total = int(sub.shape[0])
+    ever_e = int(ever_e_sub.shape[0])
+    out = {
+        "total_actas": total,
+        "ever_e":      ever_e,
+        "ever_e_pct":  round(ever_e / total * 100, 2) if total > 0 else 0,
+        "estado_C":    int((ever_e_sub["estado_acta"] == "C").sum()),
+        "estado_E":    int((ever_e_sub["estado_acta"] == "E").sum()),
+        "estado_P":    int((ever_e_sub["estado_acta"] == "P").sum()),
+        "error_counts_by_estado": {
+            estado: {
+                key: int(ever_e_sub[ever_e_sub["estado_acta"] == estado][key].sum())
+                for key in ERROR_TYPES
+            }
+            for estado in ["C", "E", "P"]
+        },
+    }
+    return out
+
 # ── National summary ──────────────────────────────────────────────────────────
 ever_e_df = df[df["ever_E_bool"]]
 total  = int(df.shape[0])
 ever_e = int(ever_e_df.shape[0])
+
+# Domestic (non-exterior) stats
+dom_df = df[~df["is_exterior"]]
+
+# Exterior: by region
+ext_df = df[df["is_exterior"]]
+ext_regions = []
+for prefix, name in EXTERIOR_REGION_NAMES.items():
+    sub = df[df["ubigeo_distrito"].str[:2] == prefix]
+    if len(sub) == 0:
+        continue
+    s = status_summary(sub)
+    s["nombre"] = name
+    ext_regions.append(s)
+
 summary = {
     "total_actas": total,
     "ever_e":      ever_e,
@@ -199,9 +248,16 @@ summary = {
         }
         for estado in ["C", "E", "P"]
     },
+    # Domestic summary (excludes exterior)
+    "domestico": status_summary(dom_df),
+    # Exterior summary + per-region breakdown
+    "exterior": {
+        **status_summary(ext_df),
+        "regiones": ext_regions,
+    },
 }
 out_summary = OUT_DIR / "jee_national.json"
 with open(out_summary, "w", encoding="utf-8") as f:
     json.dump(summary, f, ensure_ascii=False, indent=2)
-print(f"National summary: {summary}")
+print(f"National summary: {summary['total_actas']} actas, {summary['ever_e']} ever_E, exterior: {summary['exterior']['total_actas']} actas")
 print("Done.")

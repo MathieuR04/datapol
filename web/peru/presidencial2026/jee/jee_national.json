@@ -54,5 +54,334 @@
       "err_sin_datos": 0,
       "err_nulidad": 0
     }
+  },
+  "domestico": {
+    "total_actas": 90223,
+    "ever_e": 5177,
+    "ever_e_pct": 5.74,
+    "estado_C": 5177,
+    "estado_E": 0,
+    "estado_P": 0,
+    "error_counts_by_estado": {
+      "C": {
+        "err_aritmetico": 4397,
+        "err_firmas": 463,
+        "err_impugnada": 407,
+        "err_ilegible": 387,
+        "err_incompleta": 63,
+        "err_reprocesada": 42,
+        "err_extraviada": 2,
+        "err_siniestrada": 0,
+        "err_sin_datos": 11,
+        "err_nulidad": 7
+      },
+      "E": {
+        "err_aritmetico": 0,
+        "err_firmas": 0,
+        "err_impugnada": 0,
+        "err_ilegible": 0,
+        "err_incompleta": 0,
+        "err_reprocesada": 0,
+        "err_extraviada": 0,
+        "err_siniestrada": 0,
+        "err_sin_datos": 0,
+        "err_nulidad": 0
+      },
+      "P": {
+        "err_aritmetico": 0,
+        "err_firmas": 0,
+        "err_impugnada": 0,
+        "err_ilegible": 0,
+        "err_incompleta": 0,
+        "err_reprocesada": 0,
+        "err_extraviada": 0,
+        "err_siniestrada": 0,
+        "err_sin_datos": 0,
+        "err_nulidad": 0
+      }
+    }
+  },
+  "exterior": {
+    "total_actas": 2543,
+    "ever_e": 714,
+    "ever_e_pct": 28.08,
+    "estado_C": 714,
+    "estado_E": 0,
+    "estado_P": 0,
+    "error_counts_by_estado": {
+      "C": {
+        "err_aritmetico": 561,
+        "err_firmas": 146,
+        "err_impugnada": 62,
+        "err_ilegible": 79,
+        "err_incompleta": 24,
+        "err_reprocesada": 0,
+        "err_extraviada": 0,
+        "err_siniestrada": 0,
+        "err_sin_datos": 36,
+        "err_nulidad": 0
+      },
+      "E": {
+        "err_aritmetico": 0,
+        "err_firmas": 0,
+        "err_impugnada": 0,
+        "err_ilegible": 0,
+        "err_incompleta": 0,
+        "err_reprocesada": 0,
+        "err_extraviada": 0,
+        "err_siniestrada": 0,
+        "err_sin_datos": 0,
+        "err_nulidad": 0
+      },
+      "P": {
+        "err_aritmetico": 0,
+        "err_firmas": 0,
+        "err_impugnada": 0,
+        "err_ilegible": 0,
+        "err_incompleta": 0,
+        "err_reprocesada": 0,
+        "err_extraviada": 0,
+        "err_siniestrada": 0,
+        "err_sin_datos": 0,
+        "err_nulidad": 0
+      }
+    },
+    "regiones": [
+      {
+        "total_actas": 6,
+        "ever_e": 0,
+        "ever_e_pct": 0.0,
+        "estado_C": 0,
+        "estado_E": 0,
+        "estado_P": 0,
+        "error_counts_by_estado": {
+          "C": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "E": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "P": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          }
+        },
+        "nombre": "Misiones diplomáticas"
+      },
+      {
+        "total_actas": 1570,
+        "ever_e": 457,
+        "ever_e_pct": 29.11,
+        "estado_C": 457,
+        "estado_E": 0,
+        "estado_P": 0,
+        "error_counts_by_estado": {
+          "C": {
+            "err_aritmetico": 352,
+            "err_firmas": 103,
+            "err_impugnada": 43,
+            "err_ilegible": 56,
+            "err_incompleta": 20,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 28,
+            "err_nulidad": 0
+          },
+          "E": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "P": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          }
+        },
+        "nombre": "Latinoamérica y Caribe"
+      },
+      {
+        "total_actas": 107,
+        "ever_e": 22,
+        "ever_e_pct": 20.56,
+        "estado_C": 22,
+        "estado_E": 0,
+        "estado_P": 0,
+        "error_counts_by_estado": {
+          "C": {
+            "err_aritmetico": 16,
+            "err_firmas": 2,
+            "err_impugnada": 4,
+            "err_ilegible": 2,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "E": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "P": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          }
+        },
+        "nombre": "Asia y Oceanía"
+      },
+      {
+        "total_actas": 839,
+        "ever_e": 229,
+        "ever_e_pct": 27.29,
+        "estado_C": 229,
+        "estado_E": 0,
+        "estado_P": 0,
+        "error_counts_by_estado": {
+          "C": {
+            "err_aritmetico": 190,
+            "err_firmas": 38,
+            "err_impugnada": 15,
+            "err_ilegible": 21,
+            "err_incompleta": 1,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 4,
+            "err_nulidad": 0
+          },
+          "E": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "P": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          }
+        },
+        "nombre": "Europa"
+      },
+      {
+        "total_actas": 21,
+        "ever_e": 6,
+        "ever_e_pct": 28.57,
+        "estado_C": 6,
+        "estado_E": 0,
+        "estado_P": 0,
+        "error_counts_by_estado": {
+          "C": {
+            "err_aritmetico": 3,
+            "err_firmas": 3,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 3,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 4,
+            "err_nulidad": 0
+          },
+          "E": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          },
+          "P": {
+            "err_aritmetico": 0,
+            "err_firmas": 0,
+            "err_impugnada": 0,
+            "err_ilegible": 0,
+            "err_incompleta": 0,
+            "err_reprocesada": 0,
+            "err_extraviada": 0,
+            "err_siniestrada": 0,
+            "err_sin_datos": 0,
+            "err_nulidad": 0
+          }
+        },
+        "nombre": "Norteamérica"
+      }
+    ]
   }
 }

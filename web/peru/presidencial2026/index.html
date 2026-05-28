@@ -351,6 +351,15 @@
     .jee-sub-count { font-size: 11px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
     .jee-sub-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-top: 3px; }
     .jee-sub-bar-fill { height: 100%; border-radius: 1px; }
+    /* JEE dept/exterior tab rows */
+    #jee-subtabs { flex-shrink: 0; }
+    .jee-geo-row { padding: 0.4rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); cursor: default; }
+    .jee-geo-row-top { display: flex; align-items: center; gap: 0.5rem; }
+    .jee-geo-name { flex: 1; font-size: 9px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .jee-geo-pct { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: #DC2626; flex-shrink: 0; min-width: 3.2rem; text-align: right; }
+    .jee-geo-count { font-size: 8px; color: var(--muted); flex-shrink: 0; }
+    .jee-geo-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+    .jee-geo-bar-fill { height: 100%; background: #DC2626; border-radius: 2px; }
     /* JEE detail panel — slides in over the jee-panel */
     .jee-panel { position: relative; }
     .jee-detail { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); transform: translateX(100%); transition: transform 0.2s; z-index: 10; display: flex; flex-direction: column; overflow-y: auto; }
@@ -655,8 +664,18 @@
           <div class="jee-prog-bar"><div class="jee-prog-fill" id="jee-prog-fill" style="width:0%"></div></div>
           <div class="jee-prog-note" id="jee-nat-note">—</div>
         </div>
-        <div class="jee-sect-head">Estado actual de actas observadas</div>
-        <div id="jee-status-rows"></div>
+        <!-- Subtabs: Nacional / Deptos / Exterior -->
+        <div class="panel-tabs" id="jee-subtabs">
+          <button class="ptab active" data-jeetab="nacional">Nacional</button>
+          <button class="ptab" data-jeetab="deptos">Deptos</button>
+          <button class="ptab" data-jeetab="exterior">Exterior</button>
+        </div>
+        <div id="jee-tab-nacional">
+          <div class="jee-sect-head">Estado actual de actas observadas</div>
+          <div id="jee-status-rows"></div>
+        </div>
+        <div id="jee-tab-deptos" style="display:none"></div>
+        <div id="jee-tab-exterior" style="display:none"></div>
       </div>
       <!-- Detail view (slides in on geography click) -->
       <div id="jee-detail" class="jee-detail">
@@ -1244,6 +1263,29 @@
         <span style="color:${col};font-weight:700">${short}</span>: <b>${share}</b><br>
         <span style="opacity:0.65;font-size:9px">${parseInt(votes).toLocaleString("es-PE")} votos</span>`;
     }
+    if (currentView === "actas") {
+      const cont  = parseInt(p.actas_contabilizadas) || 0;
+      const total = parseInt(p.actas_total) || 0;
+      const pend  = Math.max(0, total - cont);
+      return `<b>${name}</b><br>
+        Actas pendientes: <b>${fmt(pend)}</b><br>
+        <span style="opacity:0.65;font-size:9px">${fmt(cont)} de ${fmt(total)} contabilizadas</span>`;
+    }
+    if (currentView === "votos") {
+      const vv = parseInt(p.votos_validos) || 0;
+      return `<b>${name}</b><br>
+        Votos válidos: <b>${fmt(vv)}</b>`;
+    }
+    if (currentView === "candidate_bubble" && selectedCandidate) {
+      const votes = getCandVotes(p, selectedCandidate);
+      const vvN   = parseInt(p.votos_validos) || 1;
+      const share = votes > 0 ? (votes / vvN * 100).toFixed(1) + "%" : "0.0%";
+      const col   = candColor(selectedCandidate);
+      const short = selectedCandidate.split(" ").slice(0, 2).join(" ");
+      return `<b>${name}</b><br>
+        <span style="color:${col};font-weight:700">${short}</span>: <b>${share}</b><br>
+        <span style="opacity:0.65;font-size:9px">${parseInt(votes).toLocaleString("es-PE")} votos</span>`;
+    }
     return null;
   }
 
@@ -1258,10 +1300,11 @@
     }
     layer.on({
       mouseover(e) {
-        if (BUBBLE_VIEWS.has(currentView)) return;
         if (e.target !== activeLayer) {
-          if (currentView !== "candidate") e.target.setStyle({ fillOpacity: 1 });
-          e.target.bringToFront();    // safe: stays within fillPane (z:400)
+          // In bubble views the polygon fill is transparent — don't override it
+          if (!BUBBLE_VIEWS.has(currentView) && currentView !== "candidate")
+            e.target.setStyle({ fillOpacity: 1 });
+          if (!BUBBLE_VIEWS.has(currentView)) e.target.bringToFront();
           showHover(e.target.feature);
         }
         const tip = getMapaTooltip(feat.properties || {}, type);
@@ -2081,8 +2124,28 @@
       document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
       document.getElementById("jee-porc-btn").classList.add("active");
       hideJeeDetail();
+      // Reset subtab to Nacional
+      jeeCurrentTab = "nacional";
+      document.querySelectorAll("#jee-subtabs .ptab")
+        .forEach(b => b.classList.toggle("active", b.dataset.jeetab === "nacional"));
+      ["deptos","exterior"].forEach(t => {
+        const el = document.getElementById(`jee-tab-${t}`);
+        if (el) { el.style.display = "none"; delete el.dataset.built; }
+      });
+      document.getElementById("jee-tab-nacional").style.display = "";
       loadJeeData(() => { buildJeePanel(); renderJee(); });
     } else if (isMap) {
+      // Reset MAPA to defaults each time it's entered
+      currentView = "winner";
+      selectedCandidate = null;
+      activeLayer = null;
+      clearSelect(); clearHover();
+      hideDetail();
+      map.setView(HOME_CENTER, defZoom());
+      document.getElementById("map-topbar").style.display = "none";
+      document.getElementById("bubble-legend").classList.remove("show");
+      document.querySelectorAll(".view-btn").forEach(b =>
+        b.classList.toggle("active", b.dataset.view === "winner"));
       render();
     }
     if (mode === "pronostico") renderPronostico();
@@ -2445,6 +2508,61 @@
       srEl.appendChild(row);
       srEl.appendChild(subEl);
     });
+  }
+
+  // ── JEE subtab switching ─────────────────────────────────────────────────
+  let jeeCurrentTab = "nacional";
+
+  function switchJeeTab(tab) {
+    jeeCurrentTab = tab;
+    document.querySelectorAll("#jee-subtabs .ptab")
+      .forEach(b => b.classList.toggle("active", b.dataset.jeetab === tab));
+    ["nacional","deptos","exterior"].forEach(t =>
+      document.getElementById(`jee-tab-${t}`).style.display = (t === tab) ? "" : "none");
+    if (tab === "deptos")   buildJeeDeptos();
+    if (tab === "exterior") buildJeeExterior();
+  }
+
+  document.querySelectorAll("#jee-subtabs .ptab").forEach(btn =>
+    btn.addEventListener("click", () => switchJeeTab(btn.dataset.jeetab)));
+
+  function makeGeoRow(nombre, ever_e, total_actas, ever_e_pct) {
+    const pct = ever_e_pct != null ? ever_e_pct : (total_actas > 0 ? ever_e / total_actas * 100 : 0);
+    const barW = Math.min(pct * 4, 100); // scale: 25% → full bar
+    return `<div class="jee-geo-row">
+      <div class="jee-geo-row-top">
+        <span class="jee-geo-name">${nombre}</span>
+        <span class="jee-geo-count">${fmtN(ever_e)} / ${fmtN(total_actas)}</span>
+        <span class="jee-geo-pct">${pct.toFixed(1)}%</span>
+      </div>
+      <div class="jee-geo-bar"><div class="jee-geo-bar-fill" style="width:${barW}%"></div></div>
+    </div>`;
+  }
+
+  function buildJeeDeptos() {
+    const el = document.getElementById("jee-tab-deptos");
+    if (el.dataset.built) return;
+    el.dataset.built = "1";
+    if (!jeeDeptData) { el.innerHTML = "<div style='padding:1rem;font-size:9px;color:var(--muted)'>Datos no disponibles</div>"; return; }
+    const rows = jeeDeptData.features
+      .map(f => f.properties)
+      .filter(p => p.nombre_dept)
+      .sort((a, b) => (b.ever_e || 0) - (a.ever_e || 0));
+    el.innerHTML = `<div class="jee-sect-head">Por departamento · mayor a menor</div>` +
+      rows.map(p => makeGeoRow(p.nombre_dept, p.ever_e || 0, p.total_actas || 0, p.ever_e_pct)).join("");
+  }
+
+  function buildJeeExterior() {
+    const el = document.getElementById("jee-tab-exterior");
+    if (el.dataset.built) return;
+    el.dataset.built = "1";
+    const ext = (jeeNational || {}).exterior;
+    if (!ext) { el.innerHTML = "<div style='padding:1rem;font-size:9px;color:var(--muted)'>Datos no disponibles</div>"; return; }
+    const regiones = (ext.regiones || []).sort((a, b) => (b.ever_e || 0) - (a.ever_e || 0));
+    el.innerHTML = `<div class="jee-sect-head">Total exterior</div>` +
+      makeGeoRow("Exterior", ext.ever_e || 0, ext.total_actas || 0, ext.ever_e_pct) +
+      `<div class="jee-sect-head">Por región</div>` +
+      regiones.map(r => makeGeoRow(r.nombre, r.ever_e || 0, r.total_actas || 0, r.ever_e_pct)).join("");
   }
 
   // ── JEE detail panel (right sidebar on geography click) ───────────────────
