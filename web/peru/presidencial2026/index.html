@@ -345,7 +345,7 @@
     .jee-detail::-webkit-scrollbar { width: 3px; }
     .jee-detail::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
     /* JEE bubble legend */
-    .jee-bubble-legend { position: absolute; bottom: 2.5rem; left: 0.75rem; background: rgba(250,246,240,0.92); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; z-index: 450; pointer-events: none; display: none; }
+    .jee-bubble-legend { position: absolute; bottom: 0.75rem; right: 0.5rem; background: rgba(245,240,232,0.92); border: 1px solid var(--border); border-radius: 3px; padding: 0.5rem 0.7rem; z-index: 800; pointer-events: none; display: none; backdrop-filter: blur(4px); font-size: 9px; color: var(--muted); }
     .jee-bubble-legend.show { display: block; }
     .jee-bubble-legend-title { font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.35rem; }
     .jee-bubble-legend-items { display: flex; align-items: flex-end; gap: 0.5rem; }
@@ -590,6 +590,13 @@
           <button class="view-btn" data-view="turnout">Participación</button>
           <button class="view-btn" data-view="votos">Votos válidos</button>
           <button class="view-btn" data-view="actas">Actas restantes</button>
+        </div>
+      </div>
+      <!-- JEE-mode only datos selector -->
+      <div class="ctrl-group" id="jee-datos-group" style="display:none">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row">
+          <button class="view-btn" id="jee-porc-btn">Porc. observado</button>
         </div>
       </div>
     </div>
@@ -1697,6 +1704,7 @@
         clearHover();
         renderComp();
       } else if (currentMode === "jee") {
+        jeeActiveUbigeo = null;
         hideJeeDetail();
         renderJee();
       } else {
@@ -1981,7 +1989,9 @@
     document.getElementById("jee-panel").style.display       = isJee ? "flex" : "none";
     document.getElementById("jee-panel").style.flexDirection = "column";
     document.getElementById("view-btns").closest(".ctrl-group").style.display = (isComp || isJee) ? "none" : "";
+    document.getElementById("jee-datos-group").style.display = isJee ? "" : "none";
     document.getElementById("bubble-legend").classList.toggle("show", false);
+    hideJeeBubbleLegend();
     if (usesMap) setTimeout(() => map.invalidateSize(), 50);
     if (isComp) {
       map.setView(HOME_CENTER, defZoom());
@@ -2000,6 +2010,8 @@
       clearSelect(); clearHover();
       activeLayer = null;
       jeeSelectedView = "choropleth";
+      jeeActiveUbigeo = null;
+      document.getElementById("jee-porc-btn").classList.add("active");
       hideJeeDetail();
       loadJeeData(() => { buildJeePanel(); renderJee(); });
     } else if (isMap) {
@@ -2219,7 +2231,8 @@
   const JEE_BASE = "jee/";
   const fmt = n => fmtN(n);
   let jeeLayer = null, jeeBubbleLayer = null;
-  let jeeSelectedView = "choropleth"; // "choropleth" | err_xxx key
+  let jeeSelectedView = "choropleth";
+  let jeeActiveUbigeo = null; // "choropleth" | err_xxx key
   let jeeDeptData = null, jeeProvData = null, jeeDistData = null;
   let jeeNational = null;
   let jeeDataLoading = false, jeeDataLoaded = false;
@@ -2321,18 +2334,32 @@
           jeeSelectedView = errViewKey;
           document.querySelectorAll(".jee-row,.jee-sub-row")
             .forEach(b => b.classList.toggle("active", b.dataset.jeeView === errViewKey));
+          document.getElementById("jee-porc-btn").classList.remove("active");
           renderJee();
         });
         subEl.appendChild(sub);
       });
 
       row.addEventListener("click", () => {
-        const isOpen = subEl.classList.toggle("open");
-        row.classList.toggle("open", isOpen);
-        // Click on status row → bubble map for that status
-        jeeSelectedView = viewKey;
-        document.querySelectorAll(".jee-row,.jee-sub-row")
-          .forEach(b => b.classList.toggle("active", b.dataset.jeeView === viewKey));
+        if (jeeSelectedView === viewKey) {
+          // Second click on active row → deselect, back to choropleth
+          jeeSelectedView = "choropleth";
+          subEl.classList.remove("open");
+          row.classList.remove("open");
+          document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
+          document.getElementById("jee-porc-btn").classList.add("active");
+        } else {
+          // Select this row; close any other open accordion
+          document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
+          document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
+          subEl.classList.add("open");
+          row.classList.add("open");
+          jeeSelectedView = viewKey;
+          document.querySelectorAll(".jee-row,.jee-sub-row")
+            .forEach(b => b.classList.toggle("active", b.dataset.jeeView === viewKey));
+          document.getElementById("jee-porc-btn").classList.remove("active");
+          setTimeout(() => subEl.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+        }
         renderJee();
       });
 
@@ -2342,8 +2369,29 @@
   }
 
   // ── JEE detail panel (right sidebar on geography click) ───────────────────
-  function showJeeDetail(feat) {
+  function showJeeDetail(feat, leafletLayer) {
     const p = feat.properties;
+    // Derive a stable ubigeo key for this feature
+    const ubigeo = p.ubigeo_distrito || p.ubigeo_provincia || p.ubigeo_dept || "";
+
+    // Toggle: second click on same geo → zoom out + hide detail
+    if (jeeActiveUbigeo === ubigeo && ubigeo !== "") {
+      jeeActiveUbigeo = null;
+      hideJeeDetail();
+      map.flyTo(HOME_CENTER, defZoom(), { animate: true, duration: 0.5 });
+      return;
+    }
+    jeeActiveUbigeo = ubigeo;
+
+    // Zoom in
+    try {
+      const bounds = leafletLayer
+        ? leafletLayer.getBounds()
+        : L.geoJSON(feat).getBounds();
+      const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
+      map.flyToBounds(bounds, { padding: pad, maxZoom: 13, duration: 0.5 });
+    } catch(e) {}
+
     const name = currentLevel === "dept"     ? (p.nombre_dept      || "—")
                : currentLevel === "provincia"? (p.nombre_provincia || "—")
                : (p.nombre_distrito || "—");
@@ -2392,11 +2440,27 @@
   }
 
   function hideJeeDetail() {
+    jeeActiveUbigeo = null;
     document.getElementById("jee-detail").classList.remove("active");
     clearHover();
   }
 
-  document.getElementById("jee-detail-back").addEventListener("click", hideJeeDetail);
+  document.getElementById("jee-detail-back").addEventListener("click", () => {
+    hideJeeDetail();
+    map.flyTo(HOME_CENTER, defZoom(), { animate: true, duration: 0.5 });
+  });
+
+  // "Porcentaje observado" datos button → return to choropleth
+  document.getElementById("jee-porc-btn").addEventListener("click", () => {
+    jeeSelectedView = "choropleth";
+    jeeActiveUbigeo = null;
+    document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
+    document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
+    document.getElementById("jee-porc-btn").classList.add("active");
+    hideJeeDetail();
+    renderJee();
+  });
 
   // ── Map rendering ──────────────────────────────────────────────────────────
   function jeeChloroColor(pct) {
@@ -2486,7 +2550,7 @@
           : `<b>${jeeGeoName(p)}</b><br>Observadas: <b>${fmtN(p.ever_e)}</b> de ${fmtN(p.total_actas)} (${(p.ever_e_pct||0).toFixed(1)}%)`;
         layer.on("mouseover", e => { showHover(feat); layer.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
         layer.on("mouseout",  () => { clearHover(); layer.unbindTooltip(); });
-        layer.on("click",     e => { L.DomEvent.stopPropagation(e); layer.unbindTooltip(); showJeeDetail(feat); });
+        layer.on("click",     e => { L.DomEvent.stopPropagation(e); layer.unbindTooltip(); showJeeDetail(feat, layer); });
       },
       smoothFactor: 0,
     }).addTo(map);
@@ -2511,7 +2575,7 @@
           });
           m.on("mouseover", e => { m.setStyle({ fillOpacity: 0.95 }); m.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
           m.on("mouseout",  () => { m.setStyle({ fillOpacity: 0.78 }); m.unbindTooltip(); });
-          m.on("click",     e => { L.DomEvent.stopPropagation(e); showJeeDetail(feat); });
+          m.on("click",     e => { L.DomEvent.stopPropagation(e); try { showJeeDetail(feat, L.geoJSON(feat)); } catch(ex) {} });
           markers.push(m);
         } catch(e) {}
       });
