@@ -344,6 +344,14 @@
     .jee-detail.active { transform: translateX(0); }
     .jee-detail::-webkit-scrollbar { width: 3px; }
     .jee-detail::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    /* JEE bubble legend */
+    .jee-bubble-legend { position: absolute; bottom: 2.5rem; left: 0.75rem; background: rgba(250,246,240,0.92); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; z-index: 450; pointer-events: none; display: none; }
+    .jee-bubble-legend.show { display: block; }
+    .jee-bubble-legend-title { font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.35rem; }
+    .jee-bubble-legend-items { display: flex; align-items: flex-end; gap: 0.5rem; }
+    .jee-bubble-legend-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .jee-bubble-legend-circle { border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); opacity: 0.8; }
+    .jee-bubble-legend-label { font-size: 7px; color: var(--muted); }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -589,6 +597,11 @@
     <div class="bubble-legend" id="bubble-legend">
       <div class="bubble-legend-title" id="bl-title">Actas faltantes</div>
       <div class="bubble-legend-items" id="bl-items"></div>
+    </div>
+
+    <div class="jee-bubble-legend" id="jee-bubble-legend">
+      <div class="jee-bubble-legend-title" id="jbl-title">Actas</div>
+      <div class="jee-bubble-legend-items" id="jbl-items"></div>
     </div>
 
     <div id="map"></div>
@@ -1938,10 +1951,14 @@
 
   // ── Mode switching ────────────────────────────────────────────────────────
   function clearAllModeLayers() {
-    // Always wipe mode-specific layers before any switch to prevent leakage
-    [compLayer, jeeLayer, jeeBubbleLayer].forEach(l => { try { if (l) map.removeLayer(l); } catch(e){} });
+    // Wipe every map layer from every mode to prevent leakage
+    [deptLayer, provLayer, distLayer, bubbleLayer,
+     compLayer, jeeLayer, jeeBubbleLayer,
+     deptBoundaryLayer, provBoundaryLayer].forEach(l => {
+       try { if (l) map.removeLayer(l); } catch(e) {}
+    });
+    deptLayer = provLayer = distLayer = bubbleLayer = null;
     compLayer = jeeLayer = jeeBubbleLayer = null;
-    [deptBoundaryLayer, provBoundaryLayer].forEach(l => { try { if (l) map.removeLayer(l); } catch(e){} });
     deptBoundaryLayer = provBoundaryLayer = null;
   }
 
@@ -2253,7 +2270,6 @@
   // ── Panel: built once, shows estado(C/E/P) with collapsible error types ──
   function buildJeePanel() {
     const nat = jeeNational || {};
-    // Header
     const pct = nat.ever_e_pct || 0;
     document.getElementById("jee-nat-pct").textContent   = pct.toFixed(2) + "%";
     document.getElementById("jee-prog-fill").style.width  = Math.min(pct * 5, 100) + "%";
@@ -2265,16 +2281,17 @@
     srEl.dataset.built = "1";
 
     const totalEver = nat.ever_e || 1;
-    const errCounts = nat.error_counts || {};
+    // Per-status error counts from national summary
+    const errByEstado = nat.error_counts_by_estado || { C: {}, E: {}, P: {} };
 
     Object.entries(JEE_ESTADOS).forEach(([key, info]) => {
-      const count = nat[`estado_${key}`] || 0;
+      const count  = nat[`estado_${key}`] || 0;
       const pctRow = count / totalEver * 100;
+      const viewKey = `estado_${key}`;
 
-      // Main estado row (clicking → choropleth of that estado... or just the default choropleth)
       const row = document.createElement("div");
-      row.className = "jee-row" + (jeeSelectedView === `estado_${key}` ? " active" : "");
-      row.dataset.jeeView = `estado_${key}`;
+      row.className = "jee-row";
+      row.dataset.jeeView = viewKey;
       row.innerHTML = `
         <div class="jee-row-dot" style="background:${info.color}"></div>
         <span class="jee-row-name">${info.label}</span>
@@ -2282,17 +2299,18 @@
         <span class="jee-row-pct">${pctRow.toFixed(1)}%</span>
         <span class="jee-row-expand">▾</span>`;
 
-      // Sub-rows (error types) — built inline, collapsible
+      // Sub-rows: only errors that exist for THIS specific status
       const subEl = document.createElement("div");
       subEl.className = "jee-suberrors";
-      subEl.id = `jee-sub-${key}`;
+      const statusErrCounts = errByEstado[key] || {};
       Object.entries(JEE_ERROR_TYPES).forEach(([errKey, errInfo]) => {
-        const ec = errCounts[errKey] || 0;
-        if (ec === 0) return;
+        const ec = statusErrCounts[errKey] || 0;
+        if (ec === 0) return; // only show errors present in this status
         const ep = ec / totalEver * 100;
+        const errViewKey = `${errKey}_${key}`; // e.g. "err_aritmetico_C"
         const sub = document.createElement("div");
-        sub.className = "jee-sub-row jee-row" + (jeeSelectedView === errKey ? " active" : "");
-        sub.dataset.jeeView = errKey;
+        sub.className = "jee-sub-row";
+        sub.dataset.jeeView = errViewKey;
         sub.innerHTML = `
           <div class="jee-sub-dot" style="background:${errInfo.color}"></div>
           <span class="jee-sub-name">${errInfo.label}</span>
@@ -2300,25 +2318,22 @@
           <span class="jee-sub-pct"> ${ep.toFixed(1)}%</span>`;
         sub.addEventListener("click", e => {
           e.stopPropagation();
-          jeeSelectedView = errKey;
-          document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b =>
-            b.classList.toggle("active", (b.dataset.jeeView === errKey)));
+          jeeSelectedView = errViewKey;
+          document.querySelectorAll(".jee-row,.jee-sub-row")
+            .forEach(b => b.classList.toggle("active", b.dataset.jeeView === errViewKey));
           renderJee();
         });
         subEl.appendChild(sub);
       });
 
-      // Toggle expand / collapse
       row.addEventListener("click", () => {
         const isOpen = subEl.classList.toggle("open");
         row.classList.toggle("open", isOpen);
-        // Also switch map view to choropleth when clicking the status row
-        if (jeeSelectedView !== `estado_${key}`) {
-          jeeSelectedView = "choropleth";
-          document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b =>
-            b.classList.toggle("active", b === row));
-          renderJee();
-        }
+        // Click on status row → bubble map for that status
+        jeeSelectedView = viewKey;
+        document.querySelectorAll(".jee-row,.jee-sub-row")
+          .forEach(b => b.classList.toggle("active", b.dataset.jeeView === viewKey));
+        renderJee();
       });
 
       srEl.appendChild(row);
@@ -2399,6 +2414,52 @@
          : (p.nombre_distrito || "—");
   }
 
+  // Determine bubble field + color from jeeSelectedView
+  // View keys: "choropleth" | "estado_C/E/P" | "err_xxx_C/E/P"
+  function jeeBubbleConfig(view) {
+    // Status bubble: "estado_C" → field "estado_C", color from JEE_ESTADOS
+    const estadoMatch = view.match(/^estado_([CEP])$/);
+    if (estadoMatch) {
+      const key = estadoMatch[1];
+      return { field: view, color: JEE_ESTADOS[key].color, label: JEE_ESTADOS[key].label };
+    }
+    // Error bubble: "err_aritmetico_C" → field "err_aritmetico_C", color from JEE_ERROR_TYPES
+    const errMatch = view.match(/^(err_\w+)_([CEP])$/);
+    if (errMatch) {
+      const errKey = errMatch[1];
+      const info = JEE_ERROR_TYPES[errKey];
+      return info ? { field: view, color: info.color, label: info.label } : null;
+    }
+    return null;
+  }
+
+  // Build/update JEE bubble size legend
+  function showJeeBubbleLegend(color, label, maxVal) {
+    const el = document.getElementById("jee-bubble-legend");
+    const itemsEl = document.getElementById("jbl-items");
+    document.getElementById("jbl-title").textContent = label;
+    const maxR = 28, minR = 3;
+    // Reference values: ~10%, ~33%, 100% of max
+    const refs = [
+      Math.max(1, Math.round(maxVal * 0.1)),
+      Math.max(1, Math.round(maxVal * 0.33)),
+      maxVal,
+    ].filter((v, i, a) => a.indexOf(v) === i); // dedupe
+    itemsEl.innerHTML = refs.map(v => {
+      const r = minR + (maxR - minR) * Math.sqrt(v / maxVal);
+      const d = Math.round(r * 2);
+      return `<div class="jee-bubble-legend-item">
+        <div class="jee-bubble-legend-circle" style="width:${d}px;height:${d}px;background:${color}"></div>
+        <span class="jee-bubble-legend-label">${fmtN(v)}</span>
+      </div>`;
+    }).join("");
+    el.classList.add("show");
+  }
+
+  function hideJeeBubbleLegend() {
+    document.getElementById("jee-bubble-legend").classList.remove("show");
+  }
+
   function renderJee() {
     const geo = jeeGeoForLevel();
     if (!geo) return;
@@ -2407,42 +2468,46 @@
     if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
     if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
 
-    const isBubble = jeeSelectedView in JEE_ERROR_TYPES;
+    const bubbleCfg = jeeBubbleConfig(jeeSelectedView);
+    const isBubble  = !!bubbleCfg;
+
+    // Transparent polygon base — always present for hover & click
+    jeeLayer = L.geoJSON(geo, {
+      pane: "fillPane",
+      style(feat) {
+        if (isBubble) return { fillColor: "#F5F0E8", fillOpacity: 0.01, weight: 0 };
+        const pct = feat.properties.ever_e_pct || 0;
+        return { fillColor: jeeChloroColor(pct), fillOpacity: 0.85, weight: 0 };
+      },
+      onEachFeature(feat, layer) {
+        const p   = feat.properties;
+        const tip = isBubble
+          ? `<b>${jeeGeoName(p)}</b><br>${bubbleCfg.label}: <b>${fmtN(p[bubbleCfg.field] || 0)}</b>`
+          : `<b>${jeeGeoName(p)}</b><br>Observadas: <b>${fmtN(p.ever_e)}</b> de ${fmtN(p.total_actas)} (${(p.ever_e_pct||0).toFixed(1)}%)`;
+        layer.on("mouseover", e => { showHover(feat); layer.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
+        layer.on("mouseout",  () => { clearHover(); layer.unbindTooltip(); });
+        layer.on("click",     e => { L.DomEvent.stopPropagation(e); layer.unbindTooltip(); showJeeDetail(feat); });
+      },
+      smoothFactor: 0,
+    }).addTo(map);
 
     if (isBubble) {
-      // Transparent base (borders only, needed for hover events)
-      jeeLayer = L.geoJSON(geo, {
-        pane: "fillPane",
-        style: { fillColor: "#F5F0E8", fillOpacity: 0.01, weight: 0 },
-        onEachFeature(feat, layer) {
-          layer.on("mouseover", () => showHover(feat));
-          layer.on("mouseout",  () => clearHover());
-          layer.on("click", e => {
-            L.DomEvent.stopPropagation(e);
-            showJeeDetail(feat);
-          });
-        },
-        smoothFactor: 0,
-      }).addTo(map);
-
-      // Bubbles
-      const errKey = jeeSelectedView;
-      const info   = JEE_ERROR_TYPES[errKey];
-      const vals   = geo.features.map(f => f.properties[errKey] || 0);
+      const { field, color, label } = bubbleCfg;
+      const vals   = geo.features.map(f => f.properties[field] || 0);
       const maxVal = Math.max(...vals, 1);
       const maxR = 28, minR = 3;
       const markers = [];
       geo.features.forEach(feat => {
-        const v = feat.properties[errKey] || 0;
+        const v = feat.properties[field] || 0;
         if (v === 0) return;
         try {
           const center = L.geoJSON(feat).getBounds().getCenter();
-          const r      = minR + (maxR - minR) * Math.sqrt(v / maxVal);
-          const p      = feat.properties;
-          const tip    = `<b>${jeeGeoName(p)}</b><br>${info.label}: <b>${fmtN(v)}</b><br>Total obs.: ${fmtN(p.ever_e)}`;
+          const r   = minR + (maxR - minR) * Math.sqrt(v / maxVal);
+          const p   = feat.properties;
+          const tip = `<b>${jeeGeoName(p)}</b><br>${label}: <b>${fmtN(v)}</b><br>Total obs.: ${fmtN(p.ever_e)}`;
           const m = L.circleMarker(center, {
             pane: "bubblePane", radius: r,
-            fillColor: info.color, fillOpacity: 0.78, color: "#fff", weight: 1.5,
+            fillColor: color, fillOpacity: 0.78, color: "#fff", weight: 1.5,
           });
           m.on("mouseover", e => { m.setStyle({ fillOpacity: 0.95 }); m.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
           m.on("mouseout",  () => { m.setStyle({ fillOpacity: 0.78 }); m.unbindTooltip(); });
@@ -2451,24 +2516,9 @@
         } catch(e) {}
       });
       jeeBubbleLayer = L.layerGroup(markers).addTo(map);
-
+      showJeeBubbleLegend(color, label, maxVal);
     } else {
-      // Choropleth by ever_e_pct — geography click opens detail panel
-      jeeLayer = L.geoJSON(geo, {
-        pane: "fillPane",
-        style(feat) {
-          const pct = feat.properties.ever_e_pct || 0;
-          return { fillColor: jeeChloroColor(pct), fillOpacity: 0.85, weight: 0 };
-        },
-        onEachFeature(feat, layer) {
-          const p   = feat.properties;
-          const tip = `<b>${jeeGeoName(p)}</b><br>Observadas: <b>${fmtN(p.ever_e)}</b> de ${fmtN(p.total_actas)} (${(p.ever_e_pct||0).toFixed(1)}%)`;
-          layer.on("mouseover", e => { showHover(feat); layer.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
-          layer.on("mouseout",  () => { clearHover(); layer.unbindTooltip(); });
-          layer.on("click",     e => { L.DomEvent.stopPropagation(e); layer.unbindTooltip(); showJeeDetail(feat); });
-        },
-        smoothFactor: 0,
-      }).addTo(map);
+      hideJeeBubbleLegend();
     }
 
     // Border overlays

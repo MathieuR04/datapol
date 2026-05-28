@@ -94,13 +94,23 @@ def aggregate(df, group_col):
     grp = df.groupby(group_col).agg(**agg_dict).reset_index()
     grp["ever_e_pct"] = (grp["ever_e"] / grp["total_actas"] * 100).round(2)
 
-    # Estado breakdown *within* ever_E actas
+    # Estado breakdown + per-status error counts within ever_E actas
     ever_e_df = df[df["ever_E_bool"]]
     for estado in ["C", "E", "P"]:
-        sub = (ever_e_df[ever_e_df["estado_acta"] == estado]
-               .groupby(group_col).size().rename(f"estado_{estado}"))
+        sub_df = ever_e_df[ever_e_df["estado_acta"] == estado]
+        # Count actas with this status
+        sub = sub_df.groupby(group_col).size().rename(f"estado_{estado}")
         grp = grp.merge(sub, on=group_col, how="left")
         grp[f"estado_{estado}"] = grp[f"estado_{estado}"].fillna(0).astype(int)
+        # Count each error type within this status
+        if len(sub_df) > 0:
+            for key in ERROR_TYPES:
+                sub_err = sub_df.groupby(group_col)[key].sum().rename(f"{key}_{estado}")
+                grp = grp.merge(sub_err, on=group_col, how="left")
+                grp[f"{key}_{estado}"] = grp[f"{key}_{estado}"].fillna(0).astype(int)
+        else:
+            for key in ERROR_TYPES:
+                grp[f"{key}_{estado}"] = 0
 
     return grp
 
@@ -110,9 +120,11 @@ agg_dist = aggregate(df, "ubigeo_distrito_key")
 print(f"  dept rows: {len(agg_dept)}, prov: {len(agg_prov)}, dist: {len(agg_dist)}")
 
 # ── GeoJSONs ──────────────────────────────────────────────────────────────────
+_estado_err_cols = [f"{k}_{e}" for e in ["C","E","P"] for k in ERROR_TYPES]
 JEE_PROPS = (
     ["total_actas", "ever_e", "ever_e_pct", "estado_C", "estado_E", "estado_P"]
     + list(ERROR_TYPES.keys())
+    + _estado_err_cols
 )
 KEEP_PROPS = {
     "dept":      ["ubigeo_dept", "nombre_dept"],
@@ -180,6 +192,13 @@ summary = {
     "estado_E":    int((ever_e_df["estado_acta"] == "E").sum()),
     "estado_P":    int((ever_e_df["estado_acta"] == "P").sum()),
     "error_counts": {key: int(df[key].sum()) for key in ERROR_TYPES},
+    "error_counts_by_estado": {
+        estado: {
+            key: int(ever_e_df[ever_e_df["estado_acta"] == estado][key].sum())
+            for key in ERROR_TYPES
+        }
+        for estado in ["C", "E", "P"]
+    },
 }
 out_summary = OUT_DIR / "jee_national.json"
 with open(out_summary, "w", encoding="utf-8") as f:
