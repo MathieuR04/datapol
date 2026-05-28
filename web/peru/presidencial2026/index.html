@@ -1216,7 +1216,6 @@
     hideDetail();
     if (currentMode === "comparacion") {
       clearHover();
-      map.closePopup();
       if (selectedCompLayer) {
         selectedCompLayer = null;
         map.setView(HOME_CENTER, defZoom(), { animate: true });
@@ -1659,15 +1658,11 @@
       hideDetail();
       if (currentMode === "comparacion") {
         selectedCompLayer = null;
-        map.closePopup();
         clearHover();
-        map.setView(HOME_CENTER, defZoom());
         renderComp();
       } else if (currentMode === "jee") {
         jeeSelectedLayer = null;
-        map.closePopup();
         clearHover();
-        map.setView(HOME_CENTER, defZoom());
         renderJee();
       } else {
         render();
@@ -2142,24 +2137,22 @@
         });
         layer.on("mouseout", () => {
           clearHover();
-          if (!layer._popup) layer.unbindTooltip();
+          layer.unbindTooltip();
         });
         layer.on("click", e => {
           L.DomEvent.stopPropagation(e);
           layer.unbindTooltip();
           if (selectedCompLayer === layer) {
-            // Second click on same geography → zoom out
+            // Second click → zoom out
             selectedCompLayer = null;
-            map.closePopup();
             clearHover();
             map.setView(HOME_CENTER, defZoom(), { animate: true });
           } else {
-            // First click (or different geography) → zoom in
+            // First click → zoom in, no popup
             selectedCompLayer = layer;
             const bounds = layer.getBounds();
             const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
             map.fitBounds(bounds, { padding: pad, animate: true });
-            layer.bindPopup(getTooltipContent(), { className: "map-tooltip", closeButton: true, autoPan: false }).openPopup(e.latlng);
             showHover(feat);
           }
         });
