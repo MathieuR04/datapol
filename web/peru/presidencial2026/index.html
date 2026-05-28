@@ -297,6 +297,9 @@
     .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
     .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
     .comp-btn-bar { height: 3px; width: 100%; flex-shrink: 0; }
+    .comp-btn-nat { font-size: 9px; color: var(--text); padding: 0.3rem 0.75rem 0.4rem; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 0.4rem; }
+    .comp-btn-nat-pcts { font-weight: 600; }
+    .comp-btn-nat-diff { font-weight: 700; margin-left: auto; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -1896,7 +1899,39 @@
       if (dist) compDistData = dist;
       compDataLoaded = true;
       compDataLoading = false;
+      fillNationalStats();
       cb();
+    });
+  }
+
+  function fillNationalStats() {
+    // Use dept-level GeoJSON to compute national totals
+    const geo = compDeptData;
+    if (!geo) return;
+    let vv26 = 0, vv21 = 0;
+    const v26 = {A:0,B:0,C:0,D:0}, v21 = {A:0,B:0,C:0,D:0};
+    (geo.features || []).forEach(f => {
+      const p = f.properties || {};
+      vv26 += p.votos_validos        || 0;
+      vv21 += p.votos_validos_2021   || 0;
+      ["A","B","C","D"].forEach(k => {
+        v26[k] += p[`votes26_${k}`] || 0;
+        v21[k] += p[`votes21_${k}`] || 0;
+      });
+    });
+    ["A","B","C","D"].forEach(k => {
+      const el = document.getElementById(`comp-nat-${k}`);
+      if (!el) return;
+      const pct26 = vv26 > 0 ? v26[k] / vv26 * 100 : 0;
+      const pct21 = vv21 > 0 ? v21[k] / vv21 * 100 : 0;
+      const diff  = pct26 - pct21;
+      const sign  = diff >= 0 ? "+" : "";
+      const dCol  = diff >= 0 ? "#27ae60" : "#c0392b";
+      el.innerHTML = `
+        <span class="comp-btn-nat-pcts">${pct26.toFixed(1)}%</span>
+        <span style="opacity:0.45;font-size:8px">vs</span>
+        <span class="comp-btn-nat-pcts" style="opacity:0.7">${pct21.toFixed(1)}%</span>
+        <span class="comp-btn-nat-diff" style="color:${dCol}">${sign}${diff.toFixed(1)} pp</span>`;
     });
   }
 
@@ -1920,6 +1955,9 @@
             <div class="comp-btn-l1">${c.line1}</div>
             <div class="comp-btn-l2">${c.line2}</div>
             <div class="comp-btn-l3">${c.line3}</div>
+          </div>
+          <div class="comp-btn-nat" id="comp-nat-${c.key}">
+            <span class="comp-btn-nat-pcts" style="opacity:0.4">cargando…</span>
           </div>
           <div class="comp-btn-bar" style="background:${c.color}"></div>
         </div>`;
