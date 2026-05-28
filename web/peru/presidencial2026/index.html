@@ -975,6 +975,11 @@
         L.DomEvent.stopPropagation(e);
         showDetail(feat, currentLevel);
         document.getElementById("map-topbar").style.display = "block";
+        try {
+          const bounds = L.geoJSON(feat).getBounds();
+          const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
+          if (bounds.isValid()) map.fitBounds(bounds, { padding: pad });
+        } catch (_) {}
       });
       marker.addTo(bubbleLayer);
     });
