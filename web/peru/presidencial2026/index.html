@@ -329,6 +329,21 @@
     .jee-row-name { flex: 1; min-width: 0; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .jee-row-count { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
     .jee-row-pct { font-size: 8px; color: var(--muted); flex-shrink: 0; }
+    .jee-row-expand { font-size: 10px; color: var(--muted); flex-shrink: 0; transition: transform 0.15s; }
+    .jee-row.open .jee-row-expand { transform: rotate(180deg); }
+    .jee-suberrors { display: none; background: var(--sand-lt); }
+    .jee-suberrors.open { display: block; }
+    .jee-sub-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem 0.3rem 1.75rem; border-bottom: 1px solid var(--border); font-size: 8.5px; color: var(--muted); }
+    .jee-sub-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .jee-sub-name { flex: 1; }
+    .jee-sub-count { font-size: 11px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
+    .jee-sub-pct { font-size: 7.5px; }
+    /* JEE detail panel — slides in over the jee-panel */
+    .jee-panel { position: relative; }
+    .jee-detail { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); transform: translateX(100%); transition: transform 0.2s; z-index: 10; display: flex; flex-direction: column; overflow-y: auto; }
+    .jee-detail.active { transform: translateX(0); }
+    .jee-detail::-webkit-scrollbar { width: 3px; }
+    .jee-detail::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -595,20 +610,33 @@
     <div id="comparacion-panel" style="display:none;flex:1;overflow-y:auto;min-height:0;flex-direction:column;display:none"></div>
     <!-- Actas JEE panel -->
     <div id="jee-panel" class="jee-panel" style="display:none">
-      <div class="jee-hdr">
-        <div class="jee-hdr-title">Actas JEE</div>
-        <div class="jee-hdr-sub">Mesa a mesa · ONPE 1ra Vuelta 2026</div>
-        <div class="jee-prog-labels">
-          <span>Enviadas al JEE</span>
-          <span class="jee-pct" id="jee-nat-pct">—</span>
+      <!-- Main list view -->
+      <div id="jee-main">
+        <div class="jee-hdr">
+          <div class="jee-hdr-title">Actas JEE</div>
+          <div class="jee-hdr-sub">Mesa a mesa · ONPE 1ra Vuelta 2026</div>
+          <div class="jee-prog-labels">
+            <span>Observadas (ever JEE)</span>
+            <span class="jee-pct" id="jee-nat-pct">—</span>
+          </div>
+          <div class="jee-prog-bar"><div class="jee-prog-fill" id="jee-prog-fill" style="width:0%"></div></div>
+          <div class="jee-prog-note" id="jee-nat-note">—</div>
         </div>
-        <div class="jee-prog-bar"><div class="jee-prog-fill" id="jee-prog-fill" style="width:0%"></div></div>
-        <div class="jee-prog-note" id="jee-nat-note">—</div>
+        <div class="jee-sect-head">Estado actual de actas observadas</div>
+        <div id="jee-status-rows"></div>
       </div>
-      <div class="jee-sect-head">Estado de actas</div>
-      <div id="jee-status-rows"></div>
-      <div class="jee-sect-head">Observaciones · actas enviadas al JEE</div>
-      <div id="jee-error-rows"></div>
+      <!-- Detail view (slides in on geography click) -->
+      <div id="jee-detail" class="jee-detail">
+        <div class="detail-back" id="jee-detail-back">← Volver</div>
+        <div class="detail-hero">
+          <div class="detail-mpio" id="jee-d-name">—</div>
+        </div>
+        <div class="detail-kpi-row" id="jee-d-kpis"></div>
+        <div class="detail-sect-head">Estado actas observadas</div>
+        <div id="jee-d-status"></div>
+        <div class="detail-sect-head">Observaciones</div>
+        <div id="jee-d-errors"></div>
+      </div>
     </div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
@@ -1222,12 +1250,7 @@
       }
     }
     if (currentMode === "jee") {
-      clearHover();
-      map.closePopup();
-      if (jeeSelectedLayer) {
-        jeeSelectedLayer = null;
-        map.setView(HOME_CENTER, defZoom(), { animate: true });
-      }
+      hideJeeDetail();
     }
   });
 
@@ -1661,8 +1684,7 @@
         clearHover();
         renderComp();
       } else if (currentMode === "jee") {
-        jeeSelectedLayer = null;
-        clearHover();
+        hideJeeDetail();
         renderJee();
       } else {
         render();
@@ -1915,18 +1937,25 @@
   }
 
   // ── Mode switching ────────────────────────────────────────────────────────
+  function clearAllModeLayers() {
+    // Always wipe mode-specific layers before any switch to prevent leakage
+    [compLayer, jeeLayer, jeeBubbleLayer].forEach(l => { try { if (l) map.removeLayer(l); } catch(e){} });
+    compLayer = jeeLayer = jeeBubbleLayer = null;
+    [deptBoundaryLayer, provBoundaryLayer].forEach(l => { try { if (l) map.removeLayer(l); } catch(e){} });
+    deptBoundaryLayer = provBoundaryLayer = null;
+  }
+
   function switchMode(mode) {
     currentMode = mode;
+    clearAllModeLayers();
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
     const isMap  = mode === "mapa";
     const isComp = mode === "comparacion";
     const isJee  = mode === "jee";
     const usesMap = isMap || isComp || isJee;
-    // mapa-body contains the map; show it for mapa/comparacion/jee
     document.getElementById("mapa-body").style.display       = usesMap ? "flex" : "none";
     document.getElementById("pronostico-view").style.display = (mode === "pronostico") ? "flex" : "none";
     document.getElementById("bottombar").style.display       = usesMap ? "flex" : "none";
-    // Toggle panel sections
     const hideNormalPanel = isComp || isJee;
     document.getElementById("panel-tabs").style.display      = hideNormalPanel ? "none" : "";
     document.getElementById("panel-scroll").style.display    = hideNormalPanel ? "none" : "";
@@ -1934,7 +1963,6 @@
     document.getElementById("comparacion-panel").style.flexDirection = "column";
     document.getElementById("jee-panel").style.display       = isJee ? "flex" : "none";
     document.getElementById("jee-panel").style.flexDirection = "column";
-    // Hide DATOS view-btn controls for non-MAPA map modes
     document.getElementById("view-btns").closest(".ctrl-group").style.display = (isComp || isJee) ? "none" : "";
     document.getElementById("bubble-legend").classList.toggle("show", false);
     if (usesMap) setTimeout(() => map.invalidateSize(), 50);
@@ -1954,18 +1982,11 @@
       document.getElementById("map-topbar").style.display = "none";
       clearSelect(); clearHover();
       activeLayer = null;
-      jeeSelectedView = "sent";
-      jeeSelectedLayer = null;
-      map.closePopup();
+      jeeSelectedView = "choropleth";
+      hideJeeDetail();
       loadJeeData(() => { buildJeePanel(); renderJee(); });
-    } else {
-      // Leaving comparison or JEE — clean up those layers
-      if (compLayer) { map.removeLayer(compLayer); compLayer = null; }
-      if (jeeLayer)  { map.removeLayer(jeeLayer);  jeeLayer  = null; }
-      if (jeeBubbleLayer) { map.removeLayer(jeeBubbleLayer); jeeBubbleLayer = null; }
-      if (deptBoundaryLayer && !map.hasLayer(deptBoundaryLayer)) deptBoundaryLayer = null;
-      if (provBoundaryLayer && !map.hasLayer(provBoundaryLayer)) provBoundaryLayer = null;
-      if (isMap) render();
+    } else if (isMap) {
+      render();
     }
     if (mode === "pronostico") renderPronostico();
   }
@@ -2179,25 +2200,29 @@
 
   // ── Actas JEE tab functions ───────────────────────────────────────────────
   const JEE_BASE = "jee/";
-  const fmt = n => fmtN(n);   // alias for use in JEE code
+  const fmt = n => fmtN(n);
   let jeeLayer = null, jeeBubbleLayer = null;
-  let jeeSelectedView = "sent";   // "sent"|"never"|"err_xxx"
-  let jeeSelectedLayer = null;
+  let jeeSelectedView = "choropleth"; // "choropleth" | err_xxx key
   let jeeDeptData = null, jeeProvData = null, jeeDistData = null;
   let jeeNational = null;
   let jeeDataLoading = false, jeeDataLoaded = false;
 
+  const JEE_ESTADOS = {
+    C: { label: "Contabilizadas",   color: "#16A34A" },
+    E: { label: "Enviadas al JEE",  color: "#DC2626" },
+    P: { label: "Pendientes",       color: "#D97706" },
+  };
   const JEE_ERROR_TYPES = {
-    err_aritmetico:  { label: "Error aritmético",         color: "#2563EB" },
-    err_firmas:      { label: "Sin firmas",               color: "#EA580C" },
-    err_impugnada:   { label: "Impugnada",                color: "#DC2626" },
-    err_ilegible:    { label: "Ilegible",                 color: "#7C3AED" },
-    err_incompleta:  { label: "Incompleta",               color: "#0891B2" },
-    err_reprocesada: { label: "Reprocesada",              color: "#16A34A" },
-    err_extraviada:  { label: "Extraviada",               color: "#D97706" },
-    err_siniestrada: { label: "Siniestrada",              color: "#9F1239" },
-    err_sin_datos:   { label: "Sin datos",                color: "#6B7280" },
-    err_nulidad:     { label: "Solicitud de nulidad",     color: "#DB2777" },
+    err_aritmetico:  { label: "Error aritmético",     color: "#2563EB" },
+    err_firmas:      { label: "Sin firmas",           color: "#EA580C" },
+    err_impugnada:   { label: "Impugnada",            color: "#DC2626" },
+    err_ilegible:    { label: "Ilegible",             color: "#7C3AED" },
+    err_incompleta:  { label: "Incompleta",           color: "#0891B2" },
+    err_reprocesada: { label: "Reprocesada",          color: "#16A34A" },
+    err_extraviada:  { label: "Extraviada",           color: "#D97706" },
+    err_siniestrada: { label: "Siniestrada",          color: "#9F1239" },
+    err_sin_datos:   { label: "Sin datos",            color: "#6B7280" },
+    err_nulidad:     { label: "Solicitud de nulidad", color: "#DB2777" },
   };
 
   function loadJeeData(cb) {
@@ -2225,206 +2250,222 @@
     return jeeDeptData;
   }
 
+  // ── Panel: built once, shows estado(C/E/P) with collapsible error types ──
   function buildJeePanel() {
-    // Update header stats (always)
-    if (jeeNational) {
-      const pct = jeeNational.ever_e_pct;
-      document.getElementById("jee-nat-pct").textContent  = pct.toFixed(2) + "%";
-      document.getElementById("jee-prog-fill").style.width = Math.min(pct * 5, 100) + "%"; // scale so 20% = full bar
-      document.getElementById("jee-nat-note").textContent =
-        fmt(jeeNational.ever_e) + " de " + fmt(jeeNational.total_actas) + " actas";
-    }
+    const nat = jeeNational || {};
+    // Header
+    const pct = nat.ever_e_pct || 0;
+    document.getElementById("jee-nat-pct").textContent   = pct.toFixed(2) + "%";
+    document.getElementById("jee-prog-fill").style.width  = Math.min(pct * 5, 100) + "%";
+    document.getElementById("jee-nat-note").textContent   =
+      fmtN(nat.ever_e) + " de " + fmtN(nat.total_actas) + " actas observadas";
 
-    // Status rows (built once)
     const srEl = document.getElementById("jee-status-rows");
     if (srEl.dataset.built) return;
     srEl.dataset.built = "1";
 
-    const nat = jeeNational || {};
-    const statusRows = [
-      { key: "sent",  label: "Enviadas al JEE", color: "#DC2626",
-        count: nat.ever_e  || 0, pct: nat.ever_e_pct || 0 },
-      { key: "never", label: "No enviadas",      color: "#94A3B8",
-        count: nat.never_e || 0, pct: 100 - (nat.ever_e_pct || 0) },
-    ];
-    statusRows.forEach(r => {
-      const el = document.createElement("div");
-      el.className = "jee-row" + (jeeSelectedView === r.key ? " active" : "");
-      el.dataset.jeeView = r.key;
-      el.innerHTML = `
-        <div class="jee-row-dot" style="background:${r.color}"></div>
-        <span class="jee-row-name">${r.label}</span>
-        <span class="jee-row-count">${fmt(r.count)}</span>
-        <span class="jee-row-pct">${r.pct.toFixed(1)}%</span>`;
-      el.addEventListener("click", () => {
-        jeeSelectedView = r.key;
-        jeeSelectedLayer = null;
-        map.closePopup(); clearHover();
-        map.setView(HOME_CENTER, defZoom());
-        document.querySelectorAll(".jee-row").forEach(b => b.classList.toggle("active", b.dataset.jeeView === r.key));
-        renderJee();
-      });
-      srEl.appendChild(el);
-    });
-
-    // Error rows (built once)
-    const erEl = document.getElementById("jee-error-rows");
-    erEl.dataset.built = "1";
-    const errCounts = nat.error_counts || {};
     const totalEver = nat.ever_e || 1;
-    Object.entries(JEE_ERROR_TYPES).forEach(([key, info]) => {
-      const count = errCounts[key] || 0;
-      const pct   = (count / totalEver * 100);
-      const el    = document.createElement("div");
-      el.className = "jee-row" + (jeeSelectedView === key ? " active" : "");
-      el.dataset.jeeView = key;
-      el.innerHTML = `
+    const errCounts = nat.error_counts || {};
+
+    Object.entries(JEE_ESTADOS).forEach(([key, info]) => {
+      const count = nat[`estado_${key}`] || 0;
+      const pctRow = count / totalEver * 100;
+
+      // Main estado row (clicking → choropleth of that estado... or just the default choropleth)
+      const row = document.createElement("div");
+      row.className = "jee-row" + (jeeSelectedView === `estado_${key}` ? " active" : "");
+      row.dataset.jeeView = `estado_${key}`;
+      row.innerHTML = `
         <div class="jee-row-dot" style="background:${info.color}"></div>
         <span class="jee-row-name">${info.label}</span>
-        <span class="jee-row-count">${fmt(count)}</span>
-        <span class="jee-row-pct">${pct.toFixed(1)}%</span>`;
-      el.addEventListener("click", () => {
-        jeeSelectedView = key;
-        jeeSelectedLayer = null;
-        map.closePopup(); clearHover();
-        map.setView(HOME_CENTER, defZoom());
-        document.querySelectorAll(".jee-row").forEach(b => b.classList.toggle("active", b.dataset.jeeView === key));
-        renderJee();
+        <span class="jee-row-count">${fmtN(count)}</span>
+        <span class="jee-row-pct">${pctRow.toFixed(1)}%</span>
+        <span class="jee-row-expand">▾</span>`;
+
+      // Sub-rows (error types) — built inline, collapsible
+      const subEl = document.createElement("div");
+      subEl.className = "jee-suberrors";
+      subEl.id = `jee-sub-${key}`;
+      Object.entries(JEE_ERROR_TYPES).forEach(([errKey, errInfo]) => {
+        const ec = errCounts[errKey] || 0;
+        if (ec === 0) return;
+        const ep = ec / totalEver * 100;
+        const sub = document.createElement("div");
+        sub.className = "jee-sub-row jee-row" + (jeeSelectedView === errKey ? " active" : "");
+        sub.dataset.jeeView = errKey;
+        sub.innerHTML = `
+          <div class="jee-sub-dot" style="background:${errInfo.color}"></div>
+          <span class="jee-sub-name">${errInfo.label}</span>
+          <span class="jee-sub-count">${fmtN(ec)}</span>
+          <span class="jee-sub-pct"> ${ep.toFixed(1)}%</span>`;
+        sub.addEventListener("click", e => {
+          e.stopPropagation();
+          jeeSelectedView = errKey;
+          document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b =>
+            b.classList.toggle("active", (b.dataset.jeeView === errKey)));
+          renderJee();
+        });
+        subEl.appendChild(sub);
       });
-      erEl.appendChild(el);
+
+      // Toggle expand / collapse
+      row.addEventListener("click", () => {
+        const isOpen = subEl.classList.toggle("open");
+        row.classList.toggle("open", isOpen);
+        // Also switch map view to choropleth when clicking the status row
+        if (jeeSelectedView !== `estado_${key}`) {
+          jeeSelectedView = "choropleth";
+          document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b =>
+            b.classList.toggle("active", b === row));
+          renderJee();
+        }
+      });
+
+      srEl.appendChild(row);
+      srEl.appendChild(subEl);
     });
   }
 
+  // ── JEE detail panel (right sidebar on geography click) ───────────────────
+  function showJeeDetail(feat) {
+    const p = feat.properties;
+    const name = currentLevel === "dept"     ? (p.nombre_dept      || "—")
+               : currentLevel === "provincia"? (p.nombre_provincia || "—")
+               : (p.nombre_distrito || "—");
+    const totalEver = p.ever_e || 0;
+    const sentPct   = p.ever_e_pct != null ? p.ever_e_pct.toFixed(1) + "%" : "—";
+
+    document.getElementById("jee-d-name").textContent = name;
+
+    // KPIs
+    document.getElementById("jee-d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Total actas</div><div class="dkpi-val">${fmtN(p.total_actas)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Observadas</div><div class="dkpi-val">${fmtN(totalEver)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">% observadas</div><div class="dkpi-val">${sentPct}</div></div>`;
+
+    // Estado breakdown
+    const stEl = document.getElementById("jee-d-status");
+    stEl.innerHTML = Object.entries(JEE_ESTADOS).map(([key, info]) => {
+      const c = p[`estado_${key}`] || 0;
+      const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+        <div class="detail-cand-dot" style="background:${info.color}"></div>
+        <span class="detail-cand-name">${info.label}</span>
+        <span class="detail-cand-votes">${fmtN(c)}</span>
+      </div>`;
+    }).join("");
+
+    // Error breakdown
+    const erEl = document.getElementById("jee-d-errors");
+    erEl.innerHTML = Object.entries(JEE_ERROR_TYPES)
+      .map(([k, i]) => [i, p[k] || 0])
+      .filter(([, v]) => v > 0)
+      .sort((a, b) => b[1] - a[1])
+      .map(([info, c]) => {
+        const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+        return `<div class="detail-cand">
+          <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+          <div class="detail-cand-dot" style="background:${info.color}"></div>
+          <span class="detail-cand-name">${info.label}</span>
+          <span class="detail-cand-votes">${fmtN(c)}</span>
+        </div>`;
+      }).join("") || "<div style='padding:0.5rem 0.75rem;font-size:9px;color:var(--muted)'>Sin observaciones</div>";
+
+    document.getElementById("jee-detail").classList.add("active");
+    showHover(feat);
+  }
+
+  function hideJeeDetail() {
+    document.getElementById("jee-detail").classList.remove("active");
+    clearHover();
+  }
+
+  document.getElementById("jee-detail-back").addEventListener("click", hideJeeDetail);
+
+  // ── Map rendering ──────────────────────────────────────────────────────────
   function jeeChloroColor(pct) {
-    if (pct <= 0)  return "#FEF9F0";
-    if (pct < 3)   return "#FED7AA";
-    if (pct < 6)   return "#FB923C";
-    if (pct < 10)  return "#EA580C";
-    if (pct < 15)  return "#C2410C";
+    if (pct <= 0) return "#FEF9F0";
+    if (pct < 3)  return "#FED7AA";
+    if (pct < 6)  return "#FB923C";
+    if (pct < 10) return "#EA580C";
+    if (pct < 15) return "#C2410C";
     return "#7C2D12";
   }
 
-  function jeeTooltipName(p) {
-    return currentLevel === "dept"     ? (p.nombre_dept     || "—")
-         : currentLevel === "provincia"? (p.nombre_provincia|| "—")
+  function jeeGeoName(p) {
+    return currentLevel === "dept"     ? (p.nombre_dept      || "—")
+         : currentLevel === "provincia"? (p.nombre_provincia || "—")
          : (p.nombre_distrito || "—");
   }
 
   function renderJee() {
     const geo = jeeGeoForLevel();
     if (!geo) return;
-
-    // Clear existing layers
     if (jeeLayer)       { map.removeLayer(jeeLayer);       jeeLayer       = null; }
     if (jeeBubbleLayer) { map.removeLayer(jeeBubbleLayer); jeeBubbleLayer = null; }
     if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
     if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
 
-    const isBubble = jeeSelectedView !== "sent" && jeeSelectedView !== "never";
+    const isBubble = jeeSelectedView in JEE_ERROR_TYPES;
 
     if (isBubble) {
-      // Background fill layer
+      // Transparent base (borders only, needed for hover events)
       jeeLayer = L.geoJSON(geo, {
         pane: "fillPane",
-        style: { fillColor: "#F5F0E8", fillOpacity: 0.5, weight: 0 },
+        style: { fillColor: "#F5F0E8", fillOpacity: 0.01, weight: 0 },
         onEachFeature(feat, layer) {
           layer.on("mouseover", () => showHover(feat));
           layer.on("mouseout",  () => clearHover());
-          layer.on("click",     e  => L.DomEvent.stopPropagation(e));
+          layer.on("click", e => {
+            L.DomEvent.stopPropagation(e);
+            showJeeDetail(feat);
+          });
         },
         smoothFactor: 0,
       }).addTo(map);
 
-      // Bubble layer
+      // Bubbles
       const errKey = jeeSelectedView;
       const info   = JEE_ERROR_TYPES[errKey];
       const vals   = geo.features.map(f => f.properties[errKey] || 0);
       const maxVal = Math.max(...vals, 1);
       const maxR = 28, minR = 3;
-
       const markers = [];
       geo.features.forEach(feat => {
         const v = feat.properties[errKey] || 0;
         if (v === 0) return;
         try {
-          const bounds = L.geoJSON(feat).getBounds();
-          const center = bounds.getCenter();
-          const r = minR + (maxR - minR) * Math.sqrt(v / maxVal);
-          const p = feat.properties;
-          const name = jeeTooltipName(p);
-          const content = `<b>${name}</b><br>${info.label}: <b>${fmt(v)}</b><br>Total enviadas JEE: ${fmt(p.ever_e)}`;
+          const center = L.geoJSON(feat).getBounds().getCenter();
+          const r      = minR + (maxR - minR) * Math.sqrt(v / maxVal);
+          const p      = feat.properties;
+          const tip    = `<b>${jeeGeoName(p)}</b><br>${info.label}: <b>${fmtN(v)}</b><br>Total obs.: ${fmtN(p.ever_e)}`;
           const m = L.circleMarker(center, {
-            pane: "bubblePane",
-            radius: r,
-            fillColor: info.color,
-            fillOpacity: 0.75,
-            color: "#fff",
-            weight: 1.5,
+            pane: "bubblePane", radius: r,
+            fillColor: info.color, fillOpacity: 0.78, color: "#fff", weight: 1.5,
           });
-          m.on("mouseover", e => {
-            m.setStyle({ fillOpacity: 0.95 });
-            m.bindTooltip(content, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
-          });
-          m.on("mouseout", () => { m.setStyle({ fillOpacity: 0.75 }); if (!m._popup) m.unbindTooltip(); });
-          m.on("click",    e => {
-            L.DomEvent.stopPropagation(e);
-            m.unbindTooltip();
-            m.bindPopup(content, { className: "map-tooltip", closeButton: true, autoPan: false }).openPopup(e.latlng);
-          });
+          m.on("mouseover", e => { m.setStyle({ fillOpacity: 0.95 }); m.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
+          m.on("mouseout",  () => { m.setStyle({ fillOpacity: 0.78 }); m.unbindTooltip(); });
+          m.on("click",     e => { L.DomEvent.stopPropagation(e); showJeeDetail(feat); });
           markers.push(m);
         } catch(e) {}
       });
       jeeBubbleLayer = L.layerGroup(markers).addTo(map);
 
     } else {
-      // Choropleth (sent or never)
-      const isNever = jeeSelectedView === "never";
+      // Choropleth by ever_e_pct — geography click opens detail panel
       jeeLayer = L.geoJSON(geo, {
         pane: "fillPane",
         style(feat) {
-          const p   = feat.properties;
-          const pct = isNever ? (100 - (p.ever_e_pct || 0)) : (p.ever_e_pct || 0);
+          const pct = feat.properties.ever_e_pct || 0;
           return { fillColor: jeeChloroColor(pct), fillOpacity: 0.85, weight: 0 };
         },
         onEachFeature(feat, layer) {
-          const p = feat.properties;
-          const getContent = () => {
-            const name = jeeTooltipName(p);
-            const sentPct = p.ever_e_pct != null ? p.ever_e_pct.toFixed(1) + "%" : "—";
-            // Error breakdown
-            const errLines = Object.entries(JEE_ERROR_TYPES)
-              .map(([k, i]) => [i.label, p[k] || 0])
-              .filter(([, v]) => v > 0)
-              .sort((a,b) => b[1]-a[1])
-              .slice(0, 5)
-              .map(([l, v]) => `${l}: <b>${fmt(v)}</b>`)
-              .join("<br>");
-            return `<b>${name}</b><br>
-              Total actas: ${fmt(p.total_actas)}<br>
-              Enviadas JEE: <b>${fmt(p.ever_e)}</b> (${sentPct})<br>
-              No enviadas: ${fmt(p.never_e)}` +
-              (errLines ? `<br><span style="font-size:9px;opacity:0.75">${errLines}</span>` : "");
-          };
-          layer.on("mouseover", e => {
-            showHover(feat);
-            layer.bindTooltip(getContent(), { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
-          });
-          layer.on("mouseout",  () => { clearHover(); if (!layer._popup) layer.unbindTooltip(); });
-          layer.on("click", e => {
-            L.DomEvent.stopPropagation(e);
-            layer.unbindTooltip();
-            if (jeeSelectedLayer === layer) {
-              jeeSelectedLayer = null;
-              map.closePopup(); clearHover();
-              map.setView(HOME_CENTER, defZoom(), { animate: true });
-            } else {
-              jeeSelectedLayer = layer;
-              const pad = currentLevel === "dept" ? [40,40] : [60,60];
-              map.fitBounds(layer.getBounds(), { padding: pad, animate: true });
-              layer.bindPopup(getContent(), { className: "map-tooltip", closeButton: true, autoPan: false }).openPopup(e.latlng);
-              showHover(feat);
-            }
-          });
+          const p   = feat.properties;
+          const tip = `<b>${jeeGeoName(p)}</b><br>Observadas: <b>${fmtN(p.ever_e)}</b> de ${fmtN(p.total_actas)} (${(p.ever_e_pct||0).toFixed(1)}%)`;
+          layer.on("mouseover", e => { showHover(feat); layer.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
+          layer.on("mouseout",  () => { clearHover(); layer.unbindTooltip(); });
+          layer.on("click",     e => { L.DomEvent.stopPropagation(e); layer.unbindTooltip(); showJeeDetail(feat); });
         },
         smoothFactor: 0,
       }).addTo(map);

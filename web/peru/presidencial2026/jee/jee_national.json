@@ -1,8 +1,10 @@
 {
   "total_actas": 92766,
   "ever_e": 5891,
-  "never_e": 86875,
   "ever_e_pct": 6.35,
+  "estado_C": 5891,
+  "estado_E": 0,
+  "estado_P": 0,
   "error_counts": {
     "err_aritmetico": 4958,
     "err_firmas": 609,
