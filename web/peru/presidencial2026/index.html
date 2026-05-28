@@ -286,14 +286,15 @@
     .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
 
     /* ── Comparison tab ── */
-    .comp-btn { display: block; width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; }
+    .comp-btn { display: flex; align-items: stretch; width: 100%; text-align: left; padding: 0; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; min-height: 62px; position: relative; }
     .comp-btn:hover { background: var(--terra-lt); }
-    .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); padding-left: calc(0.75rem - 3px); }
-    .comp-btn-label { font-size: 10px; font-weight: 600; color: var(--text); line-height: 1.3; }
-    .comp-btn-sub { font-size: 8.5px; color: var(--muted); margin-top: 2px; }
-    .comp-legend { display: flex; gap: 0.75rem; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 8px; color: var(--muted); }
-    .comp-legend-item { display: flex; align-items: center; gap: 0.3rem; }
-    .comp-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .comp-btn-body { flex: 1; min-width: 0; padding: 0.55rem 0.6rem 0.55rem 0.75rem; display: flex; flex-direction: column; justify-content: center; }
+    .comp-btn.active .comp-btn-body { padding-left: calc(0.75rem - 3px); }
+    .comp-btn-label { font-size: 10.5px; font-weight: 700; color: var(--text); line-height: 1.3; text-transform: none; letter-spacing: 0; }
+    .comp-btn-sub { font-size: 8.5px; color: var(--muted); margin-top: 3px; }
+    .comp-btn-photo { width: 62px; flex-shrink: 0; overflow: hidden; }
+    .comp-btn-photo img { width: 62px; height: 100%; object-fit: cover; object-position: top; display: block; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -751,6 +752,7 @@
   map.createPane('bubblePane'); map.getPane('bubblePane').style.zIndex = 450;
 
   // ── State ────────────────────────────────────────────────────────────────
+  let currentMode      = "mapa";
   let currentView      = "winner";
   let currentLevel     = "dept";
   let currentPanelTab  = "candidatos";
@@ -1227,8 +1229,11 @@
 
   function hideDetail() {
     document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-scroll").style.display = "";
-    document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
+    // Only restore panel-scroll when NOT in comparison mode
+    if (currentMode !== "comparacion") {
+      document.getElementById("panel-scroll").style.display = "";
+      document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
+    }
     if (activeLayer) {
       if (BUBBLE_VIEWS.has(currentView)) {
         const isDept = currentLevel === "dept";
@@ -1283,7 +1288,7 @@
     document.getElementById("panel-deptos").style.display      = tab === "deptos"      ? "" : "none";
     document.getElementById("panel-exterior").style.display    = tab === "exterior"    ? "" : "none";
     document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-scroll").style.display = "";
+    if (currentMode !== "comparacion") document.getElementById("panel-scroll").style.display = "";
     if (activeLayer) {
       if (BUBBLE_VIEWS.has(currentView)) {
         const isDept = currentLevel === "dept";
@@ -1823,6 +1828,7 @@
 
   // ── Mode switching ────────────────────────────────────────────────────────
   function switchMode(mode) {
+    currentMode = mode;
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
     const isMap  = mode === "mapa";
     const isComp = mode === "comparacion";
@@ -1835,6 +1841,9 @@
     document.getElementById("panel-scroll").style.display    = isComp ? "none" : "";
     document.getElementById("comparacion-panel").style.display = isComp ? "flex" : "none";
     document.getElementById("comparacion-panel").style.flexDirection = "column";
+    // Hide DATOS controls + bubble legend in comparison mode
+    document.getElementById("view-btns").closest(".ctrl-group").style.display = isComp ? "none" : "";
+    document.getElementById("bubble-legend").classList.toggle("show", false);
     if (isMap || isComp) setTimeout(() => map.invalidateSize(), 50);
     if (isComp) {
       buildCompList();
@@ -1876,27 +1885,19 @@
     el.dataset.built = "1";
     el.innerHTML = "";
 
-    // Legend
-    el.insertAdjacentHTML("beforeend", `
-      <div class="comp-legend">
-        <div class="comp-legend-item"><div class="comp-legend-dot" style="background:#27ae60"></div> Mejor que 2021</div>
-        <div class="comp-legend-item"><div class="comp-legend-dot" style="background:#c0392b"></div> Peor que 2021</div>
-      </div>`);
-
     Object.values(COMPARISONS).forEach(c => {
       const btn = document.createElement("button");
       btn.className = "comp-btn" + (selectedComp === c.key ? " active" : "");
       btn.dataset.comp = c.key;
       const photoHtml = c.imagen
-        ? `<img src="${BASE}${c.imagen}" width="42" height="56" style="object-fit:cover;object-position:top;border-radius:3px;flex-shrink:0;margin-left:0.5rem" onerror="this.style.display='none'" alt="">`
+        ? `<div class="comp-btn-photo"><img src="${BASE}${c.imagen}" alt=""></div>`
         : "";
       btn.innerHTML = `
-        <div style="flex:1;min-width:0">
+        <div class="comp-btn-body">
           <div class="comp-btn-label">${c.label}</div>
-          <div class="comp-btn-sub">${c.cand26} <span style="color:var(--muted)">vs</span> ${c.cand21}</div>
+          <div class="comp-btn-sub">${c.cand26} <span style="opacity:0.6">vs</span> ${c.cand21}</div>
         </div>
         ${photoHtml}`;
-      btn.style.cssText += "display:flex;align-items:center";
       btn.addEventListener("click", () => {
         selectedComp = c.key;
         el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
