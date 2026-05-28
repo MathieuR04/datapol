@@ -286,9 +286,12 @@
     .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
 
     /* ── Comparison tab ── */
-    .comp-btn { display: flex; align-items: stretch; width: 100%; text-align: left; padding: 0; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; min-height: 72px; position: relative; }
+    /* Card = column: [top-row] + [nat-stats] + [color-bar] */
+    .comp-btn { display: flex; flex-direction: column; width: 100%; text-align: left; padding: 0; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; position: relative; }
     .comp-btn:hover { background: var(--terra-lt); }
     .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    /* Top row: photo (left) + label text (right) */
+    .comp-btn-top { display: flex; align-items: stretch; }
     .comp-btn-photo { width: 62px; flex-shrink: 0; overflow: hidden; }
     .comp-btn-photo img { width: 62px; height: 100%; object-fit: cover; object-position: top center; display: block; }
     .comp-btn-body { flex: 1; min-width: 0; padding: 0.6rem 0.75rem; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
@@ -296,10 +299,14 @@
     .comp-btn-l1 { font-size: 10px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: 0.04em; text-transform: uppercase; }
     .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
     .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
+    /* National stats row — full width, below photo+text */
+    .comp-btn-nat { display: flex; align-items: baseline; gap: 0.35rem; padding: 0.4rem 0.75rem 0.5rem; border-top: 1px solid var(--border); }
+    .comp-btn-nat-26 { font-size: 20px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; line-height: 1; letter-spacing: 0.02em; }
+    .comp-btn-nat-vs  { font-size: 8px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .comp-btn-nat-21  { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--muted); line-height: 1; }
+    .comp-btn-nat-diff { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; margin-left: auto; line-height: 1; }
+    /* Color bar — very bottom, full width */
     .comp-btn-bar { height: 3px; width: 100%; flex-shrink: 0; }
-    .comp-btn-nat { font-size: 9px; color: var(--text); padding: 0.3rem 0.75rem 0.4rem; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 0.4rem; }
-    .comp-btn-nat-pcts { font-weight: 600; }
-    .comp-btn-nat-diff { font-weight: 700; margin-left: auto; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -1927,10 +1934,11 @@
       const diff  = pct26 - pct21;
       const sign  = diff >= 0 ? "+" : "";
       const dCol  = diff >= 0 ? "#27ae60" : "#c0392b";
+      const candColor = COMPARISONS[k].color;
       el.innerHTML = `
-        <span class="comp-btn-nat-pcts">${pct26.toFixed(1)}%</span>
-        <span style="opacity:0.45;font-size:8px">vs</span>
-        <span class="comp-btn-nat-pcts" style="opacity:0.7">${pct21.toFixed(1)}%</span>
+        <span class="comp-btn-nat-26" style="color:${candColor}">${pct26.toFixed(1)}%</span>
+        <span class="comp-btn-nat-vs">vs</span>
+        <span class="comp-btn-nat-21">${pct21.toFixed(1)}%</span>
         <span class="comp-btn-nat-diff" style="color:${dCol}">${sign}${diff.toFixed(1)} pp</span>`;
     });
   }
@@ -1949,18 +1957,18 @@
         ? `<div class="comp-btn-photo"><img src="${BASE}${c.imagen}" alt=""></div>`
         : "";
       btn.innerHTML = `
-        ${photoHtml}
-        <div style="flex:1;display:flex;flex-direction:column;min-width:0">
-          <div class="comp-btn-body" style="flex:1">
+        <div class="comp-btn-top">
+          ${photoHtml}
+          <div class="comp-btn-body">
             <div class="comp-btn-l1">${c.line1}</div>
             <div class="comp-btn-l2">${c.line2}</div>
             <div class="comp-btn-l3">${c.line3}</div>
           </div>
-          <div class="comp-btn-nat" id="comp-nat-${c.key}">
-            <span class="comp-btn-nat-pcts" style="opacity:0.4">cargando…</span>
-          </div>
-          <div class="comp-btn-bar" style="background:${c.color}"></div>
-        </div>`;
+        </div>
+        <div class="comp-btn-nat" id="comp-nat-${c.key}">
+          <span class="comp-btn-nat-26" style="opacity:0.3">—</span>
+        </div>
+        <div class="comp-btn-bar" style="background:${c.color}"></div>`;
       btn.addEventListener("click", () => {
         selectedComp = c.key;
         el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
