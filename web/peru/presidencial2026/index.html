@@ -1868,7 +1868,7 @@
       document.getElementById("map-topbar").style.display = "none";
       clearSelect(); clearHover();
       activeLayer = null;
-      if (!selectedComp) selectedComp = "A";   // default to first comparison
+      selectedComp = "A";   // always reset to Keiko vs Keiko on tab entry
       buildCompList();
       document.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === selectedComp));
       loadCompData(() => renderComp());
