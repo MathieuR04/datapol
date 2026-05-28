@@ -764,6 +764,7 @@
   let distData = null, provData = null, deptData = null;
   let candidatesData = null, aggStats = null;
   let hoverLayer = null, selectLayer = null;   // highlight layers in hoverPane
+  let activeBubble = null;                      // last-clicked bubble marker
 
   // ── Comparison tab state ──────────────────────────────────────────────────
   let compLayer   = null;
@@ -914,6 +915,7 @@
   // ── Render bubbles ────────────────────────────────────────────────────────
   function renderBubbles(valueKey, labelFn, bubbleColor) {
     if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    activeBubble = null;
 
     const isDept = currentLevel === "dept";
     const activeGeoData = currentLevel === "distrito" ? distData : currentLevel === "provincia" ? provData : deptData;
@@ -973,6 +975,15 @@
       marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
       marker.on("click", e => {
         L.DomEvent.stopPropagation(e);
+        if (activeBubble === marker) {
+          // second click → zoom out
+          activeBubble = null;
+          map.setView(HOME_CENTER, defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        activeBubble = marker;
         showDetail(feat, currentLevel);
         document.getElementById("map-topbar").style.display = "block";
         try {
@@ -1830,6 +1841,25 @@
   document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
 
   // ── Comparison tab functions ──────────────────────────────────────────────
+  let compDataLoading = false, compDataLoaded = false;
+  function loadCompData(cb) {
+    if (compDataLoaded) { cb(); return; }
+    if (compDataLoading) { setTimeout(() => loadCompData(cb), 200); return; }
+    compDataLoading = true;
+    Promise.all([
+      fetch(BASE + "comparison/peru_2026_primera_departamento_comparison.geojson").then(r => r.json()).catch(() => null),
+      fetch(BASE + "comparison/peru_2026_primera_provincia_comparison.geojson").then(r => r.json()).catch(() => null),
+      fetch(BASE + "comparison/peru_2026_primera_distrito_comparison.geojson").then(r => r.json()).catch(() => null),
+    ]).then(([dept, prov, dist]) => {
+      if (dept) compDeptData = dept;
+      if (prov) compProvData = prov;
+      if (dist) compDistData = dist;
+      compDataLoaded = true;
+      compDataLoading = false;
+      cb();
+    });
+  }
+
   function buildCompList() {
     const el = document.getElementById("panel-comparacion");
     if (el.dataset.built === "1") return;
@@ -1853,7 +1883,7 @@
       btn.addEventListener("click", () => {
         selectedComp = c.key;
         el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
-        renderComp();
+        loadCompData(() => renderComp());
       });
       el.appendChild(btn);
     });
@@ -1953,15 +1983,9 @@
     fetch(BASE + "peru_2026eg_distrito_primera.geojson").then(r => r.json()).catch(() => null),
     fetch(BASE + "peru_2026eg_provincia_primera.geojson").then(r => r.json()).catch(() => null),
     fetch(BASE + "peru_2026eg_departamento_primera.geojson").then(r => r.json()).catch(() => null),
-    fetch(BASE + "comparison/peru_2026_primera_distrito_comparison.geojson").then(r => r.json()).catch(() => null),
-    fetch(BASE + "comparison/peru_2026_primera_provincia_comparison.geojson").then(r => r.json()).catch(() => null),
-    fetch(BASE + "comparison/peru_2026_primera_departamento_comparison.geojson").then(r => r.json()).catch(() => null),
-  ]).then(([cands, agg, forecast, distGeo, provGeo, deptGeo, compDist, compProv, compDept]) => {
+  ]).then(([cands, agg, forecast, distGeo, provGeo, deptGeo]) => {
     candidatesData = cands;
     aggStats       = agg;
-    if (compDist) compDistData = compDist;
-    if (compProv) compProvData = compProv;
-    if (compDept) compDeptData = compDept;
     forecastData   = forecast;
 
     if (distGeo) distData = distGeo;
