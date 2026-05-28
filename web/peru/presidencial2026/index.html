@@ -294,18 +294,18 @@
     .comp-btn-top { display: flex; align-items: stretch; }
     .comp-btn-photo { width: 62px; flex-shrink: 0; overflow: hidden; }
     .comp-btn-photo img { width: 62px; height: 100%; object-fit: cover; object-position: top center; display: block; }
-    .comp-btn-body { flex: 1; min-width: 0; padding: 0.6rem 0.75rem; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+    .comp-btn-body { flex: 1; min-width: 0; padding: 0.55rem 0.75rem 0.55rem; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
     .comp-btn.active .comp-btn-body { padding-left: calc(0.75rem - 3px); }
-    .comp-btn-l1 { font-size: 10px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: 0.04em; text-transform: uppercase; }
-    .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
-    .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
-    /* National stats row — full width, below photo+text */
-    .comp-btn-nat { display: flex; align-items: baseline; gap: 0.35rem; padding: 0.4rem 0.75rem 0.5rem; border-top: 1px solid var(--border); }
+    /* National stats — inside body, at top above name */
+    .comp-btn-nat { display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 4px; }
     .comp-btn-nat-26 { font-size: 20px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; line-height: 1; letter-spacing: 0.02em; }
-    .comp-btn-nat-vs  { font-size: 8px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .comp-btn-nat-vs  { font-size: 7.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
     .comp-btn-nat-21  { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--muted); line-height: 1; }
     .comp-btn-nat-diff { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; margin-left: auto; line-height: 1; }
-    /* Color bar — very bottom, full width */
+    .comp-btn-l1 { font-size: 10px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: 0.04em; text-transform: uppercase; }
+    .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+    .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
+    /* Color bar — very bottom, full width, photo touches it */
     .comp-btn-bar { height: 3px; width: 100%; flex-shrink: 0; }
 
     /* Dept rows */
@@ -786,6 +786,7 @@
   // ── Comparison tab state ──────────────────────────────────────────────────
   let compLayer   = null;
   let selectedComp = null;
+  let selectedCompLayer = null;   // currently zoomed-in layer in comparison mode
   let compDistData = null, compProvData = null, compDeptData = null;
 
   // Keys A/B/C/D match the Python build script order exactly:
@@ -1171,7 +1172,17 @@
     });
   }
 
-  map.on("click", () => { hideDetail(); if (currentMode === "comparacion") { clearHover(); map.closePopup(); } });
+  map.on("click", () => {
+    hideDetail();
+    if (currentMode === "comparacion") {
+      clearHover();
+      map.closePopup();
+      if (selectedCompLayer) {
+        selectedCompLayer = null;
+        map.setView(HOME_CENTER, defZoom(), { animate: true });
+      }
+    }
+  });
 
   document.getElementById("btn-fullview").addEventListener("click", () => {
     map.setView(HOME_CENTER, defZoom());
@@ -1599,6 +1610,10 @@
       document.getElementById("map-topbar").style.display = "none";
       hideDetail();
       if (currentMode === "comparacion") {
+        selectedCompLayer = null;
+        map.closePopup();
+        clearHover();
+        map.setView(HOME_CENTER, defZoom());
         renderComp();
       } else {
         render();
@@ -1876,6 +1891,8 @@
       clearSelect(); clearHover();
       activeLayer = null;
       selectedComp = "A";   // always reset to Keiko vs Keiko on tab entry
+      selectedCompLayer = null;
+      map.closePopup();
       buildCompList();
       document.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === selectedComp));
       loadCompData(() => renderComp());
@@ -1960,17 +1977,21 @@
         <div class="comp-btn-top">
           ${photoHtml}
           <div class="comp-btn-body">
+            <div class="comp-btn-nat" id="comp-nat-${c.key}">
+              <span class="comp-btn-nat-26" style="opacity:0.3">—</span>
+            </div>
             <div class="comp-btn-l1">${c.line1}</div>
             <div class="comp-btn-l2">${c.line2}</div>
             <div class="comp-btn-l3">${c.line3}</div>
           </div>
         </div>
-        <div class="comp-btn-nat" id="comp-nat-${c.key}">
-          <span class="comp-btn-nat-26" style="opacity:0.3">—</span>
-        </div>
         <div class="comp-btn-bar" style="background:${c.color}"></div>`;
       btn.addEventListener("click", () => {
         selectedComp = c.key;
+        selectedCompLayer = null;
+        map.closePopup();
+        clearHover();
+        map.setView(HOME_CENTER, defZoom());
         el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
         loadCompData(() => renderComp());
       });
@@ -2024,7 +2045,9 @@
       onEachFeature(feat, layer) {
         const getTooltipContent = () => {
           const p = feat.properties;
-          const name   = p.nombre_dept || p.nombre_provincia || p.nombre_distrito || "—";
+          const name   = currentLevel === "dept" ? (p.nombre_dept || "—")
+                       : currentLevel === "provincia" ? (p.nombre_provincia || "—")
+                       : (p.nombre_distrito || "—");
           const diff   = p["diff_"    + selectedComp];
           const pct21  = p["pct21_"   + selectedComp];
           const pct26  = p["pct26_"   + selectedComp];
@@ -2055,8 +2078,21 @@
         layer.on("click", e => {
           L.DomEvent.stopPropagation(e);
           layer.unbindTooltip();
-          layer.bindPopup(getTooltipContent(), { className: "map-tooltip", closeButton: true, autoPan: false }).openPopup(e.latlng);
-          showHover(feat);
+          if (selectedCompLayer === layer) {
+            // Second click on same geography → zoom out
+            selectedCompLayer = null;
+            map.closePopup();
+            clearHover();
+            map.setView(HOME_CENTER, defZoom(), { animate: true });
+          } else {
+            // First click (or different geography) → zoom in
+            selectedCompLayer = layer;
+            const bounds = layer.getBounds();
+            const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
+            map.fitBounds(bounds, { padding: pad, animate: true });
+            layer.bindPopup(getTooltipContent(), { className: "map-tooltip", closeButton: true, autoPan: false }).openPopup(e.latlng);
+            showHover(feat);
+          }
         });
       }
     }).addTo(map);
