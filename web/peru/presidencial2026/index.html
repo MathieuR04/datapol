@@ -296,6 +296,7 @@
     .comp-btn-l1 { font-size: 10px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: 0.04em; text-transform: uppercase; }
     .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
     .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
+    .comp-btn-bar { height: 3px; width: 100%; flex-shrink: 0; }
 
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
@@ -778,10 +779,10 @@
   // Keys A/B/C/D match the Python build script order exactly:
   // A=Keiko/Keiko  B=Sánchez/Castillo  C=Aliaga/Aliaga  D=Nieto/DeSoto
   const COMPARISONS = {
-    A: { key: "A", line1: "KEIKO FUJIMORI 2026",        line2: "VS. KEIKO FUJIMORI 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/keiko.png" },
-    B: { key: "B", line1: "ROBERTO SÁNCHEZ 2026",       line2: "VS. PEDRO CASTILLO 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/roberto.png" },
-    C: { key: "C", line1: "RAFAEL LÓPEZ ALIAGA 2026",   line2: "VS. LÓPEZ ALIAGA 2021",         line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/lopez_aliaga.png" },
-    D: { key: "D", line1: "JORGE NIETO 2026",           line2: "VS. HERNANDO DE SOTO 2021",     line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/nieto.png" },
+    A: { key: "A", line1: "KEIKO FUJIMORI 2026",        line2: "VS. KEIKO FUJIMORI 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/keiko.png",       color: "#EA580C" },
+    B: { key: "B", line1: "ROBERTO SÁNCHEZ 2026",       line2: "VS. PEDRO CASTILLO 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/roberto.png",     color: "#166534" },
+    C: { key: "C", line1: "RAFAEL LÓPEZ ALIAGA 2026",   line2: "VS. LÓPEZ ALIAGA 2021",         line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/lopez_aliaga.png", color: "#1E3A8A" },
+    D: { key: "D", line1: "JORGE NIETO 2026",           line2: "VS. HERNANDO DE SOTO 2021",     line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/nieto.png",        color: "#FBBF24" },
   };
   // Display name pairs for tooltip
   const COMP_NAMES = {
@@ -1158,7 +1159,7 @@
     });
   }
 
-  map.on("click", hideDetail);
+  map.on("click", () => { hideDetail(); if (currentMode === "comparacion") { clearHover(); map.closePopup(); } });
 
   document.getElementById("btn-fullview").addEventListener("click", () => {
     map.setView(HOME_CENTER, defZoom());
@@ -1857,9 +1858,13 @@
     document.getElementById("bubble-legend").classList.toggle("show", false);
     if (isMap || isComp) setTimeout(() => map.invalidateSize(), 50);
     if (isComp) {
+      // Always reset map view and clear any MAPA selection state
+      map.setView(HOME_CENTER, defZoom());
+      document.getElementById("map-topbar").style.display = "none";
+      clearSelect(); clearHover();
+      activeLayer = null;
       if (!selectedComp) selectedComp = "A";   // default to first comparison
       buildCompList();
-      // mark A active in the list
       document.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === selectedComp));
       loadCompData(() => renderComp());
     } else {
@@ -1908,10 +1913,13 @@
         : "";
       btn.innerHTML = `
         ${photoHtml}
-        <div class="comp-btn-body">
-          <div class="comp-btn-l1">${c.line1}</div>
-          <div class="comp-btn-l2">${c.line2}</div>
-          <div class="comp-btn-l3">${c.line3}</div>
+        <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+          <div class="comp-btn-body" style="flex:1">
+            <div class="comp-btn-l1">${c.line1}</div>
+            <div class="comp-btn-l2">${c.line2}</div>
+            <div class="comp-btn-l3">${c.line3}</div>
+          </div>
+          <div class="comp-btn-bar" style="background:${c.color}"></div>
         </div>`;
       btn.addEventListener("click", () => {
         selectedComp = c.key;
@@ -1966,8 +1974,7 @@
       style: styleComp,
       smoothFactor: 0,
       onEachFeature(feat, layer) {
-        layer.on("mouseover", e => {
-          layer.setStyle({ weight: 2, color: "#1a1209" });
+        const getTooltipContent = () => {
           const p = feat.properties;
           const name   = p.nombre_dept || p.nombre_provincia || p.nombre_distrito || "—";
           const diff   = p["diff_"    + selectedComp];
@@ -1982,18 +1989,26 @@
           const fmt    = n => n != null ? parseInt(n).toLocaleString("es-PE") : "—";
           const fmtPct = n => n != null ? n.toFixed(1) + "%" : "—";
           const names  = COMP_NAMES[selectedComp] || { c26: "2026", c21: "2021" };
-          layer.bindTooltip(`
-            <b>${name}</b><br>
+          return `<b>${name}</b><br>
             <span style="font-size:9px;opacity:0.7">2026</span>
             ${names.c26}: ${fmtPct(pct26)} <span style="opacity:0.6">(${fmt(v26)} / ${fmt(vv26)})</span><br>
             <span style="font-size:9px;opacity:0.7">2021</span>
             ${names.c21}: ${fmtPct(pct21)} <span style="opacity:0.6">(${fmt(v21)} / ${fmt(vv21)})</span><br>
-            <span style="color:${color};font-weight:700">${sign}${diff != null ? diff.toFixed(1) : "—"} pp</span>
-          `, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
+            <span style="color:${color};font-weight:700">${sign}${diff != null ? diff.toFixed(1) : "—"} pp</span>`;
+        };
+        layer.on("mouseover", e => {
+          showHover(feat);
+          layer.bindTooltip(getTooltipContent(), { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
         });
         layer.on("mouseout", () => {
-          compLayer?.resetStyle(layer);
+          clearHover();
+          if (!layer._popup) layer.unbindTooltip();
+        });
+        layer.on("click", e => {
+          L.DomEvent.stopPropagation(e);
           layer.unbindTooltip();
+          layer.bindPopup(getTooltipContent(), { className: "map-tooltip", closeButton: true, autoPan: false }).openPopup(e.latlng);
+          showHover(feat);
         });
       }
     }).addTo(map);
