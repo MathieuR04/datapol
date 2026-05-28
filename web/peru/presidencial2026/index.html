@@ -456,6 +456,8 @@
       .view-btn, .level-btn { font-size: 7px; padding: 0.18rem 0.4rem; letter-spacing: 0.03em; }
       .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
     }
+  /* Remove browser focus ring on Leaflet SVG paths */
+  .leaflet-interactive:focus { outline: none !important; box-shadow: none !important; }
   </style>
 </head>
 <body>
