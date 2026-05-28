@@ -735,6 +735,7 @@
   map.createPane('borderPane'); map.getPane('borderPane').style.zIndex = 401;
   map.createPane('hoverPane');  map.getPane('hoverPane').style.zIndex  = 402;
   map.getPane('hoverPane').style.pointerEvents = 'none';
+  map.createPane('bubblePane'); map.getPane('bubblePane').style.zIndex = 450;
 
   // ── State ────────────────────────────────────────────────────────────────
   let currentView      = "winner";
@@ -941,6 +942,7 @@
       const latlng = centroid(feat);
       const bCol = bubbleColor || "#c4603a";
       const marker = L.circleMarker(latlng, {
+        pane: 'bubblePane',
         radius: r, fillColor: bCol, fillOpacity: 0.55,
         weight: 0.8, color: bCol
       });
