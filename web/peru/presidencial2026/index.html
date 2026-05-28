@@ -193,6 +193,10 @@
     .ctrl-label.geo  { color: var(--text); }
     .ctrl-label.data { color: var(--terra); }
 
+    /* Map tooltip */
+    .map-tooltip { background: rgba(245,240,232,0.96) !important; border: 1px solid #c9b99a !important; border-radius: 3px !important; box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important; color: #1a1209 !important; font-size: 10px !important; line-height: 1.5 !important; padding: 5px 8px !important; font-family: inherit !important; }
+    .map-tooltip::before { display: none !important; }
+
     /* Loading */
     #loading { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; gap: 0.75rem; }
     #loading p { color: var(--muted); font-size: 11px; }
@@ -1193,6 +1197,45 @@
     if (selectLayer) { map.removeLayer(selectLayer); selectLayer = null; }
   }
 
+  // ── MAPA tooltip content (view-aware) ────────────────────────────────────
+  function getMapaTooltip(p, type) {
+    const name = type === "dept"     ? (p.nombre_dept      || "—")
+               : type === "provincia"? (p.nombre_provincia || "—")
+               :                      (p.nombre_distrito   || "—");
+    const fmt    = n => (n != null && n !== "") ? parseInt(n).toLocaleString("es-PE") : "—";
+    const fmtPct = n => n != null ? (+n).toFixed(1) + "%" : "—";
+
+    if (currentView === "winner") {
+      const vvN = parseInt(p.votos_validos) || 0;
+      const wv  = parseInt(p.winner_votes)  || 0;
+      const share = vvN > 0 ? (wv / vvN * 100).toFixed(1) + "%" : "—";
+      const col   = liveColor(p.winner) || p.winner_color || "#888";
+      const winner = p.winner || "—";
+      return `<b>${name}</b><br>
+        <span style="color:${col};font-weight:700">${winner}</span> · ${share}<br>
+        <span style="opacity:0.65;font-size:9px">${fmt(wv)} de ${fmt(vvN)} votos válidos</span>`;
+    }
+    if (currentView === "turnout") {
+      const ve   = parseInt(p.votos_emitidos) || 0;
+      const elec = parseInt(p.num_electores)  || 0;
+      const tPct = elec > 0 ? (ve / elec * 100).toFixed(1) + "%" : fmtPct(p.turnout_pct);
+      return `<b>${name}</b><br>
+        Participación: <b>${tPct}</b><br>
+        <span style="opacity:0.65;font-size:9px">${fmt(ve)} de ${fmt(elec)} electores</span>`;
+    }
+    if (currentView === "candidate" && selectedCandidate) {
+      const votes = getCandVotes(p, selectedCandidate);
+      const vvN   = parseInt(p.votos_validos) || 1;
+      const share = votes > 0 ? (votes / vvN * 100).toFixed(1) + "%" : "0.0%";
+      const col   = candColor(selectedCandidate);
+      const short = selectedCandidate.split(" ").slice(0, 2).join(" ");
+      return `<b>${name}</b><br>
+        <span style="color:${col};font-weight:700">${short}</span>: <b>${share}</b><br>
+        <span style="opacity:0.65;font-size:9px">${parseInt(votes).toLocaleString("es-PE")} votos</span>`;
+    }
+    return null;
+  }
+
   // ── Feature interactions ──────────────────────────────────────────────────
   function onEachFeature(feat, layer, type) {
     if (type === "dept") {
@@ -1210,9 +1253,12 @@
           e.target.bringToFront();    // safe: stays within fillPane (z:400)
           showHover(e.target.feature);
         }
+        const tip = getMapaTooltip(feat.properties || {}, type);
+        if (tip) e.target.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
       },
       mouseout(e) {
         clearHover();
+        e.target.unbindTooltip();
         if (e.target === activeLayer) return;
         if (BUBBLE_VIEWS.has(currentView)) {
           const isDept = type === "dept";
@@ -1225,6 +1271,7 @@
       },
       click(e) {
         L.DomEvent.stopPropagation(e);
+        e.target.unbindTooltip();
         clearHover();
         if (currentMode === "comparacion") return;  // comparison has its own click handlers
         if (activeLayer === e.target) {
