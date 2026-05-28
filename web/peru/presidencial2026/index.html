@@ -285,6 +285,16 @@
     .sidebar-photo-text { flex: 1; min-width: 0; padding: 0.45rem 0.6rem; display: flex; flex-direction: column; justify-content: center; }
     .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
 
+    /* ── Comparison tab ── */
+    .comp-btn { display: block; width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; }
+    .comp-btn:hover { background: var(--terra-lt); }
+    .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); padding-left: calc(0.75rem - 3px); }
+    .comp-btn-label { font-size: 10px; font-weight: 600; color: var(--text); line-height: 1.3; }
+    .comp-btn-sub { font-size: 8.5px; color: var(--muted); margin-top: 2px; }
+    .comp-legend { display: flex; gap: 0.75rem; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 8px; color: var(--muted); }
+    .comp-legend-item { display: flex; align-items: center; gap: 0.3rem; }
+    .comp-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
     /* Dept rows */
     .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
     .dept-row:hover { background: var(--terra-lt); }
@@ -535,11 +545,13 @@
     <div class="panel-tabs" id="panel-tabs">
       <button class="ptab active" data-ptab="candidatos">Candidatos</button>
       <button class="ptab" data-ptab="deptos">Deptos</button>
+      <button class="ptab" data-ptab="comparacion">Comparación</button>
       <button class="ptab" data-ptab="exterior">Exterior</button>
     </div>
     <div class="panel-scroll" id="panel-scroll">
       <div id="panel-candidatos"></div>
       <div id="panel-deptos" style="display:none"></div>
+      <div id="panel-comparacion" style="display:none"></div>
       <div id="panel-exterior" style="display:none"></div>
     </div>
     <!-- Detail overlay -->
@@ -752,6 +764,18 @@
   let distData = null, provData = null, deptData = null;
   let candidatesData = null, aggStats = null;
   let hoverLayer = null, selectLayer = null;   // highlight layers in hoverPane
+
+  // ── Comparison tab state ──────────────────────────────────────────────────
+  let compLayer   = null;
+  let selectedComp = null;
+  let compDistData = null, compProvData = null, compDeptData = null;
+
+  const COMPARISONS = {
+    A: { key: "A", label: "Keiko Fujimori 2026 vs 2021",        cand26: "Keiko Fujimori", cand21: "Keiko Fujimori",   color: "#c4603a" },
+    B: { key: "B", label: "Aliaga 2026 vs Aliaga 2021",          cand26: "Rafael López Aliaga", cand21: "López Aliaga 2021", color: "#1a5276" },
+    C: { key: "C", label: "R. Sánchez 2026 vs Castillo 2021",    cand26: "Roberto Sánchez", cand21: "Pedro Castillo",  color: "#c0392b" },
+    D: { key: "D", label: "Jorge Nieto 2026 vs De Soto 2021",    cand26: "Jorge Nieto",    cand21: "Hernando de Soto", color: "#566573" },
+  };
 
   const BUBBLE_VIEWS = new Set(["actas", "votos", "candidate_bubble"]);
 
@@ -971,7 +995,9 @@
 
   // ── Render dispatcher ─────────────────────────────────────────────────────
   function featName(p) {
-    return p.nombre_distrito || p.nombre_provincia || p.nombre_dept || "—";
+    if (currentLevel === "dept")     return p.nombre_dept     || "—";
+    if (currentLevel === "provincia") return p.nombre_provincia || "—";
+    return p.nombre_distrito || "—";
   }
   function render() {
     if (currentView === "actas") {
@@ -1236,9 +1262,10 @@
     currentPanelTab = tab;
     previousTab     = tab;
     document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
-    document.getElementById("panel-candidatos").style.display = tab === "candidatos" ? "" : "none";
-    document.getElementById("panel-deptos").style.display     = tab === "deptos"     ? "" : "none";
-    document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
+    document.getElementById("panel-candidatos").style.display  = tab === "candidatos"  ? "" : "none";
+    document.getElementById("panel-deptos").style.display      = tab === "deptos"      ? "" : "none";
+    document.getElementById("panel-comparacion").style.display = tab === "comparacion" ? "" : "none";
+    document.getElementById("panel-exterior").style.display    = tab === "exterior"    ? "" : "none";
     document.getElementById("detail-panel").classList.remove("active");
     document.getElementById("panel-scroll").style.display = "";
     if (activeLayer) {
@@ -1256,7 +1283,15 @@
     }
     map.setView(HOME_CENTER, defZoom());
     document.getElementById("map-topbar").style.display = "none";
-    if (tab === "exterior") buildExteriorList();
+    if (tab === "exterior")   buildExteriorList();
+    if (tab === "comparacion") {
+      buildCompList();
+      if (selectedComp) renderComp();
+    } else {
+      // leaving comparison tab — restore normal choropleth
+      if (compLayer)  { map.removeLayer(compLayer);  compLayer  = null; }
+      render();
+    }
   }
   document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
 
@@ -1525,7 +1560,11 @@
       activeLayer = null;
       document.getElementById("map-topbar").style.display = "none";
       hideDetail();
-      render();
+      if (currentPanelTab === "comparacion" && selectedComp) {
+        renderComp();
+      } else {
+        render();
+      }
     });
   });
 
@@ -1785,6 +1824,121 @@
   }
   document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
 
+  // ── Comparison tab functions ──────────────────────────────────────────────
+  function buildCompList() {
+    const el = document.getElementById("panel-comparacion");
+    if (el.dataset.built === "1") return;
+    el.dataset.built = "1";
+    el.innerHTML = "";
+
+    // Legend
+    el.insertAdjacentHTML("beforeend", `
+      <div class="comp-legend">
+        <div class="comp-legend-item"><div class="comp-legend-dot" style="background:#27ae60"></div> Mejor que 2021</div>
+        <div class="comp-legend-item"><div class="comp-legend-dot" style="background:#c0392b"></div> Peor que 2021</div>
+      </div>`);
+
+    Object.values(COMPARISONS).forEach(c => {
+      const btn = document.createElement("button");
+      btn.className = "comp-btn" + (selectedComp === c.key ? " active" : "");
+      btn.dataset.comp = c.key;
+      btn.innerHTML = `
+        <div class="comp-btn-label">${c.label}</div>
+        <div class="comp-btn-sub">${c.cand26} · ${c.cand21}</div>`;
+      btn.addEventListener("click", () => {
+        selectedComp = c.key;
+        el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
+        renderComp();
+      });
+      el.appendChild(btn);
+    });
+  }
+
+  function compGeoForLevel() {
+    if (currentLevel === "distrito") return compDistData;
+    if (currentLevel === "provincia") return compProvData;
+    return compDeptData;
+  }
+
+  function styleComp(feat) {
+    const diff = feat.properties["diff_" + selectedComp];
+    let fillColor = "#e0d8cc";
+    if (diff != null && !isNaN(diff)) {
+      // scale: ±20 pp → full saturation
+      const t = Math.min(Math.abs(diff) / 20, 1);
+      if (diff > 0) {
+        // green: lerp from sand to #27ae60
+        fillColor = lerp("#e0d8cc", "#27ae60", Math.pow(t, 0.6));
+      } else {
+        // red: lerp from sand to #c0392b
+        fillColor = lerp("#e0d8cc", "#c0392b", Math.pow(t, 0.6));
+      }
+    }
+    return { fillColor, fillOpacity: 0.85, weight: 0.4, color: "#8a7a6a", pane: "fillPane" };
+  }
+
+  function renderComp() {
+    if (!selectedComp) return;
+    const geo = compGeoForLevel();
+    if (!geo) return;
+
+    if (compLayer) { map.removeLayer(compLayer); compLayer = null; }
+    // Remove main layers so they don't visually compete
+    if (distLayer)         { map.removeLayer(distLayer);         distLayer         = null; }
+    if (provLayer)         { map.removeLayer(provLayer);         provLayer         = null; }
+    if (deptLayer)         { map.removeLayer(deptLayer);         deptLayer         = null; }
+    if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+    if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+    if (bubbleLayer)       { map.removeLayer(bubbleLayer);       bubbleLayer       = null; }
+
+    const comp = COMPARISONS[selectedComp];
+
+    compLayer = L.geoJSON(geo, {
+      pane: "fillPane",
+      style: styleComp,
+      smoothFactor: 0,
+      onEachFeature(feat, layer) {
+        layer.on("mouseover", e => {
+          layer.setStyle({ weight: 2, color: "#1a1209" });
+          const p = feat.properties;
+          const name = p.nombre_dept || p.nombre_provincia || p.nombre_distrito || "—";
+          const diff = p["diff_" + selectedComp];
+          const pct21 = p["pct21_" + selectedComp];
+          const pct26 = p["pct26_" + selectedComp];
+          const sign  = diff > 0 ? "+" : "";
+          const color = diff > 0 ? "#27ae60" : "#c0392b";
+          layer.bindTooltip(`
+            <b>${name}</b><br>
+            ${comp.cand26}: ${pct26 != null ? pct26.toFixed(1) : "—"}%<br>
+            ${comp.cand21}: ${pct21 != null ? pct21.toFixed(1) : "—"}%<br>
+            <span style="color:${color};font-weight:700">${sign}${diff != null ? diff.toFixed(1) : "—"} pp</span>
+          `, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
+        });
+        layer.on("mouseout", () => {
+          compLayer?.resetStyle(layer);
+          layer.unbindTooltip();
+        });
+      }
+    }).addTo(map);
+
+    // Dept border overlay always on top in borderPane
+    if (deptData) {
+      deptBoundaryLayer = L.geoJSON(deptData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+        interactive: false, smoothFactor: 0
+      }).addTo(map);
+    }
+    // Province border overlay when at district or province level
+    if ((currentLevel === "distrito" || currentLevel === "provincia") && provData) {
+      provBoundaryLayer = L.geoJSON(provData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" },
+        interactive: false, smoothFactor: 0
+      }).addTo(map);
+    }
+  }
+
   // ── Load data ──────────────────────────────────────────────────────────────
   const BASE = "../../../peru/2026eg/primera/data/";
   Promise.all([
@@ -1794,9 +1948,15 @@
     fetch(BASE + "peru_2026eg_distrito_primera.geojson").then(r => r.json()).catch(() => null),
     fetch(BASE + "peru_2026eg_provincia_primera.geojson").then(r => r.json()).catch(() => null),
     fetch(BASE + "peru_2026eg_departamento_primera.geojson").then(r => r.json()).catch(() => null),
-  ]).then(([cands, agg, forecast, distGeo, provGeo, deptGeo]) => {
+    fetch(BASE + "comparison/peru_2026_primera_distrito_comparison.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "comparison/peru_2026_primera_provincia_comparison.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "comparison/peru_2026_primera_departamento_comparison.geojson").then(r => r.json()).catch(() => null),
+  ]).then(([cands, agg, forecast, distGeo, provGeo, deptGeo, compDist, compProv, compDept]) => {
     candidatesData = cands;
     aggStats       = agg;
+    if (compDist) compDistData = compDist;
+    if (compProv) compProvData = compProv;
+    if (compDept) compDeptData = compDept;
     forecastData   = forecast;
 
     if (distGeo) distData = distGeo;
