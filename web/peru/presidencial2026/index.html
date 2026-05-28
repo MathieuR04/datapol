@@ -317,31 +317,40 @@
     .jee-panel::-webkit-scrollbar { width: 3px; }
     .jee-panel::-webkit-scrollbar-track { background: transparent; }
     .jee-panel::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
-    .jee-hdr { padding: 0.7rem 0.75rem 0.65rem; border-bottom: 1px solid var(--border); background: var(--sand-lt); flex-shrink: 0; }
+    .jee-hdr { padding: 0.7rem 0.75rem 0.6rem; border-bottom: 1px solid var(--border); background: var(--sand-lt); flex-shrink: 0; }
     .jee-hdr-title { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
-    .jee-hdr-sub { font-size: 8px; color: var(--muted); margin-top: 1px; margin-bottom: 0.5rem; }
-    .jee-prog-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--muted); margin-bottom: 3px; }
-    .jee-prog-labels .jee-pct { font-size: 10px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: #DC2626; }
-    .jee-prog-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .jee-prog-fill { height: 100%; background: #DC2626; border-radius: 3px; transition: width 0.5s; }
-    .jee-prog-note { font-size: 8px; color: var(--muted); margin-top: 3px; }
+    .jee-hdr-sub { font-size: 8px; color: var(--muted); margin-top: 1px; margin-bottom: 0.55rem; }
+    .jee-hdr-stat { display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 2px; }
+    .jee-hdr-stat-pct { font-size: 22px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: #DC2626; line-height: 1; }
+    .jee-hdr-stat-label { font-size: 8.5px; color: var(--muted); }
+    .jee-prog-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
+    .jee-prog-fill { height: 100%; background: #DC2626; border-radius: 2px; transition: width 0.5s; }
+    .jee-prog-note { font-size: 8px; color: var(--muted); }
     .jee-sect-head { padding: 0.45rem 0.75rem 0.3rem; font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); background: var(--sand-lt); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    .jee-row { display: flex; align-items: center; padding: 0.45rem 0.75rem; gap: 0.5rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    /* Status rows (C/E/P) */
+    .jee-row { padding: 0.5rem 0.75rem 0.35rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
     .jee-row:hover { background: var(--terra-lt); }
     .jee-row.active { background: var(--terra-lt); border-left: 3px solid var(--terra); padding-left: calc(0.75rem - 3px); }
-    .jee-row-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .jee-row-name { flex: 1; min-width: 0; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .jee-row-top { display: flex; align-items: center; gap: 0.5rem; }
+    .jee-row-pct { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; flex-shrink: 0; min-width: 3.2rem; }
+    .jee-row-name { flex: 1; min-width: 0; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text); }
     .jee-row-count { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
-    .jee-row-pct { font-size: 8px; color: var(--muted); flex-shrink: 0; }
     .jee-row-expand { font-size: 10px; color: var(--muted); flex-shrink: 0; transition: transform 0.15s; }
     .jee-row.open .jee-row-expand { transform: rotate(180deg); }
+    .jee-row-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 5px; }
+    .jee-row-bar-fill { height: 100%; border-radius: 2px; }
+    /* Sub-error rows */
     .jee-suberrors { display: none; background: var(--sand-lt); }
     .jee-suberrors.open { display: block; }
-    .jee-sub-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.75rem 0.3rem 1.75rem; border-bottom: 1px solid var(--border); font-size: 8.5px; color: var(--muted); }
-    .jee-sub-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .jee-sub-name { flex: 1; }
+    .jee-sub-row { padding: 0.35rem 0.75rem 0.25rem 1.5rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .jee-sub-row:hover { background: var(--terra-lt); }
+    .jee-sub-row.active { background: var(--terra-lt); border-left: 3px solid var(--terra); padding-left: calc(1.5rem - 3px); }
+    .jee-sub-top { display: flex; align-items: center; gap: 0.4rem; }
+    .jee-sub-pct { font-size: 11px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; flex-shrink: 0; min-width: 2.8rem; }
+    .jee-sub-name { flex: 1; font-size: 8.5px; color: var(--text); }
     .jee-sub-count { font-size: 11px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
-    .jee-sub-pct { font-size: 7.5px; }
+    .jee-sub-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-top: 3px; }
+    .jee-sub-bar-fill { height: 100%; border-radius: 1px; }
     /* JEE detail panel — slides in over the jee-panel */
     .jee-panel { position: relative; }
     .jee-detail { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); transform: translateX(100%); transition: transform 0.2s; z-index: 10; display: flex; flex-direction: column; overflow-y: auto; }
@@ -639,9 +648,9 @@
         <div class="jee-hdr">
           <div class="jee-hdr-title">Actas JEE</div>
           <div class="jee-hdr-sub">Mesa a mesa · ONPE 1ra Vuelta 2026</div>
-          <div class="jee-prog-labels">
-            <span>Observadas (ever JEE)</span>
-            <span class="jee-pct" id="jee-nat-pct">—</span>
+          <div class="jee-hdr-stat">
+            <span class="jee-hdr-stat-pct" id="jee-nat-pct">—</span>
+            <span class="jee-hdr-stat-label">actas observadas</span>
           </div>
           <div class="jee-prog-bar"><div class="jee-prog-fill" id="jee-prog-fill" style="width:0%"></div></div>
           <div class="jee-prog-note" id="jee-nat-note">—</div>
@@ -861,6 +870,8 @@
   let currentMode      = "mapa";
   let currentView      = "winner";
   let currentLevel     = "dept";
+  // Each tab remembers its own geography level independently
+  const modeLevels     = { mapa: "dept", comparacion: "dept", jee: "dept" };
   let currentPanelTab  = "candidatos";
   let previousTab      = "candidatos";
   let selectedCandidate = null;
@@ -1742,6 +1753,7 @@
   document.querySelectorAll(".level-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       currentLevel = btn.dataset.level;
+      modeLevels[currentMode] = currentLevel;   // persist for this tab
       document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === currentLevel));
       activeLayer = null;
       document.getElementById("map-topbar").style.display = "none";
@@ -2018,7 +2030,12 @@
   }
 
   function switchMode(mode) {
+    // Save current level for the tab we're leaving, restore for the one we're entering
+    modeLevels[currentMode] = currentLevel;
     currentMode = mode;
+    currentLevel = modeLevels[mode] || "dept";
+    document.querySelectorAll(".level-btn").forEach(b =>
+      b.classList.toggle("active", b.dataset.level === currentLevel));
     clearAllModeLayers();
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
     const isMap  = mode === "mapa";
@@ -2058,6 +2075,10 @@
       activeLayer = null;
       jeeSelectedView = "choropleth";
       jeeActiveUbigeo = null;
+      // Clear any active/open state on panel rows
+      document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
+      document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
       document.getElementById("jee-porc-btn").classList.add("active");
       hideJeeDetail();
       loadJeeData(() => { buildJeePanel(); renderJee(); });
@@ -2289,17 +2310,18 @@
     E: { label: "Enviadas al JEE",  color: "#DC2626" },
     P: { label: "Pendientes",       color: "#D97706" },
   };
+  // Error types — bubble maps use their own color; panel rows use ERR_BROWNS
   const JEE_ERROR_TYPES = {
-    err_aritmetico:  { label: "Error aritmético",     color: "#2563EB" },
-    err_firmas:      { label: "Sin firmas",           color: "#EA580C" },
-    err_impugnada:   { label: "Impugnada",            color: "#DC2626" },
-    err_ilegible:    { label: "Ilegible",             color: "#7C3AED" },
-    err_incompleta:  { label: "Incompleta",           color: "#0891B2" },
-    err_reprocesada: { label: "Reprocesada",          color: "#16A34A" },
-    err_extraviada:  { label: "Extraviada",           color: "#D97706" },
-    err_siniestrada: { label: "Siniestrada",          color: "#9F1239" },
-    err_sin_datos:   { label: "Sin datos",            color: "#6B7280" },
-    err_nulidad:     { label: "Solicitud de nulidad", color: "#DB2777" },
+    err_aritmetico:  { label: "Error aritmético",     color: "#7A4F2C" },
+    err_firmas:      { label: "Sin firmas",           color: "#8A5C32" },
+    err_impugnada:   { label: "Impugnada",            color: "#9A6A3A" },
+    err_ilegible:    { label: "Ilegible",             color: "#A87848" },
+    err_incompleta:  { label: "Incompleta",           color: "#B88658" },
+    err_reprocesada: { label: "Reprocesada",          color: "#C59468" },
+    err_extraviada:  { label: "Extraviada",           color: "#D0A278" },
+    err_siniestrada: { label: "Siniestrada",          color: "#D9B08A" },
+    err_sin_datos:   { label: "Sin datos",            color: "#E2BE9C" },
+    err_nulidad:     { label: "Solicitud de nulidad", color: "#EACCAE" },
   };
 
   function loadJeeData(cb) {
@@ -2331,17 +2353,16 @@
   function buildJeePanel() {
     const nat = jeeNational || {};
     const pct = nat.ever_e_pct || 0;
-    document.getElementById("jee-nat-pct").textContent   = pct.toFixed(2) + "%";
-    document.getElementById("jee-prog-fill").style.width  = Math.min(pct * 5, 100) + "%";
-    document.getElementById("jee-nat-note").textContent   =
-      fmtN(nat.ever_e) + " de " + fmtN(nat.total_actas) + " actas observadas";
+    document.getElementById("jee-nat-pct").textContent  = pct.toFixed(2) + "%";
+    document.getElementById("jee-prog-fill").style.width = Math.min(pct * 5, 100) + "%";
+    document.getElementById("jee-nat-note").textContent  =
+      fmtN(nat.ever_e) + " de " + fmtN(nat.total_actas) + " actas";
 
     const srEl = document.getElementById("jee-status-rows");
     if (srEl.dataset.built) return;
     srEl.dataset.built = "1";
 
     const totalEver = nat.ever_e || 1;
-    // Per-status error counts from national summary
     const errByEstado = nat.error_counts_by_estado || { C: {}, E: {}, P: {} };
 
     Object.entries(JEE_ESTADOS).forEach(([key, info]) => {
@@ -2353,29 +2374,40 @@
       row.className = "jee-row";
       row.dataset.jeeView = viewKey;
       row.innerHTML = `
-        <div class="jee-row-dot" style="background:${info.color}"></div>
-        <span class="jee-row-name">${info.label}</span>
-        <span class="jee-row-count">${fmtN(count)}</span>
-        <span class="jee-row-pct">${pctRow.toFixed(1)}%</span>
-        <span class="jee-row-expand">▾</span>`;
+        <div class="jee-row-top">
+          <span class="jee-row-pct" style="color:${info.color}">${pctRow.toFixed(1)}%</span>
+          <span class="jee-row-name">${info.label}</span>
+          <span class="jee-row-count">${fmtN(count)}</span>
+          <span class="jee-row-expand">▾</span>
+        </div>
+        <div class="jee-row-bar">
+          <div class="jee-row-bar-fill" style="width:${Math.min(pctRow,100)}%;background:${info.color}"></div>
+        </div>`;
 
-      // Sub-rows: only errors that exist for THIS specific status
+      // Sub-rows: only errors present for THIS status, sorted by count desc
       const subEl = document.createElement("div");
       subEl.className = "jee-suberrors";
       const statusErrCounts = errByEstado[key] || {};
-      Object.entries(JEE_ERROR_TYPES).forEach(([errKey, errInfo]) => {
-        const ec = statusErrCounts[errKey] || 0;
-        if (ec === 0) return; // only show errors present in this status
+      const errEntries = Object.entries(JEE_ERROR_TYPES)
+        .map(([k, i]) => [k, i, statusErrCounts[k] || 0])
+        .filter(([,, ec]) => ec > 0)
+        .sort((a, b) => b[2] - a[2]);
+
+      errEntries.forEach(([errKey, errInfo, ec]) => {
         const ep = ec / totalEver * 100;
-        const errViewKey = `${errKey}_${key}`; // e.g. "err_aritmetico_C"
+        const errViewKey = `${errKey}_${key}`;
         const sub = document.createElement("div");
         sub.className = "jee-sub-row";
         sub.dataset.jeeView = errViewKey;
         sub.innerHTML = `
-          <div class="jee-sub-dot" style="background:${errInfo.color}"></div>
-          <span class="jee-sub-name">${errInfo.label}</span>
-          <span class="jee-sub-count">${fmtN(ec)}</span>
-          <span class="jee-sub-pct"> ${ep.toFixed(1)}%</span>`;
+          <div class="jee-sub-top">
+            <span class="jee-sub-pct" style="color:${errInfo.color}">${ep.toFixed(1)}%</span>
+            <span class="jee-sub-name">${errInfo.label}</span>
+            <span class="jee-sub-count">${fmtN(ec)}</span>
+          </div>
+          <div class="jee-sub-bar">
+            <div class="jee-sub-bar-fill" style="width:${Math.min(ep*8,100)}%;background:${errInfo.color}"></div>
+          </div>`;
         sub.addEventListener("click", e => {
           e.stopPropagation();
           jeeSelectedView = errViewKey;
@@ -2389,14 +2421,14 @@
 
       row.addEventListener("click", () => {
         if (jeeSelectedView === viewKey) {
-          // Second click on active row → deselect, back to choropleth
+          // Second click → deselect, back to choropleth
           jeeSelectedView = "choropleth";
           subEl.classList.remove("open");
           row.classList.remove("open");
           document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
           document.getElementById("jee-porc-btn").classList.add("active");
         } else {
-          // Select this row; close any other open accordion
+          // Close other accordions, open this one
           document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
           document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
           subEl.classList.add("open");
