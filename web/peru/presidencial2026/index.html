@@ -102,9 +102,9 @@
       padding-left: 0.6rem;
       line-height: 1.5;
     }
-    .live-block { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
+    .live-block { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; flex-shrink: 0; }
     #last-update-dist {
-      font-size: 8px;
+      font-size: 8.5px;
       color: var(--muted);
       letter-spacing: 0.02em;
       white-space: nowrap;
@@ -941,14 +941,12 @@
     if (!isoStr) return null;
     try {
       const d = new Date(isoStr);
-      return d.toLocaleString("es-PE", {
-        timeZone:  "America/Lima",
-        day:       "2-digit",
-        month:     "2-digit",
-        year:      "numeric",
-        hour:      "2-digit",
-        minute:    "2-digit",
-      });
+      const opts = { timeZone: "America/Lima" };
+      const day   = d.toLocaleString("es-PE", { ...opts, day:    "numeric" });
+      const mon   = d.toLocaleString("es-PE", { ...opts, month:  "short"   }).replace(".","");
+      const hh    = String(d.toLocaleString("es-PE", { ...opts, hour:   "2-digit", hour12: false })).padStart(2,"0");
+      const mm    = String(d.toLocaleString("es-PE", { ...opts, minute: "2-digit" })).padStart(2,"0");
+      return `↻ ${day} ${mon} · ${hh}:${mm}`;
     } catch(e) { return null; }
   }
   const fmtP = n => (n == null || n === "" || isNaN(n)) ? "—" : parseFloat(n).toFixed(1) + "%";
@@ -3049,7 +3047,7 @@
     const distTs = fmtUpdateTime(agg?.generated_at);
     const elDist = document.getElementById("last-update-dist");
     if (distTs && elDist) {
-      elDist.textContent = "Actualizado: " + distTs;
+      elDist.textContent = distTs;
       elDist.style.display = "";
     }
 
