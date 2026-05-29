@@ -7,6 +7,7 @@ Outputs:
   data/forecast.json           ← placeholder (populated by 05_forecast.py)
 """
 
+import datetime
 import json
 import csv
 from pathlib import Path
@@ -92,6 +93,7 @@ def main():
         "actas_pct":           round(
             totals["actas_contabilizadas"] / max(totals["actas_total"], 1) * 100, 2),
         "candidatos":          cand_summary,
+        "generated_at":        datetime.datetime.utcnow().isoformat() + "Z",
     }
 
     out_path = DATA_DIR / "aggregate_stats.json"

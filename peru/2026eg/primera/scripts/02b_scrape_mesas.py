@@ -68,10 +68,10 @@ MESA_CSV   = RESULTS / "peru_2026eg_mesa_primera.csv"
 CKPT_FILE  = RESULTS / ".mesa_checkpoint.json"
 
 FLUSH_EVERY    = 1_000      # write to CSV every N completed mesas
-BATCH_PAUSE_N  = 3_000      # pause after every N requests
-BATCH_PAUSE_S  = 15         # seconds to pause
-DELAY_MIN      = 0.05
-DELAY_MAX      = 0.15
+BATCH_PAUSE_N  = 10_000     # pause after every N requests
+BATCH_PAUSE_S  = 5          # seconds to pause
+DELAY_MIN      = 0.02
+DELAY_MAX      = 0.08
 
 _write_lock = Lock()
 
@@ -179,7 +179,17 @@ def parse_acta(acta: dict, codcan_map: dict, cand_cols: list) -> dict:
     for col in cand_cols:
         row[col] = 0
 
-    for entry in (acta.get("detalle") or []):
+    detalle = acta.get("detalle") or []
+
+    # Atomicity guard: if acta is Contabilizada and voters were cast but the
+    # vote-breakdown list is empty, refuse the row entirely so the mesa stays
+    # pending and gets re-fetched on the next --update run.  This prevents
+    # saving a row with estado="C" but all candidate columns = 0, which would
+    # cause --update to skip it forever and never recover the vote data.
+    if estado == "C" and int(acta.get("totalVotosEmitidos") or 0) > 0 and not detalle:
+        return None
+
+    for entry in detalle:
         codap = int(entry.get("adAgrupacionPolitica") or 0)
         votos = int(entry.get("adVotos") or 0)
         if codap == 80:
@@ -410,10 +420,22 @@ def run_retry_nulls(n_workers: int, codcan_map: dict, cand_cols: list,
 # ── Update run ──────────────────────────────────────────────────────────────────
 
 def run_update(n_workers: int, codcan_map: dict, cand_cols: list):
-    """Re-fetch mesas whose acta is not yet Contabilizada."""
+    """Re-fetch mesas whose acta is not yet Contabilizada, or is C but has no vote data."""
     existing = load_existing_rows()
-    pending  = [r["codigo_mesa"] for r in existing.values()
-                if r.get("estado_acta") not in ("C",) and r.get("estado_acta")]
+
+    def _needs_update(row: dict) -> bool:
+        estado = row.get("estado_acta", "")
+        if not estado:
+            return False               # no data at all (exterior / missing)
+        if estado != "C":
+            return True                # not yet counted
+        # estado == "C" but vote breakdown may be missing (partial prior scrape):
+        # if emitted > 0 but votos_validos == 0, we never got the detalle.
+        def _int(v): return int(v) if str(v).strip() not in ("", "None") else 0
+        return _int(row.get("votos_emitidos", 0)) > 0 and \
+               _int(row.get("votos_validos",  0)) == 0
+
+    pending = [r["codigo_mesa"] for r in existing.values() if _needs_update(r)]
 
     print(f"\n{'='*60}")
     print(f"ONPE 2026 Scraper — Update Run")
@@ -468,7 +490,7 @@ def main():
     p = argparse.ArgumentParser(description="Scrape ONPE 2026 mesa-level presidencial results")
     p.add_argument("--start",   type=int, default=1,           help="First mesa number (default: 1)")
     p.add_argument("--end",     type=int, default=TOTAL_MESAS, help=f"Last mesa number (default: {TOTAL_MESAS})")
-    p.add_argument("--workers", type=int, default=10,          help="Parallel workers (default: 10)")
+    p.add_argument("--workers", type=int, default=20,          help="Parallel workers (default: 20)")
     p.add_argument("--update",        action="store_true", help="Re-fetch non-Contabilizada actas")
     p.add_argument("--retry-nulls",   action="store_true", help="Re-fetch codes that previously returned 204 + unchecked codes above old range")
     p.add_argument("--full-refresh",  action="store_true", help="Clear checkpoint + CSV and re-scrape everything from scratch (picks up new columns)")
