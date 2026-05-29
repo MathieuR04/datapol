@@ -32,7 +32,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).parent
 DATA_DIR   = SCRIPT_DIR.parent / "data"
 METADATA   = SCRIPT_DIR.parent.parent / "metadata"
-COMP_DIR   = SCRIPT_DIR.parent / "comparison"
+COMP_DIR   = DATA_DIR / "comparison"
 RAW_DIR    = COMP_DIR / "raw"
 OUT_DIR    = DATA_DIR / "comparison"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
