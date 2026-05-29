@@ -353,9 +353,10 @@
     .jee-sub-bar-fill { height: 100%; border-radius: 1px; }
     /* JEE dept/exterior tab rows */
     #jee-subtabs { flex-shrink: 0; }
-    .jee-geo-row { padding: 0.4rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); cursor: default; }
+    .jee-geo-row { padding: 0.4rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .jee-geo-row:hover { background: var(--terra-lt); }
     .jee-geo-row-top { display: flex; align-items: center; gap: 0.5rem; }
-    .jee-geo-name { flex: 1; font-size: 9px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .jee-geo-name { flex: 1; font-size: 9px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.03em; }
     .jee-geo-pct { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: #DC2626; flex-shrink: 0; min-width: 3.2rem; text-align: right; }
     .jee-geo-count { font-size: 8px; color: var(--muted); flex-shrink: 0; }
     .jee-geo-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 4px; }
@@ -2683,8 +2684,25 @@
       .map(f => f.properties)
       .filter(p => p.nombre_dept)
       .sort((a, b) => (b.ever_e || 0) - (a.ever_e || 0));
-    el.innerHTML = `<div class="jee-sect-head">Por departamento · mayor a menor</div>` +
-      rows.map(p => makeGeoRow(p.nombre_dept, p.ever_e || 0, p.total_actas || 0, p.ever_e_pct)).join("");
+
+    el.innerHTML = `<div class="jee-sect-head">Por departamento · mayor a menor</div>`;
+    rows.forEach(p => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = makeGeoRow(p.nombre_dept, p.ever_e || 0, p.total_actas || 0, p.ever_e_pct);
+      const row = wrap.firstElementChild;
+      row.addEventListener("click", () => {
+        // Zoom to dept geometry on map
+        const feat = jeeDeptData.features.find(f => f.properties.ubigeo_dept === p.ubigeo_dept);
+        if (feat) {
+          try {
+            const bounds = L.geoJSON(feat).getBounds();
+            map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 10, duration: 0.5 });
+          } catch(e) {}
+        }
+        showJeeDetailFromProps(p, p.nombre_dept);
+      });
+      el.appendChild(row);
+    });
   }
 
   function buildJeeExterior() {
@@ -2693,11 +2711,61 @@
     el.dataset.built = "1";
     const ext = (jeeNational || {}).exterior;
     if (!ext) { el.innerHTML = "<div style='padding:1rem;font-size:9px;color:var(--muted)'>Datos no disponibles</div>"; return; }
-    const regiones = (ext.regiones || []).sort((a, b) => (b.ever_e || 0) - (a.ever_e || 0));
-    el.innerHTML = `<div class="jee-sect-head">Total exterior</div>` +
-      makeGeoRow("Exterior", ext.ever_e || 0, ext.total_actas || 0, ext.ever_e_pct) +
-      `<div class="jee-sect-head">Por región</div>` +
-      regiones.map(r => makeGeoRow(r.nombre, r.ever_e || 0, r.total_actas || 0, r.ever_e_pct)).join("");
+
+    // Province (country) level — sorted by total actas descending
+    const provincias = (ext.provincias || []).slice().sort((a, b) => (b.total_actas || 0) - (a.total_actas || 0));
+
+    el.innerHTML = `<div class="jee-sect-head">Total exterior</div>`;
+    // Total exterior summary row (non-clickable)
+    el.insertAdjacentHTML("beforeend", makeGeoRow("Exterior", ext.ever_e || 0, ext.total_actas || 0, ext.ever_e_pct));
+
+    el.insertAdjacentHTML("beforeend", `<div class="jee-sect-head">Por país · mayor a menor</div>`);
+    provincias.forEach(prov => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = makeGeoRow(prov.nombre, prov.ever_e || 0, prov.total_actas || 0, prov.ever_e_pct);
+      const row = wrap.firstElementChild;
+      row.addEventListener("click", () => showJeeDetailFromProps(prov, prov.nombre));
+      el.appendChild(row);
+    });
+  }
+
+  // ── Show JEE detail from list row (no map zoom) ───────────────────────────
+  function showJeeDetailFromProps(p, name) {
+    const totalEver = p.ever_e || 0;
+    const sentPct   = p.ever_e_pct != null ? parseFloat(p.ever_e_pct).toFixed(1) + "%" : "—";
+
+    document.getElementById("jee-d-name").textContent = name;
+    document.getElementById("jee-d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Total actas</div><div class="dkpi-val">${fmtN(p.total_actas)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Observadas</div><div class="dkpi-val">${fmtN(totalEver)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">% observadas</div><div class="dkpi-val">${sentPct}</div></div>`;
+
+    document.getElementById("jee-d-status").innerHTML = Object.entries(JEE_ESTADOS).map(([key, info]) => {
+      const c = p[`estado_${key}`] || 0;
+      const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+        <div class="detail-cand-dot" style="background:${info.color}"></div>
+        <span class="detail-cand-name">${info.label}</span>
+        <span class="detail-cand-votes">${fmtN(c)}</span>
+      </div>`;
+    }).join("");
+
+    document.getElementById("jee-d-errors").innerHTML = Object.entries(JEE_ERROR_TYPES)
+      .map(([k, i]) => [i, p[k] || 0])
+      .filter(([, v]) => v > 0)
+      .sort((a, b) => b[1] - a[1])
+      .map(([info, c]) => {
+        const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+        return `<div class="detail-cand">
+          <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+          <div class="detail-cand-dot" style="background:${info.color}"></div>
+          <span class="detail-cand-name">${info.label}</span>
+          <span class="detail-cand-votes">${fmtN(c)}</span>
+        </div>`;
+      }).join("") || "<div style='padding:0.5rem 0.75rem;font-size:9px;color:var(--muted)'>Sin observaciones</div>";
+
+    document.getElementById("jee-detail").classList.add("active");
   }
 
   // ── JEE detail panel (right sidebar on geography click) ───────────────────

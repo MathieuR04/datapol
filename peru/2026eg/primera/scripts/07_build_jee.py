@@ -28,9 +28,11 @@ from pathlib import Path
 import pandas as pd
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-ROOT     = Path(__file__).resolve().parents[1]
-DATA     = ROOT / "data"
-MESA_CSV = DATA / "results" / "peru_2026eg_mesa_primera.csv"
+ROOT      = Path(__file__).resolve().parents[1]
+DATA      = ROOT / "data"
+METADATA  = ROOT.parent / "metadata"
+MESA_CSV  = DATA / "results" / "peru_2026eg_mesa_primera.csv"
+MESA_ROLL = METADATA / "peru_2026_mesa_electoral_roll.csv"
 GEOJSON  = {
     "dept":      DATA / "peru_2026eg_departamento_primera.geojson",
     "provincia": DATA / "peru_2026eg_provincia_primera.geojson",
@@ -190,10 +192,14 @@ EXTERIOR_REGION_NAMES = {
     "95": "Norteamérica",
 }
 
+# Province name lookup (ubigeo_provincia → nombre_provincia) from roll
+_roll_prov = pd.read_csv(MESA_ROLL, dtype=str, usecols=["ubigeo_provincia", "nombre_provincia"])
+PROV_NAMES = _roll_prov.drop_duplicates("ubigeo_provincia").set_index("ubigeo_provincia")["nombre_provincia"].to_dict()
+
 df["is_exterior"] = df["ubigeo_distrito"].str[:2].isin(EXTERIOR_PREFIXES)
 df["ext_region"]  = df["ubigeo_distrito"].str[:2].map(EXTERIOR_REGION_NAMES)
 
-def status_summary(sub):
+def status_summary(sub, include_flat_errors=False):
     ever_e_sub = sub[sub["ever_E_bool"]]
     total = int(sub.shape[0])
     ever_e = int(ever_e_sub.shape[0])
@@ -212,6 +218,9 @@ def status_summary(sub):
             for estado in ["C", "E", "P"]
         },
     }
+    if include_flat_errors:
+        for key in ERROR_TYPES:
+            out[key] = int(ever_e_sub[key].sum())
     return out
 
 # ── National summary ──────────────────────────────────────────────────────────
@@ -233,6 +242,16 @@ for prefix, name in EXTERIOR_REGION_NAMES.items():
     s["nombre"] = name
     ext_regions.append(s)
 
+# Exterior: by province (country) — for detail list in frontend
+ext_provinces = []
+for ubigeo_prov, grp in ext_df.groupby("ubigeo_provincia"):
+    s = status_summary(grp, include_flat_errors=True)
+    s["ubigeo_provincia"] = ubigeo_prov
+    s["nombre"]  = PROV_NAMES.get(ubigeo_prov, ubigeo_prov)
+    s["region"]  = EXTERIOR_REGION_NAMES.get(ubigeo_prov[:2], "Exterior")
+    ext_provinces.append(s)
+ext_provinces.sort(key=lambda x: -x["total_actas"])
+
 summary = {
     "total_actas": total,
     "ever_e":      ever_e,
@@ -250,10 +269,11 @@ summary = {
     },
     # Domestic summary (excludes exterior)
     "domestico": status_summary(dom_df),
-    # Exterior summary + per-region breakdown
+    # Exterior summary + per-region and per-province (country) breakdown
     "exterior": {
         **status_summary(ext_df),
-        "regiones": ext_regions,
+        "regiones":   ext_regions,
+        "provincias": ext_provinces,
     },
 }
 out_summary = OUT_DIR / "jee_national.json"

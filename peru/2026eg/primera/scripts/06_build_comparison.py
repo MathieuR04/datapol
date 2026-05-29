@@ -229,9 +229,7 @@ def main():
         stats[f"pct21_{key}"] = stats[col21] / stats["votos_validos_2021"].replace(0, float("nan")) * 100
         # When no 2026 results yet, votos_validos=0 → pct26=NaN → fill with 0 *before*
         # computing diff so that diff = 0 − pct21 (not NaN → 0 via fillna).
-        stats[f"pct26_{key}"] = (
-            stats[col26] / stats["votos_validos"].replace(0, float("nan")) * 100
-        ).fillna(0)
+        stats[f"pct26_{key}"] = stats[col26] / stats["votos_validos"].replace(0, float("nan")) * 100
         stats[f"diff_{key}"]  = stats[f"pct26_{key}"] - stats[f"pct21_{key}"]
 
     stats = stats.fillna(0)
@@ -293,9 +291,7 @@ def main():
             prov_votes[f"votes21_{key}"] = prov_votes[col21]
             prov_votes[f"votes26_{key}"] = prov_votes[col26]
             prov_votes[f"pct21_{key}"] = prov_votes[col21] / prov_votes["votos_validos_2021"].replace(0, float("nan")) * 100
-            prov_votes[f"pct26_{key}"] = (
-                prov_votes[col26] / prov_votes["votos_validos"].replace(0, float("nan")) * 100
-            ).fillna(0)
+            prov_votes[f"pct26_{key}"] = prov_votes[col26] / prov_votes["votos_validos"].replace(0, float("nan")) * 100
             prov_votes[f"diff_{key}"]  = prov_votes[f"pct26_{key}"] - prov_votes[f"pct21_{key}"]
         prov_votes = prov_votes.fillna(0)
 
@@ -337,9 +333,7 @@ def main():
             dept_votes[f"votes21_{key}"] = dept_votes[col21]
             dept_votes[f"votes26_{key}"] = dept_votes[col26]
             dept_votes[f"pct21_{key}"] = dept_votes[col21] / dept_votes["votos_validos_2021"].replace(0, float("nan")) * 100
-            dept_votes[f"pct26_{key}"] = (
-                dept_votes[col26] / dept_votes["votos_validos"].replace(0, float("nan")) * 100
-            ).fillna(0)
+            dept_votes[f"pct26_{key}"] = dept_votes[col26] / dept_votes["votos_validos"].replace(0, float("nan")) * 100
             dept_votes[f"diff_{key}"]  = dept_votes[f"pct26_{key}"] - dept_votes[f"pct21_{key}"]
         dept_votes = dept_votes.fillna(0)
 
