@@ -102,11 +102,11 @@
       padding-left: 0.6rem;
       line-height: 1.5;
     }
+    .live-block { display: flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; }
     #last-update-dist {
       font-size: 8px;
-      color: var(--dim);
-      letter-spacing: 0.03em;
-      margin-top: 3px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
       white-space: nowrap;
     }
     .header-progress {
@@ -688,7 +688,6 @@
 <div class="header">
   <div>
     <div class="header-title">🇵🇪 1ra Vuelta · Perú 2026</div>
-    <div id="last-update-dist" style="display:none"></div>
   </div>
   <div class="header-sub">Resultados por distrito<br>ONPE</div>
   <div class="header-progress">
@@ -698,7 +697,10 @@
     </div>
     <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
   </div>
-  <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+  <div class="live-block">
+    <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+    <div id="last-update-dist" style="display:none"></div>
+  </div>
   <div class="header-stats">
     <div class="hstat">
       <span class="hstat-label">Electores</span>
