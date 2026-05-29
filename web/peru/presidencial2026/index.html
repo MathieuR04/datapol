@@ -796,7 +796,7 @@
         </div>
         <!-- Subtabs: Nacional / Deptos / Exterior -->
         <div class="panel-tabs" id="jee-subtabs">
-          <button class="ptab active" data-jeetab="nacional">Nacional</button>
+          <button class="ptab active" data-jeetab="nacional">Estado</button>
           <button class="ptab" data-jeetab="deptos">Deptos</button>
           <button class="ptab" data-jeetab="exterior">Exterior</button>
         </div>
@@ -1543,7 +1543,7 @@
   // ── Detail panel ──────────────────────────────────────────────────────────
   function showDetail(feat, type) {
     const p = feat.properties || {};
-    document.querySelectorAll(".ptab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll("#panel-tabs .ptab").forEach(t => t.classList.remove("active"));
     document.getElementById("panel-scroll").style.display = "none";
     document.getElementById("detail-panel").classList.add("active");
 
@@ -1614,7 +1614,7 @@
     // Only restore panel-scroll when in normal MAPA mode
     if (currentMode !== "comparacion" && currentMode !== "jee") {
       document.getElementById("panel-scroll").style.display = "";
-      document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
+      document.querySelectorAll("#panel-tabs .ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
     }
     if (activeLayer) {
       if (BUBBLE_VIEWS.has(currentView)) {
@@ -1665,7 +1665,7 @@
   function switchPanelTab(tab) {
     currentPanelTab = tab;
     previousTab     = tab;
-    document.querySelectorAll(".ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
+    document.querySelectorAll("#panel-tabs .ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
     document.getElementById("panel-candidatos").style.display  = tab === "candidatos"  ? "" : "none";
     document.getElementById("panel-deptos").style.display      = tab === "deptos"      ? "" : "none";
     document.getElementById("panel-exterior").style.display    = tab === "exterior"    ? "" : "none";
@@ -1689,7 +1689,7 @@
     if (tab === "exterior") buildExteriorList();
     render();
   }
-  document.querySelectorAll(".ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
+  document.querySelectorAll("#panel-tabs .ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
 
   // ── Candidatos sidebar ────────────────────────────────────────────────────
   function buildCandList() {
