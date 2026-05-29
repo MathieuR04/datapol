@@ -109,10 +109,14 @@ for _, row in df.iterrows():
         "n":  f"{geo['nombre_distrito'].title()} ({geo['nombre_dept'].title()})",
         "e":  int(electores),
         "pob": v(row.get("pobreza")),
-        "rur": None if pd.isna(row.get("rural")) else round(float(row.get("rural")) * 100, 4),  # [0,1] → [0,100]%
+        "rur": v(row.get("rural")),          # already in % (0–100) from build_analisis.py
         "den": v(row.get("population_density")),
         "k21": v(row.get("keiko_2021_share")),
         "c21": v(row.get("castillo_2021_share")),
+        "agu": v(row.get("agua")),
+        "tra": v(row.get("trabajo")),
+        "sis": v(row.get("sis")),
+        "edu": v(row.get("educacion")),
     }
     # Top-5 candidate shares
     for i, share in enumerate(geo["shares"]):
@@ -124,11 +128,15 @@ print(f"  Records: {len(records)}, skipped: {skipped}")
 
 # ── Metadata ───────────────────────────────────────────────────────────────
 variables = [
-    {"key": "pob", "label": "Tasa de pobreza",          "unit": "%",      "logX": False},
-    {"key": "rur", "label": "Ruralidad",                 "unit": "%",      "logX": False},
-    {"key": "den", "label": "Densidad (electores/km²)",  "unit": "",       "logX": True},
-    {"key": "k21", "label": "Voto Keiko 2021",           "unit": "%",      "logX": False},
-    {"key": "c21", "label": "Voto Castillo 2021",        "unit": "%",      "logX": False},
+    {"key": "pob", "label": "Tasa de pobreza",          "unit": "%", "logX": False},
+    {"key": "rur", "label": "Ruralidad",                 "unit": "%", "logX": False},
+    {"key": "den", "label": "Densidad (electores/km²)",  "unit": "",  "logX": True},
+    {"key": "agu", "label": "Agua 7 días/semana",        "unit": "%", "logX": False},
+    {"key": "tra", "label": "Trabaja (tiene empleo)",    "unit": "%", "logX": False},
+    {"key": "sis", "label": "Afiliado al SIS",           "unit": "%", "logX": False},
+    {"key": "edu", "label": "Sec. o más (educación)",   "unit": "%", "logX": False},
+    {"key": "k21", "label": "Voto Keiko 2021",           "unit": "%", "logX": False},
+    {"key": "c21", "label": "Voto Castillo 2021",        "unit": "%", "logX": False},
 ]
 
 output = {

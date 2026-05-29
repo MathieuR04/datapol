@@ -4,7 +4,12 @@ Build district-level socioeconomic + electoral analysis CSV.
 
 Sources:
   - INEI Mapa de Pobreza 2018          → pobreza (%)
-  - Censo 2017 area urbano/rural        → rural share (%)
+  - Censo 2017 (block output files):
+      rural.xlsx                       → rural share (%)
+      agua.xlsx                        → water access 7 days/week (%)
+      trabajo.xlsx                     → employment rate (%)
+      sis.xlsx                         → SIS health insurance (%)
+      educacion.xlsx                   → secondary+ education (%)
   - Ubigeo lookup (ONPE ↔ INEI)        → id_ubigeo
   - District GeoJSON (2026 election)   → area_km2, electores (2026 roll)
   - 2021 runoff results (mesa level)   → keiko_2021_share, castillo_2021_share
@@ -13,7 +18,7 @@ Output: analisis/distrito_analisis.csv
   ubigeo, departamento, provincia, distrito,
   electores, area_km2, population_density,
   keiko_2021_share, castillo_2021_share,
-  rural, pobreza
+  rural, agua, trabajo, sis, educacion, pobreza
 """
 import json, re, unicodedata
 import pandas as pd
@@ -55,34 +60,142 @@ pov["distrito"]     = pov["distrito"].str.strip().str.title()
 pov["pobreza"]      = ((pov["ci_inf"] + pov["ci_sup"]) / 2).round(4)
 pov = pov[["ubigeo_inei","departamento","provincia","distrito","pobreza"]]
 
+# ── Generic Censo 2017 block-output parser ─────────────────────────────────
+def parse_censo_blocks(xlsx_path, target_categories, sum_mode=False, default_if_absent=None):
+    """
+    Parse an INEI Censo 2017 SPSS block-output xlsx.
+
+    Each district block starts with "AREA # XXXXXX" in col[1].
+    For each block we look at col[1] (category label) and col[3] (% value).
+
+    target_categories  : list of exact strings to match in col[1]
+    sum_mode           : if True, sum all matching categories per district
+    default_if_absent  : value to assign when no target category found in block
+                         (e.g. 0.0 for rural — absent means 100% urban)
+                         None means leave those districts as missing (NaN)
+
+    Returns dict: ubigeo_inei (6-digit str) → float [0–1]
+    """
+    raw = pd.read_excel(xlsx_path, sheet_name="Output", header=None)
+    records = {}
+    current_ubigeo = None
+    in_resumen = False   # skip national/regional RESUMEN summary blocks
+
+    for _, row in raw.iterrows():
+        val = str(row[1]) if pd.notna(row[1]) else ""
+
+        # Detect RESUMEN blocks — skip until next valid AREA
+        if val.strip() == "RESUMEN":
+            in_resumen = True
+            current_ubigeo = None
+            continue
+        m = re.match(r"AREA\s*#\s*(\d+)", val)
+        if m:
+            ubi = m.group(1).zfill(6)
+            if re.match(r"^\d{6}$", ubi):
+                current_ubigeo = ubi
+                in_resumen = False
+                # Initialise with default so district is always present
+                if current_ubigeo not in records:
+                    records[current_ubigeo] = 0.0 if sum_mode else default_if_absent
+            else:
+                in_resumen = True
+                current_ubigeo = None
+            continue
+
+        if in_resumen or current_ubigeo is None:
+            continue
+
+        if val in target_categories:
+            try:
+                pct = float(row[3])
+                if sum_mode:
+                    records[current_ubigeo] = round((records.get(current_ubigeo) or 0.0) + pct, 8)
+                else:
+                    records[current_ubigeo] = round(pct, 6)
+            except (ValueError, TypeError):
+                pass
+
+    return records
+
 # ── Rural ──────────────────────────────────────────────────────────────────
 print("Loading rural …")
-rural_raw = pd.read_excel(RAW / "rural.xlsx", sheet_name="Output", header=None)
-rural_records = {}
-current_ubigeo = None
-
-for _, row in rural_raw.iterrows():
-    val = str(row[1]) if pd.notna(row[1]) else ""
-    m = re.match(r"AREA\s*#\s*(\d+)", val)
-    if m:
-        current_ubigeo = m.group(1).zfill(6)
-        rural_records[current_ubigeo] = 0.0
-        continue
-    if current_ubigeo and "Rural encuesta" in val:
-        try:
-            rural_records[current_ubigeo] = round(float(row[3]), 6)
-        except Exception:
-            pass
-
+rural_records = parse_censo_blocks(
+    RAW / "rural.xlsx",
+    target_categories=["Rural encuesta"],
+    sum_mode=False,
+    default_if_absent=0.0,   # 100% urban districts have no Rural row → 0%
+)
 rural_df = pd.DataFrame(
-    [{"ubigeo_inei": k, "rural": v} for k, v in rural_records.items()]
+    [{"ubigeo_inei": k, "rural": round(v * 100, 4)} for k, v in rural_records.items()]
 )
 
-# ── Merge pobreza + rural ──────────────────────────────────────────────────
-merged = pov.merge(rural_df, on="ubigeo_inei", how="outer")
+# ── Agua (water access 7 days/week) ────────────────────────────────────────
+print("Loading agua …")
+agua_records = parse_censo_blocks(
+    RAW / "agua.xlsx",
+    target_categories=["Sí tiene servicio de agua todos los días de la semana"],
+    sum_mode=False,
+)
+agua_df = pd.DataFrame(
+    [{"ubigeo_inei": k, "agua": round(v * 100, 4) if v is not None else None}
+     for k, v in agua_records.items()]
+)
+
+# ── Trabajo (employment) ───────────────────────────────────────────────────
+print("Loading trabajo …")
+trabajo_records = parse_censo_blocks(
+    RAW / "trabajo.xlsx",
+    target_categories=["Sí, trabajó por algún pago"],
+    sum_mode=False,
+)
+trabajo_df = pd.DataFrame(
+    [{"ubigeo_inei": k, "trabajo": round(v * 100, 4) if v is not None else None}
+     for k, v in trabajo_records.items()]
+)
+
+# ── SIS (health insurance) ─────────────────────────────────────────────────
+print("Loading SIS …")
+sis_records = parse_censo_blocks(
+    RAW / "sis.xlsx",
+    target_categories=["Sí, afiliado al SIS"],
+    sum_mode=False,
+)
+sis_df = pd.DataFrame(
+    [{"ubigeo_inei": k, "sis": round(v * 100, 4) if v is not None else None}
+     for k, v in sis_records.items()]
+)
+
+# ── Educación (secondary+ = Secundaria and all higher levels) ──────────────
+print("Loading educacion …")
+EDU_SECONDARY_PLUS = [
+    "Secundaria",
+    "Superior no universitaria incompleta",
+    "Superior no universitaria completa",
+    "Superior universitaria incompleta",
+    "Superior universitaria completa",
+    "Maestría / Doctorado",
+]
+edu_records = parse_censo_blocks(
+    RAW / "educacion.xlsx",
+    target_categories=EDU_SECONDARY_PLUS,
+    sum_mode=True,   # sum all matching rows per district
+)
+edu_df = pd.DataFrame(
+    [{"ubigeo_inei": k, "educacion": round(v * 100, 4) if v is not None else None}
+     for k, v in edu_records.items()]
+)
+
+print(f"  Rural: {len(rural_df)} | Agua: {len(agua_df)} | Trabajo: {len(trabajo_df)} "
+      f"| SIS: {len(sis_df)} | Educación: {len(edu_df)}")
+
+# ── Merge all Censo variables ──────────────────────────────────────────────
+merged = pov.copy()
+for df_extra in [rural_df, agua_df, trabajo_df, sis_df, edu_df]:
+    merged = merged.merge(df_extra, on="ubigeo_inei", how="outer")
 merged = merged[merged["ubigeo_inei"].str.match(r"^\d{6}$", na=False)].copy()
 merged = merged.sort_values("ubigeo_inei").reset_index(drop=True)
-print(f"  Pobreza: {len(pov)} | Rural: {len(rural_df)} | Merged: {len(merged)}")
+print(f"  Merged rows: {len(merged)}")
 
 # ── ONPE id_ubigeo ─────────────────────────────────────────────────────────
 print("Matching ONPE ubigeo …")
@@ -194,23 +307,13 @@ final = merged[[
     "departamento", "provincia", "distrito",
     "electores", "area_km2", "population_density",
     "keiko_2021_share", "castillo_2021_share",
-    "rural", "pobreza",
+    "rural", "agua", "trabajo", "sis", "educacion", "pobreza",
 ]].copy()
 
-# Rename for clarity
-final = final.rename(columns={
-    "id_ubigeo":    "ubigeo",
-    "departamento": "departamento",
-    "provincia":    "provincia",
-    "distrito":     "distrito",
-    "electores":    "electores",
-    "pobreza":      "pobreza",
-})
+final = final.rename(columns={"id_ubigeo": "ubigeo"})
 
 final.to_csv(OUT, index=False)
-print(f"\nSaved → {OUT}  ({len(final)} rows)")
-print(f"NaN ubigeo:              {final['ubigeo'].isna().sum()}")
-print(f"NaN area_km2:            {final['area_km2'].isna().sum()}")
-print(f"NaN keiko_2021_share:    {final['keiko_2021_share'].isna().sum()}")
-print(f"NaN castillo_2021_share: {final['castillo_2021_share'].isna().sum()}")
-print(f"\nSample:\n{final.head(5).to_string()}")
+print(f"\nSaved → {OUT}  ({len(final)} rows, {len(final.columns)} columns)")
+for col in ["ubigeo","area_km2","keiko_2021_share","rural","agua","trabajo","sis","educacion","pobreza"]:
+    print(f"  NaN {col:<22}: {final[col].isna().sum()}")
+print(f"\nSample:\n{final.head(3).to_string()}")

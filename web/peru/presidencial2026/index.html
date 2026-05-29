@@ -3079,9 +3079,9 @@
       xScale = v => (Math.log(Math.max(v, 0.01)) - Math.log(xMin)) / (Math.log(xMax) - Math.log(xMin)) * pw;
     } else {
       xMin = 0;
-      xMax = varMeta.key === "rur" ? 100
-           : varMeta.key === "pob" ? 85
-           : varMeta.key === "k21" || varMeta.key === "c21" ? 100
+      // Fixed 0–100% axis for all percentage variables
+      const PCT_VARS = new Set(["rur","pob","k21","c21","agu","tra","sis","edu"]);
+      xMax = PCT_VARS.has(varMeta.key) ? 100
            : Math.ceil(Math.max(...xVals) / 5) * 5;
       xScale = v => (v - xMin) / (xMax - xMin) * pw;
     }
@@ -3121,9 +3121,8 @@
     // X axis ticks (3–4 labels)
     const xTicks = varMeta.logX
       ? [1, 10, 100, 1000, 10000].filter(v => v >= xMin * 0.9 && v <= xMax * 1.1)
-      : varMeta.key === "rur" ? [0, 25, 50, 75, 100]
       : varMeta.key === "pob" ? [0, 20, 40, 60, 80]
-      : [0, 25, 50, 75, 100];
+      : [0, 25, 50, 75, 100];   // all other % variables
 
     xTicks.forEach(xv => {
       const xp = xScale(xv);
