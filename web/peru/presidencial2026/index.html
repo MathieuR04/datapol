@@ -535,6 +535,125 @@
     }
   /* Remove browser focus ring on Leaflet SVG paths */
   .leaflet-interactive:focus { outline: none !important; box-shadow: none !important; }
+
+  /* ── Análisis tab ─────────────────────────────────────────────────────── */
+  #analisis-view {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg);
+    min-height: 0;
+  }
+  #analisis-view::-webkit-scrollbar { width: 3px; }
+  #analisis-view::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+
+  .an-inner {
+    max-width: 980px;
+    width: 100%;
+    align-self: center;
+    padding: 1rem 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Candidate selector bar */
+  .an-cand-bar {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .an-cand-label {
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 0.25rem;
+    white-space: nowrap;
+  }
+  .an-cand-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.4rem;
+    border-radius: 3px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .an-cand-btn:hover { border-color: var(--border2); color: var(--text); }
+  .an-cand-btn.active {
+    background: var(--text);
+    border-color: var(--text);
+    color: #fff;
+  }
+  .an-cand-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .an-cand-pct {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    margin-left: 0.25rem;
+  }
+
+  /* Grid of scatter plots */
+  .an-plots-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  @media (max-width: 720px) {
+    .an-plots-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 500px) {
+    .an-plots-grid { grid-template-columns: 1fr; }
+  }
+  /* 5th chart spans all remaining (centers it on row of 2) */
+  .an-plot-card:nth-child(5) { grid-column: span 1; }
+
+  .an-plot-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.65rem 0.65rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .an-plot-title {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .an-plot-svg-wrap { width: 100%; }
+
+  /* Tooltip bubble for scatter */
+  .an-tooltip {
+    position: fixed;
+    background: rgba(26,18,9,0.92);
+    color: #fff;
+    font-size: 9.5px;
+    line-height: 1.45;
+    padding: 5px 8px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 9000;
+    white-space: nowrap;
+    display: none;
+  }
   </style>
 </head>
 <body>
@@ -553,6 +672,7 @@
   <button class="mode-tab" data-mode="pronostico">Pronóstico</button>
   <button class="mode-tab" data-mode="comparacion">Comparación</button>
   <button class="mode-tab" data-mode="jee">Actas JEE</button>
+  <button class="mode-tab" data-mode="analisis">Análisis</button>
 </div>
 
 <!-- Header -->
@@ -786,6 +906,17 @@
 
   </div>
 </div>
+
+<!-- Análisis view -->
+<div id="analisis-view">
+  <div class="an-inner">
+    <div class="an-cand-bar" id="an-cand-bar">
+      <span class="an-cand-label">Candidato</span>
+    </div>
+    <div class="an-plots-grid" id="an-plots-grid"></div>
+  </div>
+</div>
+<div class="an-tooltip" id="an-tooltip"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -2081,12 +2212,14 @@
       b.classList.toggle("active", b.dataset.level === currentLevel));
     clearAllModeLayers();
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
-    const isMap  = mode === "mapa";
-    const isComp = mode === "comparacion";
-    const isJee  = mode === "jee";
+    const isMap      = mode === "mapa";
+    const isComp     = mode === "comparacion";
+    const isJee      = mode === "jee";
+    const isAnalisis = mode === "analisis";
     const usesMap = isMap || isComp || isJee;
     document.getElementById("mapa-body").style.display       = usesMap ? "flex" : "none";
     document.getElementById("pronostico-view").style.display = (mode === "pronostico") ? "flex" : "none";
+    document.getElementById("analisis-view").style.display   = isAnalisis ? "flex" : "none";
     document.getElementById("bottombar").style.display       = usesMap ? "flex" : "none";
     const hideNormalPanel = isComp || isJee;
     document.getElementById("panel-tabs").style.display      = hideNormalPanel ? "none" : "";
@@ -2149,6 +2282,7 @@
       render();
     }
     if (mode === "pronostico") renderPronostico();
+    if (isAnalisis) renderAnalisis();
   }
   document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
 
@@ -2844,6 +2978,222 @@
       `<p style="color:#c4603a;font-weight:700">${err.message}</p>
        <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts de procesamiento primero.</p>`;
   });
+
+  // ── Análisis tab ──────────────────────────────────────────────────────────
+  let analisisData = null, analisisLoaded = false, analisisLoading = false;
+  let analisisActiveCand = 0;  // index 0–4 into top5
+
+  function loadAnalisisData(cb) {
+    if (analisisLoaded) { cb(); return; }
+    if (analisisLoading) { setTimeout(() => loadAnalisisData(cb), 200); return; }
+    analisisLoading = true;
+    fetch("analisis/analisis_data.json").then(r => r.json()).then(d => {
+      analisisData = d;
+      analisisLoaded = true;
+      cb();
+    }).catch(() => { analisisLoading = false; });
+  }
+
+  function renderAnalisis() {
+    loadAnalisisData(() => {
+      buildAnalisisCandBar();
+      buildAnalisisPlots();
+    });
+  }
+
+  function buildAnalisisCandBar() {
+    const bar = document.getElementById("an-cand-bar");
+    // preserve label
+    bar.innerHTML = '<span class="an-cand-label">Candidato</span>';
+    analisisData.top5.forEach((c, i) => {
+      const btn = document.createElement("button");
+      btn.className = "an-cand-btn" + (i === analisisActiveCand ? " active" : "");
+      btn.innerHTML = `<span class="an-cand-dot" style="background:${c.color}"></span>
+        <span>${shortName(c.nombre)}</span>
+        <span class="an-cand-pct" style="color:${i === analisisActiveCand ? '#fff' : c.color}">${c.pct.toFixed(1)}%</span>`;
+      btn.addEventListener("click", () => {
+        analisisActiveCand = i;
+        buildAnalisisCandBar();
+        buildAnalisisPlots();
+      });
+      bar.appendChild(btn);
+    });
+  }
+
+  function shortName(name) {
+    // "KEIKO SOFIA FUJIMORI HIGUCHI" → "Keiko Fujimori"
+    const parts = name.split(" ");
+    if (parts.length >= 3) return parts[0].charAt(0) + parts[0].slice(1).toLowerCase()
+      + " " + parts[parts.length - 2].charAt(0) + parts[parts.length - 2].slice(1).toLowerCase();
+    return name.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+  }
+
+  function buildAnalisisPlots() {
+    const grid   = document.getElementById("an-plots-grid");
+    const vars   = analisisData.variables;
+    const top5   = analisisData.top5;
+    const cand   = top5[analisisActiveCand];
+    const color  = cand.color;
+    const sKey   = `s${analisisActiveCand + 1}`;
+    const districts = analisisData.districts;
+
+    grid.innerHTML = "";
+
+    vars.forEach(v => {
+      // Filter to rows with both x and y
+      const pts = districts.filter(d => d[v.key] != null && d[sKey] != null);
+
+      const card = document.createElement("div");
+      card.className = "an-plot-card";
+
+      const title = document.createElement("div");
+      title.className = "an-plot-title";
+      title.textContent = v.label;
+      card.appendChild(title);
+
+      const wrap = document.createElement("div");
+      wrap.className = "an-plot-svg-wrap";
+      const svg = buildScatterSVG(pts, v, sKey, color, cand.nombre);
+      wrap.appendChild(svg);
+      card.appendChild(wrap);
+
+      grid.appendChild(card);
+    });
+  }
+
+  function buildScatterSVG(pts, varMeta, sKey, color, candName) {
+    const W = 280, H = 190;
+    const ml = 32, mr = 8, mt = 8, mb = 28;
+    const pw = W - ml - mr, ph = H - mt - mb;
+
+    // X range
+    let xVals = pts.map(d => d[varMeta.key]);
+    let yVals = pts.map(d => d[sKey]);
+    const yMin = 0, yMax = Math.min(100, Math.ceil(Math.max(...yVals) / 5) * 5 + 5);
+
+    let xMin, xMax, xScale;
+    if (varMeta.logX) {
+      const positives = xVals.filter(v => v > 0);
+      xMin = Math.max(0.01, Math.min(...positives));
+      xMax = Math.max(...positives);
+      xScale = v => (Math.log(Math.max(v, 0.01)) - Math.log(xMin)) / (Math.log(xMax) - Math.log(xMin)) * pw;
+    } else {
+      xMin = 0;
+      xMax = varMeta.key === "rur" ? 100
+           : varMeta.key === "pob" ? 85
+           : varMeta.key === "k21" || varMeta.key === "c21" ? 100
+           : Math.ceil(Math.max(...xVals) / 5) * 5;
+      xScale = v => (v - xMin) / (xMax - xMin) * pw;
+    }
+    const yScale = v => ph - (v - yMin) / (yMax - yMin) * ph;
+
+    // Build SVG string
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("style", "width:100%;height:auto;display:block");
+
+    const g = document.createElementNS(ns, "g");
+    g.setAttribute("transform", `translate(${ml},${mt})`);
+    svg.appendChild(g);
+
+    // Grid lines + axis ticks
+    const gridColor = "#cfc0ab";
+    const tickColor = "#7a6858";
+
+    // Y grid + labels (every 10%)
+    for (let yv = 0; yv <= yMax; yv += 10) {
+      if (yv < yMin) continue;
+      const yp = yScale(yv);
+      const gl = document.createElementNS(ns, "line");
+      gl.setAttribute("x1", 0); gl.setAttribute("x2", pw);
+      gl.setAttribute("y1", yp); gl.setAttribute("y2", yp);
+      gl.setAttribute("stroke", gridColor); gl.setAttribute("stroke-width", "0.5");
+      g.appendChild(gl);
+      const yl = document.createElementNS(ns, "text");
+      yl.setAttribute("x", -3); yl.setAttribute("y", yp + 3);
+      yl.setAttribute("text-anchor", "end");
+      yl.setAttribute("font-size", "7"); yl.setAttribute("fill", tickColor);
+      yl.textContent = yv + "%";
+      g.appendChild(yl);
+    }
+
+    // X axis ticks (3–4 labels)
+    const xTicks = varMeta.logX
+      ? [1, 10, 100, 1000, 10000].filter(v => v >= xMin * 0.9 && v <= xMax * 1.1)
+      : varMeta.key === "rur" ? [0, 25, 50, 75, 100]
+      : varMeta.key === "pob" ? [0, 20, 40, 60, 80]
+      : [0, 25, 50, 75, 100];
+
+    xTicks.forEach(xv => {
+      const xp = xScale(xv);
+      if (xp < -2 || xp > pw + 2) return;
+      const vl = document.createElementNS(ns, "line");
+      vl.setAttribute("x1", xp); vl.setAttribute("x2", xp);
+      vl.setAttribute("y1", 0); vl.setAttribute("y2", ph);
+      vl.setAttribute("stroke", gridColor); vl.setAttribute("stroke-width", "0.5");
+      g.appendChild(vl);
+      const xl = document.createElementNS(ns, "text");
+      xl.setAttribute("x", xp); xl.setAttribute("y", ph + 10);
+      xl.setAttribute("text-anchor", "middle");
+      xl.setAttribute("font-size", "7"); xl.setAttribute("fill", tickColor);
+      xl.textContent = varMeta.logX ? (xv >= 1000 ? xv/1000 + "k" : xv)
+                     : (varMeta.unit === "%" ? xv + "%" : xv);
+      g.appendChild(xl);
+    });
+
+    // Axes border
+    const axRect = document.createElementNS(ns, "rect");
+    axRect.setAttribute("x", 0); axRect.setAttribute("y", 0);
+    axRect.setAttribute("width", pw); axRect.setAttribute("height", ph);
+    axRect.setAttribute("fill", "none");
+    axRect.setAttribute("stroke", "#bfb0a0"); axRect.setAttribute("stroke-width", "0.8");
+    g.appendChild(axRect);
+
+    // Dots
+    const hexToRgb = hex => {
+      const r = parseInt(hex.slice(1,3),16), gg = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return `rgba(${r},${gg},${b},0.55)`;
+    };
+    const dotColor = hexToRgb(color);
+
+    pts.forEach(d => {
+      const xv = d[varMeta.key];
+      const yv = d[sKey];
+      const xp = xScale(xv);
+      const yp = yScale(yv);
+      if (xp < -4 || xp > pw + 4 || yp < -4 || yp > ph + 4) return;
+
+      // Size: sqrt of electores, clamped
+      const r = Math.max(1.5, Math.min(6, Math.sqrt(d.e / 5000)));
+
+      const circ = document.createElementNS(ns, "circle");
+      circ.setAttribute("cx", xp); circ.setAttribute("cy", yp);
+      circ.setAttribute("r", r);
+      circ.setAttribute("fill", dotColor);
+      circ.setAttribute("stroke", "none");
+      circ.dataset.tip = `${d.n}\n${varMeta.label}: ${xv.toFixed(1)}${varMeta.unit}\n${shortName(candName)}: ${yv.toFixed(1)}%\nElectores: ${d.e.toLocaleString("es-PE")}`;
+      circ.style.cursor = "default";
+      g.appendChild(circ);
+    });
+
+    // Tooltip interaction
+    const tip = document.getElementById("an-tooltip");
+    svg.addEventListener("mousemove", e => {
+      const el = e.target;
+      if (el.tagName === "circle" && el.dataset.tip) {
+        tip.style.display = "block";
+        tip.innerHTML = el.dataset.tip.replace(/\n/g, "<br>");
+        tip.style.left = (e.clientX + 12) + "px";
+        tip.style.top  = (e.clientY - 8)  + "px";
+      } else {
+        tip.style.display = "none";
+      }
+    });
+    svg.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+
+    return svg;
+  }
 
 })();
 </script>
