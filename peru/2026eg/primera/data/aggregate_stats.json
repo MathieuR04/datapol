@@ -1,335 +1,335 @@
 {
   "n_distritos": 2102,
   "num_electores": 27325432,
-  "votos_emitidos": 0,
-  "votos_validos": 0,
-  "votos_blancos": 0,
-  "votos_nulos": 0,
-  "actas_contabilizadas": 0,
+  "votos_emitidos": 20167745,
+  "votos_validos": 16738039,
+  "votos_blancos": 2372895,
+  "votos_nulos": 1056811,
+  "actas_contabilizadas": 92766,
   "actas_total": 92766,
-  "participacion_pct": 0.0,
-  "actas_pct": 0.0,
+  "participacion_pct": 73.81,
+  "actas_pct": 100.0,
   "candidatos": [
     {
       "codigo": "08",
       "nombre": "KEIKO SOFIA FUJIMORI HIGUCHI",
       "partido": "FUERZA POPULAR",
       "color": "#EA580C",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 2877678,
+      "pct_validos": 17.192,
+      "pct_emitidos": 14.269
     },
     {
       "codigo": "10",
       "nombre": "ROBERTO HELBERT SANCHEZ PALOMINO",
       "partido": "JUNTOS POR EL PERÚ",
       "color": "#166534",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 2015114,
+      "pct_validos": 12.039,
+      "pct_emitidos": 9.992
     },
     {
       "codigo": "35",
       "nombre": "RAFAEL BERNARDO LÓPEZ ALIAGA CAZORLA",
       "partido": "RENOVACIÓN POPULAR",
       "color": "#1E3A8A",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 1993905,
+      "pct_validos": 11.912,
+      "pct_emitidos": 9.887
     },
     {
       "codigo": "16",
       "nombre": "JORGE NIETO MONTESINOS",
       "partido": "PARTIDO DEL BUEN GOBIERNO",
       "color": "#FBBF24",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 1837517,
+      "pct_validos": 10.978,
+      "pct_emitidos": 9.111
     },
     {
       "codigo": "14",
       "nombre": "RICARDO PABLO BELMONT CASSINELLI",
       "partido": "PARTIDO CÍVICO OBRAS",
       "color": "#D97706",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 1698903,
+      "pct_validos": 10.15,
+      "pct_emitidos": 8.424
     },
     {
       "codigo": "23",
       "nombre": "CARLOS GONSALO ALVAREZ LOAYZA",
       "partido": "PARTIDO PAÍS PARA TODOS",
       "color": "#EAB308",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 1326717,
+      "pct_validos": 7.926,
+      "pct_emitidos": 6.578
     },
     {
       "codigo": "02",
       "nombre": "PABLO ALFONSO LOPEZ CHAU NAVA",
       "partido": "AHORA NACIÓN - AN",
       "color": "#DC2626",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 1221272,
+      "pct_validos": 7.296,
+      "pct_emitidos": 6.056
     },
     {
       "codigo": "33",
       "nombre": "MARIA SOLEDAD PEREZ TELLO",
       "partido": "PRIMERO LA GENTE",
       "color": "#DB2777",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 571170,
+      "pct_validos": 3.412,
+      "pct_emitidos": 2.832
     },
     {
       "codigo": "31",
       "nombre": "ALFONSO CARLOS ESPA Y GARCES-ALVEAR",
       "partido": "PARTIDO SICREO",
       "color": "#059669",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 560792,
+      "pct_validos": 3.35,
+      "pct_emitidos": 2.781
     },
     {
       "codigo": "21",
       "nombre": "LUIS FERNANDO OLIVERA VEGA",
       "partido": "PARTIDO FRENTE DE LA ESPERANZA 2021",
       "color": "#6366F1",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 307880,
+      "pct_validos": 1.839,
+      "pct_emitidos": 1.527
     },
     {
       "codigo": "32",
       "nombre": "JOSE LEON LUNA GALVEZ",
       "partido": "PODEMOS PERÚ",
       "color": "#0369A1",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 266768,
+      "pct_validos": 1.594,
+      "pct_emitidos": 1.323
     },
     {
       "codigo": "25",
       "nombre": "YONHY LESCANO ANCIETA",
       "partido": "PARTIDO POLÍTICO COOPERACIÓN POPULAR",
       "color": "#B45309",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 214779,
+      "pct_validos": 1.283,
+      "pct_emitidos": 1.065
     },
     {
       "codigo": "01",
       "nombre": "CESAR ACUÑA PERALTA",
       "partido": "ALIANZA PARA EL PROGRESO",
       "color": "#0284C7",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 192516,
+      "pct_validos": 1.15,
+      "pct_emitidos": 0.955
     },
     {
       "codigo": "12",
       "nombre": "PITTER ENRIQUE VALDERRAMA PEÑA",
       "partido": "PARTIDO APRISTA PERUANO",
       "color": "#991B1B",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 161248,
+      "pct_validos": 0.963,
+      "pct_emitidos": 0.8
     },
     {
       "codigo": "20",
       "nombre": "GEORGE PATRICK FORSYTH SOMMER",
       "partido": "PARTIDO DEMOCRÁTICO SOMOS PERÚ",
       "color": "#2563EB",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 153073,
+      "pct_validos": 0.915,
+      "pct_emitidos": 0.759
     },
     {
       "codigo": "24",
       "nombre": "HERBERT CALLER GUTIERREZ",
       "partido": "PARTIDO PATRIÓTICO DEL PERÚ",
       "color": "#65A30D",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 144183,
+      "pct_validos": 0.861,
+      "pct_emitidos": 0.715
     },
     {
       "codigo": "29",
       "nombre": "MARIO ENRIQUE VIZCARRA CORNEJO",
       "partido": "PARTIDO POLÍTICO PERÚ PRIMERO",
       "color": "#E11D48",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 143908,
+      "pct_validos": 0.86,
+      "pct_emitidos": 0.714
     },
     {
       "codigo": "03",
       "nombre": "RONALD DARWIN ATENCIO SOTOMAYOR",
       "partido": "ALIANZA ELECTORAL VENCEREMOS",
       "color": "#F59E0B",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 140174,
+      "pct_validos": 0.837,
+      "pct_emitidos": 0.695
     },
     {
       "codigo": "37",
       "nombre": "ROSARIO DEL PILAR FERNANDEZ BAZAN",
       "partido": "UN CAMINO DIFERENTE",
       "color": "#8B5CF6",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 128009,
+      "pct_validos": 0.765,
+      "pct_emitidos": 0.635
     },
     {
       "codigo": "17",
       "nombre": "CHARLIE CARRASCO SALAZAR",
       "partido": "PARTIDO DEMÓCRATA UNIDO PERÚ",
       "color": "#64748B",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 119028,
+      "pct_validos": 0.711,
+      "pct_emitidos": 0.59
     },
     {
       "codigo": "27",
       "nombre": "VLADIMIR ROY CERRON ROJAS",
       "partido": "PARTIDO POLÍTICO NACIONAL PERÚ LIBRE",
       "color": "#EF4444",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 100073,
+      "pct_validos": 0.598,
+      "pct_emitidos": 0.496
     },
     {
       "codigo": "22",
       "nombre": "MESIAS ANTONIO GUEVARA AMASIFUEN",
       "partido": "PARTIDO MORADO",
       "color": "#A855F7",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 82196,
+      "pct_validos": 0.491,
+      "pct_emitidos": 0.408
     },
     {
       "codigo": "38",
       "nombre": "ROBERTO ENRIQUE CHIABRA LEON",
       "partido": "UNIDAD NACIONAL",
       "color": "#334155",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "18",
-      "nombre": "ALEX GONZALES CASTILLO",
-      "partido": "PARTIDO DEMÓCRATA VERDE",
-      "color": "#15803D",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "26",
-      "nombre": "WOLFGANG MARIO GROZO COSTA",
-      "partido": "PARTIDO POLÍTICO INTEGRIDAD DEMOCRÁTICA",
-      "color": "#06B6D4",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "11",
-      "nombre": "RAFAEL JORGE BELAUNDE LLOSA",
-      "partido": "LIBERTAD POPULAR",
-      "color": "#84CC16",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "07",
-      "nombre": "JOSE DANIEL WILLIAMS ZAPATA",
-      "partido": "AVANZA PAÍS - PARTIDO DE INTEGRACIÓN SOCIAL",
-      "color": "#F97316",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "28",
-      "nombre": "FRANCISCO ERNESTO DIEZ-CANSECO TÁVARA",
-      "partido": "PARTIDO POLÍTICO PERÚ ACCIÓN",
-      "color": "#78350F",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "09",
-      "nombre": "FIORELLA GIANNINA MOLINELLI ARISTONDO",
-      "partido": "FUERZA Y LIBERTAD",
-      "color": "#C026D3",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "05",
-      "nombre": "ALVARO GONZALO PAZ DE LA BARRA FREIGEIRO",
-      "partido": "FE EN EL PERÚ",
-      "color": "#14B8A6",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "19",
-      "nombre": "ARMANDO JOAQUIN MASSE FERNANDEZ",
-      "partido": "PARTIDO DEMOCRATICO FEDERAL",
-      "color": "#94A3B8",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "36",
-      "nombre": "ANTONIO ORTIZ VILLANO",
-      "partido": "SALVEMOS AL PERÚ",
-      "color": "#22C55E",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "30",
-      "nombre": "WALTER GILMER CHIRINOS PURIZAGA",
-      "partido": "PARTIDO POLÍTICO PRIN",
-      "color": "#A16207",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "04",
-      "nombre": "CARLOS ERNESTO JAICO CARRANZA",
-      "partido": "PERÚ MODERNO",
-      "color": "#818CF8",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
-    },
-    {
-      "codigo": "15",
-      "nombre": "NAPOLEON BECERRA GARCIA",
-      "partido": "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE - PERÚ",
-      "color": "#1F2937",
-      "votos": 0,
-      "pct_validos": 0.0,
-      "pct_emitidos": 0.0
+      "votos": 67939,
+      "pct_validos": 0.406,
+      "pct_emitidos": 0.337
     },
     {
       "codigo": "34",
       "nombre": "PAUL DAVIS JAIMES BLANCO",
       "partido": "PROGRESEMOS",
       "color": "#6B7280",
+      "votos": 66046,
+      "pct_validos": 0.395,
+      "pct_emitidos": 0.327
+    },
+    {
+      "codigo": "18",
+      "nombre": "ALEX GONZALES CASTILLO",
+      "partido": "PARTIDO DEMÓCRATA VERDE",
+      "color": "#15803D",
+      "votos": 63924,
+      "pct_validos": 0.382,
+      "pct_emitidos": 0.317
+    },
+    {
+      "codigo": "26",
+      "nombre": "WOLFGANG MARIO GROZO COSTA",
+      "partido": "PARTIDO POLÍTICO INTEGRIDAD DEMOCRÁTICA",
+      "color": "#06B6D4",
+      "votos": 63751,
+      "pct_validos": 0.381,
+      "pct_emitidos": 0.316
+    },
+    {
+      "codigo": "11",
+      "nombre": "RAFAEL JORGE BELAUNDE LLOSA",
+      "partido": "LIBERTAD POPULAR",
+      "color": "#84CC16",
+      "votos": 40870,
+      "pct_validos": 0.244,
+      "pct_emitidos": 0.203
+    },
+    {
+      "codigo": "07",
+      "nombre": "JOSE DANIEL WILLIAMS ZAPATA",
+      "partido": "AVANZA PAÍS - PARTIDO DE INTEGRACIÓN SOCIAL",
+      "color": "#F97316",
+      "votos": 32585,
+      "pct_validos": 0.195,
+      "pct_emitidos": 0.162
+    },
+    {
+      "codigo": "28",
+      "nombre": "FRANCISCO ERNESTO DIEZ-CANSECO TÁVARA",
+      "partido": "PARTIDO POLÍTICO PERÚ ACCIÓN",
+      "color": "#78350F",
+      "votos": 31710,
+      "pct_validos": 0.189,
+      "pct_emitidos": 0.157
+    },
+    {
+      "codigo": "09",
+      "nombre": "FIORELLA GIANNINA MOLINELLI ARISTONDO",
+      "partido": "FUERZA Y LIBERTAD",
+      "color": "#C026D3",
+      "votos": 27217,
+      "pct_validos": 0.163,
+      "pct_emitidos": 0.135
+    },
+    {
+      "codigo": "05",
+      "nombre": "ALVARO GONZALO PAZ DE LA BARRA FREIGEIRO",
+      "partido": "FE EN EL PERÚ",
+      "color": "#14B8A6",
+      "votos": 23335,
+      "pct_validos": 0.139,
+      "pct_emitidos": 0.116
+    },
+    {
+      "codigo": "19",
+      "nombre": "ARMANDO JOAQUIN MASSE FERNANDEZ",
+      "partido": "PARTIDO DEMOCRATICO FEDERAL",
+      "color": "#94A3B8",
+      "votos": 21744,
+      "pct_validos": 0.13,
+      "pct_emitidos": 0.108
+    },
+    {
+      "codigo": "36",
+      "nombre": "ANTONIO ORTIZ VILLANO",
+      "partido": "SALVEMOS AL PERÚ",
+      "color": "#22C55E",
+      "votos": 17648,
+      "pct_validos": 0.105,
+      "pct_emitidos": 0.088
+    },
+    {
+      "codigo": "30",
+      "nombre": "WALTER GILMER CHIRINOS PURIZAGA",
+      "partido": "PARTIDO POLÍTICO PRIN",
+      "color": "#A16207",
+      "votos": 14566,
+      "pct_validos": 0.087,
+      "pct_emitidos": 0.072
+    },
+    {
+      "codigo": "04",
+      "nombre": "CARLOS ERNESTO JAICO CARRANZA",
+      "partido": "PERÚ MODERNO",
+      "color": "#818CF8",
+      "votos": 9801,
+      "pct_validos": 0.059,
+      "pct_emitidos": 0.049
+    },
+    {
+      "codigo": "15",
+      "nombre": "NAPOLEON BECERRA GARCIA",
+      "partido": "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE - PERÚ",
+      "color": "#1F2937",
       "votos": 0,
       "pct_validos": 0.0,
       "pct_emitidos": 0.0
