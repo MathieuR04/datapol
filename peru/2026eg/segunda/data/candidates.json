@@ -1,0 +1,18 @@
+[
+  {
+    "codigo": "01",
+    "nombre": "KEIKO SOFIA FUJIMORI HIGUCHI",
+    "partido": "FUERZA POPULAR",
+    "color": "#EA580C",
+    "codcan": 1,
+    "imagen": "images/keiko.png"
+  },
+  {
+    "codigo": "02",
+    "nombre": "ROBERTO HELBERT SANCHEZ PALOMINO",
+    "partido": "JUNTOS POR EL PERÚ",
+    "color": "#166534",
+    "codcan": 2,
+    "imagen": "images/roberto.png"
+  }
+]

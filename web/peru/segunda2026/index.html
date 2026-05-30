@@ -1,0 +1,3418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Perú — 1ª Vuelta 2026 | Datapol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #f5f0e8;
+      --surface:  #ede8df;
+      --border:   #cfc0ab;
+      --border2:  #bfb0a0;
+      --text:     #1a1209;
+      --muted:    #7a6858;
+      --dim:      #b0a090;
+      --terra:    #c4603a;
+      --terra-dk: #8b3c1f;
+      --terra-lt: #f0e4d8;
+      --sand:     #d9c9b4;
+    }
+    html { height: 100%; }
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────────── */
+    .nav {
+      background: var(--text);
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      height: 32px;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .nav-brand {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 14px;
+      color: var(--sand);
+      letter-spacing: 0.05em;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+    .nav-sep { width: 1px; height: 14px; background: #333; margin: 0 0.6rem; }
+    .nav-item {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #555;
+      padding: 0 0.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .nav-item.active { color: var(--terra); }
+    .nav-item:hover:not(.active) { color: #999; }
+    .nav-pill {
+      font-size: 8px;
+      background: #333;
+      color: #666;
+      border-radius: 2px;
+      padding: 1px 5px;
+      margin-left: 4px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .header {
+      background: var(--bg);
+      border-bottom: 2px solid var(--text);
+      padding: 0.55rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .header-sub {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-left: 2px solid var(--terra);
+      padding-left: 0.6rem;
+      line-height: 1.5;
+    }
+    .live-block { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    #last-update-dist {
+      font-size: 8.5px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .header-progress {
+      flex: 1;
+      max-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .hp-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    .hp-bar { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .hp-fill { height: 100%; background: var(--terra); border-radius: 2px; transition: width 0.5s; }
+    .live-tag {
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      color: var(--terra);
+      border: 1px solid var(--terra);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--terra); animation: blink 1.4s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .header-stats { display: flex; gap: 1.25rem; margin-left: auto; }
+    .hstat { display: flex; flex-direction: column; align-items: flex-end; }
+    .hstat-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .hstat-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; color: var(--text); }
+    .hstat-val.hi { color: var(--terra); }
+
+    /* ── Mode bar ─────────────────────────────────────────────────────────── */
+    .mode-bar { background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1.25rem; height: 28px; gap: 0; flex-shrink: 0; }
+    .mode-tab { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.3rem 0.75rem; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+    .mode-tab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .mode-tab:hover:not(.active) { color: var(--text); }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .body { display: flex; flex: 1; min-height: 0; }
+
+    /* ── Map ──────────────────────────────────────────────────────────────── */
+    .map-wrap { flex: 1; position: relative; min-width: 0; }
+    #map { width: 100%; height: 100%; background: #e8e0d4; }
+    .leaflet-container { background: #e8e0d4; }
+    .leaflet-control-zoom a { background: var(--bg) !important; color: var(--text) !important; border-color: var(--border) !important; }
+    .leaflet-control-zoom a:hover { background: var(--surface) !important; }
+    .leaflet-control-attribution { background: rgba(245,240,232,0.9) !important; color: var(--dim) !important; font-size: 9px !important; }
+    .leaflet-control-attribution a { color: var(--dim) !important; }
+
+    /* Map controls overlay */
+    .map-controls {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 0.75rem;
+      z-index: 800;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .ctrl-row { display: flex; gap: 0.3rem; }
+    .view-btn, .level-btn {
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .level-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .view-btn.active  { background: var(--terra); color: #fff; border-color: var(--terra); }
+    .view-btn:hover:not(.active), .level-btn:hover:not(.active) { background: var(--bg); color: var(--text); }
+
+    /* Map control group labels */
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.2rem; }
+    .ctrl-label { font-size: 7px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0 0.1rem; }
+    .ctrl-label.geo  { color: var(--text); }
+    .ctrl-label.data { color: var(--terra); }
+
+    /* Map tooltip */
+    .map-tooltip { background: rgba(245,240,232,0.96) !important; border: 1px solid #c9b99a !important; border-radius: 3px !important; box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important; color: #1a1209 !important; font-size: 10px !important; line-height: 1.5 !important; padding: 5px 8px !important; font-family: inherit !important; }
+    .map-tooltip::before { display: none !important; }
+
+    /* Loading */
+    #loading { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; gap: 0.75rem; }
+    #loading p { color: var(--muted); font-size: 11px; }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--sand); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Bubble legend */
+    .bubble-legend {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 0.5rem;
+      z-index: 800;
+      background: rgba(245,240,232,0.92);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.5rem 0.7rem;
+      font-size: 9px;
+      color: var(--muted);
+      display: none;
+      backdrop-filter: blur(4px);
+    }
+    .bubble-legend.show { display: block; }
+    .bubble-legend-title { font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .bubble-legend-items { display: flex; align-items: flex-end; gap: 0.75rem; }
+    .bl-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+    .bl-circle { border-radius: 50%; border: 1px solid #999; background: rgba(196,96,58,0.25); }
+    .bl-label { font-size: 8px; }
+
+    /* Full-view back button */
+    .map-topbar {
+      position: absolute;
+      top: 10px;
+      left: 44px;
+      z-index: 800;
+    }
+    .btn-fullview {
+      background: rgba(245,240,232,0.93);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.28rem 0.9rem;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .btn-fullview:hover { color: var(--terra); }
+
+    /* ── Panel ────────────────────────────────────────────────────────────── */
+    .panel {
+      width: 280px;
+      min-width: 280px;
+      background: var(--surface);
+      border-left: 2px solid var(--text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    /* Panel tabs */
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .ptab { flex: 1; font-size: 8.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 0.6rem 0; border: none; background: transparent; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+    .ptab.active { color: var(--terra); border-bottom-color: var(--terra); }
+    .ptab:hover:not(.active) { color: var(--text); }
+    .panel-scroll { flex: 1; overflow-y: auto; min-height: 0; }
+    .panel-scroll::-webkit-scrollbar { width: 3px; }
+    .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+    .panel-scroll::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.55rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); }
+    /* ── Sidebar rows without photo ── */
+    .party-row { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .party-row:hover { background: var(--terra-lt); }
+    .party-row.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .party-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 4px; }
+    .party-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .party-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.2; }
+    .party-sub  { font-size: 8.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
+    .party-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+    .party-bar-wrap { height: 4px; background: var(--sand); border-radius: 1px; overflow: hidden; }
+    .party-bar { height: 100%; border-radius: 1px; }
+    /* ── Sidebar rows WITH photo ── */
+    .party-row--photo { padding: 0; }
+    .party-row--photo:hover { background: var(--terra-lt); }
+    .party-row--photo.selected { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    .sidebar-photo-inner { display: flex; align-items: stretch; }
+    .sidebar-cand-photo { width: 62px; flex-shrink: 0; object-fit: cover; object-position: top center; display: block; }
+    .sidebar-photo-text { flex: 1; min-width: 0; padding: 0.45rem 0.6rem; display: flex; flex-direction: column; justify-content: center; }
+    .party-pct-big { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; display: block; }
+
+    /* ── Comparison tab ── */
+    /* Card = column: [top-row] + [nat-stats] + [color-bar] */
+    .comp-btn { display: flex; flex-direction: column; width: 100%; text-align: left; padding: 0; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; position: relative; }
+    .comp-btn:hover { background: var(--terra-lt); }
+    .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+    /* Top row: photo (left) + label text (right) */
+    .comp-btn-top { display: flex; align-items: stretch; }
+    .comp-btn-photo { width: 62px; flex-shrink: 0; overflow: hidden; }
+    .comp-btn-photo img { width: 62px; height: 100%; object-fit: cover; object-position: top center; display: block; }
+    .comp-btn-body { flex: 1; min-width: 0; padding: 0.55rem 0.75rem 0.55rem; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+    .comp-btn.active .comp-btn-body { padding-left: calc(0.75rem - 3px); }
+    /* National stats — inside body, at top above name */
+    .comp-btn-nat { display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 4px; }
+    .comp-btn-nat-26 { font-size: 20px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; line-height: 1; letter-spacing: 0.02em; }
+    .comp-btn-nat-vs  { font-size: 7.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .comp-btn-nat-21  { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--muted); line-height: 1; }
+    .comp-btn-nat-diff { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; margin-left: auto; line-height: 1; }
+    .comp-btn-l1 { font-size: 10px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: 0.04em; text-transform: uppercase; }
+    .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+    .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
+    /* Color bar — very bottom, full width, photo touches it */
+    .comp-btn-bar { height: 3px; width: 100%; flex-shrink: 0; }
+
+    /* ── Actas JEE tab ── */
+    .jee-panel { flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 0; display: flex; flex-direction: column; }
+    .jee-panel::-webkit-scrollbar { width: 3px; }
+    .jee-panel::-webkit-scrollbar-track { background: transparent; }
+    .jee-panel::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .jee-hdr { padding: 0.7rem 0.75rem 0.6rem; border-bottom: 1px solid var(--border); background: var(--sand-lt); flex-shrink: 0; }
+    .jee-hdr-title { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+    .jee-hdr-sub { font-size: 8px; color: var(--muted); margin-top: 1px; margin-bottom: 0.55rem; }
+    .jee-hdr-stat { display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 2px; }
+    .jee-hdr-stat-pct { font-size: 22px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: #DC2626; line-height: 1; }
+    .jee-hdr-stat-label { font-size: 8.5px; color: var(--muted); }
+    .jee-prog-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
+    .jee-prog-fill { height: 100%; background: #DC2626; border-radius: 2px; transition: width 0.5s; }
+    .jee-prog-note { font-size: 8px; color: var(--muted); }
+    .jee-sect-head { padding: 0.45rem 0.75rem 0.3rem; font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); background: var(--sand-lt); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    /* Status rows (C/E/P) */
+    .jee-row { padding: 0.5rem 0.75rem 0.35rem; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    .jee-row:hover { background: var(--terra-lt); }
+    .jee-row.active { background: var(--terra-lt); border-left: 3px solid var(--terra); padding-left: calc(0.75rem - 3px); }
+    .jee-row-top { display: flex; align-items: center; gap: 0.5rem; }
+    .jee-row-pct { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; flex-shrink: 0; min-width: 3.2rem; }
+    .jee-row-name { flex: 1; min-width: 0; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text); }
+    .jee-row-count { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
+    .jee-row-expand { font-size: 10px; color: var(--muted); flex-shrink: 0; transition: transform 0.15s; }
+    .jee-row.open .jee-row-expand { transform: rotate(180deg); }
+    .jee-row-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 5px; }
+    .jee-row-bar-fill { height: 100%; border-radius: 2px; }
+    /* Sub-error rows */
+    .jee-suberrors { display: none; background: var(--sand-lt); }
+    .jee-suberrors.open { display: block; }
+    .jee-sub-row { padding: 0.35rem 0.75rem 0.25rem 1.5rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .jee-sub-row:hover { background: var(--terra-lt); }
+    .jee-sub-row.active { background: var(--terra-lt); border-left: 3px solid var(--terra); padding-left: calc(1.5rem - 3px); }
+    .jee-sub-top { display: flex; align-items: center; gap: 0.4rem; }
+    .jee-sub-pct { font-size: 11px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; flex-shrink: 0; min-width: 2.8rem; }
+    .jee-sub-name { flex: 1; font-size: 8.5px; color: var(--text); }
+    .jee-sub-count { font-size: 11px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--text); }
+    .jee-sub-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-top: 3px; }
+    .jee-sub-bar-fill { height: 100%; border-radius: 1px; }
+    /* JEE dept/exterior tab rows */
+    #jee-subtabs { flex-shrink: 0; }
+    .jee-geo-row { padding: 0.4rem 0.75rem 0.3rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .jee-geo-row:hover { background: var(--terra-lt); }
+    .jee-geo-row-top { display: flex; align-items: center; gap: 0.5rem; }
+    .jee-geo-name { flex: 1; font-size: 9px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.03em; }
+    .jee-geo-pct { font-size: 13px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: #DC2626; flex-shrink: 0; min-width: 3.2rem; text-align: right; }
+    .jee-geo-count { font-size: 8px; color: var(--muted); flex-shrink: 0; }
+    .jee-geo-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+    .jee-geo-bar-fill { height: 100%; background: #DC2626; border-radius: 2px; }
+    /* JEE detail panel — slides in over the jee-panel */
+    .jee-panel { position: relative; }
+    .jee-detail { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); transform: translateX(100%); transition: transform 0.2s; z-index: 10; display: flex; flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+    .jee-detail.active { transform: translateX(0); }
+    .jee-detail::-webkit-scrollbar { width: 3px; }
+    .jee-detail::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    /* JEE bubble legend */
+    .jee-bubble-legend { position: absolute; bottom: 0.75rem; right: 0.5rem; background: rgba(245,240,232,0.92); border: 1px solid var(--border); border-radius: 3px; padding: 0.5rem 0.7rem; z-index: 800; pointer-events: none; display: none; backdrop-filter: blur(4px); font-size: 9px; color: var(--muted); }
+    .jee-bubble-legend.show { display: block; }
+    .jee-bubble-legend-title { font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.35rem; }
+    .jee-bubble-legend-items { display: flex; align-items: flex-end; gap: 0.5rem; }
+    .jee-bubble-legend-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .jee-bubble-legend-circle { border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); opacity: 0.8; }
+    .jee-bubble-legend-label { font-size: 7px; color: var(--muted); }
+
+    /* Dept rows */
+    .dept-row { padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+    .dept-row:hover { background: var(--terra-lt); }
+    .dept-top { display: flex; align-items: center; gap: 0.4rem; }
+    .dept-swatch { width: 8px; height: 8px; border-radius: 1px; flex-shrink: 0; }
+    .dept-name { font-size: 10px; font-weight: 600; color: var(--text); flex: 1; }
+    .dept-votes { font-size: 9px; color: var(--muted); white-space: nowrap; }
+    .dept-winner { font-size: 9px; color: var(--muted); margin-top: 2px; padding-left: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Detail panel */
+    .detail-panel { display: none; flex-direction: column; overflow-y: auto; flex: 1; }
+    .detail-panel.active { display: flex; }
+    .detail-panel::-webkit-scrollbar { width: 3px; }
+    .detail-panel::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .detail-back { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.75rem; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 1px solid var(--border); flex-shrink: 0; transition: color 0.15s; }
+    .detail-back:hover { color: var(--terra); }
+    .detail-hero { padding: 0.65rem 0.75rem 0.45rem; border-bottom: 2px solid var(--text); flex-shrink: 0; }
+    .detail-mpio { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; letter-spacing: 0.03em; }
+    .detail-winner-tag { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.3rem; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--terra-dk); }
+    .detail-winner-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .detail-kpi-row { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .dkpi { flex: 1; padding: 0.4rem 0.6rem; border-right: 1px solid var(--border); }
+    .dkpi:last-child { border-right: none; }
+    .dkpi-label { font-size: 7px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .dkpi-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1.1; color: var(--text); margin-top: 1px; }
+    .dkpi-val.hi { color: var(--terra); }
+    .detail-sect-head { font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0.45rem 0.75rem 0.2rem; flex-shrink: 0; }
+    .detail-breakdown { flex-shrink: 0; border-bottom: 1px solid var(--border); }
+    .dbreak-row { display: flex; align-items: center; padding: 0.28rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .dbreak-row:last-child { border-bottom: none; }
+    .dbreak-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; flex: 1; }
+    .dbreak-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); min-width: 64px; text-align: right; }
+    .dbreak-pct { font-size: 9px; color: var(--muted); min-width: 42px; text-align: right; padding-left: 0.5rem; }
+    .dbreak-row.total { background: var(--surface); }
+    .dbreak-row.total .dbreak-label { color: var(--text); font-weight: 700; }
+    .dbreak-row.total .dbreak-val { color: var(--terra); }
+
+    /* Candidate bar in detail */
+    .detail-cand { display: flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .detail-cand-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; flex-shrink: 0; min-width: 44px; }
+    .detail-cand-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .detail-cand-name { font-size: 9.5px; color: var(--text); flex: 1; line-height: 1.2; }
+    .detail-cand-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
+
+    /* ── Pronóstico view ─────────────────────────────────────────────────── */
+    #pronostico-view {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg);
+      min-height: 0;
+    }
+    #pronostico-view::-webkit-scrollbar { width: 3px; }
+    #pronostico-view::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+    .pron-inner {
+      max-width: 680px;
+      width: 100%;
+      align-self: center;
+      padding: 1.25rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .needle-mesas-note { font-size: 8px; color: var(--dim); text-align: center; margin-top: -0.3rem; margin-bottom: 0.5rem; }
+    .needle-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem 0.75rem;
+    }
+    .needle-title {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-align: center; margin-bottom: 0.65rem;
+    }
+    .needle-wrap { position: relative; width: 100%; max-width: 360px; margin: 0 auto; }
+    #needle-svg { display: block; width: 100%; height: auto; }
+    .needle-labels {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem;
+      margin-top: 0.5rem; align-items: start;
+    }
+    .needle-label.left { text-align: left; }
+    .needle-label.right { text-align: right; }
+    .needle-label-name { font-size: 11px; font-weight: 700; }
+    .needle-label-prob { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; }
+    .needle-label-probsub { font-size: 8px; color: var(--muted); }
+    .needle-label-votes { font-size: 9px; color: var(--muted); margin-top: 2px; }
+    .needle-center-block { text-align: center; padding-top: 0.4rem; }
+    .needle-center-diff { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; color: var(--text); }
+    .needle-center-sub { font-size: 8px; color: var(--muted); margin-top: 2px; }
+    .needle-center-ci { font-size: 8px; color: var(--dim); margin-top: 1px; }
+    .needle-gauge-row { display: flex; align-items: flex-end; justify-content: center; gap: 0; }
+    .needle-side-photo { width: 90px; flex-shrink: 0; display: block; object-fit: cover; object-position: top center; }
+    .needle-side-placeholder { width: 90px; flex-shrink: 0; }
+    .needle-side-photo-wrap { width: 90px; flex-shrink: 0; display: flex; align-items: flex-end; }
+    .pron-section-head {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; letter-spacing: 0.05em;
+      color: var(--text); border-bottom: 2px solid var(--text); padding-bottom: 0.3rem;
+      display: flex; align-items: baseline; gap: 0.75rem;
+    }
+    .pron-section-sub {
+      font-family: 'Inter', sans-serif; font-size: 9px; color: var(--muted);
+      letter-spacing: 0.04em; font-weight: 400; text-transform: none;
+    }
+    .pron-prob-note { font-size: 8.5px; color: var(--dim); font-style: italic; padding: 0.3rem 0; margin-bottom: 0.15rem; }
+    .cand-prob-list { display: flex; flex-direction: column; gap: 0; }
+    .cand-prob-row { padding: 0.65rem 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
+    .cand-prob-top { display: flex; align-items: center; gap: 0.5rem; }
+    .cand-prob-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .cand-prob-nameblock { flex: 1; min-width: 0; }
+    .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); }
+    .cand-prob-partido { font-size: 9px; color: var(--muted); }
+    .cand-prob-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+    .cand-prob-pct-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 30px; line-height: 1; }
+    .cand-prob-pct-label { font-size: 7.5px; color: var(--muted); letter-spacing: 0.04em; }
+    .sv-badge {
+      font-size: 7.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      background: var(--terra-lt); color: var(--terra-dk); border: 1px solid var(--terra);
+      border-radius: 2px; padding: 1px 5px; margin-top: 2px;
+    }
+    .cand-prob-bar-wrap { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
+    .cand-prob-bar { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    .cand-prob-bottom { display: flex; align-items: center; gap: 0.5rem; font-size: 9px; color: var(--muted); }
+    .cand-prob-votes { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); }
+    .cand-prob-ci { font-size: 8px; color: var(--dim); }
+    .pron-note { font-size: 9px; color: var(--dim); line-height: 1.7; font-style: italic; border-top: 1px solid var(--border); padding-top: 0.75rem; }
+    .margin-dist-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.85rem 1rem 0.55rem; }
+    .margin-dist-title { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; text-align: center; }
+    #margin-dist-svg { display: block; width: 100%; overflow: visible; }
+    .margin-dist-axis { display: flex; justify-content: space-between; font-size: 8px; color: var(--dim); margin-top: 2px; padding: 0 2px; }
+    .margin-dist-foot { display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 0.45rem; padding: 0 2px; }
+
+    /* ── Bottom bar ──────────────────────────────────────────────────────── */
+    .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
+    .bottombar::-webkit-scrollbar { display: none; }
+    .bbar-item { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    .bbar-label { font-size: 8px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #4a4a3a; }
+    .bbar-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; line-height: 1; color: var(--sand); }
+    .bbar-val.hi { color: var(--terra); }
+    .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
+
+    /* ── Mobile status chip (compact header info) ────────────────────────── */
+    #mob-status {
+      display: none;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    #mob-pct {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 17px;
+      line-height: 1;
+      color: var(--terra);
+    }
+    #mob-ts {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      body { overflow-x: hidden; overflow-y: auto; }
+      .body { flex-direction: column; }
+      .map-wrap { height: 55vw; min-height: 280px; flex: none; }
+      .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
+      /* Hide all desktop header elements, show compact chip instead */
+      .header-sub, .live-tag, .header-stats, .header-progress, .live-block { display: none !important; }
+      #mob-status { display: flex !important; }
+      .header { gap: 0.5rem; padding: 0.4rem 0.75rem; overflow: hidden; }
+      .header-title { font-size: 13px !important; white-space: nowrap; }
+      /* Hide bottom bar on all map tabs */
+      .bottombar { display: none !important; }
+      .map-controls { gap: 0.2rem; }
+      .ctrl-group { gap: 0.1rem; }
+      .ctrl-row { gap: 0.15rem; flex-wrap: wrap; }
+      .ctrl-label { font-size: 6px; }
+      .view-btn, .level-btn { font-size: 7px; padding: 0.18rem 0.4rem; letter-spacing: 0.03em; }
+      .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
+    }
+  /* Remove browser focus ring on Leaflet SVG paths */
+  .leaflet-interactive:focus { outline: none !important; box-shadow: none !important; }
+
+  /* ── Análisis tab ─────────────────────────────────────────────────────── */
+  #analisis-view {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg);
+    min-height: 0;
+  }
+  #analisis-view::-webkit-scrollbar { width: 3px; }
+  #analisis-view::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+
+  .an-inner {
+    max-width: 980px;
+    width: 100%;
+    align-self: center;
+    padding: 1rem 1.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Candidate selector bar */
+  .an-cand-bar {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+  .an-cand-label {
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 0.25rem;
+    white-space: nowrap;
+  }
+  .an-cand-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem 0.3rem 0.4rem;
+    border-radius: 3px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .an-cand-btn:hover { border-color: var(--border2); color: var(--text); }
+  .an-cand-btn.active {
+    background: var(--text);
+    border-color: var(--text);
+    color: #fff;
+  }
+  .an-cand-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .an-cand-pct {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    margin-left: 0.25rem;
+  }
+
+  /* Grid of scatter plots */
+  .an-plots-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  @media (max-width: 720px) {
+    .an-plots-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 500px) {
+    .an-plots-grid { grid-template-columns: 1fr; }
+  }
+  /* 5th chart spans all remaining (centers it on row of 2) */
+  .an-plot-card:nth-child(5) { grid-column: span 1; }
+
+  .an-plot-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.65rem 0.65rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .an-plot-title {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .an-plot-svg-wrap { width: 100%; }
+
+  /* Tooltip bubble for scatter */
+  .an-tooltip {
+    position: fixed;
+    background: rgba(26,18,9,0.92);
+    color: #fff;
+    font-size: 9.5px;
+    line-height: 1.45;
+    padding: 5px 8px;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 9000;
+    white-space: nowrap;
+    display: none;
+  }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav">
+  <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
+  <div class="nav-sep"></div>
+  <span class="nav-item active">2da Vuelta</span>
+  <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
+</div>
+
+<!-- Mode bar -->
+<div class="mode-bar">
+  <button class="mode-tab active" data-mode="mapa">Mapa</button>
+  <button class="mode-tab" data-mode="pronostico">Pronóstico</button>
+  <button class="mode-tab" data-mode="comparacion">Comparación</button>
+  <button class="mode-tab" data-mode="jee">Actas JEE</button>
+  <button class="mode-tab" data-mode="analisis">Análisis</button>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <div class="header-title">🇵🇪 2da Vuelta · Perú 2026</div>
+  </div>
+  <div id="mob-status">
+    <span id="mob-pct">—</span>
+    <span id="mob-ts"></span>
+  </div>
+  <div class="header-sub">Resultados por distrito<br>ONPE</div>
+  <div class="header-progress">
+    <div class="hp-labels">
+      <span>Actas contabilizadas</span>
+      <span id="hp-label">—</span>
+    </div>
+    <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
+  </div>
+  <div class="live-block">
+    <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+    <div id="last-update-dist" style="display:none"></div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat">
+      <span class="hstat-label">Electores</span>
+      <span class="hstat-val" id="hs-censo">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Votos emitidos</span>
+      <span class="hstat-val" id="hs-votes">—</span>
+    </div>
+    <div class="hstat">
+      <span class="hstat-label">Participación</span>
+      <span class="hstat-val hi" id="hs-turnout">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- Body (Mapa mode) -->
+<div class="body" id="mapa-body">
+
+  <!-- Map -->
+  <div class="map-wrap">
+    <div id="loading"><div class="spinner"></div><p>Cargando datos…</p></div>
+
+    <div class="map-topbar" id="map-topbar" style="display:none">
+      <button class="btn-fullview" id="btn-fullview">← Perú</button>
+    </div>
+
+    <div class="map-controls">
+      <div class="ctrl-group">
+        <span class="ctrl-label geo">Geografía</span>
+        <div class="ctrl-row">
+          <button class="level-btn active" data-level="dept">Departamento</button>
+          <button class="level-btn" data-level="provincia">Provincia</button>
+          <button class="level-btn" data-level="distrito">Distrito</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row" id="view-btns">
+          <button class="view-btn active" data-view="winner">Candidato</button>
+          <button class="view-btn" data-view="turnout">Participación</button>
+          <button class="view-btn" data-view="votos">Votos válidos</button>
+          <button class="view-btn" data-view="actas">Actas restantes</button>
+        </div>
+      </div>
+      <!-- JEE-mode only datos selector -->
+      <div class="ctrl-group" id="jee-datos-group" style="display:none">
+        <span class="ctrl-label data">Datos</span>
+        <div class="ctrl-row">
+          <button class="view-btn" id="jee-porc-btn">Porc. observado</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bubble-legend" id="bubble-legend">
+      <div class="bubble-legend-title" id="bl-title">Actas faltantes</div>
+      <div class="bubble-legend-items" id="bl-items"></div>
+    </div>
+
+    <div class="jee-bubble-legend" id="jee-bubble-legend">
+      <div class="jee-bubble-legend-title" id="jbl-title">Actas</div>
+      <div class="jee-bubble-legend-items" id="jbl-items"></div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <!-- Panel -->
+  <div class="panel">
+    <div class="panel-tabs" id="panel-tabs">
+      <button class="ptab active" data-ptab="candidatos">Candidatos</button>
+      <button class="ptab" data-ptab="deptos">Deptos</button>
+      <button class="ptab" data-ptab="exterior">Exterior</button>
+    </div>
+    <div class="panel-scroll" id="panel-scroll">
+      <div id="panel-candidatos"></div>
+      <div id="panel-deptos" style="display:none"></div>
+      <div id="panel-exterior" style="display:none"></div>
+    </div>
+    <!-- Comparación mode panel (shown when mode=comparacion) -->
+    <div id="comparacion-panel" style="display:none;flex:1;overflow-y:auto;min-height:0;flex-direction:column;display:none"></div>
+    <!-- Actas JEE panel -->
+    <div id="jee-panel" class="jee-panel" style="display:none">
+      <!-- Main list view -->
+      <div id="jee-main">
+        <div class="jee-hdr">
+          <div class="jee-hdr-title">Actas JEE</div>
+          <div class="jee-hdr-sub">Mesa a mesa · ONPE 2da Vuelta 2026</div>
+          <div class="jee-hdr-stat">
+            <span class="jee-hdr-stat-pct" id="jee-nat-pct">—</span>
+            <span class="jee-hdr-stat-label">actas observadas</span>
+          </div>
+          <div class="jee-prog-bar"><div class="jee-prog-fill" id="jee-prog-fill" style="width:0%"></div></div>
+          <div class="jee-prog-note" id="jee-nat-note">—</div>
+        </div>
+        <!-- Subtabs: Nacional / Deptos / Exterior -->
+        <div class="panel-tabs" id="jee-subtabs">
+          <button class="ptab active" data-jeetab="nacional">Estado</button>
+          <button class="ptab" data-jeetab="deptos">Deptos</button>
+          <button class="ptab" data-jeetab="exterior">Exterior</button>
+        </div>
+        <div id="jee-tab-nacional">
+          <div class="jee-sect-head">Estado actual de actas observadas</div>
+          <div id="jee-status-rows"></div>
+        </div>
+        <div id="jee-tab-deptos" style="display:none"></div>
+        <div id="jee-tab-exterior" style="display:none"></div>
+      </div>
+      <!-- Detail view (slides in on geography click) -->
+      <div id="jee-detail" class="jee-detail">
+        <div class="detail-back" id="jee-detail-back">← Volver</div>
+        <div class="detail-hero">
+          <div class="detail-mpio" id="jee-d-name">—</div>
+        </div>
+        <div class="detail-kpi-row" id="jee-d-kpis"></div>
+        <div class="detail-sect-head">Estado actas observadas</div>
+        <div id="jee-d-status"></div>
+        <div class="detail-sect-head">Observaciones</div>
+        <div id="jee-d-errors"></div>
+      </div>
+    </div>
+    <!-- Detail overlay -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-back" id="detail-back">← Volver</div>
+      <div class="detail-hero">
+        <div class="detail-mpio" id="d-mpio">—</div>
+        <div class="detail-winner-tag" id="d-winner-tag"></div>
+      </div>
+      <div class="detail-kpi-row" id="d-kpis"></div>
+      <div class="detail-breakdown" id="d-breakdown"></div>
+      <div class="detail-sect-head">Candidatos</div>
+      <div id="d-candidates"></div>
+    </div>
+  </div>
+
+</div><!-- end .body -->
+
+<!-- Bottom bar -->
+<div class="bottombar" id="bottombar">
+  <div class="bbar-item"><span class="bbar-label">Emitidos</span><span class="bbar-val hi" id="bb-emitidos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Votos nulos</span><span class="bbar-val" id="bb-nulos">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">En blanco</span><span class="bbar-val" id="bb-blanco">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Actas</span><span class="bbar-val" id="bb-actas">—</span></div>
+  <div class="bbar-sep"></div>
+  <div class="bbar-item"><span class="bbar-label">Distritos</span><span class="bbar-val" id="bb-distritos">—</span></div>
+</div>
+
+<!-- Pronóstico view -->
+<div id="pronostico-view">
+  <div class="pron-inner">
+
+    <!-- Needle gauge -->
+    <div class="needle-section" id="needle-section">
+      <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-mesas-note" id="needle-mesas-note"></div>
+      <div class="needle-gauge-row">
+        <div id="needle-left-photo" class="needle-side-placeholder"></div>
+        <div class="needle-wrap">
+          <svg id="needle-svg" viewBox="0 0 300 175" preserveAspectRatio="xMidYMid meet">
+            <line id="needle-line" x1="150" y1="155" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="butt"/>
+            <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
+                  font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
+                  fill="var(--muted)"></text>
+          </svg>
+        </div>
+        <div id="needle-right-photo" class="needle-side-placeholder"></div>
+      </div>
+      <div class="needle-labels">
+        <div class="needle-label left">
+          <div class="needle-label-name" id="needle-left-name">—</div>
+          <div class="needle-label-prob" id="needle-left-prob">—%</div>
+          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-votes" id="needle-left-votes">—</div>
+        </div>
+        <div class="needle-center-block">
+          <div class="needle-center-diff" id="needle-center-diff">—</div>
+          <div class="needle-center-sub">margen proyectado (votos)</div>
+          <div class="needle-center-ci" id="needle-center-ci"></div>
+        </div>
+        <div class="needle-label right">
+          <div class="needle-label-name" id="needle-right-name">—</div>
+          <div class="needle-label-prob" id="needle-right-prob">—%</div>
+          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-votes" id="needle-right-votes">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Margin distribution -->
+    <div class="margin-dist-wrap" id="margin-dist-wrap">
+      <div class="margin-dist-title">Distribución del margen proyectado entre 2º y 3er puesto</div>
+      <svg id="margin-dist-svg" viewBox="0 0 480 96" preserveAspectRatio="none"></svg>
+      <div class="margin-dist-axis" id="margin-dist-axis"></div>
+      <div class="margin-dist-foot" id="margin-dist-foot"></div>
+    </div>
+
+    <!-- Candidate bars -->
+    <div>
+      <div class="pron-section-head">
+        Probabilidades de segunda vuelta
+        <span class="pron-section-sub" id="pron-source-note">Escrutinio</span>
+      </div>
+      <div class="pron-prob-note">Cada candidato tiene su propia probabilidad de clasificar. La suma ronda el 200% porque exactamente 2 candidatos pasan a segunda vuelta.</div>
+      <div class="cand-prob-list" id="cand-prob-list"></div>
+    </div>
+
+    <!-- Methodology note -->
+    <div class="pron-note" id="pron-note" style="display:none"></div>
+
+  </div>
+</div>
+
+<!-- Análisis view -->
+<div id="analisis-view">
+  <div class="an-inner">
+    <div class="an-cand-bar" id="an-cand-bar">
+      <span class="an-cand-label">Candidato</span>
+    </div>
+    <div class="an-plots-grid" id="an-plots-grid"></div>
+  </div>
+</div>
+<div class="an-tooltip" id="an-tooltip"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+
+  // ── Formatting ───────────────────────────────────────────────────────────
+  const fmtN = n => (n == null || n === "" || isNaN(n)) ? "—" : parseInt(n).toLocaleString("es-PE");
+
+  const _MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  function fmtUpdateTime(isoStr) {
+    if (!isoStr) return null;
+    try {
+      const d = new Date(isoStr);
+      const parts = new Intl.DateTimeFormat("es-PE", {
+        timeZone: "America/Lima",
+        day: "numeric", month: "numeric",
+        hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(d);
+      const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+      const mon = _MESES[parseInt(p.month) - 1];
+      const hh  = p.hour.padStart(2, "0");
+      const mm  = p.minute.padStart(2, "0");
+      return `↻ ${p.day} ${mon} · ${hh}:${mm}`;
+    } catch(e) { return null; }
+  }
+  function fmtUpdateHour(isoStr) {
+    if (!isoStr) return null;
+    try {
+      const d = new Date(isoStr);
+      const parts = new Intl.DateTimeFormat("es-PE", {
+        timeZone: "America/Lima",
+        hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(d);
+      const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+      return `↻ ${p.hour.padStart(2,"0")}:${p.minute.padStart(2,"0")}`;
+    } catch(e) { return null; }
+  }
+  const fmtP = n => (n == null || n === "" || isNaN(n)) ? "—" : parseFloat(n).toFixed(1) + "%";
+
+  // ── Color helpers ────────────────────────────────────────────────────────
+  function lerp(a, b, t) {
+    const p = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+    const [r1,g1,b1] = p(a), [r2,g2,b2] = p(b);
+    return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1+(g2-g1)*t)},${Math.round(b1+(b2-b1)*t)})`;
+  }
+  function winnerStrength(winnerVotes, votosValidos, range) {
+    const share = Math.min((winnerVotes || 0) / Math.max(votosValidos || 1, 1), 1);
+    if (share === 0) return 0;
+    const mn = (range && range.min != null) ? range.min : 0;
+    const mx = (range && range.max != null) ? range.max : 1;
+    const t  = mx > mn ? Math.max(0, (share - mn) / (mx - mn)) : 0.5;
+    return 0.20 + Math.min(Math.pow(t, 0.65), 1) * 0.68;
+  }
+  function computeWinnerRange(features) {
+    const shares = [];
+    features.forEach(f => {
+      const p  = f.properties || {};
+      const wv = parseInt(p.winner_votes) || 0;
+      const dn = parseInt(p.votos_validos) || 0;
+      if (wv > 0 && dn > 0) shares.push(wv / dn);
+    });
+    if (shares.length < 3) return { min: 0, max: 1 };
+    shares.sort((a, b) => a - b);
+    const p5  = shares[Math.floor(shares.length * 0.05)];
+    const p95 = shares[Math.floor(shares.length * 0.95)];
+    return { min: Math.max(0, p5 * 0.95), max: Math.min(p95 * 1.02, 1) };
+  }
+  function liveColor(name) {
+    if (!name) return null;
+    const cand = (candidatesData || []).find(c => c.nombre === name);
+    return cand ? cand.color : null;
+  }
+  function blendWithBg(hex, strength) {
+    strength = strength == null ? 0.72 : strength;
+    try {
+      const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+      const bg = [245,240,232];
+      return `rgb(${Math.round(r*strength+bg[0]*(1-strength))},${Math.round(g*strength+bg[1]*(1-strength))},${Math.round(b*strength+bg[2]*(1-strength))})`;
+    } catch(e) { return "#d9c9b4"; }
+  }
+  function turnoutColor(pct, maxPct) {
+    if (pct == null || isNaN(pct) || pct === 0) return "#e0d8cc";
+    const stops = [[0,"#e0d8cc"],[25,"#f5c89a"],[40,"#e8935a"],[55,"#d06030"],[70,"#952010"],[85,"#5a0808"]];
+    const scaled = maxPct ? Math.min(pct / maxPct * 85, 85) : pct;
+    for (let i=1; i<stops.length; i++) {
+      if (scaled <= stops[i][0]) {
+        const t = (scaled - stops[i-1][0]) / (stops[i][0] - stops[i-1][0]);
+        return lerp(stops[i-1][1], stops[i][1], t);
+      }
+    }
+    return stops[stops.length-1][1];
+  }
+
+  // ── Centroid of a GeoJSON feature ────────────────────────────────────────
+  function centroid(feat) {
+    const g = feat.geometry;
+    let coords = g.type === "MultiPolygon"
+      ? g.coordinates.reduce((a, poly) => a.concat(poly[0]), [])
+      : g.coordinates[0];
+    let minLat=Infinity, maxLat=-Infinity, minLng=Infinity, maxLng=-Infinity;
+    coords.forEach(([lng, lat]) => {
+      if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
+      if (lng < minLng) minLng = lng; if (lng > maxLng) maxLng = lng;
+    });
+    return [(minLat+maxLat)/2, (minLng+maxLng)/2];
+  }
+
+  // ── Map setup ─────────────────────────────────────────────────────────────
+  const TILE = {
+    url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+    opts: { attribution: '© <a href="https://carto.com">CARTO</a>', subdomains: "abcd", maxZoom: 14 }
+  };
+  function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
+  const HOME_CENTER = [-9.0, -75.5];
+  const MAP_OPTS = {
+    center: HOME_CENTER, zoom: defZoom(),
+    zoomControl: true, attributionControl: true,
+    zoomSnap: 0.5, zoomDelta: 0.5, wheelPxPerZoomLevel: 80,
+    doubleClickZoom: false
+  };
+  const map = L.map("map", MAP_OPTS);
+  L.tileLayer(TILE.url, TILE.opts).addTo(map);
+  // Custom panes: fill paths always below border paths regardless of add order
+  map.createPane('fillPane');   map.getPane('fillPane').style.zIndex  = 400;
+  map.createPane('borderPane'); map.getPane('borderPane').style.zIndex = 401;
+  map.createPane('hoverPane');  map.getPane('hoverPane').style.zIndex  = 402;
+  map.getPane('hoverPane').style.pointerEvents = 'none';
+  map.createPane('bubblePane'); map.getPane('bubblePane').style.zIndex = 450;
+
+  // ── State ────────────────────────────────────────────────────────────────
+  let currentMode      = "mapa";
+  let currentView      = "winner";
+  let currentLevel     = "dept";
+  // Each tab remembers its own geography level independently
+  const modeLevels     = { mapa: "dept", comparacion: "dept", jee: "dept" };
+  let currentPanelTab  = "candidatos";
+  let previousTab      = "candidatos";
+  let selectedCandidate = null;
+  let activeLayer      = null;
+  let distLayer = null, provLayer = null, deptLayer = null, deptBoundaryLayer = null, provBoundaryLayer = null, bubbleLayer = null;
+  let winnerShareRange = { min: 0, max: 1 };
+  let candViewMaxShare = 1;
+  let deptBoundsMap = {}, deptFeatMap = {};
+
+  let distData = null, provData = null, deptData = null;
+  let candidatesData = null, aggStats = null;
+  let hoverLayer = null, selectLayer = null;   // highlight layers in hoverPane
+  let activeBubble = null;                      // last-clicked bubble marker
+
+  // ── Comparison tab state ──────────────────────────────────────────────────
+  let compLayer   = null;
+  let selectedComp = null;
+  let selectedCompLayer = null;   // currently zoomed-in layer in comparison mode
+  let compDistData = null, compProvData = null, compDeptData = null;
+
+  // Keys A/B/C/D match the Python build script order exactly:
+  // A=Keiko/Keiko  B=Sánchez/Castillo  C=Aliaga/Aliaga  D=Nieto/DeSoto
+  const COMPARISONS = {
+    A: { key: "A", line1: "KEIKO FUJIMORI 2026",        line2: "VS. KEIKO FUJIMORI 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/keiko.png",       color: "#EA580C" },
+    B: { key: "B", line1: "ROBERTO SÁNCHEZ 2026",       line2: "VS. PEDRO CASTILLO 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/roberto.png",     color: "#166534" },
+    C: { key: "C", line1: "RAFAEL LÓPEZ ALIAGA 2026",   line2: "VS. LÓPEZ ALIAGA 2021",         line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/lopez_aliaga.png", color: "#1E3A8A" },
+    D: { key: "D", line1: "JORGE NIETO 2026",           line2: "VS. HERNANDO DE SOTO 2021",     line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/nieto.png",        color: "#FBBF24" },
+  };
+  // Display name pairs for tooltip
+  const COMP_NAMES = {
+    A: { c26: "Keiko Fujimori",      c21: "Keiko Fujimori" },
+    B: { c26: "Roberto Sánchez",     c21: "Pedro Castillo" },
+    C: { c26: "López Aliaga",        c21: "López Aliaga" },
+    D: { c26: "Jorge Nieto",         c21: "Hernando de Soto" },
+  };
+
+  const BUBBLE_VIEWS = new Set(["actas", "votos", "candidate_bubble"]);
+
+  // ── Candidate photo helper ────────────────────────────────────────────────
+  function candPhotoHtml(imagen, w, h, cssClass) {
+    if (!imagen) return "";
+    const cls = cssClass || "needle-side-photo";
+    const src = BASE + imagen;
+    return `<img class="${cls}" src="${src}" width="${w}" height="${h}" onerror="this.style.display='none'" alt="">`;
+  }
+  function imagenByCode(codigo) {
+    return (candidatesData || []).find(c => String(c.codigo) === String(codigo))?.imagen || null;
+  }
+
+  // ── Style functions ───────────────────────────────────────────────────────
+  function getCandVotes(props, candName) {
+    let allCands = [];
+    try { allCands = JSON.parse(props.all_candidates || "[]"); } catch(e) {}
+    return (allCands.find(c => c.name === candName) || {}).votes || 0;
+  }
+
+  function getCandShare(props, candName) {
+    let allCands = [];
+    try { allCands = JSON.parse(props.all_candidates || "[]"); } catch(e) {}
+    const entry = allCands.find(c => c.name === candName);
+    const vv = parseInt(props.votos_validos) || 1;
+    return entry ? entry.votes / vv : 0;
+  }
+  function candColor(candName) {
+    return liveColor(candName) || ((candidatesData || []).find(c => c.nombre === candName)?.color) || "#9a8878";
+  }
+
+  function styleFeature(feat, isDept) {
+    const p = feat.properties || {};
+    let fill = "#e0d8cc";
+    if (currentView === "winner") {
+      const wv    = parseInt(p.winner_votes) || 0;
+      const color = liveColor(p.winner) || p.winner_color;
+      if (wv > 0 && color) {
+        const strength = winnerStrength(wv, parseInt(p.votos_validos) || 0, winnerShareRange);
+        fill = blendWithBg(color, isDept ? Math.min(strength + 0.06, 0.94) : strength);
+      }
+    } else if (currentView === "turnout") {
+      fill = turnoutColor(parseFloat(p.turnout_pct), 70);
+    } else if (currentView === "candidate" && selectedCandidate) {
+      const share = getCandShare(p, selectedCandidate);
+      const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.7));
+    }
+    if (isDept) return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
+    return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
+  }
+
+  const styleDist = feat => styleFeature(feat, false);
+  // Province view: borders match the province-boundary overlay in district view
+  const styleProv = feat => {
+    const s = styleFeature(feat, false);
+    s.weight = 0.7; s.color = "#4a3820";
+    return s;
+  };
+  // Dept view: thicker dark borders
+  const styleDept = feat => styleFeature(feat, true);
+
+  // ── Render choropleth ─────────────────────────────────────────────────────
+  function renderChoropleth() {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    document.getElementById("bubble-legend").classList.remove("show");
+
+    const srcData = currentLevel === "distrito" ? distData : currentLevel === "provincia" ? provData : deptData;
+    if (currentView === "winner" && srcData) winnerShareRange = computeWinnerRange(srcData.features);
+    if (currentView === "candidate" && selectedCandidate && srcData) {
+      const shares = srcData.features.map(f => getCandShare(f.properties || {}, selectedCandidate));
+      candViewMaxShare = Math.max(...shares.filter(s => s > 0), 0.01);
+    }
+
+    if (currentLevel === "distrito") {
+      if (deptLayer)  { map.removeLayer(deptLayer);  deptLayer  = null; }
+      if (provLayer)  { map.removeLayer(provLayer);  provLayer  = null; }
+      if (!distLayer) {
+        distLayer = L.geoJSON(distData, { pane: 'fillPane', style: styleDist, onEachFeature: (f,l) => onEachFeature(f,l,"distrito"), smoothFactor: 0 }).addTo(map);
+      } else { distLayer.setStyle(styleDist); }
+      // Province border overlay in borderPane — always above all fill paths
+      if (!provBoundaryLayer && provData) {
+        provBoundaryLayer = L.geoJSON(provData, {
+          pane: 'borderPane',
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+      // Dept border overlay — always recreate so weight is correct for this level
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          pane: 'borderPane',
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+    } else if (currentLevel === "provincia") {
+      if (deptLayer)  { map.removeLayer(deptLayer);  deptLayer  = null; }
+      if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+      // Province fill in fillPane — pane z-order guarantees borderPane is always on top
+      if (!provLayer) {
+        provLayer = L.geoJSON(provData, { pane: 'fillPane', style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
+      } else { provLayer.setStyle(styleProv); }
+      // Dept border overlay in borderPane — always above province fill regardless of add order
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          pane: 'borderPane',
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+    } else {
+      if (distLayer)  { map.removeLayer(distLayer);  distLayer  = null; }
+      if (provLayer)  { map.removeLayer(provLayer);  provLayer  = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+      // Dept fill in fillPane (no stroke — borders come from deptBoundaryLayer in borderPane)
+      if (!deptLayer) {
+        deptLayer = L.geoJSON(deptData, { pane: 'fillPane', style: f => ({ ...styleDept(f), weight: 0, stroke: false }), onEachFeature: (f,l) => onEachFeature(f,l,"dept"), smoothFactor: 0 }).addTo(map);
+      } else { deptLayer.setStyle(f => ({ ...styleDept(f), weight: 0, stroke: false })); }
+      // Dept borders always in borderPane — hover on fill layer can never obscure these
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, {
+          pane: 'borderPane',
+          style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+          interactive: false, smoothFactor: 0
+        }).addTo(map);
+      }
+    }
+  }
+
+  // ── Render bubbles ────────────────────────────────────────────────────────
+  function renderBubbles(valueKey, labelFn, bubbleColor) {
+    if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
+    activeBubble = null;
+
+    const isDept = currentLevel === "dept";
+    const activeGeoData = currentLevel === "distrito" ? distData : currentLevel === "provincia" ? provData : deptData;
+
+    // Ensure base choropleth layer is visible (transparent fill, borders in borderPane)
+    if (currentLevel === "distrito") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (provLayer) { map.removeLayer(provLayer); provLayer = null; }
+      if (!distLayer) distLayer = L.geoJSON(distData, { pane: 'fillPane', style: styleDist, onEachFeature: (f,l) => onEachFeature(f,l,"distrito"), smoothFactor: 0 }).addTo(map);
+      distLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.3, color: "#cfc0ab" }));
+      if (!provBoundaryLayer && provData) {
+        provBoundaryLayer = L.geoJSON(provData, { pane: 'borderPane', style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" }, interactive: false }).addTo(map);
+      }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, { pane: 'borderPane', style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" }, interactive: false }).addTo(map);
+      }
+    } else if (currentLevel === "provincia") {
+      if (deptLayer) { map.removeLayer(deptLayer); deptLayer = null; }
+      if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+      if (!provLayer) provLayer = L.geoJSON(provData, { pane: 'fillPane', style: styleProv, onEachFeature: (f,l) => onEachFeature(f,l,"provincia"), smoothFactor: 0 }).addTo(map);
+      provLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" }));
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, { pane: 'borderPane', style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" }, interactive: false }).addTo(map);
+      }
+    } else {
+      if (distLayer) { map.removeLayer(distLayer); distLayer = null; }
+      if (provLayer) { map.removeLayer(provLayer); provLayer = null; }
+      if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+      if (!deptLayer) deptLayer = L.geoJSON(deptData, { pane: 'fillPane', style: styleDept, onEachFeature: (f,l) => onEachFeature(f,l,"dept"), smoothFactor: 0 }).addTo(map);
+      deptLayer.setStyle(() => ({ fillColor: "transparent", fillOpacity: 0, weight: 0, stroke: false }));
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (deptData) {
+        deptBoundaryLayer = L.geoJSON(deptData, { pane: 'borderPane', style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" }, interactive: false }).addTo(map);
+      }
+    }
+
+    const features = activeGeoData.features.filter(f => valueKey(f.properties || {}) > 0);
+    const values = features.map(f => valueKey(f.properties || {}));
+    const maxVal = Math.max(...values, 1);
+    const maxR = isDept ? 30 : 18;
+
+    bubbleLayer = L.layerGroup();
+    features.forEach(feat => {
+      const val = valueKey(feat.properties || {});
+      if (!val) return;
+      const r = Math.max(2, Math.sqrt(val / maxVal) * maxR);
+      const latlng = centroid(feat);
+      const bCol = bubbleColor || "#c4603a";
+      const marker = L.circleMarker(latlng, {
+        pane: 'bubblePane',
+        radius: r, fillColor: bCol, fillOpacity: 0.55,
+        weight: 0.8, color: bCol
+      });
+      marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
+      marker.on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        if (activeBubble === marker) {
+          // second click → zoom out
+          activeBubble = null;
+          map.setView(HOME_CENTER, defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        activeBubble = marker;
+        showDetail(feat, currentLevel);
+        document.getElementById("map-topbar").style.display = "block";
+        try {
+          const bounds = L.geoJSON(feat).getBounds();
+          const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
+          if (bounds.isValid()) map.fitBounds(bounds, { padding: pad });
+        } catch (_) {}
+      });
+      marker.addTo(bubbleLayer);
+    });
+    bubbleLayer.addTo(map);
+
+    const legend = document.getElementById("bubble-legend");
+    legend.classList.add("show");
+    const sizes = [maxVal, maxVal/4, maxVal/16].filter(v => v > 0);
+    document.getElementById("bl-items").innerHTML = sizes.map(v => {
+      const r = Math.max(2, Math.sqrt(v / maxVal) * maxR);
+      const d = r * 2;
+      return `<div class="bl-item">
+        <div class="bl-circle" style="width:${d}px;height:${d}px"></div>
+        <span class="bl-label">${fmtN(Math.round(v))}</span>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Render dispatcher ─────────────────────────────────────────────────────
+  function featName(p) {
+    if (currentLevel === "dept")     return p.nombre_dept     || "—";
+    if (currentLevel === "provincia") return p.nombre_provincia || "—";
+    return p.nombre_distrito || "—";
+  }
+  function render() {
+    if (currentView === "actas") {
+      document.getElementById("bl-title").textContent = "Actas faltantes";
+      renderBubbles(
+        p => Math.max(0, (parseInt(p.actas_total) || 0) - (parseInt(p.actas_contabilizadas) || 0)),
+        (p, v) => `<b>${featName(p)}</b><br>${fmtN(v)} actas pendientes`
+      );
+    } else if (currentView === "votos") {
+      document.getElementById("bl-title").textContent = "Votos válidos";
+      renderBubbles(
+        p => parseInt(p.votos_validos) || 0,
+        (p, v) => `<b>${featName(p)}</b><br>${fmtN(v)} votos válidos`
+      );
+    } else if (currentView === "candidate_bubble" && selectedCandidate) {
+      const col = candColor(selectedCandidate);
+      const shortName = selectedCandidate.split(" ")[0];
+      document.getElementById("bl-title").textContent = `Votos · ${shortName}`;
+      renderBubbles(
+        p => getCandVotes(p, selectedCandidate),
+        (p, v) => `<b>${featName(p)}</b><br>${fmtN(v)} votos`,
+        col
+      );
+    } else {
+      renderChoropleth();
+    }
+    // Redraw the selection highlight in hoverPane so it persists across redraws
+    if (activeLayer && selectLayer) {
+      map.removeLayer(selectLayer); selectLayer = null;
+    }
+    if (activeLayer) {
+      if (currentView !== "candidate") activeLayer.setStyle({ fillOpacity: 1 });
+      selectLayer = L.geoJSON(activeLayer.feature, {
+        pane: 'hoverPane', smoothFactor: 0,
+        style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
+        interactive: false
+      }).addTo(map);
+    }
+  }
+
+  // ── Highlight helpers ─────────────────────────────────────────────────────
+  function showHover(feat) {
+    if (hoverLayer) { map.removeLayer(hoverLayer); hoverLayer = null; }
+    hoverLayer = L.geoJSON(feat, {
+      pane: 'hoverPane', smoothFactor: 0,
+      style: { fillColor: 'transparent', fillOpacity: 0, weight: 2.5, color: '#c4603a' },
+      interactive: false
+    }).addTo(map);
+  }
+  function clearHover() {
+    if (hoverLayer) { map.removeLayer(hoverLayer); hoverLayer = null; }
+  }
+  function showSelect(feat) {
+    if (selectLayer) { map.removeLayer(selectLayer); selectLayer = null; }
+    selectLayer = L.geoJSON(feat, {
+      pane: 'hoverPane', smoothFactor: 0,
+      style: { fillColor: 'transparent', fillOpacity: 0, weight: 3, color: '#c4603a' },
+      interactive: false
+    }).addTo(map);
+  }
+  function clearSelect() {
+    if (selectLayer) { map.removeLayer(selectLayer); selectLayer = null; }
+  }
+
+  // ── MAPA tooltip content (view-aware) ────────────────────────────────────
+  function getMapaTooltip(p, type) {
+    const name = type === "dept"     ? (p.nombre_dept      || "—")
+               : type === "provincia"? (p.nombre_provincia || "—")
+               :                      (p.nombre_distrito   || "—");
+    const fmt    = n => (n != null && n !== "") ? parseInt(n).toLocaleString("es-PE") : "—";
+    const fmtPct = n => n != null ? (+n).toFixed(1) + "%" : "—";
+
+    if (currentView === "winner") {
+      const vvN = parseInt(p.votos_validos) || 0;
+      const wv  = parseInt(p.winner_votes)  || 0;
+      const share = vvN > 0 ? (wv / vvN * 100).toFixed(1) + "%" : "—";
+      const col   = liveColor(p.winner) || p.winner_color || "#888";
+      const winner = p.winner || "—";
+      return `<b>${name}</b><br>
+        <span style="color:${col};font-weight:700">${winner}</span> · ${share}<br>
+        <span style="opacity:0.65;font-size:9px">${fmt(wv)} de ${fmt(vvN)} votos válidos</span>`;
+    }
+    if (currentView === "turnout") {
+      const ve   = parseInt(p.votos_emitidos) || 0;
+      const elec = parseInt(p.num_electores)  || 0;
+      const tPct = elec > 0 ? (ve / elec * 100).toFixed(1) + "%" : fmtPct(p.turnout_pct);
+      return `<b>${name}</b><br>
+        Participación: <b>${tPct}</b><br>
+        <span style="opacity:0.65;font-size:9px">${fmt(ve)} de ${fmt(elec)} electores</span>`;
+    }
+    if (currentView === "candidate" && selectedCandidate) {
+      const votes = getCandVotes(p, selectedCandidate);
+      const vvN   = parseInt(p.votos_validos) || 1;
+      const share = votes > 0 ? (votes / vvN * 100).toFixed(1) + "%" : "0.0%";
+      const col   = candColor(selectedCandidate);
+      const short = selectedCandidate.split(" ").slice(0, 2).join(" ");
+      return `<b>${name}</b><br>
+        <span style="color:${col};font-weight:700">${short}</span>: <b>${share}</b><br>
+        <span style="opacity:0.65;font-size:9px">${parseInt(votes).toLocaleString("es-PE")} votos</span>`;
+    }
+    if (currentView === "actas") {
+      const cont  = parseInt(p.actas_contabilizadas) || 0;
+      const total = parseInt(p.actas_total) || 0;
+      const pend  = Math.max(0, total - cont);
+      return `<b>${name}</b><br>
+        Actas pendientes: <b>${fmt(pend)}</b><br>
+        <span style="opacity:0.65;font-size:9px">${fmt(cont)} de ${fmt(total)} contabilizadas</span>`;
+    }
+    if (currentView === "votos") {
+      const vv = parseInt(p.votos_validos) || 0;
+      return `<b>${name}</b><br>
+        Votos válidos: <b>${fmt(vv)}</b>`;
+    }
+    if (currentView === "candidate_bubble" && selectedCandidate) {
+      const votes = getCandVotes(p, selectedCandidate);
+      const vvN   = parseInt(p.votos_validos) || 1;
+      const share = votes > 0 ? (votes / vvN * 100).toFixed(1) + "%" : "0.0%";
+      const col   = candColor(selectedCandidate);
+      const short = selectedCandidate.split(" ").slice(0, 2).join(" ");
+      return `<b>${name}</b><br>
+        <span style="color:${col};font-weight:700">${short}</span>: <b>${share}</b><br>
+        <span style="opacity:0.65;font-size:9px">${parseInt(votes).toLocaleString("es-PE")} votos</span>`;
+    }
+    return null;
+  }
+
+  // ── Feature interactions ──────────────────────────────────────────────────
+  function onEachFeature(feat, layer, type) {
+    if (type === "dept") {
+      const key = (feat.properties || {}).ubigeo_dept || "";
+      if (key) {
+        deptBoundsMap[key] = layer.getBounds();
+        deptFeatMap[key] = feat;
+      }
+    }
+    layer.on({
+      mouseover(e) {
+        if (e.target !== activeLayer) {
+          // In bubble views the polygon fill is transparent — don't override it
+          if (!BUBBLE_VIEWS.has(currentView) && currentView !== "candidate")
+            e.target.setStyle({ fillOpacity: 1 });
+          if (!BUBBLE_VIEWS.has(currentView)) e.target.bringToFront();
+          showHover(e.target.feature);
+        }
+        const tip = getMapaTooltip(feat.properties || {}, type);
+        if (tip) e.target.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
+      },
+      mouseout(e) {
+        clearHover();
+        e.target.unbindTooltip();
+        if (e.target === activeLayer) return;
+        if (BUBBLE_VIEWS.has(currentView)) {
+          const isDept = type === "dept";
+          e.target.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+        } else {
+          deptLayer?.resetStyle(e.target);
+          provLayer?.resetStyle(e.target);
+          distLayer?.resetStyle(e.target);
+        }
+      },
+      click(e) {
+        L.DomEvent.stopPropagation(e);
+        e.target.unbindTooltip();
+        clearHover();
+        if (currentMode === "comparacion") return;  // comparison has its own click handlers
+        if (activeLayer === e.target) {
+          deptLayer?.resetStyle(e.target);
+          provLayer?.resetStyle(e.target);
+          distLayer?.resetStyle(e.target);
+          clearSelect();
+          activeLayer = null;
+          map.setView(HOME_CENTER, defZoom());
+          document.getElementById("map-topbar").style.display = "none";
+          hideDetail();
+          return;
+        }
+        if (activeLayer) {
+          if (BUBBLE_VIEWS.has(currentView)) {
+            const isDept = type === "dept";
+            activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0, weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+          } else {
+            deptLayer?.resetStyle(activeLayer);
+            provLayer?.resetStyle(activeLayer);
+            distLayer?.resetStyle(activeLayer);
+          }
+          clearSelect();
+        }
+        activeLayer = e.target;
+        if (currentView !== "candidate") e.target.setStyle({ fillOpacity: 1 });
+        showSelect(e.target.feature);
+        showDetail(feat, type);
+        const pad = type === "dept" ? [40, 40] : [60, 60];
+        map.fitBounds(e.target.getBounds(), { padding: pad });
+        document.getElementById("map-topbar").style.display = "block";
+      }
+    });
+  }
+
+  map.on("click", () => {
+    hideDetail();
+    if (currentMode === "comparacion") {
+      clearHover();
+      if (selectedCompLayer) {
+        selectedCompLayer = null;
+        map.setView(HOME_CENTER, defZoom(), { animate: true });
+      }
+    }
+    if (currentMode === "jee") {
+      hideJeeDetail();
+    }
+  });
+
+  document.getElementById("btn-fullview").addEventListener("click", () => {
+    map.setView(HOME_CENTER, defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+    hideDetail();
+  });
+  map.on("zoomend", () => {
+    if (map.getZoom() <= defZoom() + 0.3) document.getElementById("map-topbar").style.display = "none";
+  });
+
+  // ── Detail panel ──────────────────────────────────────────────────────────
+  function showDetail(feat, type) {
+    const p = feat.properties || {};
+    document.querySelectorAll("#panel-tabs .ptab").forEach(t => t.classList.remove("active"));
+    document.getElementById("panel-scroll").style.display = "none";
+    document.getElementById("detail-panel").classList.add("active");
+
+    const name = type === "dept"
+      ? (p.nombre_dept || "—")
+      : type === "provincia"
+      ? (p.nombre_provincia || "—")
+      : (p.nombre_distrito || "—");
+    document.getElementById("d-mpio").textContent = name;
+
+    const wt = document.getElementById("d-winner-tag");
+    if (p.winner) {
+      const col = liveColor(p.winner) || p.winner_color || candColor(p.winner);
+      wt.innerHTML = `<div class="detail-winner-swatch" style="background:${col}"></div>${p.winner}`;
+    } else { wt.textContent = "Sin datos"; }
+
+    const vv  = parseInt(p.votos_validos)        || 0;
+    const ve  = parseInt(p.votos_emitidos)        || 0;
+    const elec= parseInt(p.num_electores)         || 0;
+    const vb  = parseInt(p.votos_blancos)         || 0;
+    const vn  = parseInt(p.votos_nulos)           || 0;
+    const acE = parseInt(p.actas_contabilizadas)  || 0;
+    const acT = parseInt(p.actas_total)           || 0;
+    const pct = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + "%" : "—";
+
+    document.getElementById("d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Electores</div><div class="dkpi-val">${fmtN(elec)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Emitidos</div><div class="dkpi-val">${fmtN(ve)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Participación</div><div class="dkpi-val hi">${elec > 0 ? pct(ve, elec) : "—"}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Actas cont.</div><div class="dkpi-val">${fmtN(acE)}/${fmtN(acT)}</div></div>`;
+
+    const bkRows = [
+      ["Votos nulos",  vn, pct(vn, ve)],
+      ["En blanco",    vb, pct(vb, ve)],
+    ];
+    document.getElementById("d-breakdown").innerHTML =
+      bkRows.map(([l, v, pp]) => `<div class="dbreak-row">
+        <span class="dbreak-label">${l}</span>
+        <span class="dbreak-val">${fmtN(v)}</span>
+        <span class="dbreak-pct">${pp}</span>
+      </div>`).join("") +
+      `<div class="dbreak-row total">
+        <span class="dbreak-label">Votos válidos</span>
+        <span class="dbreak-val">${fmtN(vv)}</span>
+        <span class="dbreak-pct">${pct(vv, ve)}</span>
+      </div>`;
+
+    let cands = [];
+    try { cands = JSON.parse(p.all_candidates || "[]"); } catch(e) {}
+    const allZero = cands.length === 0 || cands.every(c => !c.votes);
+    const candSource = allZero
+      ? (candidatesData || []).map(c => ({ name: c.nombre, color: c.color, votes: 0 }))
+      : cands;
+    document.getElementById("d-candidates").innerHTML = candSource.map(c => {
+      const col = liveColor(c.name) || c.color || "#9a8878";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${col}">${pct(c.votes, vv)}</span>
+        <div class="detail-cand-dot" style="background:${col}"></div>
+        <span class="detail-cand-name">${c.name}</span>
+        <span class="detail-cand-votes">${fmtN(c.votes)}</span>
+      </div>`;
+    }).join("");
+  }
+
+  function hideDetail() {
+    document.getElementById("detail-panel").classList.remove("active");
+    // Only restore panel-scroll when in normal MAPA mode
+    if (currentMode !== "comparacion" && currentMode !== "jee") {
+      document.getElementById("panel-scroll").style.display = "";
+      document.querySelectorAll("#panel-tabs .ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
+    }
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        distLayer?.resetStyle(activeLayer);
+        provLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+    }
+    clearSelect();
+  }
+  document.getElementById("detail-back").addEventListener("click", hideDetail);
+
+  // ── Header stats ──────────────────────────────────────────────────────────
+  function updateHeaderStats() {
+    const s = aggStats || {};
+    const elec  = s.num_electores || 0;
+    const acE   = s.actas_contabilizadas || 0;
+    const acT   = s.actas_total || 0;
+    const emit  = s.votos_emitidos || 0;
+    const pct   = acT ? acE / acT : 0;
+    document.getElementById("hs-censo").textContent   = elec ? fmtN(elec) : "—";
+    document.getElementById("hs-votes").textContent   = emit ? fmtN(emit) : "—";
+    document.getElementById("hs-turnout").textContent = (elec && emit) ? (emit / elec * 100).toFixed(1) + "%" : "—";
+    document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
+    document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(acE)}/${fmtN(acT)}`;
+    if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+    const mobPct = document.getElementById("mob-pct");
+    if (mobPct) mobPct.textContent = acT ? (acE / acT * 100).toFixed(1) + "%" : "—";
+  }
+
+  // ── Bottom bar ────────────────────────────────────────────────────────────
+  function updateBottomBar() {
+    const s = aggStats || {};
+    document.getElementById("bb-emitidos").textContent = fmtN(s.votos_emitidos  || 0);
+    document.getElementById("bb-nulos").textContent    = fmtN(s.votos_nulos     || 0);
+    document.getElementById("bb-blanco").textContent   = fmtN(s.votos_blancos   || 0);
+    document.getElementById("bb-actas").textContent    = `${fmtN(s.actas_contabilizadas||0)}/${fmtN(s.actas_total||0)}`;
+
+    const reported = (distData?.features || []).filter(f => (parseInt(f.properties?.actas_contabilizadas) || 0) > 0).length;
+    const total    = (distData?.features || []).length;
+    document.getElementById("bb-distritos").textContent = `${reported}/${total || "—"}`;
+  }
+
+  // ── Panel tab switching ───────────────────────────────────────────────────
+  function switchPanelTab(tab) {
+    currentPanelTab = tab;
+    previousTab     = tab;
+    document.querySelectorAll("#panel-tabs .ptab").forEach(b => b.classList.toggle("active", b.dataset.ptab === tab));
+    document.getElementById("panel-candidatos").style.display  = tab === "candidatos"  ? "" : "none";
+    document.getElementById("panel-deptos").style.display      = tab === "deptos"      ? "" : "none";
+    document.getElementById("panel-exterior").style.display    = tab === "exterior"    ? "" : "none";
+    document.getElementById("detail-panel").classList.remove("active");
+    if (currentMode !== "comparacion" && currentMode !== "jee") document.getElementById("panel-scroll").style.display = "";
+    if (activeLayer) {
+      if (BUBBLE_VIEWS.has(currentView)) {
+        const isDept = currentLevel === "dept";
+        activeLayer.setStyle({ fillColor: "transparent", fillOpacity: 0,
+          weight: isDept ? 1.5 : 0.3, color: isDept ? "#1a1209" : "#cfc0ab" });
+      } else {
+        distLayer?.resetStyle(activeLayer);
+        provLayer?.resetStyle(activeLayer);
+        deptLayer?.resetStyle(activeLayer);
+      }
+      activeLayer = null;
+      clearSelect();
+    }
+    map.setView(HOME_CENTER, defZoom());
+    document.getElementById("map-topbar").style.display = "none";
+    if (tab === "exterior") buildExteriorList();
+    render();
+  }
+  document.querySelectorAll("#panel-tabs .ptab").forEach(b => b.addEventListener("click", () => switchPanelTab(b.dataset.ptab)));
+
+  // ── Candidatos sidebar ────────────────────────────────────────────────────
+  function buildCandList() {
+    const el = document.getElementById("panel-candidatos");
+    const cands = candidatesData || [];
+
+    const voteMap = {};
+    (aggStats?.candidatos || []).forEach(c => { voteMap[c.codigo] = c.votos || 0; });
+    const totalVV = aggStats?.votos_validos || 0;
+
+    const merged = cands.map(c => ({ ...c, votes: voteMap[c.codigo] || 0 }));
+    const isLive = (aggStats?.actas_contabilizadas || 0) > 0;
+    const sorted = isLive ? merged.slice().sort((a, b) => b.votes - a.votes) : merged;
+    const maxV   = sorted[0]?.votes || 1;
+
+    el.innerHTML = `<div class="sect-head">${sorted.length} candidatos · ${fmtN(totalVV)} votos válidos</div>` +
+      sorted.map(c => {
+        const col  = c.color || "#9a8878";
+        const pct  = totalVV > 0 ? (c.votes / totalVV * 100).toFixed(1) : "0.0";
+        const barW = (c.votes / maxV * 100).toFixed(1);
+        const dn   = c.nombre.replace(/"/g, '&quot;');
+
+        if (c.imagen) {
+          const src = `${BASE}${c.imagen}`;
+          return `<div class="party-row party-row--photo" data-cand="${dn}">
+            <div class="sidebar-photo-inner">
+              <img class="sidebar-cand-photo" src="${src}" onerror="this.style.display='none'" alt="">
+              <div class="sidebar-photo-text">
+                <span class="party-pct-big" style="color:${col}">${pct}%</span>
+                <div class="party-name">${c.nombre}</div>
+                <div class="party-sub">${c.partido || ''}</div>
+              </div>
+              <span class="party-votes" style="align-self:center;padding-right:0.5rem">${fmtN(c.votes)}</span>
+            </div>
+            <div class="party-bar-wrap">
+              <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+            </div>
+          </div>`;
+        }
+
+        return `<div class="party-row" data-cand="${dn}">
+          <div class="party-top">
+            <span class="party-pct" style="color:${col}">${pct}%</span>
+            <div style="flex:1;min-width:0">
+              <div class="party-name">${c.nombre}</div>
+              <div class="party-sub">${c.partido || ''}</div>
+            </div>
+            <span class="party-votes">${fmtN(c.votes)}</span>
+          </div>
+          <div class="party-bar-wrap">
+            <div class="party-bar" style="width:${barW}%;background:${col}"></div>
+          </div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".party-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const name = row.dataset.cand;
+        if (selectedCandidate === name) {
+          if (currentView === "candidate") {
+            // 2nd click → bubble view
+            currentView = "candidate_bubble";
+            document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+          } else {
+            // 3rd click → deselect, back to winner
+            selectedCandidate = null;
+            el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+            currentView = "winner";
+            document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+          }
+        } else {
+          selectedCandidate = name;
+          el.querySelectorAll(".party-row").forEach(r => r.classList.toggle("selected", r.dataset.cand === name));
+          currentView = "candidate";
+          document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+        }
+        render();
+      });
+    });
+  }
+
+  // ── Dept sidebar ──────────────────────────────────────────────────────────
+  function buildDeptList() {
+    if (!deptData) return;
+    const features = deptData.features.slice().sort((a, b) =>
+      (parseInt(b.properties?.votos_validos) || 0) - (parseInt(a.properties?.votos_validos) || 0)
+    );
+    const el = document.getElementById("panel-deptos");
+    el.innerHTML = `<div class="sect-head">${features.length} departamentos</div>` +
+      features.map(feat => {
+        const p = feat.properties || {};
+        const name = p.nombre_dept || "—";
+        const col = p.winner_color || "#9a8878";
+        return `<div class="dept-row" data-deptkey="${p.ubigeo_dept || ''}">
+          <div class="dept-top">
+            <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+            <span class="dept-name">${name}</span>
+            <span class="dept-votes">${fmtN(p.votos_validos)}</span>
+          </div>
+          <div class="dept-winner">${p.winner || `${fmtN((parseInt(p.actas_total)||0)-(parseInt(p.actas_contabilizadas)||0))} actas restantes`}</div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".dept-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const key = row.dataset.deptkey;
+        const feat = deptFeatMap[key];
+        if (!feat) return;
+        if (currentLevel !== "dept") {
+          currentLevel = "dept";
+          document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === "dept"));
+          render();
+        }
+        const bounds = deptBoundsMap[key];
+        if (bounds) { map.fitBounds(bounds, { padding: [40, 40] }); document.getElementById("map-topbar").style.display = "block"; }
+        showDetail(feat, "dept");
+      });
+    });
+  }
+
+  // ── Exterior panel ────────────────────────────────────────────────────────
+  let _exteriorRows = null;
+
+  function buildExteriorList() {
+    const el = document.getElementById("panel-exterior");
+    if (!el) return;
+
+    if (_exteriorRows !== null) {
+      renderExteriorRows(el, _exteriorRows);
+      return;
+    }
+
+    el.innerHTML = `<div class="sect-head" style="color:var(--muted)">Cargando…</div>`;
+
+    const parseCSV = text => {
+      const lines = text.trim().split("\n");
+      const headers = lines[0].split(",");
+      return lines.slice(1).filter(l => l.trim()).map(line => {
+        const cols = line.split(",");
+        const obj = {};
+        headers.forEach((h, i) => obj[h.trim()] = cols[i] !== undefined ? cols[i].trim() : "");
+        return obj;
+      });
+    };
+
+    // Load district CSV + electoral roll to get country names
+    Promise.all([
+      fetch(BASE + "results/peru_2026eg_distrito_segunda.csv").then(r => r.text()),
+      fetch(BASE + "../../../../peru/2026eg/metadata/peru_2026_distrito_electoral_roll.csv").then(r => r.text())
+    ])
+    .then(([csvText, rollText]) => {
+      const distRows = parseCSV(csvText).filter(r => String(r.ubigeo_distrito || "").startsWith("9"));
+      const roll = parseCSV(rollText);
+
+      // Build lookup: ubigeo_distrito → {ubigeo_provincia, nombre_provincia}
+      const rollLkp = {};
+      roll.filter(r => r.is_exterior === "True").forEach(r => {
+        rollLkp[r.ubigeo_distrito] = { ubigeo_provincia: r.ubigeo_provincia, nombre_provincia: r.nombre_provincia };
+      });
+
+      // Aggregate district rows up to country (ubigeo_provincia) level
+      const byProv = {};
+      distRows.forEach(r => {
+        const info = rollLkp[r.ubigeo_distrito] || {};
+        const provKey = info.ubigeo_provincia || r.ubigeo_distrito;
+        if (!byProv[provKey]) {
+          byProv[provKey] = {
+            ubigeo_provincia:     provKey,
+            nombre_provincia:     info.nombre_provincia || r.ubigeo_distrito,
+            votos_emitidos:       0, votos_validos: 0,
+            votos_blancos:        0, votos_nulos: 0,
+            actas_contabilizadas: 0, actas_total: 0,
+            _candVotes: {}
+          };
+        }
+        const g = byProv[provKey];
+        g.votos_emitidos       += parseInt(r.votos_emitidos)       || 0;
+        g.votos_validos        += parseInt(r.votos_validos)        || 0;
+        g.votos_blancos        += parseInt(r.votos_blancos)        || 0;
+        g.votos_nulos          += parseInt(r.votos_nulos)          || 0;
+        g.actas_contabilizadas += parseInt(r.actas_contabilizadas) || 0;
+        g.actas_total          += parseInt(r.actas_total)          || 0;
+        Object.keys(r).forEach(col => {
+          if (!col.startsWith("cand_")) return;
+          g._candVotes[col] = (g._candVotes[col] || 0) + (parseInt(r[col]) || 0);
+        });
+      });
+
+      _exteriorRows = Object.values(byProv)
+        .sort((a, b) => b.votos_emitidos - a.votos_emitidos);
+      renderExteriorRows(el, _exteriorRows);
+    })
+    .catch(() => {
+      el.innerHTML = `<div class="sect-head" style="color:var(--muted);font-size:9px;padding:0.75rem">
+        Datos del exterior no disponibles.
+      </div>`;
+    });
+  }
+
+  function renderExteriorRows(el, rows) {
+    const candByCode = {};
+    (candidatesData || []).forEach(c => { candByCode[c.codigo] = c; });
+
+    const totalVot = rows.reduce((s, r) => s + (r.votos_emitidos || 0), 0);
+
+    el.innerHTML = `<div class="sect-head">${rows.length} países · ${fmtN(totalVot)} votos en el exterior</div>` +
+      rows.map((r, idx) => {
+        const vot = r.votos_emitidos || 0;
+        const pct = totalVot > 0 ? (vot / totalVot * 100).toFixed(1) + "%" : "—";
+        let winner = null;
+        Object.entries(r._candVotes || {}).forEach(([col, votes]) => {
+          if (!winner || votes > winner.votes) {
+            const code = col.replace("cand_", "");
+            const info = candByCode[code] || {};
+            winner = { code, votes, nombre: info.nombre || code, color: info.color || "#888" };
+          }
+        });
+        const col = winner ? (winner.color || "#ccc") : "#ccc";
+        return `<div class="dept-row" data-extidx="${idx}" style="cursor:pointer">
+          <div class="dept-top">
+            <div class="dept-swatch" style="background:${col};border-radius:50%"></div>
+            <span class="dept-name" style="font-size:9px">${r.nombre_provincia}</span>
+            <span class="dept-votes">${fmtN(vot)}</span>
+          </div>
+          <div class="dept-winner">${winner ? winner.nombre : ""} <span style="color:var(--dim)">${pct}</span></div>
+        </div>`;
+      }).join("");
+
+    el.querySelectorAll(".dept-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const r = rows[parseInt(row.dataset.extidx)];
+        const candEntries = [];
+        Object.entries(r._candVotes || {}).forEach(([col, votes]) => {
+          if (!votes) return;
+          const code = col.replace("cand_", "");
+          const info = candByCode[code] || {};
+          candEntries.push({ name: info.nombre || code, color: info.color || "#888", votes });
+        });
+        candEntries.sort((a, b) => b.votes - a.votes);
+        const winner = candEntries[0] || null;
+        const fakeFeat = { properties: {
+          nombre_dept:            r.nombre_provincia,
+          winner:                 winner ? winner.name : "",
+          winner_color:           winner ? winner.color : "#888",
+          votos_emitidos:         r.votos_emitidos,
+          num_electores:          0,
+          votos_validos:          r.votos_validos,
+          votos_blancos:          r.votos_blancos,
+          votos_nulos:            r.votos_nulos,
+          actas_contabilizadas:   r.actas_contabilizadas,
+          actas_total:            r.actas_total,
+          all_candidates:         JSON.stringify(candEntries),
+        }};
+        showDetail(fakeFeat, "dept");
+      });
+    });
+  }
+
+  // ── Controls ──────────────────────────────────────────────────────────────
+  document.querySelectorAll(".level-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentLevel = btn.dataset.level;
+      modeLevels[currentMode] = currentLevel;   // persist for this tab
+      document.querySelectorAll(".level-btn").forEach(b => b.classList.toggle("active", b.dataset.level === currentLevel));
+      activeLayer = null;
+      document.getElementById("map-topbar").style.display = "none";
+      hideDetail();
+      if (currentMode === "comparacion") {
+        selectedCompLayer = null;
+        clearHover();
+        renderComp();
+      } else if (currentMode === "jee") {
+        jeeActiveUbigeo = null;
+        hideJeeDetail();
+        renderJee();
+      } else {
+        render();
+      }
+    });
+  });
+
+  document.querySelectorAll(".view-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentView = btn.dataset.view;
+      // Switching to any explicit view deselects candidate choropleth
+      if (selectedCandidate) {
+        selectedCandidate = null;
+        document.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+      }
+      document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === currentView));
+      render();
+    });
+  });
+
+  // ── Needle gauge ──────────────────────────────────────────────────────────
+  let forecastData = null;
+
+  function buildNeedleArc(cx, cy, r, startAngle, endAngle) {
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy - r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy - r * Math.sin(endAngle);
+    const large = Math.abs(endAngle - startAngle) > Math.PI ? 1 : 0;
+    const sweep = endAngle < startAngle ? 1 : 0;
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
+  }
+
+  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight) {
+    const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
+    const niceMax = (() => {
+      const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
+      for (const f of [1, 1.5, 2, 2.5, 5, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
+      return mag * 10;
+    })();
+    const MAX_RANGE = niceMax;
+    const cx = 150, cy = 155, r = 88;
+    const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
+    // Positive d → left side (candLeft winning). angle=π at far left, angle=0 at far right.
+    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE);
+    const needleA = toAngle(diffVotes);
+    const ciArcL  = toAngle(ciHiVotes);
+    const ciArcR  = toAngle(ciLowVotes);
+    const startA = Math.PI, endA = 0, midA = Math.PI / 2;
+    const svg = document.getElementById("needle-svg");
+    svg.querySelectorAll("path, text.ns-lbl, line.ns-tick, circle.ns-dot").forEach(e => e.remove());
+
+    function mkEl(tag, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      return el;
+    }
+    function mkPath(d, stroke, width, opacity, linecap) {
+      return mkEl("path", { d, fill:"none", stroke, "stroke-width": width||"18",
+        "stroke-linecap": linecap||"butt", ...(opacity ? {opacity} : {}) });
+    }
+
+    // Background arc
+    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
+    // Left half (candLeft color) and right half (candRight color)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.4","butt"));
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA),   candRight?.color||"#888","18","0.4","butt"));
+
+    // CI: two transparent pie wedges from pivot — one per candidate's "winning zone"
+    // Positive side (candLeft winning) → candLeft's color; negative → candRight's color
+    function wedgePath(fromAngle, toAngle_) {
+      const wr = r - 9;  // stop at inner edge of the arc stroke
+      const large = Math.abs(toAngle_ - fromAngle) > Math.PI ? 1 : 0;
+      const sweep = toAngle_ < fromAngle ? 1 : 0;
+      const x1 = (cx + wr * Math.cos(fromAngle)).toFixed(1);
+      const y1 = (cy - wr * Math.sin(fromAngle)).toFixed(1);
+      const x2 = (cx + wr * Math.cos(toAngle_)).toFixed(1);
+      const y2 = (cy - wr * Math.sin(toAngle_)).toFixed(1);
+      return `M ${cx} ${cy} L ${x1} ${y1} A ${wr} ${wr} 0 ${large} ${sweep} ${x2} ${y2} Z`;
+    }
+    function hexRgba(hex, a) {
+      const n = parseInt((hex||"#888888").replace("#",""), 16);
+      return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+    }
+    if (Math.abs(ciArcL - ciArcR) > 0.01) {
+      const a0   = midA;                          // angle for margin = 0
+      const aPos = Math.max(ciArcL, ciArcR);      // candLeft's CI extreme (positive side)
+      const aNeg = Math.min(ciArcL, ciArcR);      // candRight's CI extreme (negative side)
+      // Positive wedge: 0 → aPos (candLeft color)
+      if (Math.abs(aPos - a0) > 0.01)
+        svg.appendChild(mkEl("path", { d: wedgePath(a0, aPos),
+          fill: hexRgba(candLeft?.color, 0.28), stroke: "none", class: "ns-tick" }));
+      // Negative wedge: aNeg → 0 (candRight color)
+      if (Math.abs(a0 - aNeg) > 0.01)
+        svg.appendChild(mkEl("path", { d: wedgePath(aNeg, a0),
+          fill: hexRgba(candRight?.color, 0.28), stroke: "none", class: "ns-tick" }));
+    }
+
+    // Scale labels at 0, ±half, ±full (no tick marks — labels only)
+    const scaleVals = [-MAX_RANGE, -MAX_RANGE * 0.5, 0, MAX_RANGE * 0.5, MAX_RANGE];
+    const LBL_R = r + 22;
+    scaleVals.forEach(val => {
+      const a      = toAngle(val);
+      const tx     = cx + LBL_R * Math.cos(a);
+      const ty     = cy - LBL_R * Math.sin(a);
+      const anchor = val < -MAX_RANGE * 0.2 ? "start"
+                   : val >  MAX_RANGE * 0.2 ? "end" : "middle";
+      const lbl = mkEl("text", {
+        x: tx.toFixed(1), y: (ty + 3.5).toFixed(1),
+        "text-anchor": anchor, "font-size": "9", fill: "#999",
+        "font-family": "sans-serif", class: "ns-lbl"
+      });
+      lbl.textContent = val === 0 ? "0" : fmtVoteDiff(val);
+      svg.appendChild(lbl);
+    });
+
+    // Needle line + pivot dot
+    const nxEnd = cx + (r - 9) * Math.cos(needleA);
+    const nyEnd = cy - (r - 9) * Math.sin(needleA);
+    const needleLine = svg.querySelector("#needle-line");
+    needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
+    needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
+    svg.querySelector("#needle-pct-text").textContent = "";
+    // Pivot dot — sits on top of everything at the needle's base
+    svg.appendChild(mkEl("circle", { cx, cy, r: "5",
+      fill: "var(--text)", stroke: "var(--bg)", "stroke-width": "1.5", class: "ns-dot" }));
+  }
+
+  function fmtVoteDiff(v) {
+    const s = v >= 0 ? "+" : "−";
+    const a = Math.abs(v);
+    if (a >= 1000000) return `${s}${(a/1000000).toFixed(2)}M`;
+    if (a >= 100000)  return `${s}${Math.round(a/1000)}k`;
+    if (a >= 1000)    return `${s}${(a/1000).toFixed(1)}k`;
+    return `${s}${a}`;
+  }
+
+  function renderMarginDist(battle) {
+    const dist = battle?.margin_distribution;
+    if (!dist || !dist.edges || !dist.counts) return;
+    const { edges, counts } = dist;
+    const svg  = document.getElementById("margin-dist-svg");
+    const axis = document.getElementById("margin-dist-axis");
+    const foot = document.getElementById("margin-dist-foot");
+    const W = 480, H = 96, PAD = 4;
+    const maxCount = Math.max(...counts, 1);
+    const color2nd  = battle.color_2nd  || battle.left_color  || "#1E293B";
+    const color3rd  = battle.color_3rd  || battle.right_color || "#888";
+    const nombre2nd = battle.nombre_2nd || battle.left_nombre || "—";
+    const nombre3rd = battle.nombre_3rd || battle.right_nombre|| "—";
+
+    // Symmetric display range centered at 0, covering the full data extent
+    const dataMin = edges[0];
+    const dataMax = edges[edges.length - 1];
+    const absMax  = Math.max(Math.abs(dataMin), Math.abs(dataMax));
+    const dispMin = -absMax, dispMax = absMax;
+    const dispRange = dispMax - dispMin;
+    // Mirror: flip x so positive (favorite winning) is on LEFT, matching needle orientation
+    const toX = v => (W - PAD) - (v - dispMin) / dispRange * (W - 2 * PAD);
+    const zeroX = toX(0).toFixed(1);
+
+    let paths = "";
+    const n = counts.length;
+    for (let i = 0; i < n; i++) {
+      const e0 = edges[i];
+      const e1 = edges[i + 1] ?? (e0 + (edges[1] - edges[0]));
+      const x    = toX(e0);
+      const bw   = Math.max(1.2, toX(e1) - x + 0.8);   // no gap, slightly wider
+      const barH = Math.max(1, (counts[i] / maxCount) * H);
+      const y    = H - barH;
+      const mid  = (e0 + e1) / 2;
+      const col  = mid > 0 ? color2nd : mid < 0 ? color3rd : "#888";
+      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="0.82"/>`;
+    }
+    // Zero line — always in the center of the symmetric display
+    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = paths;
+
+    // Axis labels: mirrored — positive on left, negative on right (matches needle)
+    const axisVals = [dispMax, dispMax / 2, 0, dispMin / 2, dispMin];
+    axis.innerHTML = axisVals.map(v => `<span>${v === 0 ? "0" : fmtVoteDiff(v)}</span>`).join("");
+
+    // Foot: left = favorite (positive margin), right = underdog (negative margin)
+    foot.innerHTML = `
+      <span style="color:${color2nd}">← ${nombre2nd.split(" ")[0]} adelante</span>
+      <span style="color:${color3rd}">${nombre3rd.split(" ")[0]} adelante →</span>`;
+  }
+
+  // ── Pronóstico rendering ──────────────────────────────────────────────────
+  function renderPronostico() {
+    if (!forecastData) return;
+    const fd = forecastData;
+    // Support both new (pct_actas) and legacy (pct_mesas) field names
+    const pctActas   = fd.pct_actas    ?? fd.pct_mesas    ?? 0;
+    const nSims      = fd.n_sims       ?? fd.n_simulations ?? 0;
+    const mesasCont  = fd.mesas_contabilizadas ?? 0;
+    const isLive     = pctActas > 0;
+
+    document.getElementById("pron-source-note").textContent = isLive
+      ? `${pctActas.toFixed(1)}% actas · ${nSims.toLocaleString("es-PE")} simulaciones`
+      : `${nSims.toLocaleString("es-PE")} simulaciones · pronóstico previo`;
+
+    // Mesas count note + last update timestamp
+    const mesasNote = document.getElementById("needle-mesas-note");
+    if (mesasNote) {
+      const forecastTs = fmtUpdateTime(fd.generated_at);
+      if (isLive && mesasCont > 0) {
+        const tsStr = forecastTs ? ` · ${forecastTs}` : "";
+        mesasNote.textContent = `${mesasCont.toLocaleString("es-PE")} mesas contabilizadas${tsStr}`;
+      } else {
+        mesasNote.textContent = "";
+      }
+    }
+
+    const cands = (fd.candidates || []).slice().sort((a, b) => (b.prob_runoff||0) - (a.prob_runoff||0));
+
+    // Needle — use new vote-based fields, fall back to legacy pct-scaled
+    const battle = fd.battle || {};
+    const hasBattle = battle.cand_2nd || battle.left_code;
+    let dispBattle = Object.assign({}, battle);  // display-oriented battle (may be flipped)
+    if (hasBattle) {
+      // New structure
+      const cand2nd = fd.candidates?.find(c => c.codigo === battle.cand_2nd)
+                   || fd.candidates?.find(c => c.code   === battle.left_code)
+                   || cands[1] || {};
+      const cand3rd = fd.candidates?.find(c => c.codigo === battle.cand_3rd)
+                   || fd.candidates?.find(c => c.code   === battle.right_code)
+                   || cands[2] || {};
+
+      // Margin in votes (new) or scaled from pct (legacy)
+      let marginV, ciLoV, ciHiV;
+      if (battle.mean_margin_votes !== undefined) {
+        marginV = battle.mean_margin_votes;
+        ciLoV   = battle.ci_lo_votes;
+        ciHiV   = battle.ci_hi_votes;
+      } else {
+        // Legacy: pct → scale to rough votes
+        const scale = 1_000_000;
+        marginV = (battle.margin_pct_projected ?? 0) * scale;
+        ciLoV   = (battle.ci_low_pct  ?? marginV/scale - 3) * scale;
+        ciHiV   = (battle.ci_high_pct ?? marginV/scale + 3) * scale;
+      }
+
+      const prob2nd = battle.prob_2nd_pct ?? cand2nd.prob_runoff ?? 0;
+      const prob3rd = battle.prob_3rd_pct ?? cand3rd.prob_runoff ?? 0;
+
+      // Left = favorite (higher prob), right = underdog.
+      // If cand3rd is actually the favorite, swap everything and flip the margin sign
+      // so positive margin always means the left (favorite) candidate is leading.
+      // cand_2nd is always the favorite (higher in_top2) — backend guarantees this.
+      // Positive margin = cand_2nd (left) is ahead.
+      const candLeft  = cand2nd, candRight = cand3rd;
+      const probLeft  = prob2nd, probRight = prob3rd;
+      const dispMarginV = marginV, dispCiLoV = ciLoV, dispCiHiV = ciHiV;
+
+      renderNeedle(dispMarginV, dispCiLoV, dispCiHiV, candLeft, candRight);
+
+      document.getElementById("needle-left-name").textContent  = candLeft.nombre || "—";
+      document.getElementById("needle-left-name").style.color  = candLeft.color  || "#888";
+      document.getElementById("needle-left-prob").textContent  = probLeft.toFixed(0) + "%";
+      document.getElementById("needle-left-prob").style.color  = candLeft.color  || "#888";
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes || 0) + " votos" : "—";
+      // Photos beside the gauge
+      const leftPhotoEl  = document.getElementById("needle-left-photo");
+      const rightPhotoEl = document.getElementById("needle-right-photo");
+      const leftImgHtml  = candPhotoHtml(imagenByCode(candLeft.codigo), 90, 120, "needle-side-photo");
+      const rightImgHtml = candPhotoHtml(imagenByCode(candRight.codigo), 90, 120, "needle-side-photo");
+      leftPhotoEl.innerHTML  = leftImgHtml  || "";
+      rightPhotoEl.innerHTML = rightImgHtml || "";
+      leftPhotoEl.className  = leftImgHtml  ? "needle-side-photo-wrap" : "needle-side-placeholder";
+      rightPhotoEl.className = rightImgHtml ? "needle-side-photo-wrap" : "needle-side-placeholder";
+      document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
+      document.getElementById("needle-right-name").style.color = candRight.color  || "#888";
+      document.getElementById("needle-right-prob").textContent = probRight.toFixed(0) + "%";
+      document.getElementById("needle-right-prob").style.color = candRight.color  || "#888";
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes || 0) + " votos" : "—";
+
+      document.getElementById("needle-center-diff").textContent =
+        isLive ? fmtVoteDiff(dispMarginV) : "—";
+      document.getElementById("needle-center-ci").textContent =
+        isLive ? `IC 95%: [${fmtVoteDiff(dispCiLoV)}, ${fmtVoteDiff(dispCiHiV)}]` : "";
+    }
+
+    renderMarginDist(dispBattle ?? battle);
+
+    // Candidate probability bars — data from mesa CSV (via forecast.json candidates)
+    const list = document.getElementById("cand-prob-list");
+    list.innerHTML = cands.map((c, i) => {
+      const isSV  = i < 2;
+      const prob  = c.prob_runoff ?? (i === 0 ? 100 : i < 2 ? (battle.prob_2nd_pct ?? 0) : 0);
+      const votes = c.votes || 0;
+      const pctEm = c.pct_emitidos ?? c.vote_pct_projected ?? 0;
+      const voteDisplay = isLive
+        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · ${pctEm.toFixed(1)}%`
+        : `<span class="cand-prob-votes">—</span> sin datos`;
+      return `<div class="cand-prob-row">
+        <div class="cand-prob-top">
+          <div class="cand-prob-dot" style="background:${c.color||'#888'}"></div>
+          <div class="cand-prob-nameblock">
+            <div class="cand-prob-name">${c.nombre || c.codigo || c.code}</div>
+            <div class="cand-prob-partido">${c.partido || ''}</div>
+          </div>
+          <div class="cand-prob-right">
+            <span class="cand-prob-pct-val" style="color:${c.color||'#888'}">${prob.toFixed(0)}%</span>
+            <span class="cand-prob-pct-label">prob. 2da vuelta</span>
+            ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
+          </div>
+        </div>
+        <div class="cand-prob-bar-wrap">
+          <div class="cand-prob-bar" style="width:${prob.toFixed(1)}%;background:${c.color||'#888'}"></div>
+        </div>
+        <div class="cand-prob-bottom">${voteDisplay}</div>
+      </div>`;
+    }).join("");
+
+    const note = document.getElementById("pron-note");
+    note.style.display = "block";
+    note.textContent = isLive
+      ? `Proyección bayesiana jerárquica con ${nSims.toLocaleString("es-PE")} simulaciones (${pctActas.toFixed(1)}% de mesas contabilizadas). El margen se mide en votos entre el 2º y 3er candidato. El IC 95% cubre el rango esperado del resultado final.`
+      : "Pronóstico en estado inicial — sin mesas contabilizadas.";
+  }
+
+  // ── Mode switching ────────────────────────────────────────────────────────
+  function clearAllModeLayers() {
+    // Wipe every map layer from every mode to prevent leakage
+    [deptLayer, provLayer, distLayer, bubbleLayer,
+     compLayer, jeeLayer, jeeBubbleLayer,
+     deptBoundaryLayer, provBoundaryLayer].forEach(l => {
+       try { if (l) map.removeLayer(l); } catch(e) {}
+    });
+    deptLayer = provLayer = distLayer = bubbleLayer = null;
+    compLayer = jeeLayer = jeeBubbleLayer = null;
+    deptBoundaryLayer = provBoundaryLayer = null;
+  }
+
+  function switchMode(mode) {
+    // Save current level for the tab we're leaving, restore for the one we're entering
+    modeLevels[currentMode] = currentLevel;
+    currentMode = mode;
+    currentLevel = modeLevels[mode] || "dept";
+    document.querySelectorAll(".level-btn").forEach(b =>
+      b.classList.toggle("active", b.dataset.level === currentLevel));
+    clearAllModeLayers();
+    document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
+    const isMap      = mode === "mapa";
+    const isComp     = mode === "comparacion";
+    const isJee      = mode === "jee";
+    const isAnalisis = mode === "analisis";
+    const usesMap = isMap || isComp || isJee;
+    document.getElementById("mapa-body").style.display       = usesMap ? "flex" : "none";
+    document.getElementById("pronostico-view").style.display = (mode === "pronostico") ? "flex" : "none";
+    document.getElementById("analisis-view").style.display   = isAnalisis ? "flex" : "none";
+    document.getElementById("bottombar").style.display       = usesMap ? "flex" : "none";
+    const hideNormalPanel = isComp || isJee;
+    document.getElementById("panel-tabs").style.display      = hideNormalPanel ? "none" : "";
+    document.getElementById("panel-scroll").style.display    = hideNormalPanel ? "none" : "";
+    document.getElementById("comparacion-panel").style.display = isComp ? "flex" : "none";
+    document.getElementById("comparacion-panel").style.flexDirection = "column";
+    document.getElementById("jee-panel").style.display       = isJee ? "flex" : "none";
+    document.getElementById("jee-panel").style.flexDirection = "column";
+    document.getElementById("view-btns").closest(".ctrl-group").style.display = (isComp || isJee) ? "none" : "";
+    document.getElementById("jee-datos-group").style.display = isJee ? "" : "none";
+    document.getElementById("bubble-legend").classList.toggle("show", false);
+    hideJeeBubbleLegend();
+    if (usesMap) setTimeout(() => map.invalidateSize(), 50);
+    if (isComp) {
+      map.setView(HOME_CENTER, defZoom());
+      document.getElementById("map-topbar").style.display = "none";
+      clearSelect(); clearHover();
+      activeLayer = null;
+      selectedComp = "A";
+      selectedCompLayer = null;
+      map.closePopup();
+      buildCompList();
+      document.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === selectedComp));
+      loadCompData(() => renderComp());
+    } else if (isJee) {
+      map.setView(HOME_CENTER, defZoom());
+      document.getElementById("map-topbar").style.display = "none";
+      clearSelect(); clearHover();
+      activeLayer = null;
+      jeeSelectedView = "choropleth";
+      jeeActiveUbigeo = null;
+      // Clear any active/open state on panel rows
+      document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
+      document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
+      document.getElementById("jee-porc-btn").classList.add("active");
+      hideJeeDetail();
+      // Reset subtab to Nacional
+      jeeCurrentTab = "nacional";
+      document.querySelectorAll("#jee-subtabs .ptab")
+        .forEach(b => b.classList.toggle("active", b.dataset.jeetab === "nacional"));
+      ["deptos","exterior"].forEach(t => {
+        const el = document.getElementById(`jee-tab-${t}`);
+        if (el) { el.style.display = "none"; delete el.dataset.built; }
+      });
+      document.getElementById("jee-tab-nacional").style.display = "";
+      loadJeeData(() => { buildJeePanel(); renderJee(); });
+    } else if (isMap) {
+      // Reset MAPA to defaults each time it's entered
+      currentView = "winner";
+      selectedCandidate = null;
+      activeLayer = null;
+      clearSelect(); clearHover();
+      hideDetail();
+      map.setView(HOME_CENTER, defZoom());
+      document.getElementById("map-topbar").style.display = "none";
+      document.getElementById("bubble-legend").classList.remove("show");
+      document.querySelectorAll(".view-btn").forEach(b =>
+        b.classList.toggle("active", b.dataset.view === "winner"));
+      render();
+    }
+    if (mode === "pronostico") renderPronostico();
+    if (isAnalisis) renderAnalisis();
+  }
+  document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
+
+  // ── Comparison tab functions ──────────────────────────────────────────────
+  let compDataLoading = false, compDataLoaded = false;
+  function loadCompData(cb) {
+    if (compDataLoaded) { cb(); return; }
+    if (compDataLoading) { setTimeout(() => loadCompData(cb), 200); return; }
+    compDataLoading = true;
+    Promise.all([
+      fetch(BASE + "comparison/peru_2026_segunda_departamento_comparison.geojson").then(r => r.json()).catch(() => null),
+      fetch(BASE + "comparison/peru_2026_segunda_provincia_comparison.geojson").then(r => r.json()).catch(() => null),
+      fetch(BASE + "comparison/peru_2026_segunda_distrito_comparison.geojson").then(r => r.json()).catch(() => null),
+    ]).then(([dept, prov, dist]) => {
+      if (dept) compDeptData = dept;
+      if (prov) compProvData = prov;
+      if (dist) compDistData = dist;
+      compDataLoaded = true;
+      compDataLoading = false;
+      fillNationalStats();
+      cb();
+    });
+  }
+
+  function fillNationalStats() {
+    // Use dept-level GeoJSON to compute national totals
+    const geo = compDeptData;
+    if (!geo) return;
+    let vv26 = 0, vv21 = 0;
+    const v26 = {A:0,B:0,C:0,D:0}, v21 = {A:0,B:0,C:0,D:0};
+    (geo.features || []).forEach(f => {
+      const p = f.properties || {};
+      vv26 += p.votos_validos        || 0;
+      vv21 += p.votos_validos_2021   || 0;
+      ["A","B","C","D"].forEach(k => {
+        v26[k] += p[`votes26_${k}`] || 0;
+        v21[k] += p[`votes21_${k}`] || 0;
+      });
+    });
+    ["A","B","C","D"].forEach(k => {
+      const el = document.getElementById(`comp-nat-${k}`);
+      if (!el) return;
+      const pct26 = vv26 > 0 ? v26[k] / vv26 * 100 : 0;
+      const pct21 = vv21 > 0 ? v21[k] / vv21 * 100 : 0;
+      const diff  = pct26 - pct21;
+      const sign  = diff >= 0 ? "+" : "";
+      const dCol  = diff >= 0 ? "#27ae60" : "#c0392b";
+      const candColor = COMPARISONS[k].color;
+      el.innerHTML = `
+        <span class="comp-btn-nat-26" style="color:${candColor}">${pct26.toFixed(1)}%</span>
+        <span class="comp-btn-nat-vs">vs</span>
+        <span class="comp-btn-nat-21">${pct21.toFixed(1)}%</span>
+        <span class="comp-btn-nat-diff" style="color:${dCol}">${sign}${diff.toFixed(1)} pp</span>`;
+    });
+  }
+
+  function buildCompList() {
+    const el = document.getElementById("comparacion-panel");
+    if (el.dataset.built === "1") return;
+    el.dataset.built = "1";
+    el.innerHTML = "";
+
+    Object.values(COMPARISONS).forEach(c => {
+      const btn = document.createElement("button");
+      btn.className = "comp-btn" + (selectedComp === c.key ? " active" : "");
+      btn.dataset.comp = c.key;
+      const photoHtml = c.imagen
+        ? `<div class="comp-btn-photo"><img src="${BASE}${c.imagen}" alt=""></div>`
+        : "";
+      btn.innerHTML = `
+        <div class="comp-btn-top">
+          ${photoHtml}
+          <div class="comp-btn-body">
+            <div class="comp-btn-nat" id="comp-nat-${c.key}">
+              <span class="comp-btn-nat-26" style="opacity:0.3">—</span>
+            </div>
+            <div class="comp-btn-l1">${c.line1}</div>
+            <div class="comp-btn-l2">${c.line2}</div>
+            <div class="comp-btn-l3">${c.line3}</div>
+          </div>
+        </div>
+        <div class="comp-btn-bar" style="background:${c.color}"></div>`;
+      btn.addEventListener("click", () => {
+        selectedComp = c.key;
+        selectedCompLayer = null;
+        map.closePopup();
+        clearHover();
+        map.setView(HOME_CENTER, defZoom());
+        el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
+        loadCompData(() => renderComp());
+      });
+      el.appendChild(btn);
+    });
+  }
+
+  function compGeoForLevel() {
+    if (currentLevel === "distrito") return compDistData;
+    if (currentLevel === "provincia") return compProvData;
+    return compDeptData;
+  }
+
+  function styleComp(feat) {
+    const diff = feat.properties["diff_" + selectedComp];
+    let fillColor = "#e0d8cc";
+    if (diff != null && !isNaN(diff)) {
+      // scale: ±20 pp → full saturation
+      const t = Math.min(Math.abs(diff) / 20, 1);
+      if (diff > 0) {
+        // green: lerp from sand to #27ae60
+        fillColor = lerp("#e0d8cc", "#27ae60", Math.pow(t, 0.6));
+      } else {
+        // red: lerp from sand to #c0392b
+        fillColor = lerp("#e0d8cc", "#c0392b", Math.pow(t, 0.6));
+      }
+    }
+    return { fillColor, fillOpacity: 0.85, weight: 0.4, color: "#8a7a6a", pane: "fillPane" };
+  }
+
+  function renderComp() {
+    if (!selectedComp) return;
+    const geo = compGeoForLevel();
+    if (!geo) return;
+
+    if (compLayer) { map.removeLayer(compLayer); compLayer = null; }
+    // Remove main layers so they don't visually compete
+    if (distLayer)         { map.removeLayer(distLayer);         distLayer         = null; }
+    if (provLayer)         { map.removeLayer(provLayer);         provLayer         = null; }
+    if (deptLayer)         { map.removeLayer(deptLayer);         deptLayer         = null; }
+    if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+    if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+    if (bubbleLayer)       { map.removeLayer(bubbleLayer);       bubbleLayer       = null; }
+
+    const comp = COMPARISONS[selectedComp];
+
+    compLayer = L.geoJSON(geo, {
+      pane: "fillPane",
+      style: styleComp,
+      smoothFactor: 0,
+      onEachFeature(feat, layer) {
+        const getTooltipContent = () => {
+          const p = feat.properties;
+          const name   = currentLevel === "dept" ? (p.nombre_dept || "—")
+                       : currentLevel === "provincia" ? (p.nombre_provincia || "—")
+                       : (p.nombre_distrito || "—");
+          const diff   = p["diff_"    + selectedComp];
+          const pct21  = p["pct21_"   + selectedComp];
+          const pct26  = p["pct26_"   + selectedComp];
+          const v21    = p["votes21_" + selectedComp];
+          const v26    = p["votes26_" + selectedComp];
+          const vv21   = p["votos_validos_2021"];
+          const vv26   = p["votos_validos"];
+          const sign   = diff > 0 ? "+" : "";
+          const color  = diff > 0 ? "#27ae60" : "#c0392b";
+          const fmt    = n => n != null ? parseInt(n).toLocaleString("es-PE") : "—";
+          const fmtPct = n => n != null ? n.toFixed(1) + "%" : "—";
+          const names  = COMP_NAMES[selectedComp] || { c26: "2026", c21: "2021" };
+          return `<b>${name}</b><br>
+            <span style="font-size:9px;opacity:0.7">2026</span>
+            ${names.c26}: ${fmtPct(pct26)} <span style="opacity:0.6">(${fmt(v26)} / ${fmt(vv26)})</span><br>
+            <span style="font-size:9px;opacity:0.7">2021</span>
+            ${names.c21}: ${fmtPct(pct21)} <span style="opacity:0.6">(${fmt(v21)} / ${fmt(vv21)})</span><br>
+            <span style="color:${color};font-weight:700">${sign}${diff != null ? diff.toFixed(1) : "—"} pp</span>`;
+        };
+        layer.on("mouseover", e => {
+          showHover(feat);
+          layer.bindTooltip(getTooltipContent(), { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
+        });
+        layer.on("mouseout", () => {
+          clearHover();
+          layer.unbindTooltip();
+        });
+        layer.on("click", e => {
+          L.DomEvent.stopPropagation(e);
+          layer.unbindTooltip();
+          if (selectedCompLayer === layer) {
+            // Second click → zoom out
+            selectedCompLayer = null;
+            clearHover();
+            map.setView(HOME_CENTER, defZoom(), { animate: true });
+          } else {
+            // First click → zoom in, no popup
+            selectedCompLayer = layer;
+            const bounds = layer.getBounds();
+            const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
+            map.fitBounds(bounds, { padding: pad, animate: true });
+            showHover(feat);
+          }
+        });
+      }
+    }).addTo(map);
+
+    // Dept border overlay always on top in borderPane
+    if (deptData) {
+      deptBoundaryLayer = L.geoJSON(deptData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+        interactive: false, smoothFactor: 0
+      }).addTo(map);
+    }
+    // Province border overlay when at district or province level
+    if ((currentLevel === "distrito" || currentLevel === "provincia") && provData) {
+      provBoundaryLayer = L.geoJSON(provData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" },
+        interactive: false, smoothFactor: 0
+      }).addTo(map);
+    }
+  }
+
+  // ── Actas JEE tab functions ───────────────────────────────────────────────
+  const JEE_BASE = "../../../peru/2026eg/segunda/data/jee/";
+  const fmt = n => fmtN(n);
+  let jeeLayer = null, jeeBubbleLayer = null;
+  let jeeSelectedView = "choropleth";
+  let jeeActiveUbigeo = null; // "choropleth" | err_xxx key
+  let jeeDeptData = null, jeeProvData = null, jeeDistData = null;
+  let jeeNational = null;
+  let jeeDataLoading = false, jeeDataLoaded = false;
+
+  const JEE_ESTADOS = {
+    C: { label: "Contabilizadas",   color: "#16A34A" },
+    E: { label: "Enviadas al JEE",  color: "#DC2626" },
+    P: { label: "Pendientes",       color: "#D97706" },
+  };
+  // Error types — bubble maps use their own color; panel rows use ERR_BROWNS
+  const JEE_ERROR_TYPES = {
+    err_aritmetico:  { label: "Error aritmético",     color: "#7A4F2C" },
+    err_firmas:      { label: "Sin firmas",           color: "#8A5C32" },
+    err_impugnada:   { label: "Impugnada",            color: "#9A6A3A" },
+    err_ilegible:    { label: "Ilegible",             color: "#A87848" },
+    err_incompleta:  { label: "Incompleta",           color: "#B88658" },
+    err_reprocesada: { label: "Reprocesada",          color: "#C59468" },
+    err_extraviada:  { label: "Extraviada",           color: "#D0A278" },
+    err_siniestrada: { label: "Siniestrada",          color: "#D9B08A" },
+    err_sin_datos:   { label: "Sin datos",            color: "#E2BE9C" },
+    err_nulidad:     { label: "Solicitud de nulidad", color: "#EACCAE" },
+  };
+
+  function loadJeeData(cb) {
+    if (jeeDataLoaded) { cb(); return; }
+    if (jeeDataLoading) { setTimeout(() => loadJeeData(cb), 200); return; }
+    jeeDataLoading = true;
+    Promise.all([
+      fetch(JEE_BASE + "jee_dept.geojson").then(r => r.json()).catch(() => null),
+      fetch(JEE_BASE + "jee_provincia.geojson").then(r => r.json()).catch(() => null),
+      fetch(JEE_BASE + "jee_distrito.geojson").then(r => r.json()).catch(() => null),
+      fetch(JEE_BASE + "jee_national.json").then(r => r.json()).catch(() => null),
+    ]).then(([dept, prov, dist, nat]) => {
+      if (dept) jeeDeptData = dept;
+      if (prov) jeeProvData = prov;
+      if (dist) jeeDistData = dist;
+      if (nat)  jeeNational = nat;
+      jeeDataLoaded = true; jeeDataLoading = false;
+      cb();
+    });
+  }
+
+  function jeeGeoForLevel() {
+    if (currentLevel === "distrito")  return jeeDistData;
+    if (currentLevel === "provincia") return jeeProvData;
+    return jeeDeptData;
+  }
+
+  // ── Panel: built once, shows estado(C/E/P) with collapsible error types ──
+  function buildJeePanel() {
+    const nat = jeeNational || {};
+    const pct = nat.ever_e_pct || 0;
+    document.getElementById("jee-nat-pct").textContent  = pct.toFixed(2) + "%";
+    document.getElementById("jee-prog-fill").style.width = Math.min(pct * 5, 100) + "%";
+    document.getElementById("jee-nat-note").textContent  =
+      fmtN(nat.ever_e) + " de " + fmtN(nat.total_actas) + " actas";
+
+    const srEl = document.getElementById("jee-status-rows");
+    if (srEl.dataset.built) return;
+    srEl.dataset.built = "1";
+
+    const totalEver = nat.ever_e || 1;
+    const errByEstado = nat.error_counts_by_estado || { C: {}, E: {}, P: {} };
+
+    Object.entries(JEE_ESTADOS).forEach(([key, info]) => {
+      const count  = nat[`estado_${key}`] || 0;
+      const pctRow = count / totalEver * 100;
+      const viewKey = `estado_${key}`;
+
+      const row = document.createElement("div");
+      row.className = "jee-row";
+      row.dataset.jeeView = viewKey;
+      row.innerHTML = `
+        <div class="jee-row-top">
+          <span class="jee-row-pct" style="color:${info.color}">${pctRow.toFixed(1)}%</span>
+          <span class="jee-row-name">${info.label}</span>
+          <span class="jee-row-count">${fmtN(count)}</span>
+          <span class="jee-row-expand">▾</span>
+        </div>
+        <div class="jee-row-bar">
+          <div class="jee-row-bar-fill" style="width:${Math.min(pctRow,100)}%;background:${info.color}"></div>
+        </div>`;
+
+      // Sub-rows: only errors present for THIS status, sorted by count desc
+      const subEl = document.createElement("div");
+      subEl.className = "jee-suberrors";
+      const statusErrCounts = errByEstado[key] || {};
+      const errEntries = Object.entries(JEE_ERROR_TYPES)
+        .map(([k, i]) => [k, i, statusErrCounts[k] || 0])
+        .filter(([,, ec]) => ec > 0)
+        .sort((a, b) => b[2] - a[2]);
+
+      errEntries.forEach(([errKey, errInfo, ec]) => {
+        const ep = ec / totalEver * 100;
+        const errViewKey = `${errKey}_${key}`;
+        const sub = document.createElement("div");
+        sub.className = "jee-sub-row";
+        sub.dataset.jeeView = errViewKey;
+        sub.innerHTML = `
+          <div class="jee-sub-top">
+            <span class="jee-sub-pct" style="color:${errInfo.color}">${ep.toFixed(1)}%</span>
+            <span class="jee-sub-name">${errInfo.label}</span>
+            <span class="jee-sub-count">${fmtN(ec)}</span>
+          </div>
+          <div class="jee-sub-bar">
+            <div class="jee-sub-bar-fill" style="width:${Math.min(ep*8,100)}%;background:${errInfo.color}"></div>
+          </div>`;
+        sub.addEventListener("click", e => {
+          e.stopPropagation();
+          jeeSelectedView = errViewKey;
+          document.querySelectorAll(".jee-row,.jee-sub-row")
+            .forEach(b => b.classList.toggle("active", b.dataset.jeeView === errViewKey));
+          document.getElementById("jee-porc-btn").classList.remove("active");
+          renderJee();
+        });
+        subEl.appendChild(sub);
+      });
+
+      row.addEventListener("click", () => {
+        if (jeeSelectedView === viewKey) {
+          // Second click → deselect, back to choropleth
+          jeeSelectedView = "choropleth";
+          subEl.classList.remove("open");
+          row.classList.remove("open");
+          document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
+          document.getElementById("jee-porc-btn").classList.add("active");
+        } else {
+          // Close other accordions, open this one
+          document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
+          document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
+          subEl.classList.add("open");
+          row.classList.add("open");
+          jeeSelectedView = viewKey;
+          document.querySelectorAll(".jee-row,.jee-sub-row")
+            .forEach(b => b.classList.toggle("active", b.dataset.jeeView === viewKey));
+          document.getElementById("jee-porc-btn").classList.remove("active");
+          setTimeout(() => subEl.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+        }
+        renderJee();
+      });
+
+      srEl.appendChild(row);
+      srEl.appendChild(subEl);
+    });
+  }
+
+  // ── JEE subtab switching ─────────────────────────────────────────────────
+  let jeeCurrentTab = "nacional";
+
+  function switchJeeTab(tab) {
+    jeeCurrentTab = tab;
+    document.querySelectorAll("#jee-subtabs .ptab")
+      .forEach(b => b.classList.toggle("active", b.dataset.jeetab === tab));
+    ["nacional","deptos","exterior"].forEach(t =>
+      document.getElementById(`jee-tab-${t}`).style.display = (t === tab) ? "" : "none");
+    if (tab === "deptos")   buildJeeDeptos();
+    if (tab === "exterior") buildJeeExterior();
+  }
+
+  document.querySelectorAll("#jee-subtabs .ptab").forEach(btn =>
+    btn.addEventListener("click", () => switchJeeTab(btn.dataset.jeetab)));
+
+  function makeGeoRow(nombre, ever_e, total_actas, ever_e_pct) {
+    const pct = ever_e_pct != null ? ever_e_pct : (total_actas > 0 ? ever_e / total_actas * 100 : 0);
+    const barW = Math.min(pct * 4, 100); // scale: 25% → full bar
+    return `<div class="jee-geo-row">
+      <div class="jee-geo-row-top">
+        <span class="jee-geo-name">${nombre}</span>
+        <span class="jee-geo-count">${fmtN(ever_e)} / ${fmtN(total_actas)}</span>
+        <span class="jee-geo-pct">${pct.toFixed(1)}%</span>
+      </div>
+      <div class="jee-geo-bar"><div class="jee-geo-bar-fill" style="width:${barW}%"></div></div>
+    </div>`;
+  }
+
+  function buildJeeDeptos() {
+    const el = document.getElementById("jee-tab-deptos");
+    if (el.dataset.built) return;
+    el.dataset.built = "1";
+    if (!jeeDeptData) { el.innerHTML = "<div style='padding:1rem;font-size:9px;color:var(--muted)'>Datos no disponibles</div>"; return; }
+    const rows = jeeDeptData.features
+      .map(f => f.properties)
+      .filter(p => p.nombre_dept)
+      .sort((a, b) => (b.ever_e || 0) - (a.ever_e || 0));
+
+    el.innerHTML = `<div class="jee-sect-head">Por departamento · mayor a menor</div>`;
+    rows.forEach(p => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = makeGeoRow(p.nombre_dept, p.ever_e || 0, p.total_actas || 0, p.ever_e_pct);
+      const row = wrap.firstElementChild;
+      row.addEventListener("click", () => {
+        // Zoom to dept geometry on map
+        const feat = jeeDeptData.features.find(f => f.properties.ubigeo_dept === p.ubigeo_dept);
+        if (feat) {
+          try {
+            const bounds = L.geoJSON(feat).getBounds();
+            map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 10, duration: 0.5 });
+          } catch(e) {}
+        }
+        showJeeDetailFromProps(p, p.nombre_dept);
+      });
+      el.appendChild(row);
+    });
+  }
+
+  function buildJeeExterior() {
+    const el = document.getElementById("jee-tab-exterior");
+    if (el.dataset.built) return;
+    el.dataset.built = "1";
+    const ext = (jeeNational || {}).exterior;
+    if (!ext) { el.innerHTML = "<div style='padding:1rem;font-size:9px;color:var(--muted)'>Datos no disponibles</div>"; return; }
+
+    // Province (country) level — sorted by total actas descending
+    const provincias = (ext.provincias || []).slice().sort((a, b) => (b.total_actas || 0) - (a.total_actas || 0));
+
+    el.innerHTML = `<div class="jee-sect-head">Total exterior</div>`;
+    // Total exterior summary row (non-clickable)
+    el.insertAdjacentHTML("beforeend", makeGeoRow("Exterior", ext.ever_e || 0, ext.total_actas || 0, ext.ever_e_pct));
+
+    el.insertAdjacentHTML("beforeend", `<div class="jee-sect-head">Por país · mayor a menor</div>`);
+    provincias.forEach(prov => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = makeGeoRow(prov.nombre, prov.ever_e || 0, prov.total_actas || 0, prov.ever_e_pct);
+      const row = wrap.firstElementChild;
+      row.addEventListener("click", () => showJeeDetailFromProps(prov, prov.nombre));
+      el.appendChild(row);
+    });
+  }
+
+  // ── Show JEE detail from list row (no map zoom) ───────────────────────────
+  function showJeeDetailFromProps(p, name) {
+    const totalEver = p.ever_e || 0;
+    const sentPct   = p.ever_e_pct != null ? parseFloat(p.ever_e_pct).toFixed(1) + "%" : "—";
+
+    document.getElementById("jee-d-name").textContent = name;
+    document.getElementById("jee-d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Total actas</div><div class="dkpi-val">${fmtN(p.total_actas)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Observadas</div><div class="dkpi-val">${fmtN(totalEver)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">% observadas</div><div class="dkpi-val">${sentPct}</div></div>`;
+
+    document.getElementById("jee-d-status").innerHTML = Object.entries(JEE_ESTADOS).map(([key, info]) => {
+      const c = p[`estado_${key}`] || 0;
+      const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+        <div class="detail-cand-dot" style="background:${info.color}"></div>
+        <span class="detail-cand-name">${info.label}</span>
+        <span class="detail-cand-votes">${fmtN(c)}</span>
+      </div>`;
+    }).join("");
+
+    document.getElementById("jee-d-errors").innerHTML = Object.entries(JEE_ERROR_TYPES)
+      .map(([k, i]) => [i, p[k] || 0])
+      .filter(([, v]) => v > 0)
+      .sort((a, b) => b[1] - a[1])
+      .map(([info, c]) => {
+        const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+        return `<div class="detail-cand">
+          <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+          <div class="detail-cand-dot" style="background:${info.color}"></div>
+          <span class="detail-cand-name">${info.label}</span>
+          <span class="detail-cand-votes">${fmtN(c)}</span>
+        </div>`;
+      }).join("") || "<div style='padding:0.5rem 0.75rem;font-size:9px;color:var(--muted)'>Sin observaciones</div>";
+
+    document.getElementById("jee-detail").classList.add("active");
+  }
+
+  // ── JEE detail panel (right sidebar on geography click) ───────────────────
+  function showJeeDetail(feat, leafletLayer) {
+    const p = feat.properties;
+    // Derive a stable ubigeo key for this feature
+    const ubigeo = p.ubigeo_distrito || p.ubigeo_provincia || p.ubigeo_dept || "";
+
+    // Toggle: second click on same geo → zoom out + hide detail
+    if (jeeActiveUbigeo === ubigeo && ubigeo !== "") {
+      jeeActiveUbigeo = null;
+      hideJeeDetail();
+      map.flyTo(HOME_CENTER, defZoom(), { animate: true, duration: 0.5 });
+      return;
+    }
+    jeeActiveUbigeo = ubigeo;
+
+    // Zoom in
+    try {
+      const bounds = leafletLayer
+        ? leafletLayer.getBounds()
+        : L.geoJSON(feat).getBounds();
+      const pad = currentLevel === "dept" ? [40, 40] : [60, 60];
+      map.flyToBounds(bounds, { padding: pad, maxZoom: 13, duration: 0.5 });
+    } catch(e) {}
+
+    const name = currentLevel === "dept"     ? (p.nombre_dept      || "—")
+               : currentLevel === "provincia"? (p.nombre_provincia || "—")
+               : (p.nombre_distrito || "—");
+    const totalEver = p.ever_e || 0;
+    const sentPct   = p.ever_e_pct != null ? p.ever_e_pct.toFixed(1) + "%" : "—";
+
+    document.getElementById("jee-d-name").textContent = name;
+
+    // KPIs
+    document.getElementById("jee-d-kpis").innerHTML = `
+      <div class="dkpi"><div class="dkpi-label">Total actas</div><div class="dkpi-val">${fmtN(p.total_actas)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">Observadas</div><div class="dkpi-val">${fmtN(totalEver)}</div></div>
+      <div class="dkpi"><div class="dkpi-label">% observadas</div><div class="dkpi-val">${sentPct}</div></div>`;
+
+    // Estado breakdown
+    const stEl = document.getElementById("jee-d-status");
+    stEl.innerHTML = Object.entries(JEE_ESTADOS).map(([key, info]) => {
+      const c = p[`estado_${key}`] || 0;
+      const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+      return `<div class="detail-cand">
+        <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+        <div class="detail-cand-dot" style="background:${info.color}"></div>
+        <span class="detail-cand-name">${info.label}</span>
+        <span class="detail-cand-votes">${fmtN(c)}</span>
+      </div>`;
+    }).join("");
+
+    // Error breakdown
+    const erEl = document.getElementById("jee-d-errors");
+    erEl.innerHTML = Object.entries(JEE_ERROR_TYPES)
+      .map(([k, i]) => [i, p[k] || 0])
+      .filter(([, v]) => v > 0)
+      .sort((a, b) => b[1] - a[1])
+      .map(([info, c]) => {
+        const pc = totalEver > 0 ? (c / totalEver * 100).toFixed(1) : "0.0";
+        return `<div class="detail-cand">
+          <span class="detail-cand-pct" style="color:${info.color}">${pc}%</span>
+          <div class="detail-cand-dot" style="background:${info.color}"></div>
+          <span class="detail-cand-name">${info.label}</span>
+          <span class="detail-cand-votes">${fmtN(c)}</span>
+        </div>`;
+      }).join("") || "<div style='padding:0.5rem 0.75rem;font-size:9px;color:var(--muted)'>Sin observaciones</div>";
+
+    document.getElementById("jee-detail").classList.add("active");
+    showHover(feat);
+  }
+
+  function hideJeeDetail() {
+    jeeActiveUbigeo = null;
+    document.getElementById("jee-detail").classList.remove("active");
+    clearHover();
+  }
+
+  document.getElementById("jee-detail-back").addEventListener("click", () => {
+    hideJeeDetail();
+    map.flyTo(HOME_CENTER, defZoom(), { animate: true, duration: 0.5 });
+  });
+
+  // "Porcentaje observado" datos button → return to choropleth
+  document.getElementById("jee-porc-btn").addEventListener("click", () => {
+    jeeSelectedView = "choropleth";
+    jeeActiveUbigeo = null;
+    document.querySelectorAll(".jee-row,.jee-sub-row").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".jee-suberrors.open").forEach(el => el.classList.remove("open"));
+    document.querySelectorAll(".jee-row.open").forEach(el => el.classList.remove("open"));
+    document.getElementById("jee-porc-btn").classList.add("active");
+    hideJeeDetail();
+    renderJee();
+  });
+
+  // ── Map rendering ──────────────────────────────────────────────────────────
+  function jeeChloroColor(pct) {
+    if (pct <= 0) return "#FEF9F0";
+    if (pct < 3)  return "#FED7AA";
+    if (pct < 6)  return "#FB923C";
+    if (pct < 10) return "#EA580C";
+    if (pct < 15) return "#C2410C";
+    return "#7C2D12";
+  }
+
+  function jeeGeoName(p) {
+    return currentLevel === "dept"     ? (p.nombre_dept      || "—")
+         : currentLevel === "provincia"? (p.nombre_provincia || "—")
+         : (p.nombre_distrito || "—");
+  }
+
+  // Determine bubble field + color from jeeSelectedView
+  // View keys: "choropleth" | "estado_C/E/P" | "err_xxx_C/E/P"
+  function jeeBubbleConfig(view) {
+    // Status bubble: "estado_C" → field "estado_C", color from JEE_ESTADOS
+    const estadoMatch = view.match(/^estado_([CEP])$/);
+    if (estadoMatch) {
+      const key = estadoMatch[1];
+      return { field: view, color: JEE_ESTADOS[key].color, label: JEE_ESTADOS[key].label };
+    }
+    // Error bubble: "err_aritmetico_C" → field "err_aritmetico_C", color from JEE_ERROR_TYPES
+    const errMatch = view.match(/^(err_\w+)_([CEP])$/);
+    if (errMatch) {
+      const errKey = errMatch[1];
+      const info = JEE_ERROR_TYPES[errKey];
+      return info ? { field: view, color: info.color, label: info.label } : null;
+    }
+    return null;
+  }
+
+  // Build/update JEE bubble size legend
+  function showJeeBubbleLegend(color, label, maxVal) {
+    const el = document.getElementById("jee-bubble-legend");
+    const itemsEl = document.getElementById("jbl-items");
+    document.getElementById("jbl-title").textContent = label;
+    const maxR = 28, minR = 3;
+    // Reference values: ~10%, ~33%, 100% of max
+    const refs = [
+      Math.max(1, Math.round(maxVal * 0.1)),
+      Math.max(1, Math.round(maxVal * 0.33)),
+      maxVal,
+    ].filter((v, i, a) => a.indexOf(v) === i); // dedupe
+    itemsEl.innerHTML = refs.map(v => {
+      const r = minR + (maxR - minR) * Math.sqrt(v / maxVal);
+      const d = Math.round(r * 2);
+      return `<div class="jee-bubble-legend-item">
+        <div class="jee-bubble-legend-circle" style="width:${d}px;height:${d}px;background:${color}"></div>
+        <span class="jee-bubble-legend-label">${fmtN(v)}</span>
+      </div>`;
+    }).join("");
+    el.classList.add("show");
+  }
+
+  function hideJeeBubbleLegend() {
+    document.getElementById("jee-bubble-legend").classList.remove("show");
+  }
+
+  function renderJee() {
+    const geo = jeeGeoForLevel();
+    if (!geo) return;
+    if (jeeLayer)       { map.removeLayer(jeeLayer);       jeeLayer       = null; }
+    if (jeeBubbleLayer) { map.removeLayer(jeeBubbleLayer); jeeBubbleLayer = null; }
+    if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+    if (provBoundaryLayer) { map.removeLayer(provBoundaryLayer); provBoundaryLayer = null; }
+
+    const bubbleCfg = jeeBubbleConfig(jeeSelectedView);
+    const isBubble  = !!bubbleCfg;
+
+    // Transparent polygon base — always present for hover & click
+    jeeLayer = L.geoJSON(geo, {
+      pane: "fillPane",
+      style(feat) {
+        if (isBubble) return { fillColor: "#F5F0E8", fillOpacity: 0.01, weight: 0 };
+        const pct = feat.properties.ever_e_pct || 0;
+        return { fillColor: jeeChloroColor(pct), fillOpacity: 0.85, weight: 0 };
+      },
+      onEachFeature(feat, layer) {
+        const p   = feat.properties;
+        const tip = isBubble
+          ? `<b>${jeeGeoName(p)}</b><br>${bubbleCfg.label}: <b>${fmtN(p[bubbleCfg.field] || 0)}</b>`
+          : `<b>${jeeGeoName(p)}</b><br>Observadas: <b>${fmtN(p.ever_e)}</b> de ${fmtN(p.total_actas)} (${(p.ever_e_pct||0).toFixed(1)}%)`;
+        layer.on("mouseover", e => { showHover(feat); layer.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
+        layer.on("mouseout",  () => { clearHover(); layer.unbindTooltip(); });
+        layer.on("click",     e => { L.DomEvent.stopPropagation(e); layer.unbindTooltip(); showJeeDetail(feat, layer); });
+      },
+      smoothFactor: 0,
+    }).addTo(map);
+
+    if (isBubble) {
+      const { field, color, label } = bubbleCfg;
+      const vals   = geo.features.map(f => f.properties[field] || 0);
+      const maxVal = Math.max(...vals, 1);
+      const maxR = 28, minR = 3;
+      const markers = [];
+      geo.features.forEach(feat => {
+        const v = feat.properties[field] || 0;
+        if (v === 0) return;
+        try {
+          const center = L.geoJSON(feat).getBounds().getCenter();
+          const r   = minR + (maxR - minR) * Math.sqrt(v / maxVal);
+          const p   = feat.properties;
+          const tip = `<b>${jeeGeoName(p)}</b><br>${label}: <b>${fmtN(v)}</b><br>Total obs.: ${fmtN(p.ever_e)}`;
+          const m = L.circleMarker(center, {
+            pane: "bubblePane", radius: r,
+            fillColor: color, fillOpacity: 0.78, color: "#fff", weight: 1.5,
+          });
+          m.on("mouseover", e => { m.setStyle({ fillOpacity: 0.95 }); m.bindTooltip(tip, { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng); });
+          m.on("mouseout",  () => { m.setStyle({ fillOpacity: 0.78 }); m.unbindTooltip(); });
+          m.on("click",     e => { L.DomEvent.stopPropagation(e); try { showJeeDetail(feat, L.geoJSON(feat)); } catch(ex) {} });
+          markers.push(m);
+        } catch(e) {}
+      });
+      jeeBubbleLayer = L.layerGroup(markers).addTo(map);
+      showJeeBubbleLegend(color, label, maxVal);
+    } else {
+      hideJeeBubbleLegend();
+    }
+
+    // Border overlays
+    if (jeeDeptData) {
+      deptBoundaryLayer = L.geoJSON(jeeDeptData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+        interactive: false, smoothFactor: 0,
+      }).addTo(map);
+    }
+    if ((currentLevel === "distrito" || currentLevel === "provincia") && jeeProvData) {
+      provBoundaryLayer = L.geoJSON(jeeProvData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 0.7, color: "#4a3820" },
+        interactive: false, smoothFactor: 0,
+      }).addTo(map);
+    }
+  }
+
+  // ── Load data ──────────────────────────────────────────────────────────────
+  const BASE = "../../../peru/2026eg/segunda/data/";
+  Promise.all([
+    fetch(BASE + "candidates.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
+    fetch(BASE + "aggregate_stats.json").then(r => r.json()).catch(() => null),
+    fetch(BASE + "forecast.json").then(r => r.json()).catch(() => null),
+    fetch(BASE + "peru_2026eg_distrito_segunda.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "peru_2026eg_provincia_segunda.geojson").then(r => r.json()).catch(() => null),
+    fetch(BASE + "peru_2026eg_departamento_segunda.geojson").then(r => r.json()).catch(() => null),
+  ]).then(([cands, agg, forecast, distGeo, provGeo, deptGeo]) => {
+    candidatesData = cands;
+    aggStats       = agg;
+    forecastData   = forecast;
+
+    // ── Last-update timestamps ──────────────────────────────────────────────
+    const distTs = fmtUpdateTime(agg?.generated_at);
+    const elDist = document.getElementById("last-update-dist");
+    if (distTs && elDist) {
+      elDist.textContent = distTs;
+      elDist.style.display = "";
+    }
+    const hourTs = fmtUpdateHour(agg?.generated_at);
+    const mobTs  = document.getElementById("mob-ts");
+    if (hourTs && mobTs) mobTs.textContent = hourTs;
+
+    if (distGeo) distData = distGeo;
+    if (provGeo) provData = provGeo;
+    if (deptGeo) {
+      deptData = deptGeo;
+      deptGeo.features.forEach(f => {
+        const key = (f.properties || {}).ubigeo_dept || "";
+        if (key) { deptFeatMap[key] = f; }
+      });
+    }
+
+    updateHeaderStats();
+    updateBottomBar();
+    buildCandList();
+    buildDeptList();
+
+    if (deptData || provData || distData) {
+      render();
+    } else {
+      document.getElementById("loading").innerHTML =
+        `<p style="color:var(--muted);font-size:11px;text-align:center;max-width:220px">
+          Mapa no disponible.<br>GeoJSON se genera con los scripts de procesamiento.
+        </p>`;
+      document.getElementById("loading").style.background = "transparent";
+    }
+
+    document.getElementById("loading").style.display = "none";
+  }).catch(err => {
+    document.getElementById("loading").innerHTML =
+      `<p style="color:#c4603a;font-weight:700">${err.message}</p>
+       <p style="color:#7a6858;font-size:10px;margin-top:.5rem">Ejecuta los scripts de procesamiento primero.</p>`;
+  });
+
+  // ── Análisis tab ──────────────────────────────────────────────────────────
+  let analisisData = null, analisisLoaded = false, analisisLoading = false;
+  let analisisActiveCand = 0;  // index 0–4 into top5
+
+  function loadAnalisisData(cb) {
+    if (analisisLoaded) { cb(); return; }
+    if (analisisLoading) { setTimeout(() => loadAnalisisData(cb), 200); return; }
+    analisisLoading = true;
+    fetch("../../../peru/2026eg/segunda/data/analisis/analisis_data.json").then(r => r.json()).then(d => {
+      analisisData = d;
+      analisisLoaded = true;
+      cb();
+    }).catch(() => { analisisLoading = false; });
+  }
+
+  function renderAnalisis() {
+    loadAnalisisData(() => {
+      buildAnalisisCandBar();
+      buildAnalisisPlots();
+    });
+  }
+
+  function buildAnalisisCandBar() {
+    const bar = document.getElementById("an-cand-bar");
+    // preserve label
+    bar.innerHTML = '<span class="an-cand-label">Candidato</span>';
+    analisisData.top5.forEach((c, i) => {
+      const btn = document.createElement("button");
+      btn.className = "an-cand-btn" + (i === analisisActiveCand ? " active" : "");
+      btn.innerHTML = `<span class="an-cand-dot" style="background:${c.color}"></span>
+        <span>${shortName(c.nombre)}</span>
+        <span class="an-cand-pct" style="color:${i === analisisActiveCand ? '#fff' : c.color}">${c.pct.toFixed(1)}%</span>`;
+      btn.addEventListener("click", () => {
+        analisisActiveCand = i;
+        buildAnalisisCandBar();
+        buildAnalisisPlots();
+      });
+      bar.appendChild(btn);
+    });
+  }
+
+  function shortName(name) {
+    // "KEIKO SOFIA FUJIMORI HIGUCHI" → "Keiko Fujimori"
+    const parts = name.split(" ");
+    if (parts.length >= 3) return parts[0].charAt(0) + parts[0].slice(1).toLowerCase()
+      + " " + parts[parts.length - 2].charAt(0) + parts[parts.length - 2].slice(1).toLowerCase();
+    return name.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+  }
+
+  function buildAnalisisPlots() {
+    const grid   = document.getElementById("an-plots-grid");
+    const vars   = analisisData.variables;
+    const top5   = analisisData.top5;
+    const cand   = top5[analisisActiveCand];
+    const color  = cand.color;
+    const sKey   = `s${analisisActiveCand + 1}`;
+    const districts = analisisData.districts;
+
+    grid.innerHTML = "";
+
+    vars.forEach(v => {
+      // Filter to rows with both x and y
+      const pts = districts.filter(d => d[v.key] != null && d[sKey] != null);
+
+      const card = document.createElement("div");
+      card.className = "an-plot-card";
+
+      const title = document.createElement("div");
+      title.className = "an-plot-title";
+      title.textContent = v.label;
+      card.appendChild(title);
+
+      const wrap = document.createElement("div");
+      wrap.className = "an-plot-svg-wrap";
+      const svg = buildScatterSVG(pts, v, sKey, color, cand.nombre);
+      wrap.appendChild(svg);
+      card.appendChild(wrap);
+
+      grid.appendChild(card);
+    });
+  }
+
+  function buildScatterSVG(pts, varMeta, sKey, color, candName) {
+    const W = 280, H = 190;
+    const ml = 32, mr = 8, mt = 8, mb = 28;
+    const pw = W - ml - mr, ph = H - mt - mb;
+
+    // X range
+    let xVals = pts.map(d => d[varMeta.key]);
+    let yVals = pts.map(d => d[sKey]);
+    const yMin = 0, yMax = Math.min(100, Math.ceil(Math.max(...yVals) / 5) * 5 + 5);
+
+    let xMin, xMax, xScale;
+    if (varMeta.logX) {
+      const positives = xVals.filter(v => v > 0);
+      xMin = Math.max(0.01, Math.min(...positives));
+      xMax = Math.max(...positives);
+      xScale = v => (Math.log(Math.max(v, 0.01)) - Math.log(xMin)) / (Math.log(xMax) - Math.log(xMin)) * pw;
+    } else {
+      xMin = 0;
+      // Fixed 0–100% axis for all percentage variables
+      const PCT_VARS = new Set(["rur","pob","k21","c21","agu","tra","sis","edu"]);
+      xMax = PCT_VARS.has(varMeta.key) ? 100
+           : Math.ceil(Math.max(...xVals) / 5) * 5;
+      xScale = v => (v - xMin) / (xMax - xMin) * pw;
+    }
+    const yScale = v => ph - (v - yMin) / (yMax - yMin) * ph;
+
+    // Build SVG string
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("style", "width:100%;height:auto;display:block");
+
+    const g = document.createElementNS(ns, "g");
+    g.setAttribute("transform", `translate(${ml},${mt})`);
+    svg.appendChild(g);
+
+    // Grid lines + axis ticks
+    const gridColor = "#cfc0ab";
+    const tickColor = "#7a6858";
+
+    // Y grid + labels (every 10%)
+    for (let yv = 0; yv <= yMax; yv += 10) {
+      if (yv < yMin) continue;
+      const yp = yScale(yv);
+      const gl = document.createElementNS(ns, "line");
+      gl.setAttribute("x1", 0); gl.setAttribute("x2", pw);
+      gl.setAttribute("y1", yp); gl.setAttribute("y2", yp);
+      gl.setAttribute("stroke", gridColor); gl.setAttribute("stroke-width", "0.5");
+      g.appendChild(gl);
+      const yl = document.createElementNS(ns, "text");
+      yl.setAttribute("x", -3); yl.setAttribute("y", yp + 3);
+      yl.setAttribute("text-anchor", "end");
+      yl.setAttribute("font-size", "7"); yl.setAttribute("fill", tickColor);
+      yl.textContent = yv + "%";
+      g.appendChild(yl);
+    }
+
+    // X axis ticks (3–4 labels)
+    const xTicks = varMeta.logX
+      ? [1, 10, 100, 1000, 10000].filter(v => v >= xMin * 0.9 && v <= xMax * 1.1)
+      : varMeta.key === "pob" ? [0, 20, 40, 60, 80]
+      : [0, 25, 50, 75, 100];   // all other % variables
+
+    xTicks.forEach(xv => {
+      const xp = xScale(xv);
+      if (xp < -2 || xp > pw + 2) return;
+      const vl = document.createElementNS(ns, "line");
+      vl.setAttribute("x1", xp); vl.setAttribute("x2", xp);
+      vl.setAttribute("y1", 0); vl.setAttribute("y2", ph);
+      vl.setAttribute("stroke", gridColor); vl.setAttribute("stroke-width", "0.5");
+      g.appendChild(vl);
+      const xl = document.createElementNS(ns, "text");
+      xl.setAttribute("x", xp); xl.setAttribute("y", ph + 10);
+      xl.setAttribute("text-anchor", "middle");
+      xl.setAttribute("font-size", "7"); xl.setAttribute("fill", tickColor);
+      xl.textContent = varMeta.logX ? (xv >= 1000 ? xv/1000 + "k" : xv)
+                     : (varMeta.unit === "%" ? xv + "%" : xv);
+      g.appendChild(xl);
+    });
+
+    // Axes border
+    const axRect = document.createElementNS(ns, "rect");
+    axRect.setAttribute("x", 0); axRect.setAttribute("y", 0);
+    axRect.setAttribute("width", pw); axRect.setAttribute("height", ph);
+    axRect.setAttribute("fill", "none");
+    axRect.setAttribute("stroke", "#bfb0a0"); axRect.setAttribute("stroke-width", "0.8");
+    g.appendChild(axRect);
+
+    // Dots
+    const hexToRgb = hex => {
+      const r = parseInt(hex.slice(1,3),16), gg = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return `rgba(${r},${gg},${b},0.55)`;
+    };
+    const dotColor = hexToRgb(color);
+
+    pts.forEach(d => {
+      const xv = d[varMeta.key];
+      const yv = d[sKey];
+      const xp = xScale(xv);
+      const yp = yScale(yv);
+      if (xp < -4 || xp > pw + 4 || yp < -4 || yp > ph + 4) return;
+
+      // Size: sqrt of electores, clamped
+      const r = Math.max(1.5, Math.min(6, Math.sqrt(d.e / 5000)));
+
+      const circ = document.createElementNS(ns, "circle");
+      circ.setAttribute("cx", xp); circ.setAttribute("cy", yp);
+      circ.setAttribute("r", r);
+      circ.setAttribute("fill", dotColor);
+      circ.setAttribute("stroke", "none");
+      circ.dataset.tip = `${d.n}\n${varMeta.label}: ${xv.toFixed(1)}${varMeta.unit}\n${shortName(candName)}: ${yv.toFixed(1)}%\nElectores: ${d.e.toLocaleString("es-PE")}`;
+      circ.style.cursor = "default";
+      g.appendChild(circ);
+    });
+
+    // Tooltip interaction
+    const tip = document.getElementById("an-tooltip");
+    svg.addEventListener("mousemove", e => {
+      const el = e.target;
+      if (el.tagName === "circle" && el.dataset.tip) {
+        tip.style.display = "block";
+        tip.innerHTML = el.dataset.tip.replace(/\n/g, "<br>");
+        tip.style.left = (e.clientX + 12) + "px";
+        tip.style.top  = (e.clientY - 8)  + "px";
+      } else {
+        tip.style.display = "none";
+      }
+    });
+    svg.addEventListener("mouseleave", () => { tip.style.display = "none"; });
+
+    return svg;
+  }
+
+})();
+</script>
+</body>
+</html>
