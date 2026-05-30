@@ -2633,7 +2633,7 @@
   }
 
   // ── Actas JEE tab functions ───────────────────────────────────────────────
-  const JEE_BASE = "jee/";
+  const JEE_BASE = "../../../peru/2026eg/primera/data/jee/";
   const fmt = n => fmtN(n);
   let jeeLayer = null, jeeBubbleLayer = null;
   let jeeSelectedView = "choropleth";
@@ -3205,7 +3205,7 @@
     if (analisisLoaded) { cb(); return; }
     if (analisisLoading) { setTimeout(() => loadAnalisisData(cb), 200); return; }
     analisisLoading = true;
-    fetch("analisis/analisis_data.json").then(r => r.json()).then(d => {
+    fetch("../../../peru/2026eg/primera/data/analisis/analisis_data.json").then(r => r.json()).then(d => {
       analisisData = d;
       analisisLoaded = true;
       cb();
