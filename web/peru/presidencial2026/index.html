@@ -2247,24 +2247,11 @@
       // Left = favorite (higher prob), right = underdog.
       // If cand3rd is actually the favorite, swap everything and flip the margin sign
       // so positive margin always means the left (favorite) candidate is leading.
-      let candLeft, candRight, probLeft, probRight, dispMarginV, dispCiLoV, dispCiHiV;
-      if (prob3rd > prob2nd) {
-        // cand3rd is the favorite — put on LEFT. Positive margin = left (favorite) winning.
-        candLeft = cand3rd; candRight = cand2nd;
-        probLeft = prob3rd; probRight = prob2nd;
-        dispMarginV = marginV;   // keep sign: positive ≈ left candidate ahead
-        dispCiLoV   = ciLoV;
-        dispCiHiV   = ciHiV;
-        // Swap colors/names so positive bars render in the favorite's color
-        dispBattle.color_2nd  = battle.color_3rd;
-        dispBattle.color_3rd  = battle.color_2nd;
-        dispBattle.nombre_2nd = battle.nombre_3rd;
-        dispBattle.nombre_3rd = battle.nombre_2nd;
-      } else {
-        candLeft = cand2nd; candRight = cand3rd;
-        probLeft = prob2nd; probRight = prob3rd;
-        dispMarginV = marginV; dispCiLoV = ciLoV; dispCiHiV = ciHiV;
-      }
+      // cand_2nd is always the favorite (higher in_top2) — backend guarantees this.
+      // Positive margin = cand_2nd (left) is ahead.
+      const candLeft  = cand2nd, candRight = cand3rd;
+      const probLeft  = prob2nd, probRight = prob3rd;
+      const dispMarginV = marginV, dispCiLoV = ciLoV, dispCiHiV = ciHiV;
 
       renderNeedle(dispMarginV, dispCiLoV, dispCiHiV, candLeft, candRight);
 

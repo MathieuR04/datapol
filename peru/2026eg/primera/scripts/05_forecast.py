@@ -395,22 +395,27 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     print(f"  Counted: {len(counted):,}  Remaining: {len(remaining):,}  "
           f"(aggregated to {len(agg_remaining):,} prior groups)")
 
-    # Simulations
-    margins, winners_2nd, in_top2 = run_simulations(
+    # Pass 1: run simulations to learn who the real battle candidates are
+    _, winners_2nd_p1, in_top2 = run_simulations(
         base_votes, agg_remaining, agg_priors, cand_cols, n_sims, rng,
-        battle_cols=None)  # normal run: battle pair determined by base_votes ranking
+        battle_cols=None)
 
-    # --- Results ---
-    base_ranked = sorted(cand_cols, key=lambda c: base_votes.get(c, 0), reverse=True)
-    cand_2nd    = base_ranked[1]
-    cand_3rd    = base_ranked[2]
+    # Battle pair = 2nd and 3rd by simulation probability (not by raw vote count).
+    # sim_ranked[0] is the near-certain leader; [1] and [2] are the ones fighting for
+    # the runoff slot.
+    sim_ranked = sorted(cand_cols, key=lambda c: in_top2.get(c, 0), reverse=True)
+    cand_2nd   = sim_ranked[1]   # most likely to reach 2da vuelta (after leader)
+    cand_3rd   = sim_ranked[2]   # second most likely
 
-    total_sim   = len(margins)
-    # winners_2nd contains column names ("cand_10") — compare with column names here
-    prob_2nd    = sum(1 for w in winners_2nd if w == cand_2nd) / total_sim * 100
-    prob_3rd    = sum(1 for w in winners_2nd if w == cand_3rd) / total_sim * 100
-    # Note: cand_2nd / cand_3rd are column names ("cand_10") throughout the internal logic;
-    # they're converted to plain codigos only in the output dict below.
+    # Pass 2: signed margin between the actual battle pair (positive = cand_2nd ahead)
+    rng2 = random.Random(seed)   # re-seed for reproducibility
+    margins, winners_2nd, _ = run_simulations(
+        base_votes, agg_remaining, agg_priors, cand_cols, n_sims, rng2,
+        battle_cols=(cand_2nd, cand_3rd))
+
+    total_sim = len(margins)
+    prob_2nd  = sum(1 for w in winners_2nd if w == cand_2nd) / total_sim * 100
+    prob_3rd  = sum(1 for w in winners_2nd if w == cand_3rd) / total_sim * 100
 
     mean_margin = sum(margins) / len(margins)
     ci_lo       = int(percentile(margins, 2.5))
@@ -420,6 +425,7 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     total_emitidos = sum(m["_emitidos"] for m in counted)
     cand_summary = []
     cand_by_col  = {f"cand_{c['codigo']}": c for c in candidates}
+    base_ranked  = sorted(cand_cols, key=lambda c: base_votes.get(c, 0), reverse=True)
     for col in base_ranked:
         c     = cand_by_col[col]
         votes = base_votes.get(col, 0)
