@@ -13,11 +13,14 @@
         {
           code: '2026eg', label: '2026 EG', fullLabel: 'Elecciones Generales 2026',
           elections: [
-            { code: 'primera-vuelta', label: '1ra Vuelta', url: '/electoral/peru/2026eg/primera-vuelta/', available: true  },
-            { code: 'segunda-vuelta', label: '2da Vuelta', url: '/electoral/peru/2026eg/segunda-vuelta/', available: true  },
+            { code: 'segunda-vuelta',     label: '2da Vuelta',        url: '/electoral/peru/2026eg/segunda-vuelta/', available: true  },
+            { code: 'primera-vuelta',     label: '1ra Vuelta',        url: '/electoral/peru/2026eg/primera-vuelta/', available: true  },
+            { code: 'senado',             label: 'Senado',            url: '#',                                      available: false },
+            { code: 'diputados',          label: 'Diputados',         url: '#',                                      available: false },
+            { code: 'parlamento-andino',  label: 'Parl. Andino',      url: '#',                                      available: false },
           ]
         },
-        /* Future examples — uncomment and fill URLs when ready:
+        /* Future — uncomment and fill URLs when ready:
         { code: '2026erm', label: '2026 ERM', fullLabel: 'Elecciones Regionales y Municipales 2026', elections: [] },
         { code: '2021eg',  label: '2021 EG',  fullLabel: 'Elecciones Generales 2021', elections: [] },
         */
@@ -29,10 +32,11 @@
         {
           code: '2026', label: '2026', fullLabel: 'Elecciones 2026',
           elections: [
-            { code: 'senado',         label: 'Senado',     url: '/electoral/colombia/2026/senado/',          available: true  },
-            { code: 'primarias',      label: 'Primarias',  url: '/electoral/colombia/2026/primarias/',       available: true  },
             { code: 'primera-vuelta', label: '1ra Vuelta', url: '/electoral/colombia/2026/primera-vuelta/',  available: true  },
+            { code: 'primarias',      label: 'Primarias',  url: '/electoral/colombia/2026/primarias/',       available: true  },
+            { code: 'senado',         label: 'Senado',     url: '/electoral/colombia/2026/senado/',          available: true  },
             { code: 'segunda-vuelta', label: '2da Vuelta', url: '#',                                         available: false },
+            { code: 'diputados',      label: 'Diputados',  url: '#',                                         available: false },
           ]
         },
       ]
