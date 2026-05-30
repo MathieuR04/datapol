@@ -924,7 +924,7 @@
     <!-- Margin distribution -->
     <div class="margin-dist-wrap" id="margin-dist-wrap">
       <div class="margin-dist-title">Distribución del margen proyectado entre 2º y 3er puesto</div>
-      <svg id="margin-dist-svg" viewBox="0 0 480 80" preserveAspectRatio="none"></svg>
+      <svg id="margin-dist-svg" viewBox="0 0 480 96" preserveAspectRatio="none"></svg>
       <div class="margin-dist-axis" id="margin-dist-axis"></div>
       <div class="margin-dist-foot" id="margin-dist-foot"></div>
     </div>
@@ -2105,7 +2105,7 @@
     const svg  = document.getElementById("margin-dist-svg");
     const axis = document.getElementById("margin-dist-axis");
     const foot = document.getElementById("margin-dist-foot");
-    const W = 480, H = 72, PAD = 2;
+    const W = 480, H = 96, PAD = 2;
     const maxCount = Math.max(...counts, 1);
     const n = counts.length;
     const barW = (W - PAD * 2) / n;
@@ -2171,6 +2171,7 @@
     // Needle — use new vote-based fields, fall back to legacy pct-scaled
     const battle = fd.battle || {};
     const hasBattle = battle.cand_2nd || battle.left_code;
+    let dispBattle = Object.assign({}, battle);  // display-oriented battle (may be flipped)
     if (hasBattle) {
       // New structure
       const cand2nd = fd.candidates?.find(c => c.codigo === battle.cand_2nd)
@@ -2197,35 +2198,62 @@
       const prob2nd = battle.prob_2nd_pct ?? cand2nd.prob_runoff ?? 0;
       const prob3rd = battle.prob_3rd_pct ?? cand3rd.prob_runoff ?? 0;
 
-      renderNeedle(marginV, ciLoV, ciHiV, cand2nd, cand3rd);
+      // Left = favorite (higher prob), right = underdog.
+      // If cand3rd is actually the favorite, swap everything and flip the margin sign
+      // so positive margin always means the left (favorite) candidate is leading.
+      let candLeft, candRight, probLeft, probRight, dispMarginV, dispCiLoV, dispCiHiV;
+      if (prob3rd > prob2nd) {
+        candLeft = cand3rd; candRight = cand2nd;
+        probLeft = prob3rd; probRight = prob2nd;
+        dispMarginV = -marginV;
+        dispCiLoV   = -ciHiV;
+        dispCiHiV   = -ciLoV;
+        // Flip histogram: negate all edges and reverse both arrays so left = underdog wins
+        const dist = battle.margin_distribution;
+        if (dist?.edges) {
+          const negEdges  = dist.edges.map(e => -e).reverse();
+          const revCounts = [...dist.counts].reverse();
+          dispBattle.margin_distribution = { edges: negEdges, counts: revCounts };
+        }
+        dispBattle.color_2nd  = battle.color_3rd;
+        dispBattle.color_3rd  = battle.color_2nd;
+        dispBattle.nombre_2nd = battle.nombre_3rd;
+        dispBattle.nombre_3rd = battle.nombre_2nd;
+      } else {
+        candLeft = cand2nd; candRight = cand3rd;
+        probLeft = prob2nd; probRight = prob3rd;
+        dispMarginV = marginV; dispCiLoV = ciLoV; dispCiHiV = ciHiV;
+      }
 
-      document.getElementById("needle-left-name").textContent  = cand2nd.nombre || "—";
-      document.getElementById("needle-left-name").style.color  = cand2nd.color  || "#888";
-      document.getElementById("needle-left-prob").textContent  = prob2nd.toFixed(0) + "%";
-      document.getElementById("needle-left-prob").style.color  = cand2nd.color  || "#888";
-      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(cand2nd.votes || 0) + " votos" : "—";
+      renderNeedle(dispMarginV, dispCiLoV, dispCiHiV, candLeft, candRight);
+
+      document.getElementById("needle-left-name").textContent  = candLeft.nombre || "—";
+      document.getElementById("needle-left-name").style.color  = candLeft.color  || "#888";
+      document.getElementById("needle-left-prob").textContent  = probLeft.toFixed(0) + "%";
+      document.getElementById("needle-left-prob").style.color  = candLeft.color  || "#888";
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes || 0) + " votos" : "—";
       // Photos beside the gauge
       const leftPhotoEl  = document.getElementById("needle-left-photo");
       const rightPhotoEl = document.getElementById("needle-right-photo");
-      const leftImgHtml  = candPhotoHtml(imagenByCode(cand2nd.codigo), 90, 120, "needle-side-photo");
-      const rightImgHtml = candPhotoHtml(imagenByCode(cand3rd.codigo), 90, 120, "needle-side-photo");
+      const leftImgHtml  = candPhotoHtml(imagenByCode(candLeft.codigo), 90, 120, "needle-side-photo");
+      const rightImgHtml = candPhotoHtml(imagenByCode(candRight.codigo), 90, 120, "needle-side-photo");
       leftPhotoEl.innerHTML  = leftImgHtml  || "";
       rightPhotoEl.innerHTML = rightImgHtml || "";
       leftPhotoEl.className  = leftImgHtml  ? "needle-side-photo-wrap" : "needle-side-placeholder";
       rightPhotoEl.className = rightImgHtml ? "needle-side-photo-wrap" : "needle-side-placeholder";
-      document.getElementById("needle-right-name").textContent = cand3rd.nombre || "—";
-      document.getElementById("needle-right-name").style.color = cand3rd.color  || "#888";
-      document.getElementById("needle-right-prob").textContent = prob3rd.toFixed(0) + "%";
-      document.getElementById("needle-right-prob").style.color = cand3rd.color  || "#888";
-      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(cand3rd.votes || 0) + " votos" : "—";
+      document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
+      document.getElementById("needle-right-name").style.color = candRight.color  || "#888";
+      document.getElementById("needle-right-prob").textContent = probRight.toFixed(0) + "%";
+      document.getElementById("needle-right-prob").style.color = candRight.color  || "#888";
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes || 0) + " votos" : "—";
 
       document.getElementById("needle-center-diff").textContent =
-        isLive ? fmtVoteDiff(marginV) : "—";
+        isLive ? fmtVoteDiff(dispMarginV) : "—";
       document.getElementById("needle-center-ci").textContent =
-        isLive ? `IC 95%: [${fmtVoteDiff(ciLoV)}, ${fmtVoteDiff(ciHiV)}]` : "";
+        isLive ? `IC 95%: [${fmtVoteDiff(dispCiLoV)}, ${fmtVoteDiff(dispCiHiV)}]` : "";
     }
 
-    renderMarginDist(battle);
+    renderMarginDist(dispBattle ?? battle);
 
     // Candidate probability bars — data from mesa CSV (via forecast.json candidates)
     const list = document.getElementById("cand-prob-list");
