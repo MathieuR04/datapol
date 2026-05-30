@@ -369,6 +369,42 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     counted_all = [m for m in mesas if m["_is_C"]]
     non_c       = [m for m in mesas if not m["_is_C"]]
 
+    # Empty state: no actas counted yet — return zeroed output sorted alphabetically
+    if not counted_all:
+        cand_summary = sorted(
+            [{"codigo": c["codigo"], "nombre": c.get("nombre", ""),
+              "color": c.get("color", "#666"), "votes": 0,
+              "pct_emitidos": 0, "prob_runoff": 0}
+             for c in candidates],
+            key=lambda c: c["nombre"]
+        )
+        # Pick two placeholder battle candidates (first two alphabetically)
+        c2, c3 = cand_summary[0], cand_summary[1]
+        return {
+            "generated_at":         datetime.datetime.utcnow().isoformat() + "Z",
+            "pct_actas":            0.0,
+            "mesas_contabilizadas": 0,
+            "mesas_remaining":      len(non_c),
+            "mesas_total":          len(mesas),
+            "mesas_in_analysis":    0,
+            "n_sims":               0,
+            "candidates":           cand_summary,
+            "battle": {
+                "cand_2nd":          c2["codigo"],
+                "cand_3rd":          c3["codigo"],
+                "nombre_2nd":        c2["nombre"],
+                "nombre_3rd":        c3["nombre"],
+                "color_2nd":         c2["color"],
+                "color_3rd":         c3["color"],
+                "prob_2nd_pct":      0.0,
+                "prob_3rd_pct":      0.0,
+                "mean_margin_votes": 0,
+                "ci_lo_votes":       0,
+                "ci_hi_votes":       0,
+                "margin_distribution": {"edges": [0, 1], "counts": [0]},
+            },
+        }
+
     if holdout_frac > 0:
         rng.shuffle(counted_all)
         n_hold = int(len(counted_all) * holdout_frac)
