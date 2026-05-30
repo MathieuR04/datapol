@@ -2059,7 +2059,7 @@
     const ciArcR  = toAngle(ciLowVotes);
     const startA = Math.PI, endA = 0, midA = Math.PI / 2;
     const svg = document.getElementById("needle-svg");
-    svg.querySelectorAll("path, text.ns-lbl, line.ns-tick").forEach(e => e.remove());
+    svg.querySelectorAll("path, text.ns-lbl, line.ns-tick, circle.ns-dot").forEach(e => e.remove());
 
     function mkEl(tag, attrs) {
       const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
@@ -2077,39 +2077,42 @@
     svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.4","butt"));
     svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA),   candRight?.color||"#888","18","0.4","butt"));
 
-    // CI band — translucent white arc over the 95% CI range, plus ticks at boundaries
+    // CI: two transparent pie wedges from pivot — one per candidate's "winning zone"
+    // Positive side (candLeft winning) → candLeft's color; negative → candRight's color
+    function wedgePath(fromAngle, toAngle_) {
+      const large = Math.abs(toAngle_ - fromAngle) > Math.PI ? 1 : 0;
+      const sweep = toAngle_ < fromAngle ? 1 : 0;
+      const x1 = (cx + r * Math.cos(fromAngle)).toFixed(1);
+      const y1 = (cy - r * Math.sin(fromAngle)).toFixed(1);
+      const x2 = (cx + r * Math.cos(toAngle_)).toFixed(1);
+      const y2 = (cy - r * Math.sin(toAngle_)).toFixed(1);
+      return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2} Z`;
+    }
+    function hexRgba(hex, a) {
+      const n = parseInt((hex||"#888888").replace("#",""), 16);
+      return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+    }
     if (Math.abs(ciArcL - ciArcR) > 0.01) {
-      const aHi = Math.max(ciArcL, ciArcR);
-      const aLo = Math.min(ciArcL, ciArcR);
-      svg.appendChild(mkPath(buildNeedleArc(cx, cy, r, aHi, aLo),
-        "rgba(255,255,255,0.32)", "20", null, "butt"));
-      // Short ticks at CI boundary positions (outer edge only)
-      [aHi, aLo].forEach(a => {
-        svg.appendChild(mkEl("line", {
-          x1: (cx + (r + 13) * Math.cos(a)).toFixed(1),
-          y1: (cy - (r + 13) * Math.sin(a)).toFixed(1),
-          x2: (cx + (r - 2)  * Math.cos(a)).toFixed(1),
-          y2: (cy - (r - 2)  * Math.sin(a)).toFixed(1),
-          stroke: "rgba(255,255,255,0.85)", "stroke-width": "2", class: "ns-tick"
-        }));
-      });
+      const a0   = midA;                          // angle for margin = 0
+      const aPos = Math.max(ciArcL, ciArcR);      // candLeft's CI extreme (positive side)
+      const aNeg = Math.min(ciArcL, ciArcR);      // candRight's CI extreme (negative side)
+      // Positive wedge: 0 → aPos (candLeft color)
+      if (Math.abs(aPos - a0) > 0.01)
+        svg.appendChild(mkEl("path", { d: wedgePath(a0, aPos),
+          fill: hexRgba(candLeft?.color, 0.28), stroke: "none", class: "ns-tick" }));
+      // Negative wedge: aNeg → 0 (candRight color)
+      if (Math.abs(a0 - aNeg) > 0.01)
+        svg.appendChild(mkEl("path", { d: wedgePath(aNeg, a0),
+          fill: hexRgba(candRight?.color, 0.28), stroke: "none", class: "ns-tick" }));
     }
 
-    // Scale ticks + labels at 0, ±half, ±full
+    // Scale labels at 0, ±half, ±full (no tick marks — labels only)
     const scaleVals = [-MAX_RANGE, -MAX_RANGE * 0.5, 0, MAX_RANGE * 0.5, MAX_RANGE];
     const LBL_R = r + 22;
     scaleVals.forEach(val => {
-      const a   = toAngle(val);
-      const tx  = cx + LBL_R * Math.cos(a);
-      const ty  = cy - LBL_R * Math.sin(a);
-      // Tick mark on arc
-      const tk = mkEl("line", {
-        x1: (cx + (r-7)*Math.cos(a)).toFixed(1), y1: (cy - (r-7)*Math.sin(a)).toFixed(1),
-        x2: (cx + (r+7)*Math.cos(a)).toFixed(1), y2: (cy - (r+7)*Math.sin(a)).toFixed(1),
-        stroke: "#777", "stroke-width": val === 0 ? "2" : "1", class: "ns-tick"
-      });
-      svg.appendChild(tk);
-      // Label
+      const a      = toAngle(val);
+      const tx     = cx + LBL_R * Math.cos(a);
+      const ty     = cy - LBL_R * Math.sin(a);
       const anchor = val < -MAX_RANGE * 0.2 ? "start"
                    : val >  MAX_RANGE * 0.2 ? "end" : "middle";
       const lbl = mkEl("text", {
@@ -2121,20 +2124,16 @@
       svg.appendChild(lbl);
     });
 
-    // Center tick at zero (vertical mark on top)
-    const topTick = mkEl("line", {
-      x1: cx, y1: cy - r - 10, x2: cx, y2: cy - r + 10,
-      stroke: "#ccc", "stroke-width": "1.5", class: "ns-tick"
-    });
-    svg.appendChild(topTick);
-
-    // Needle
+    // Needle line + pivot dot
     const nxEnd = cx + (r - 10) * Math.cos(needleA);
     const nyEnd = cy - (r - 10) * Math.sin(needleA);
     const needleLine = svg.querySelector("#needle-line");
     needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
     needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
     svg.querySelector("#needle-pct-text").textContent = "";
+    // Pivot dot — sits on top of everything at the needle's base
+    svg.appendChild(mkEl("circle", { cx, cy, r: "5",
+      fill: "var(--text)", stroke: "var(--bg)", "stroke-width": "1.5", class: "ns-dot" }));
   }
 
   function fmtVoteDiff(v) {
@@ -2176,12 +2175,12 @@
       const e0 = edges[i];
       const e1 = edges[i + 1] ?? (e0 + (edges[1] - edges[0]));
       const x    = toX(e0);
-      const bw   = Math.max(0.5, toX(e1) - x - 0.6);
+      const bw   = Math.max(0.8, toX(e1) - x + 0.3);   // no gap — bars touch
       const barH = Math.max(1, (counts[i] / maxCount) * H);
       const y    = H - barH;
       const mid  = (e0 + e1) / 2;
       const col  = mid > 0 ? color2nd : mid < 0 ? color3rd : "#888";
-      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="0.72"/>`;
+      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="0.82"/>`;
     }
     // Zero line — always in the center of the symmetric display
     paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>`;
