@@ -1620,7 +1620,6 @@
     const bkRows = [
       ["Votos nulos",  vn, pct(vn, ve)],
       ["En blanco",    vb, pct(vb, ve)],
-      ["Candidatos",   vv, pct(vv, ve)],
     ];
     document.getElementById("d-breakdown").innerHTML =
       bkRows.map(([l, v, pp]) => `<div class="dbreak-row">
@@ -1629,9 +1628,9 @@
         <span class="dbreak-pct">${pp}</span>
       </div>`).join("") +
       `<div class="dbreak-row total">
-        <span class="dbreak-label">Votos emitidos</span>
-        <span class="dbreak-val">${fmtN(ve)}</span>
-        <span class="dbreak-pct">${pct(ve, elec > 0 ? elec : ve)}</span>
+        <span class="dbreak-label">Votos válidos</span>
+        <span class="dbreak-val">${fmtN(vv)}</span>
+        <span class="dbreak-pct">${pct(vv, ve)}</span>
       </div>`;
 
     let cands = [];
