@@ -37,34 +37,50 @@
     html, body { height: 100%; overflow: hidden; background: var(--bg); }
     body { display: flex; flex-direction: column; font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: var(--text); }
 
+    /* ── Landing nav (no election tabs — just brand, section links, social) ─ */
+    .nav-sections {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-section-link {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 11.5px;
+      letter-spacing: 0.13em;
+      color: var(--sand);
+      text-decoration: none;
+      opacity: 0.65;
+      transition: opacity .15s;
+      white-space: nowrap;
+    }
+    .nav-section-link:hover { opacity: 1; }
+
     /* ── Hero ─────────────────────────────────────────────────────────────── */
     .hero {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 0;
-      padding: 0.5rem 1rem 0.6rem;
+      padding: 0.6rem 1rem 0.7rem;
       border-bottom: 2px solid var(--text);
       flex-shrink: 0;
     }
     .hero-title {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 52px;
-      letter-spacing: 0.07em;
-      line-height: 1;
+      font-size: 68px;
+      letter-spacing: 0.08em;
+      line-height: 0.9;
       color: var(--text);
     }
-
-    /* ── Section labels (thin dark strip) ────────────────────────────────── */
-    .section-label {
-      background: var(--text);
-      color: var(--sand);
+    .hero-byline {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      padding: 0.3rem 0.9rem;
-      flex-shrink: 0;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      margin-top: 0.35rem;
     }
 
     /* ── Main two-column grid ─────────────────────────────────────────────── */
@@ -72,6 +88,8 @@
       display: flex;
       flex: 1;
       min-height: 0;
+      padding: 0.75rem;
+      gap: 0.75rem;
     }
 
     /* Left — featured election (Peru) */
@@ -79,7 +97,6 @@
       flex: 0 0 56%;
       display: flex;
       flex-direction: column;
-      border-right: 2px solid var(--text);
       min-height: 0;
     }
 
@@ -88,10 +105,41 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      gap: 0.75rem;
       min-height: 0;
     }
 
-    /* ── Iframe embed ─────────────────────────────────────────────────────── */
+    /* ── Embed block (header + iframe) ───────────────────────────────────── */
+    .embed-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .embed-block-header {
+      background: var(--text);
+      padding: 0.35rem 0.85rem 0.4rem;
+      flex-shrink: 0;
+    }
+    .embed-block-label {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 8.5px;
+      letter-spacing: 0.18em;
+      color: var(--sand);
+      opacity: 0.5;
+      line-height: 1;
+    }
+    .embed-block-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.06em;
+      color: var(--sand);
+      line-height: 1.15;
+      margin-top: 0.05rem;
+    }
     .embed-wrap {
       flex: 1;
       position: relative;
@@ -131,20 +179,36 @@
     }
     .embed-wrap:hover .embed-chip { opacity: 1; }
 
-    /* ── Article cards ────────────────────────────────────────────────────── */
+    /* ── Articles block ───────────────────────────────────────────────────── */
+    .articles-block {
+      flex: 0 0 auto;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .articles-header {
+      background: var(--text);
+      padding: 0.35rem 0.85rem 0.4rem;
+    }
+    .articles-label {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 8.5px;
+      letter-spacing: 0.18em;
+      color: var(--sand);
+      opacity: 0.5;
+      line-height: 1;
+    }
     .articles {
       display: flex;
-      flex: 0 0 38%;
-      border-bottom: 1px solid var(--border);
-      min-height: 0;
+      border-top: none;
     }
     .article-card {
       flex: 1;
-      padding: 0.9rem 1rem;
+      padding: 0.85rem 1rem;
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
+      gap: 0.4rem;
       overflow: hidden;
     }
     .article-card:last-child { border-right: none; }
@@ -169,7 +233,7 @@
       flex: 1;
       overflow: hidden;
       display: -webkit-box;
-      -webkit-line-clamp: 5;
+      -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
     }
     .article-soon {
@@ -188,20 +252,25 @@
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
       html, body { overflow: auto; }
-      .main { flex-direction: column; }
-      .col-left { flex: none; border-right: none; border-bottom: 2px solid var(--text); }
-      .embed-wrap { height: 55vw; }
-      .articles { flex: none; height: auto; }
-      .article-card { padding: 0.65rem 0.85rem; }
+      .nav-sections { display: none; }
+      .main { flex-direction: column; padding: 0.5rem; gap: 0.5rem; }
+      .col-left { flex: none; }
+      .col-right { gap: 0.5rem; }
+      .embed-block { min-height: 55vw; }
       .embed-chip { opacity: 1; }
+      .article-card { padding: 0.65rem 0.85rem; }
     }
   </style>
 </head>
 <body>
 
   <!-- Nav -->
-  <div class="nav">
+  <div class="nav" style="position:relative;">
     <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-sections">
+      <a class="nav-section-link" href="/electoral/peru/2026eg/segunda-vuelta/">RESULTADOS ELECTORALES</a>
+      <a class="nav-section-link" href="#">ARTÍCULOS</a>
+    </div>
     <div class="nav-social">
       <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
@@ -229,6 +298,7 @@
   <!-- Hero -->
   <div class="hero">
     <div class="hero-title">DATAPOL</div>
+    <div class="hero-byline">MATHIEU ROJAS</div>
   </div>
 
   <!-- Main grid -->
@@ -236,15 +306,20 @@
 
     <!-- Left: Peru 2da Vuelta -->
     <div class="col-left">
-      <div class="section-label">RESULTADOS ELECTORALES</div>
-      <div class="embed-wrap">
-        <iframe src="/electoral/peru/2026eg/segunda-vuelta/"
-                title="Perú — 2da Vuelta 2026"
-                loading="eager"
-                sandbox="allow-scripts allow-same-origin"></iframe>
-        <a class="embed-link" href="/electoral/peru/2026eg/segunda-vuelta/">
-          <span class="embed-chip">🇵🇪 Perú — 2da Vuelta &nbsp;→</span>
-        </a>
+      <div class="embed-block">
+        <div class="embed-block-header">
+          <div class="embed-block-label">RESULTADOS ELECTORALES</div>
+          <div class="embed-block-title">🇵🇪 Perú · 2da Vuelta 2026</div>
+        </div>
+        <div class="embed-wrap">
+          <iframe src="/electoral/peru/2026eg/segunda-vuelta/"
+                  title="Perú — 2da Vuelta 2026"
+                  loading="eager"
+                  sandbox="allow-scripts allow-same-origin"></iframe>
+          <a class="embed-link" href="/electoral/peru/2026eg/segunda-vuelta/">
+            <span class="embed-chip">Ver página completa &nbsp;→</span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -252,32 +327,41 @@
     <div class="col-right">
 
       <!-- Article placeholders -->
-      <div class="section-label">ARTÍCULOS</div>
-      <div class="articles">
-        <div class="article-card">
-          <div class="article-tag">Análisis · Electoral</div>
-          <div class="article-title">¿Quién llega a la segunda vuelta?</div>
-          <div class="article-body">Un análisis de los escenarios más probables para la segunda vuelta presidencial peruana según los modelos estadísticos de Datapol.</div>
-          <span class="article-soon">Próximamente</span>
+      <div class="articles-block">
+        <div class="articles-header">
+          <div class="articles-label">ARTÍCULOS</div>
         </div>
-        <div class="article-card">
-          <div class="article-tag">Metodología</div>
-          <div class="article-title">Cómo funciona el pronóstico</div>
-          <div class="article-body">Explicación del modelo bayesiano jerárquico utilizado para proyectar resultados en tiempo real a partir de actas contabilizadas.</div>
-          <span class="article-soon">Próximamente</span>
+        <div class="articles">
+          <div class="article-card">
+            <div class="article-tag">Análisis · Electoral</div>
+            <div class="article-title">¿Quién llega a la segunda vuelta?</div>
+            <div class="article-body">Un análisis de los escenarios más probables para la segunda vuelta presidencial peruana según los modelos estadísticos de Datapol.</div>
+            <span class="article-soon">Próximamente</span>
+          </div>
+          <div class="article-card">
+            <div class="article-tag">Metodología</div>
+            <div class="article-title">Cómo funciona el pronóstico</div>
+            <div class="article-body">Explicación del modelo bayesiano jerárquico utilizado para proyectar resultados en tiempo real a partir de actas contabilizadas.</div>
+            <span class="article-soon">Próximamente</span>
+          </div>
         </div>
       </div>
 
       <!-- Colombia 1ra Vuelta -->
-      <div class="section-label" style="border-top:1px solid #2d2010;">RESULTADOS ELECTORALES</div>
-      <div class="embed-wrap">
-        <iframe src="/electoral/colombia/2026/primera-vuelta/"
-                title="Colombia — 1ra Vuelta 2026"
-                loading="eager"
-                sandbox="allow-scripts allow-same-origin"></iframe>
-        <a class="embed-link" href="/electoral/colombia/2026/primera-vuelta/">
-          <span class="embed-chip">🇨🇴 Colombia — 1ra Vuelta &nbsp;→</span>
-        </a>
+      <div class="embed-block">
+        <div class="embed-block-header">
+          <div class="embed-block-label">RESULTADOS ELECTORALES</div>
+          <div class="embed-block-title">🇨🇴 Colombia · 1ra Vuelta 2026</div>
+        </div>
+        <div class="embed-wrap">
+          <iframe src="/electoral/colombia/2026/primera-vuelta/"
+                  title="Colombia — 1ra Vuelta 2026"
+                  loading="eager"
+                  sandbox="allow-scripts allow-same-origin"></iframe>
+          <a class="embed-link" href="/electoral/colombia/2026/primera-vuelta/">
+            <span class="embed-chip">Ver página completa &nbsp;→</span>
+          </a>
+        </div>
       </div>
 
     </div>
