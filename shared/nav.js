@@ -191,7 +191,8 @@
         var row = el('div', 'nav-mob-item nav-mob-country' + (isSelected ? ' active' : ' clickable'));
         row.innerHTML = c.flag + ' ' + c.name;
         if (!isSelected) {
-          row.onclick = function() {
+          row.onclick = function(e) {
+            e.stopPropagation();
             mobState.country = c.code;
             mobState.process = CONFIG[c.code].processes[0].code;
             renderMobile();
@@ -208,7 +209,8 @@
         var row = el('div', 'nav-mob-item' + (isSelected ? ' active' : ' clickable'));
         row.textContent = p.fullLabel;
         if (!isSelected) {
-          row.onclick = function() {
+          row.onclick = function(e) {
+            e.stopPropagation();
             mobState.process = p.code;
             renderMobile();
           };
