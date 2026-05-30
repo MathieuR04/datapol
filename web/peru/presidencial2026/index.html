@@ -2124,8 +2124,8 @@
     });
 
     // Needle line + pivot dot
-    const nxEnd = cx + (r - 10) * Math.cos(needleA);
-    const nyEnd = cy - (r - 10) * Math.sin(needleA);
+    const nxEnd = cx + (r - 9) * Math.cos(needleA);
+    const nyEnd = cy - (r - 9) * Math.sin(needleA);
     const needleLine = svg.querySelector("#needle-line");
     needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
     needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
