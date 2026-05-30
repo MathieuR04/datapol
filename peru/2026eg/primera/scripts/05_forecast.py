@@ -395,21 +395,21 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     print(f"  Counted: {len(counted):,}  Remaining: {len(remaining):,}  "
           f"(aggregated to {len(agg_remaining):,} prior groups)")
 
-    # Pass 1: run simulations to learn who the real battle candidates are
-    _, winners_2nd_p1, in_top2 = run_simulations(
-        base_votes, agg_remaining, agg_priors, cand_cols, n_sims, rng,
+    # Pass 1: small run (500 sims) just to identify who the real battle candidates are.
+    # 500 sims is enough to reliably rank candidates by in_top2.
+    N_ID = min(500, n_sims)
+    _, _, in_top2_id = run_simulations(
+        base_votes, agg_remaining, agg_priors, cand_cols, N_ID, rng,
         battle_cols=None)
 
     # Battle pair = 2nd and 3rd by simulation probability (not by raw vote count).
-    # sim_ranked[0] is the near-certain leader; [1] and [2] are the ones fighting for
-    # the runoff slot.
-    sim_ranked = sorted(cand_cols, key=lambda c: in_top2.get(c, 0), reverse=True)
+    sim_ranked = sorted(cand_cols, key=lambda c: in_top2_id.get(c, 0), reverse=True)
     cand_2nd   = sim_ranked[1]   # most likely to reach 2da vuelta (after leader)
     cand_3rd   = sim_ranked[2]   # second most likely
 
-    # Pass 2: signed margin between the actual battle pair (positive = cand_2nd ahead)
-    rng2 = random.Random(seed)   # re-seed for reproducibility
-    margins, winners_2nd, _ = run_simulations(
+    # Pass 2: full n_sims with signed margin for the confirmed battle pair
+    rng2 = random.Random(seed)   # re-seed so pass-2 output is reproducible
+    margins, winners_2nd, in_top2 = run_simulations(
         base_votes, agg_remaining, agg_priors, cand_cols, n_sims, rng2,
         battle_cols=(cand_2nd, cand_3rd))
 
