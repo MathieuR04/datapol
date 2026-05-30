@@ -524,16 +524,38 @@
     .bbar-val.hi { color: var(--terra); }
     .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
 
+    /* ── Mobile status chip (compact header info) ────────────────────────── */
+    #mob-status {
+      display: none;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+    #mob-pct {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 17px;
+      line-height: 1;
+      color: var(--terra);
+    }
+    #mob-ts {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
-      body { overflow: auto; }
+      body { overflow-x: hidden; overflow-y: auto; }
       .body { flex-direction: column; }
       .map-wrap { height: 55vw; min-height: 280px; flex: none; }
       .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
-      .header-sub, .live-tag { display: none !important; }
-      .header-stats { display: none !important; }
-      .header-progress { max-width: none; flex: 1; display: flex !important; }
-      .header-title { font-size: 15px; }
+      /* Hide all desktop header elements, show compact chip instead */
+      .header-title, .header-sub, .live-tag, .header-stats, .header-progress, .live-block { display: none !important; }
+      #mob-status { display: flex !important; }
+      .header { gap: 0.5rem; padding: 0.4rem 0.75rem; overflow: hidden; }
+      /* Hide bottom bar on all map tabs */
+      .bottombar { display: none !important; }
       .map-controls { gap: 0.2rem; }
       .ctrl-group { gap: 0.1rem; }
       .ctrl-row { gap: 0.15rem; flex-wrap: wrap; }
@@ -688,6 +710,10 @@
 <div class="header">
   <div>
     <div class="header-title">🇵🇪 1ra Vuelta · Perú 2026</div>
+  </div>
+  <div id="mob-status">
+    <span id="mob-pct">—</span>
+    <span id="mob-ts"></span>
   </div>
   <div class="header-sub">Resultados por distrito<br>ONPE</div>
   <div class="header-progress">
@@ -952,6 +978,18 @@
       const hh  = p.hour.padStart(2, "0");
       const mm  = p.minute.padStart(2, "0");
       return `↻ ${p.day} ${mon} · ${hh}:${mm}`;
+    } catch(e) { return null; }
+  }
+  function fmtUpdateHour(isoStr) {
+    if (!isoStr) return null;
+    try {
+      const d = new Date(isoStr);
+      const parts = new Intl.DateTimeFormat("es-PE", {
+        timeZone: "America/Lima",
+        hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(d);
+      const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+      return `↻ ${p.hour.padStart(2,"0")}:${p.minute.padStart(2,"0")}`;
     } catch(e) { return null; }
   }
   const fmtP = n => (n == null || n === "" || isNaN(n)) ? "—" : parseFloat(n).toFixed(1) + "%";
@@ -1651,6 +1689,8 @@
     document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
     document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(acE)}/${fmtN(acT)}`;
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+    const mobPct = document.getElementById("mob-pct");
+    if (mobPct) mobPct.textContent = acT ? (acE / acT * 100).toFixed(1) + "%" : "—";
   }
 
   // ── Bottom bar ────────────────────────────────────────────────────────────
@@ -3055,6 +3095,9 @@
       elDist.textContent = distTs;
       elDist.style.display = "";
     }
+    const hourTs = fmtUpdateHour(agg?.generated_at);
+    const mobTs  = document.getElementById("mob-ts");
+    if (hourTs && mobTs) mobTs.textContent = hourTs;
 
     if (distGeo) distData = distGeo;
     if (provGeo) provData = provGeo;
