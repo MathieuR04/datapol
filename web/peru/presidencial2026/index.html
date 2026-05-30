@@ -888,7 +888,7 @@
       <div class="needle-gauge-row">
         <div id="needle-left-photo" class="needle-side-placeholder"></div>
         <div class="needle-wrap">
-          <svg id="needle-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet">
+          <svg id="needle-svg" viewBox="0 0 300 175" preserveAspectRatio="xMidYMid meet">
             <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
                   stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
             <circle cx="150" cy="148" r="5" fill="#1a1209"/>
@@ -2050,39 +2050,77 @@
       return mag * 10;
     })();
     const MAX_RANGE = niceMax;
-    const cx = 150, cy = 148, r = 90;
+    const cx = 150, cy = 155, r = 88;
     const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
+    // Positive d → left side (candLeft winning). angle=π at far left, angle=0 at far right.
     const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE);
     const needleA = toAngle(diffVotes);
     const ciArcL  = toAngle(ciHiVotes);
     const ciArcR  = toAngle(ciLowVotes);
     const startA = Math.PI, endA = 0, midA = Math.PI / 2;
     const svg = document.getElementById("needle-svg");
-    svg.querySelectorAll("path, line.needle-arc-path").forEach(e => e.remove());
-    function mkPath(d, stroke, width, opacity, linecap) {
-      const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      el.setAttribute("d", d); el.setAttribute("fill", "none");
-      el.setAttribute("stroke", stroke); el.setAttribute("stroke-width", width || "18");
-      el.setAttribute("stroke-linecap", linecap || "butt");
-      if (opacity) el.setAttribute("opacity", opacity);
+    svg.querySelectorAll("path, text.ns-lbl, line.ns-tick").forEach(e => e.remove());
+
+    function mkEl(tag, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
       return el;
     }
-    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.38","butt"));
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.38","butt"));
-    if (Math.abs(ciArcL - ciArcR) > 0.01) {
-      const aL = Math.max(ciArcL, ciArcR);
-      const aR = Math.min(ciArcL, ciArcR);
-      const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
-      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aL,aR), ciCol, "18", "0.68", "butt"));
+    function mkPath(d, stroke, width, opacity, linecap) {
+      return mkEl("path", { d, fill:"none", stroke, "stroke-width": width||"18",
+        "stroke-linecap": linecap||"butt", ...(opacity ? {opacity} : {}) });
     }
-    const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    tick.setAttribute("x1", cx); tick.setAttribute("y1", cy-r-11);
-    tick.setAttribute("x2", cx); tick.setAttribute("y2", cy-r+11);
-    tick.setAttribute("stroke", "#bbb"); tick.setAttribute("stroke-width", "1.5");
-    svg.appendChild(tick);
-    const nxEnd = cx + (r-8) * Math.cos(needleA);
-    const nyEnd = cy - (r-8) * Math.sin(needleA);
+
+    // Background arc
+    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
+    // Left half (candLeft color) and right half (candRight color)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.4","butt"));
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA),   candRight?.color||"#888","18","0.4","butt"));
+
+    // CI arc (95% interval highlighted on gauge)
+    if (Math.abs(ciArcL - ciArcR) > 0.01) {
+      const aHi = Math.max(ciArcL, ciArcR);
+      const aLo = Math.min(ciArcL, ciArcR);
+      const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#888");
+      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aHi,aLo), ciCol, "18", "0.75", "butt"));
+    }
+
+    // Scale ticks + labels at 0, ±half, ±full
+    const scaleVals = [-MAX_RANGE, -MAX_RANGE * 0.5, 0, MAX_RANGE * 0.5, MAX_RANGE];
+    const LBL_R = r + 22;
+    scaleVals.forEach(val => {
+      const a   = toAngle(val);
+      const tx  = cx + LBL_R * Math.cos(a);
+      const ty  = cy - LBL_R * Math.sin(a);
+      // Tick mark on arc
+      const tk = mkEl("line", {
+        x1: (cx + (r-7)*Math.cos(a)).toFixed(1), y1: (cy - (r-7)*Math.sin(a)).toFixed(1),
+        x2: (cx + (r+7)*Math.cos(a)).toFixed(1), y2: (cy - (r+7)*Math.sin(a)).toFixed(1),
+        stroke: "#777", "stroke-width": val === 0 ? "2" : "1", class: "ns-tick"
+      });
+      svg.appendChild(tk);
+      // Label
+      const anchor = val < -MAX_RANGE * 0.2 ? "start"
+                   : val >  MAX_RANGE * 0.2 ? "end" : "middle";
+      const lbl = mkEl("text", {
+        x: tx.toFixed(1), y: (ty + 3.5).toFixed(1),
+        "text-anchor": anchor, "font-size": "9", fill: "#999",
+        "font-family": "sans-serif", class: "ns-lbl"
+      });
+      lbl.textContent = val === 0 ? "0" : fmtVoteDiff(val);
+      svg.appendChild(lbl);
+    });
+
+    // Center tick at zero (vertical mark on top)
+    const topTick = mkEl("line", {
+      x1: cx, y1: cy - r - 10, x2: cx, y2: cy - r + 10,
+      stroke: "#ccc", "stroke-width": "1.5", class: "ns-tick"
+    });
+    svg.appendChild(topTick);
+
+    // Needle
+    const nxEnd = cx + (r - 10) * Math.cos(needleA);
+    const nyEnd = cy - (r - 10) * Math.sin(needleA);
     const needleLine = svg.querySelector("#needle-line");
     needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
     needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
@@ -2105,36 +2143,44 @@
     const svg  = document.getElementById("margin-dist-svg");
     const axis = document.getElementById("margin-dist-axis");
     const foot = document.getElementById("margin-dist-foot");
-    const W = 480, H = 96, PAD = 2;
+    const W = 480, H = 96, PAD = 4;
     const maxCount = Math.max(...counts, 1);
-    const n = counts.length;
-    const barW = (W - PAD * 2) / n;
-    // Support both new (cand_2nd/color_2nd) and legacy (left_code/left_color) structures
-    const color2nd   = battle.color_2nd   || battle.left_color   || "#1E293B";
-    const color3rd   = battle.color_3rd   || battle.right_color  || "#1D4ED8";
-    const nombre2nd  = battle.nombre_2nd  || battle.left_nombre  || "—";
-    const nombre3rd  = battle.nombre_3rd  || battle.right_nombre || "—";
-    const zeroEdge = edges.findIndex(e => e >= 0);
+    const color2nd  = battle.color_2nd  || battle.left_color  || "#1E293B";
+    const color3rd  = battle.color_3rd  || battle.right_color || "#888";
+    const nombre2nd = battle.nombre_2nd || battle.left_nombre || "—";
+    const nombre3rd = battle.nombre_3rd || battle.right_nombre|| "—";
+
+    // Symmetric display range centered at 0, covering the full data extent
+    const dataMin = edges[0];
+    const dataMax = edges[edges.length - 1];
+    const absMax  = Math.max(Math.abs(dataMin), Math.abs(dataMax));
+    const dispMin = -absMax, dispMax = absMax;
+    const dispRange = dispMax - dispMin;
+    const toX = v => PAD + (v - dispMin) / dispRange * (W - 2 * PAD);
+    const zeroX = toX(0).toFixed(1);
+
     let paths = "";
-    counts.forEach((c, i) => {
-      const x    = PAD + i * barW;
-      const barH = Math.max(1, (c / maxCount) * H);
+    const n = counts.length;
+    for (let i = 0; i < n; i++) {
+      const e0 = edges[i];
+      const e1 = edges[i + 1] ?? (e0 + (edges[1] - edges[0]));
+      const x    = toX(e0);
+      const bw   = Math.max(0.5, toX(e1) - x - 0.6);
+      const barH = Math.max(1, (counts[i] / maxCount) * H);
       const y    = H - barH;
-      const midEdge = (edges[i] + (edges[i+1] ?? edges[i])) / 2;
-      const col = midEdge > 0 ? color2nd : midEdge < 0 ? color3rd : "#888";
-      const op  = midEdge === 0 ? "0.35" : "0.65";
-      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.8).toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="${op}"/>`;
-    });
-    const zeroX = zeroEdge >= 0 ? (PAD + zeroEdge * barW).toFixed(1) : (W / 2).toFixed(1);
-    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>`;
+      const mid  = (e0 + e1) / 2;
+      const col  = mid > 0 ? color2nd : mid < 0 ? color3rd : "#888";
+      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="0.72"/>`;
+    }
+    // Zero line — always in the center of the symmetric display
+    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>`;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = paths;
-    const m = edges.length - 1;
-    const keyIdxs = [0, Math.round(m/4), Math.round(m/2), Math.round(3*m/4), m];
-    axis.innerHTML = keyIdxs.map(i => {
-      const e = edges[i];
-      return `<span>${fmtVoteDiff(e)}</span>`;
-    }).join("");
+
+    // Axis labels: symmetric 5 points
+    const axisVals = [dispMin, dispMin / 2, 0, dispMax / 2, dispMax];
+    axis.innerHTML = axisVals.map(v => `<span>${v === 0 ? "0" : fmtVoteDiff(v)}</span>`).join("");
+
     foot.innerHTML = `
       <span style="color:${color3rd}">← ${nombre3rd.split(" ")[0]} adelante</span>
       <span style="color:${color2nd}">${nombre2nd.split(" ")[0]} adelante →</span>`;
@@ -2203,18 +2249,13 @@
       // so positive margin always means the left (favorite) candidate is leading.
       let candLeft, candRight, probLeft, probRight, dispMarginV, dispCiLoV, dispCiHiV;
       if (prob3rd > prob2nd) {
+        // cand3rd is the favorite — put on LEFT. Positive margin = left (favorite) winning.
         candLeft = cand3rd; candRight = cand2nd;
         probLeft = prob3rd; probRight = prob2nd;
-        dispMarginV = -marginV;
-        dispCiLoV   = -ciHiV;
-        dispCiHiV   = -ciLoV;
-        // Flip histogram: negate all edges and reverse both arrays so left = underdog wins
-        const dist = battle.margin_distribution;
-        if (dist?.edges) {
-          const negEdges  = dist.edges.map(e => -e).reverse();
-          const revCounts = [...dist.counts].reverse();
-          dispBattle.margin_distribution = { edges: negEdges, counts: revCounts };
-        }
+        dispMarginV = marginV;   // keep sign: positive ≈ left candidate ahead
+        dispCiLoV   = ciLoV;
+        dispCiHiV   = ciHiV;
+        // Swap colors/names so positive bars render in the favorite's color
         dispBattle.color_2nd  = battle.color_3rd;
         dispBattle.color_3rd  = battle.color_2nd;
         dispBattle.nombre_2nd = battle.nombre_3rd;
