@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Título del artículo — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    /* ── Article container ────────────────────────────────────────────────── */
+    .article {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+
+    /* ── Back link ────────────────────────────────────────────────────────── */
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+    .article-back svg { flex-shrink: 0; }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .article-tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 0.6rem;
+    }
+    .article-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 52px;
+      letter-spacing: 0.04em;
+      line-height: 1.0;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .article-byline {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 11px;
+      color: var(--muted);
+      padding-bottom: 1.4rem;
+      border-bottom: 2px solid var(--text);
+      margin-bottom: 2rem;
+    }
+    .article-byline-author {
+      font-weight: 600;
+      color: var(--text);
+    }
+    .article-byline-sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .article-body {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body p:last-child { margin-bottom: 0; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 24px;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      margin: 2em 0 0.6em;
+    }
+    .article-body h3 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 1.8em 0 0.5em;
+    }
+    .article-body blockquote {
+      border-left: 3px solid var(--terra);
+      padding: 0.2em 0 0.2em 1.2em;
+      margin: 1.6em 0;
+      font-style: italic;
+      color: var(--muted);
+    }
+    .article-body a {
+      color: var(--terra);
+      text-decoration: underline;
+      text-decoration-color: rgba(196,96,58,0.35);
+      transition: text-decoration-color .12s;
+    }
+    .article-body a:hover { text-decoration-color: var(--terra); }
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+
+    /* ── Footer / nav ─────────────────────────────────────────────────────── */
+    .article-footer {
+      margin-top: 3.5rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .article-footer a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    .article-footer a:hover { color: var(--text); }
+
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 38px; }
+      .article-body { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <!-- Yape modal -->
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',Arial Black,Arial,sans-serif;font-weight:900;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Article -->
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M7.5 1L2.5 6l5 5"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · Perú 2026</div>
+    <h1 class="article-title">Título del artículo de ejemplo</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>30 de mayo, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>8 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+      <p>Este es un artículo de ejemplo. Reemplaza este contenido con el texto real del artículo. Puedes usar párrafos, subtítulos, citas y enlaces.</p>
+
+      <h2>Un subtítulo de sección</h2>
+
+      <p>Aquí va el cuerpo del artículo. El texto usa <strong>Inter</strong> a 15px con line-height 1.8 para una lectura cómoda. Puedes añadir <a href="#">enlaces</a> o <em>cursivas</em> libremente.</p>
+
+      <blockquote>Una cita relevante o dato importante puede ir aquí, con el borde rojo terra a la izquierda.</blockquote>
+
+      <p>Continúa el texto después de la cita. Añade tantos párrafos como necesites. La columna tiene un máximo de 700px para mantener la legibilidad.</p>
+
+      <h3>Subencabezado secundario</h3>
+
+      <p>Contenido adicional bajo el subencabezado secundario. Este nivel usa Inter en mayúsculas pequeñas para jerarquía visual sin competir con los títulos principales en Bebas Neue.</p>
+    </div>
+
+    <footer class="article-footer">
+      <a href="/articulos/">← Todos los artículos</a>
+      <span>© 2026 Datapol · Mathieu Rojas</span>
+    </footer>
+
+  </article>
+
+</body>
+</html>
