@@ -699,6 +699,21 @@
     white-space: nowrap;
     display: none;
   }
+    /* ── Mobile nav ─── */
+    .nav-hamburger { display:none; align-items:center; color:#d9c9b4; background:none; border:none; cursor:pointer; padding:0; margin-right:0.5rem; flex-shrink:0; }
+    .nav-mobile-menu { display:none; position:fixed; top:32px; left:0; right:0; z-index:1998; background:#1a1209; border-bottom:2px solid #2a2010; flex-direction:column; box-shadow:0 6px 20px rgba(0,0,0,0.5); }
+    .nav-mobile-menu.open { display:flex; }
+    .nav-mob-item { font-size:12px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:#666; padding:0.75rem 1.25rem; cursor:default; border-bottom:1px solid #1e1510; transition:color .15s; }
+    .nav-mob-item:last-child { border-bottom:none; }
+    .nav-mob-item.active { color:#c4603a; cursor:default; }
+    .nav-mob-item.clickable { cursor:pointer; }
+    .nav-mob-item.clickable:hover { color:#999; }
+    @media (max-width:640px) {
+      html { overflow-x:hidden; }
+      .nav-item, .nav > .nav-sep { display:none !important; }
+      .nav-hamburger { display:flex; }
+      .nav-social-link:not(.nav-yape-btn) { display:none; }
+    }
     /* ── Social nav ─── */
     .nav-social { display:flex; align-items:center; gap:0.5rem; margin-left:auto; }
     .nav-social-link { color:#666; background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center; text-decoration:none; transition:color .15s; }
@@ -714,6 +729,9 @@
 <!-- Nav -->
 <div class="nav">
   <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
+  <button class="nav-hamburger" id="nav-hbg" onclick="var m=document.getElementById('nav-mob');m.classList.toggle('open')" aria-label="Menú">
+    <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+  </button>
   <div class="nav-sep"></div>
   <span class="nav-item active">2da Vuelta</span>
   <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
@@ -731,6 +749,30 @@
     <span class="nav-author">MATHIEU ROJAS</span>
   </div>
 </div>
+<div id="nav-mob" class="nav-mobile-menu"></div>
+<script>
+(function(){
+  var menu=document.getElementById('nav-mob');
+  if(!menu)return;
+  document.querySelectorAll('.nav-item').forEach(function(el){
+    var item=document.createElement('div');
+    var isActive=el.classList.contains('active');
+    var isDisabled=el.getAttribute('style')&&el.getAttribute('style').indexOf('default')>-1;
+    item.className='nav-mob-item'+(isActive?' active':'')+((!isActive&&!isDisabled)?' clickable':'');
+    var pill=el.querySelector('.nav-pill');
+    item.textContent=pill ? el.childNodes[0].textContent.trim()+' — PRÓX.' : el.textContent.trim();
+    if(!isActive&&!isDisabled&&el.tagName==='A'){
+      item.onclick=function(){document.getElementById('nav-mob').classList.remove('open');location.href=el.href;};
+    }
+    if(isDisabled)item.style.opacity='0.4';
+    menu.appendChild(item);
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('#nav-hbg')&&!e.target.closest('#nav-mob'))
+      document.getElementById('nav-mob').classList.remove('open');
+  });
+})();
+</script>
 
 <!-- Yape modal -->
 <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
