@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/nav.css">
 
-  <!-- OG / Twitter -->
   <meta property="og:type"        content="website">
   <meta property="og:site_name"   content="Datapol">
   <meta property="og:title"       content="Datapol">
@@ -26,36 +25,80 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:    #f5f0e8;
-      --text:  #1a1209;
-      --terra: #c4603a;
-      --sand:  #d9c9b4;
-      --border:#cfc0ab;
+      --bg:      #f5f0e8;
+      --surface: #ede8df;
+      --border:  #cfc0ab;
+      --text:    #1a1209;
+      --muted:   #7a6858;
+      --dim:     #b0a090;
+      --terra:   #c4603a;
+      --sand:    #d9c9b4;
     }
-    html, body {
-      height: 100%; overflow: hidden;
-      background: var(--bg);
-      font-family: 'Inter', -apple-system, sans-serif;
-    }
-    body { display: flex; flex-direction: column; }
+    html, body { height: 100%; overflow: hidden; background: var(--bg); }
+    body { display: flex; flex-direction: column; font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: var(--text); }
 
-    /* ── Cards ── */
-    .cards {
+    /* ── Hero ─────────────────────────────────────────────────────────────── */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 1rem 0.6rem;
+      border-bottom: 2px solid var(--text);
+      flex-shrink: 0;
+    }
+    .hero-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 52px;
+      letter-spacing: 0.07em;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    /* ── Section labels (thin dark strip) ────────────────────────────────── */
+    .section-label {
+      background: var(--text);
+      color: var(--sand);
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      padding: 0.3rem 0.9rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Main two-column grid ─────────────────────────────────────────────── */
+    .main {
       display: flex;
       flex: 1;
       min-height: 0;
     }
 
-    .card {
+    /* Left — featured election (Peru) */
+    .col-left {
+      flex: 0 0 56%;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid var(--text);
+      min-height: 0;
+    }
+
+    /* Right — articles + second election */
+    .col-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    /* ── Iframe embed ─────────────────────────────────────────────────────── */
+    .embed-wrap {
       flex: 1;
       position: relative;
       overflow: hidden;
-      border-right: 1px solid var(--border);
+      min-height: 0;
     }
-    .card:last-child { border-right: none; }
-
-    /* Iframe fills 2× the container, then scaled 50% back down */
-    .card iframe {
+    .embed-wrap iframe {
       position: absolute;
       top: 0; left: 0;
       width: 200%;
@@ -65,9 +108,7 @@
       transform-origin: top left;
       pointer-events: none;
     }
-
-    /* Transparent overlay — captures clicks, shows label on hover */
-    .card-link {
+    .embed-link {
       position: absolute;
       inset: 0;
       z-index: 10;
@@ -75,43 +116,90 @@
       text-decoration: none;
       display: flex;
       align-items: flex-end;
-      justify-content: flex-end;
-      padding: 1rem;
+      padding: 0.75rem;
     }
-    .card-label {
+    .embed-chip {
       opacity: 0;
-      background: rgba(26,18,9,0.75);
+      background: rgba(26,18,9,0.78);
       color: var(--sand);
       font-family: 'Bebas Neue', sans-serif;
       font-size: 13px;
       letter-spacing: 0.1em;
-      padding: 0.35rem 0.8rem;
-      border-radius: 3px;
+      padding: 0.3rem 0.75rem;
+      border-radius: 2px;
       transition: opacity .2s;
-      pointer-events: none;
     }
-    .card:hover .card-label { opacity: 1; }
+    .embed-wrap:hover .embed-chip { opacity: 1; }
 
-    /* Divider line between cards */
-    .card-divider {
-      width: 1px;
-      background: var(--border);
-      flex-shrink: 0;
+    /* ── Article cards ────────────────────────────────────────────────────── */
+    .articles {
+      display: flex;
+      flex: 0 0 38%;
+      border-bottom: 1px solid var(--border);
+      min-height: 0;
+    }
+    .article-card {
+      flex: 1;
+      padding: 0.9rem 1rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      overflow: hidden;
+    }
+    .article-card:last-child { border-right: none; }
+    .article-tag {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--terra);
+    }
+    .article-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+      color: var(--text);
+    }
+    .article-body {
+      font-size: 10px;
+      line-height: 1.55;
+      color: var(--muted);
+      flex: 1;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+    }
+    .article-soon {
+      display: inline-block;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--dim);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.55rem;
+      border-radius: 2px;
+      width: fit-content;
     }
 
-    /* Mobile — stack vertically */
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
       html, body { overflow: auto; }
-      .cards { flex-direction: column; }
-      .card { min-height: 56vh; border-right: none; border-bottom: 1px solid var(--border); }
-      .card:last-child { border-bottom: none; }
-      .card-label { opacity: 1; }
+      .main { flex-direction: column; }
+      .col-left { flex: none; border-right: none; border-bottom: 2px solid var(--text); }
+      .embed-wrap { height: 55vw; }
+      .articles { flex: none; height: auto; }
+      .article-card { padding: 0.65rem 0.85rem; }
+      .embed-chip { opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Nav — simplified, no election tabs on landing page -->
+  <!-- Nav -->
   <div class="nav">
     <a class="nav-brand" href="/">DATAPOL</a>
     <div class="nav-social">
@@ -138,27 +226,60 @@
     </div>
   </div>
 
-  <!-- Feature cards -->
-  <div class="cards">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-title">DATAPOL</div>
+  </div>
 
-    <div class="card">
-      <iframe src="/electoral/peru/2026eg/segunda-vuelta/"
-              title="Perú — 2da Vuelta 2026"
-              loading="lazy"
-              sandbox="allow-scripts allow-same-origin"></iframe>
-      <a class="card-link" href="/electoral/peru/2026eg/segunda-vuelta/">
-        <span class="card-label">🇵🇪 Perú — 2da Vuelta &nbsp;→</span>
-      </a>
+  <!-- Main grid -->
+  <div class="main">
+
+    <!-- Left: Peru 2da Vuelta -->
+    <div class="col-left">
+      <div class="section-label">RESULTADOS ELECTORALES</div>
+      <div class="embed-wrap">
+        <iframe src="/electoral/peru/2026eg/segunda-vuelta/"
+                title="Perú — 2da Vuelta 2026"
+                loading="eager"
+                sandbox="allow-scripts allow-same-origin"></iframe>
+        <a class="embed-link" href="/electoral/peru/2026eg/segunda-vuelta/">
+          <span class="embed-chip">🇵🇪 Perú — 2da Vuelta &nbsp;→</span>
+        </a>
+      </div>
     </div>
 
-    <div class="card">
-      <iframe src="/electoral/colombia/2026/primera-vuelta/"
-              title="Colombia — 1ra Vuelta 2026"
-              loading="lazy"
-              sandbox="allow-scripts allow-same-origin"></iframe>
-      <a class="card-link" href="/electoral/colombia/2026/primera-vuelta/">
-        <span class="card-label">🇨🇴 Colombia — 1ra Vuelta &nbsp;→</span>
-      </a>
+    <!-- Right: Articles + Colombia -->
+    <div class="col-right">
+
+      <!-- Article placeholders -->
+      <div class="section-label">ARTÍCULOS</div>
+      <div class="articles">
+        <div class="article-card">
+          <div class="article-tag">Análisis · Electoral</div>
+          <div class="article-title">¿Quién llega a la segunda vuelta?</div>
+          <div class="article-body">Un análisis de los escenarios más probables para la segunda vuelta presidencial peruana según los modelos estadísticos de Datapol.</div>
+          <span class="article-soon">Próximamente</span>
+        </div>
+        <div class="article-card">
+          <div class="article-tag">Metodología</div>
+          <div class="article-title">Cómo funciona el pronóstico</div>
+          <div class="article-body">Explicación del modelo bayesiano jerárquico utilizado para proyectar resultados en tiempo real a partir de actas contabilizadas.</div>
+          <span class="article-soon">Próximamente</span>
+        </div>
+      </div>
+
+      <!-- Colombia 1ra Vuelta -->
+      <div class="section-label" style="border-top:1px solid #2d2010;">RESULTADOS ELECTORALES</div>
+      <div class="embed-wrap">
+        <iframe src="/electoral/colombia/2026/primera-vuelta/"
+                title="Colombia — 1ra Vuelta 2026"
+                loading="eager"
+                sandbox="allow-scripts allow-same-origin"></iframe>
+        <a class="embed-link" href="/electoral/colombia/2026/primera-vuelta/">
+          <span class="embed-chip">🇨🇴 Colombia — 1ra Vuelta &nbsp;→</span>
+        </a>
+      </div>
+
     </div>
 
   </div>
