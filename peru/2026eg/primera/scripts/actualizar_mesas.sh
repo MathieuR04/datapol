@@ -20,7 +20,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRIMERA_DIR="$(dirname "$SCRIPT_DIR")"
 DATAPOL_DIR="$(dirname "$(dirname "$(dirname "$PRIMERA_DIR")")")"
 DATA_DIR="$PRIMERA_DIR/data"
-WEB_DIR="$DATAPOL_DIR/web/peru/presidencial2026"
 
 # ── Colores para la terminal ───────────────────────────────────────────────────
 BOLD="\033[1m"
@@ -53,10 +52,10 @@ cd "$DATAPOL_DIR"
 git add \
   "peru/2026eg/primera/data/results/peru_2026eg_mesa_primera.csv" \
   "peru/2026eg/primera/data/forecast.json" \
-  "web/peru/presidencial2026/jee/jee_dept.geojson" \
-  "web/peru/presidencial2026/jee/jee_provincia.geojson" \
-  "web/peru/presidencial2026/jee/jee_distrito.geojson" \
-  "web/peru/presidencial2026/jee/jee_national.json"
+  "peru/2026eg/primera/data/jee/jee_dept.geojson" \
+  "peru/2026eg/primera/data/jee/jee_provincia.geojson" \
+  "peru/2026eg/primera/data/jee/jee_distrito.geojson" \
+  "peru/2026eg/primera/data/jee/jee_national.json"
 
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 

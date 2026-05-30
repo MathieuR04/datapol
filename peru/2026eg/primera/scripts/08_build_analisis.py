@@ -8,7 +8,7 @@ For each district we output:
   keiko_2021_share, castillo_2021_share,
   c1..c5: vote share of each top-5 candidate (pct of valid votes)
 
-Output: web/peru/presidencial2026/analisis/analisis_data.json
+Output: peru/2026eg/primera/data/analisis/analisis_data.json
 """
 
 import json, re
@@ -22,8 +22,7 @@ ANALISIS_CSV = DATA / "analisis" / "distrito_analisis.csv"
 GJ_PATH = DATA / "peru_2026eg_distrito_primera.geojson"
 AGG_JSON = DATA / "aggregate_stats.json"
 
-WEB_ROOT = Path(__file__).resolve().parents[4] / "web" / "peru" / "presidencial2026"
-OUT_DIR  = WEB_ROOT / "analisis"
+OUT_DIR  = DATA / "analisis"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 OUT_FILE = OUT_DIR / "analisis_data.json"
 

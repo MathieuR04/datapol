@@ -20,7 +20,7 @@ Per geography we compute:
     err_incompleta, err_reprocesada, err_extraviada, err_siniestrada,
     err_sin_datos, err_nulidad
 
-Output: web/peru/presidencial2026/jee/
+Output: peru/2026eg/primera/data/jee/
 """
 
 import json
@@ -38,8 +38,7 @@ GEOJSON  = {
     "provincia": DATA / "peru_2026eg_provincia_primera.geojson",
     "distrito":  DATA / "peru_2026eg_distrito_primera.geojson",
 }
-WEB_ROOT = Path(__file__).resolve().parents[4] / "web" / "peru" / "presidencial2026"
-OUT_DIR  = WEB_ROOT / "jee"
+OUT_DIR  = DATA / "jee"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Error type definitions ─────────────────────────────────────────────────────
