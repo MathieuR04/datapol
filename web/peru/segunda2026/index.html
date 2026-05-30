@@ -1112,17 +1112,13 @@
   // Keys A/B/C/D match the Python build script order exactly:
   // A=Keiko/Keiko  B=Sánchez/Castillo  C=Aliaga/Aliaga  D=Nieto/DeSoto
   const COMPARISONS = {
-    A: { key: "A", line1: "KEIKO FUJIMORI 2026",        line2: "VS. KEIKO FUJIMORI 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/keiko.png",       color: "#EA580C" },
-    B: { key: "B", line1: "ROBERTO SÁNCHEZ 2026",       line2: "VS. PEDRO CASTILLO 2021",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/roberto.png",     color: "#166534" },
-    C: { key: "C", line1: "RAFAEL LÓPEZ ALIAGA 2026",   line2: "VS. LÓPEZ ALIAGA 2021",         line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/lopez_aliaga.png", color: "#1E3A8A" },
-    D: { key: "D", line1: "JORGE NIETO 2026",           line2: "VS. HERNANDO DE SOTO 2021",     line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/nieto.png",        color: "#FBBF24" },
+    A: { key: "A", line1: "KEIKO FUJIMORI 2026",        line2: "VS. KEIKO FUJIMORI 2021",       line3: "2DA VUELTA PRESIDENCIAL", imagen: "images/keiko.png",       color: "#EA580C" },
+    B: { key: "B", line1: "ROBERTO SÁNCHEZ 2026",       line2: "VS. PEDRO CASTILLO 2021",       line3: "2DA VUELTA PRESIDENCIAL", imagen: "images/roberto.png",     color: "#166534" },
   };
   // Display name pairs for tooltip
   const COMP_NAMES = {
     A: { c26: "Keiko Fujimori",      c21: "Keiko Fujimori" },
     B: { c26: "Roberto Sánchez",     c21: "Pedro Castillo" },
-    C: { c26: "López Aliaga",        c21: "López Aliaga" },
-    D: { c26: "Jorge Nieto",         c21: "Hernando de Soto" },
   };
 
   const BUBBLE_VIEWS = new Set(["actas", "votos", "candidate_bubble"]);
@@ -2457,12 +2453,12 @@
       const p = f.properties || {};
       vv26 += p.votos_validos        || 0;
       vv21 += p.votos_validos_2021   || 0;
-      ["A","B","C","D"].forEach(k => {
+      ["A","B"].forEach(k => {
         v26[k] += p[`votes26_${k}`] || 0;
         v21[k] += p[`votes21_${k}`] || 0;
       });
     });
-    ["A","B","C","D"].forEach(k => {
+    ["A","B"].forEach(k => {
       const el = document.getElementById(`comp-nat-${k}`);
       if (!el) return;
       const pct26 = vv26 > 0 ? v26[k] / vv26 * 100 : 0;
