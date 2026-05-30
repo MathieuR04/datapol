@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/svg+xml" href="/datapol/web/shared/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Colombia — 1ª Vuelta 2026 | Datapol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,12 +15,12 @@
   <meta property="og:title"       content="Colombia — 1ª Vuelta 2026">
   <meta property="og:description" content="Resultados en tiempo real, pronóstico estadístico y mapas interactivos.">
   <meta property="og:url"         content="https://datapol.lat/electoral/colombia/2026/primera-vuelta/">
-  <meta property="og:image"       content="https://datapol.lat/web/shared/images/og_colombia_primera.png">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_colombia_primera.png">
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:site"        content="@KhamaRamaq">
   <meta name="twitter:title"       content="Colombia — 1ª Vuelta 2026">
   <meta name="twitter:description" content="Resultados en tiempo real, pronóstico estadístico y mapas interactivos.">
-  <meta name="twitter:image"       content="https://datapol.lat/web/shared/images/og_colombia_primera.png">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_colombia_primera.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -585,12 +585,12 @@
 
 <!-- Nav -->
 <div class="nav">
-  <a class="nav-brand" href="/datapol/web/">DATAPOL</a>
+  <a class="nav-brand" href="/">DATAPOL</a>
   <button class="nav-hamburger" id="nav-hbg" onclick="var m=document.getElementById('nav-mob');m.classList.toggle('open')" aria-label="Menú">
     <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
   </button>
   <div class="nav-sep"></div>
-  <a class="nav-item" href="/datapol/web/colombia/congreso2026/">Senado</a>
+  <a class="nav-item" href="/electoral/colombia/2026/senado/">Senado</a>
   <span class="nav-item active">1ra Vuelta</span>
   <span class="nav-item" style="cursor:default">2da Vuelta <span class="nav-pill">próx.</span></span>
   <div class="nav-social">
@@ -636,7 +636,7 @@
 <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
     <p style="color:#1a1209;font-family:'Bebas Neue',Arial Black,Arial,sans-serif;font-weight:900;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
-    <img src="/datapol/web/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+    <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
     <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
   </div>
 </div>
@@ -944,9 +944,9 @@
   const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
 
   // ── Candidate photo helper ────────────────────────────────────────────────
-  // Images live at ../../../colombia/2026/primera/data/images/<image_id>.jpg
+  // Images live at ../../../../../colombia/2026/primera/data/images/<image_id>.jpg
   // relative to this HTML file.
-  const IMAGES_BASE = "../../../colombia/2026/primera/data/images/";
+  const IMAGES_BASE = "../../../../colombia/2026/primera/data/images/";
 
   function candPhotoHtml(imageId, w, h, cssClass) {
     if (!imageId) return "";
@@ -1923,7 +1923,7 @@
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
-  const BASE = "../../../colombia/2026/primera/data/";
+  const BASE = "../../../../colombia/2026/primera/data/";
   Promise.all([
     fetch(BASE + "candidates.json").then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); }),
     fetch(BASE + "aggregate_stats.json").then(r => r.json()).catch(() => null),
