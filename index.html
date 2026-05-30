@@ -37,34 +37,13 @@
     html, body { height: 100%; overflow: hidden; background: var(--bg); }
     body { display: flex; flex-direction: column; font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: var(--text); }
 
-    /* ── Landing nav (no election tabs — just brand, section links, social) ─ */
-    .nav-sections {
-      display: flex;
-      align-items: center;
-      gap: 1.6rem;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-    .nav-section-link {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 11.5px;
-      letter-spacing: 0.13em;
-      color: var(--sand);
-      text-decoration: none;
-      opacity: 0.65;
-      transition: opacity .15s;
-      white-space: nowrap;
-    }
-    .nav-section-link:hover { opacity: 1; }
-
     /* ── Hero ─────────────────────────────────────────────────────────────── */
     .hero {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 0.6rem 1rem 0.7rem;
+      padding: 0.75rem 1rem 0.85rem;
       border-bottom: 2px solid var(--text);
       flex-shrink: 0;
     }
@@ -72,15 +51,37 @@
       font-family: 'Bebas Neue', Impact, sans-serif;
       font-size: 68px;
       letter-spacing: 0.08em;
-      line-height: 0.9;
+      line-height: 1;
       color: var(--text);
     }
     .hero-byline {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 12px;
+      font-size: 15px;
       letter-spacing: 0.22em;
       color: var(--muted);
-      margin-top: 0.35rem;
+      margin-top: 0.2rem;
+    }
+    .hero-nav {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.7rem;
+    }
+    .hero-nav-btn {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.13em;
+      color: var(--text);
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      padding: 0.28rem 0.9rem 0.22rem;
+      border-radius: 2px;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .hero-nav-btn:hover {
+      background: var(--text);
+      color: var(--sand);
+      border-color: var(--text);
     }
 
     /* ── Main two-column grid ─────────────────────────────────────────────── */
@@ -121,7 +122,7 @@
     }
     .embed-block-header {
       background: var(--text);
-      padding: 0.35rem 0.85rem 0.4rem;
+      padding: 0.4rem 0.85rem 0.5rem;
       flex-shrink: 0;
     }
     .embed-block-label {
@@ -138,7 +139,7 @@
       letter-spacing: 0.06em;
       color: var(--sand);
       line-height: 1.15;
-      margin-top: 0.05rem;
+      margin-top: 0.3rem;
     }
     .embed-wrap {
       flex: 1;
@@ -181,10 +182,17 @@
 
     /* ── Articles block ───────────────────────────────────────────────────── */
     .articles-block {
-      flex: 0 0 auto;
+      flex: 0 0 44%;
+      min-height: 0;
       border: 1.5px solid var(--border);
       border-radius: 3px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .articles {
+      flex: 1;
+      min-height: 0;
     }
     .articles-header {
       background: var(--text);
@@ -198,9 +206,9 @@
       opacity: 0.5;
       line-height: 1;
     }
-    .articles {
+    .articles-inner {
       display: flex;
-      border-top: none;
+      height: 100%;
     }
     .article-card {
       flex: 1;
@@ -252,10 +260,11 @@
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
       html, body { overflow: auto; }
-      .nav-sections { display: none; }
+      .hero-nav { flex-wrap: wrap; justify-content: center; }
       .main { flex-direction: column; padding: 0.5rem; gap: 0.5rem; }
       .col-left { flex: none; }
       .col-right { gap: 0.5rem; }
+      .articles-block { flex: none; }
       .embed-block { min-height: 55vw; }
       .embed-chip { opacity: 1; }
       .article-card { padding: 0.65rem 0.85rem; }
@@ -265,12 +274,8 @@
 <body>
 
   <!-- Nav -->
-  <div class="nav" style="position:relative;">
+  <div class="nav">
     <a class="nav-brand" href="/">DATAPOL</a>
-    <div class="nav-sections">
-      <a class="nav-section-link" href="/electoral/peru/2026eg/segunda-vuelta/">RESULTADOS ELECTORALES</a>
-      <a class="nav-section-link" href="#">ARTÍCULOS</a>
-    </div>
     <div class="nav-social">
       <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
@@ -299,6 +304,10 @@
   <div class="hero">
     <div class="hero-title">DATAPOL</div>
     <div class="hero-byline">MATHIEU ROJAS</div>
+    <div class="hero-nav">
+      <a class="hero-nav-btn" href="/electoral/peru/2026eg/segunda-vuelta/">RESULTADOS ELECTORALES</a>
+      <a class="hero-nav-btn" href="#">ARTÍCULOS</a>
+    </div>
   </div>
 
   <!-- Main grid -->
@@ -331,7 +340,7 @@
         <div class="articles-header">
           <div class="articles-label">ARTÍCULOS</div>
         </div>
-        <div class="articles">
+        <div class="articles"><div class="articles-inner">
           <div class="article-card">
             <div class="article-tag">Análisis · Electoral</div>
             <div class="article-title">¿Quién llega a la segunda vuelta?</div>
@@ -344,7 +353,7 @@
             <div class="article-body">Explicación del modelo bayesiano jerárquico utilizado para proyectar resultados en tiempo real a partir de actas contabilizadas.</div>
             <span class="article-soon">Próximamente</span>
           </div>
-        </div>
+        </div></div>
       </div>
 
       <!-- Colombia 1ra Vuelta -->
