@@ -889,10 +889,8 @@
         <div id="needle-left-photo" class="needle-side-placeholder"></div>
         <div class="needle-wrap">
           <svg id="needle-svg" viewBox="0 0 300 175" preserveAspectRatio="xMidYMid meet">
-            <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
-                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="150" cy="148" r="5" fill="#1a1209"/>
-            <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
+            <line id="needle-line" x1="150" y1="155" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="butt"/>
             <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
                   font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
                   fill="var(--muted)"></text>
@@ -2080,13 +2078,14 @@
     // CI: two transparent pie wedges from pivot — one per candidate's "winning zone"
     // Positive side (candLeft winning) → candLeft's color; negative → candRight's color
     function wedgePath(fromAngle, toAngle_) {
+      const wr = r - 9;  // stop at inner edge of the arc stroke
       const large = Math.abs(toAngle_ - fromAngle) > Math.PI ? 1 : 0;
       const sweep = toAngle_ < fromAngle ? 1 : 0;
-      const x1 = (cx + r * Math.cos(fromAngle)).toFixed(1);
-      const y1 = (cy - r * Math.sin(fromAngle)).toFixed(1);
-      const x2 = (cx + r * Math.cos(toAngle_)).toFixed(1);
-      const y2 = (cy - r * Math.sin(toAngle_)).toFixed(1);
-      return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2} Z`;
+      const x1 = (cx + wr * Math.cos(fromAngle)).toFixed(1);
+      const y1 = (cy - wr * Math.sin(fromAngle)).toFixed(1);
+      const x2 = (cx + wr * Math.cos(toAngle_)).toFixed(1);
+      const y2 = (cy - wr * Math.sin(toAngle_)).toFixed(1);
+      return `M ${cx} ${cy} L ${x1} ${y1} A ${wr} ${wr} 0 ${large} ${sweep} ${x2} ${y2} Z`;
     }
     function hexRgba(hex, a) {
       const n = parseInt((hex||"#888888").replace("#",""), 16);
@@ -2175,7 +2174,7 @@
       const e0 = edges[i];
       const e1 = edges[i + 1] ?? (e0 + (edges[1] - edges[0]));
       const x    = toX(e0);
-      const bw   = Math.max(0.8, toX(e1) - x + 0.3);   // no gap — bars touch
+      const bw   = Math.max(1.2, toX(e1) - x + 0.8);   // no gap, slightly wider
       const barH = Math.max(1, (counts[i] / maxCount) * H);
       const y    = H - barH;
       const mid  = (e0 + e1) / 2;
