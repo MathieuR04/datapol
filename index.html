@@ -1,4 +1,44 @@
 <!DOCTYPE html>
-<meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=web/">
-<link rel="canonical" href="web/">
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1a1209;
+      color: #d9c9b4;
+      font-family: 'Bebas Neue', Arial Black, Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 2rem;
+    }
+    .brand { font-size: 48px; letter-spacing: 0.1em; color: #d9c9b4; }
+    .sub { font-size: 13px; letter-spacing: 0.15em; color: #7a6858; font-family: Arial, sans-serif; font-weight: 600; }
+    .links { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; margin-top: 1rem; }
+    .link {
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #c4603a; text-decoration: none; font-family: Arial, sans-serif;
+      font-weight: 700; border-bottom: 1px solid rgba(196,96,58,0.2); padding-bottom: 2px;
+      transition: color .15s;
+    }
+    .link:hover { color: #d9c9b4; }
+  </style>
+</head>
+<body>
+  <div class="brand">DATAPOL</div>
+  <div class="sub">INTELIGENCIA ELECTORAL LATINOAMERICANA</div>
+  <div class="links">
+    <a class="link" href="/electoral/peru/2026eg/primera-vuelta/">🇵🇪 &nbsp;Perú — 1ª Vuelta 2026</a>
+    <a class="link" href="/electoral/peru/2026eg/segunda-vuelta/">🇵🇪 &nbsp;Perú — 2ª Vuelta 2026</a>
+    <a class="link" href="/electoral/colombia/2026/primera-vuelta/">🇨🇴 &nbsp;Colombia — 1ª Vuelta 2026</a>
+    <a class="link" href="/electoral/colombia/2026/primarias/">🇨🇴 &nbsp;Colombia — Primarias 2026</a>
+    <a class="link" href="/electoral/colombia/2026/senado/">🇨🇴 &nbsp;Colombia — Senado 2026</a>
+  </div>
+</body>
+</html>
