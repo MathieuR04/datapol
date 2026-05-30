@@ -2077,12 +2077,31 @@
     svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.4","butt"));
     svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA),   candRight?.color||"#888","18","0.4","butt"));
 
-    // CI arc (95% interval highlighted on gauge)
+    // CI wedge — filled pie slice from pivot to the 95% CI boundaries
     if (Math.abs(ciArcL - ciArcR) > 0.01) {
       const aHi = Math.max(ciArcL, ciArcR);
       const aLo = Math.min(ciArcL, ciArcR);
-      const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#888");
-      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aHi,aLo), ciCol, "18", "0.75", "butt"));
+      const large = Math.abs(aHi - aLo) > Math.PI ? 1 : 0;
+      const sweep = aLo < aHi ? 1 : 0;
+      const wx1 = (cx + r * Math.cos(aHi)).toFixed(1);
+      const wy1 = (cy - r * Math.sin(aHi)).toFixed(1);
+      const wx2 = (cx + r * Math.cos(aLo)).toFixed(1);
+      const wy2 = (cy - r * Math.sin(aLo)).toFixed(1);
+      // Filled wedge
+      const wedge = mkEl("path", {
+        d: `M ${cx} ${cy} L ${wx1} ${wy1} A ${r} ${r} 0 ${large} ${sweep} ${wx2} ${wy2} Z`,
+        fill: "rgba(255,255,255,0.18)", stroke: "none"
+      });
+      svg.appendChild(wedge);
+      // Lines from pivot to each CI boundary
+      [aHi, aLo].forEach(a => {
+        svg.appendChild(mkEl("line", {
+          x1: cx, y1: cy,
+          x2: (cx + r * Math.cos(a)).toFixed(1),
+          y2: (cy - r * Math.sin(a)).toFixed(1),
+          stroke: "rgba(255,255,255,0.6)", "stroke-width": "1.5", class: "ns-tick"
+        }));
+      });
     }
 
     // Scale ticks + labels at 0, ±half, ±full
