@@ -2077,29 +2077,20 @@
     svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.4","butt"));
     svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA),   candRight?.color||"#888","18","0.4","butt"));
 
-    // CI wedge — filled pie slice from pivot to the 95% CI boundaries
+    // CI band — translucent white arc over the 95% CI range, plus ticks at boundaries
     if (Math.abs(ciArcL - ciArcR) > 0.01) {
       const aHi = Math.max(ciArcL, ciArcR);
       const aLo = Math.min(ciArcL, ciArcR);
-      const large = Math.abs(aHi - aLo) > Math.PI ? 1 : 0;
-      const sweep = aLo < aHi ? 1 : 0;
-      const wx1 = (cx + r * Math.cos(aHi)).toFixed(1);
-      const wy1 = (cy - r * Math.sin(aHi)).toFixed(1);
-      const wx2 = (cx + r * Math.cos(aLo)).toFixed(1);
-      const wy2 = (cy - r * Math.sin(aLo)).toFixed(1);
-      // Filled wedge
-      const wedge = mkEl("path", {
-        d: `M ${cx} ${cy} L ${wx1} ${wy1} A ${r} ${r} 0 ${large} ${sweep} ${wx2} ${wy2} Z`,
-        fill: "rgba(255,255,255,0.18)", stroke: "none"
-      });
-      svg.appendChild(wedge);
-      // Lines from pivot to each CI boundary
+      svg.appendChild(mkPath(buildNeedleArc(cx, cy, r, aHi, aLo),
+        "rgba(255,255,255,0.32)", "20", null, "butt"));
+      // Short ticks at CI boundary positions (outer edge only)
       [aHi, aLo].forEach(a => {
         svg.appendChild(mkEl("line", {
-          x1: cx, y1: cy,
-          x2: (cx + r * Math.cos(a)).toFixed(1),
-          y2: (cy - r * Math.sin(a)).toFixed(1),
-          stroke: "rgba(255,255,255,0.6)", "stroke-width": "1.5", class: "ns-tick"
+          x1: (cx + (r + 13) * Math.cos(a)).toFixed(1),
+          y1: (cy - (r + 13) * Math.sin(a)).toFixed(1),
+          x2: (cx + (r - 2)  * Math.cos(a)).toFixed(1),
+          y2: (cy - (r - 2)  * Math.sin(a)).toFixed(1),
+          stroke: "rgba(255,255,255,0.85)", "stroke-width": "2", class: "ns-tick"
         }));
       });
     }
@@ -2175,7 +2166,8 @@
     const absMax  = Math.max(Math.abs(dataMin), Math.abs(dataMax));
     const dispMin = -absMax, dispMax = absMax;
     const dispRange = dispMax - dispMin;
-    const toX = v => PAD + (v - dispMin) / dispRange * (W - 2 * PAD);
+    // Mirror: flip x so positive (favorite winning) is on LEFT, matching needle orientation
+    const toX = v => (W - PAD) - (v - dispMin) / dispRange * (W - 2 * PAD);
     const zeroX = toX(0).toFixed(1);
 
     let paths = "";
@@ -2196,13 +2188,14 @@
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = paths;
 
-    // Axis labels: symmetric 5 points
-    const axisVals = [dispMin, dispMin / 2, 0, dispMax / 2, dispMax];
+    // Axis labels: mirrored — positive on left, negative on right (matches needle)
+    const axisVals = [dispMax, dispMax / 2, 0, dispMin / 2, dispMin];
     axis.innerHTML = axisVals.map(v => `<span>${v === 0 ? "0" : fmtVoteDiff(v)}</span>`).join("");
 
+    // Foot: left = favorite (positive margin), right = underdog (negative margin)
     foot.innerHTML = `
-      <span style="color:${color3rd}">← ${nombre3rd.split(" ")[0]} adelante</span>
-      <span style="color:${color2nd}">${nombre2nd.split(" ")[0]} adelante →</span>`;
+      <span style="color:${color2nd}">← ${nombre2nd.split(" ")[0]} adelante</span>
+      <span style="color:${color3rd}">${nombre3rd.split(" ")[0]} adelante →</span>`;
   }
 
   // ── Pronóstico rendering ──────────────────────────────────────────────────
@@ -2231,7 +2224,7 @@
       }
     }
 
-    const cands = (fd.candidates || []).slice().sort((a, b) => (b.votes||0) - (a.votes||0));
+    const cands = (fd.candidates || []).slice().sort((a, b) => (b.prob_runoff||0) - (a.prob_runoff||0));
 
     // Needle — use new vote-based fields, fall back to legacy pct-scaled
     const battle = fd.battle || {};
