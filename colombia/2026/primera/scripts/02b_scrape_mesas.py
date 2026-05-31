@@ -2,21 +2,17 @@
 02b_scrape_mesas.py — Primera Vuelta 2026
 Scrape mesa-level presidential results (one row per polling table).
 
-**TEMPLATE — MUST BE ADAPTED ON ELECTION DAY.**
-
-Before running on election day:
+**MUST BE ADAPTED ON ELECTION DAY:**
   1. Confirm BASE_URL from the Registraduría results website (mesa-level endpoint).
   2. Verify PRESIDENTIAL_CAM (the cam index for the presidential race).
   3. Ensure candidates.json has "codcan" fields (run 01_build_candidate_json.py first).
-  4. Confirm the API structure for mesa-level data (may differ from municipio endpoint).
-  5. Test against a small set of mesas before running the full scrape (~126,647 rows).
 
 Output:
   data/results/colombia_2026_mesa_primera.csv
-      126,647 rows: mesa_code + mpio_reg_code_7 + vote totals + cand_XXXX columns
+      126,647 rows: mesa_code + mpio_reg_code_7 + counted + vote totals + cand_XXXX columns
 
 Options:
-  --update   Only re-fetch mesas where mesas_escrutadas == 0
+  --update   Only re-fetch mesas where counted == 0 (plus any that previously errored)
 """
 
 import asyncio
@@ -32,27 +28,29 @@ OUT      = Path(__file__).parent.parent / "data"
 RESULTS  = OUT / "results"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
-# ⚠️  UPDATE THIS URL BEFORE ELECTION DAY (mesa-level endpoint)
-BASE_URL = "https://resultados1vuelta2026.registraduria.gov.co/json/ACT/PR/{code}.json"
+# ⚠️  UPDATE THIS URL BEFORE ELECTION DAY
+BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 HEADERS  = {
-    "Referer":    "https://resultados1vuelta2026.registraduria.gov.co/",
+    "Referer":    "https://resultados.registraduria.gov.co/",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
     "Accept":     "application/json, */*",
 }
 
-# ⚠️  VERIFY THIS ON ELECTION DAY (camara index for presidential race)
+# ⚠️  VERIFY THIS ON ELECTION DAY
 PRESIDENTIAL_CAM = 0
 
-CONCURRENCY = 30
-TIMEOUT     = 30
+CONCURRENCY  = 50
+TIMEOUT      = 25
+FLUSH_EVERY  = 1_000   # rows before flushing to CSV
 
-MESA_CSV = RESULTS / "colombia_2026_mesa_primera.csv"
+MESA_CSV     = RESULTS / "colombia_2026_mesa_primera.csv"
+ERRORS_CSV   = OUT / "scrape_errors_mesas.csv"
+CHECKPOINT   = OUT / ".mesa_checkpoint.json"   # tracks counted + errored codes
 
 
 # ── Candidates ─────────────────────────────────────────────────────────────────
 
 def load_candidates() -> list[dict]:
-    """Load candidates from candidates.json; must have 'codcan' field."""
     path = OUT / "candidates.json"
     with open(path) as f:
         cands = json.load(f)
@@ -63,9 +61,7 @@ def load_candidates() -> list[dict]:
             "Run 01_build_candidate_json.py first.")
     return cands
 
-
 def build_codcan_map(candidates: list[dict]) -> dict[int, str]:
-    """Map codcan (int) → candidate code string."""
     return {c["codcan"]: c["code"] for c in candidates}
 
 
@@ -73,8 +69,10 @@ def build_codcan_map(candidates: list[dict]) -> dict[int, str]:
 
 def parse_mesa_json(mesa_code: str, mpio_code: str, data: dict,
                     codcan_map: dict[int, str], cand_cols: list[str]) -> dict:
-    """Flatten one mesa JSON into a flat result row."""
     totales = data.get("totales", {}).get("act", {})
+
+    # counted = 1 if this mesa has been escrutada
+    counted = 1 if int(totales.get("mesesc") or 0) > 0 else 0
 
     pres_t = {}
     for camara in data.get("camaras", []):
@@ -83,17 +81,15 @@ def parse_mesa_json(mesa_code: str, mpio_code: str, data: dict,
             break
 
     record = {
-        "mesa_code":          mesa_code,
-        "mpio_reg_code_7":    mpio_code,
-        "censo":              int(totales.get("centota") or 0),
-        "mesas_escrutadas":   int(totales.get("mesesc")  or 0),
-        "votantes":           int(pres_t.get("votant")  or totales.get("votant")  or 0),
-        "votos_nulos":        int(pres_t.get("votnul")  or totales.get("votnul")  or 0),
-        "votos_no_marcados":  int(pres_t.get("votnma")  or totales.get("votnma")  or 0),
-        "votos_blanco":       int(pres_t.get("votbla")  or totales.get("votblan") or 0),
-        "votos_validos":      int(pres_t.get("votval")  or totales.get("votval")  or 0),
+        "mesa_code":         mesa_code,
+        "mpio_reg_code_7":   mpio_code,
+        "counted":           counted,
+        "votantes":          int(pres_t.get("votant")  or totales.get("votant")  or 0),
+        "votos_nulos":       int(pres_t.get("votnul")  or totales.get("votnul")  or 0),
+        "votos_no_marcados": int(pres_t.get("votnma")  or totales.get("votnma")  or 0),
+        "votos_blanco":      int(pres_t.get("votbla")  or totales.get("votblan") or 0),
+        "votos_validos":     int(pres_t.get("votval")  or totales.get("votval")  or 0),
     }
-
     for col in cand_cols:
         record[col] = 0
 
@@ -104,12 +100,47 @@ def parse_mesa_json(mesa_code: str, mpio_code: str, data: dict,
             p      = entry.get("act", entry)
             codpar = int(p.get("codpar", 0))
             vot    = p.get("vot")
-            cand_code = codcan_map.get(codpar)
-            if cand_code:
-                col = f"cand_{cand_code}"
+            code   = codcan_map.get(codpar)
+            if code:
+                col = f"cand_{code}"
                 record[col] = record.get(col, 0) + (int(vot) if vot else 0)
 
     return record
+
+
+# ── Checkpoint ─────────────────────────────────────────────────────────────────
+
+def load_checkpoint() -> tuple[set, set]:
+    """Returns (counted_codes, errored_codes)."""
+    if CHECKPOINT.exists():
+        with open(CHECKPOINT) as f:
+            d = json.load(f)
+        return set(d.get("counted", [])), set(d.get("errored", []))
+    return set(), set()
+
+def save_checkpoint(counted: set, errored: set):
+    with open(CHECKPOINT, "w") as f:
+        json.dump({"counted": sorted(counted), "errored": sorted(errored)}, f)
+
+
+# ── CSV helpers ────────────────────────────────────────────────────────────────
+
+FIELDNAMES = None   # set once at first flush
+
+def open_writer(path: Path, fieldnames: list[str], append: bool):
+    mode = "a" if append else "w"
+    f = open(path, mode, newline="")
+    w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+    if not append:
+        w.writeheader()
+    return f, w
+
+def flush_rows(rows: list[dict], fieldnames: list[str], first_flush: bool):
+    """Append rows to MESA_CSV."""
+    f, w = open_writer(MESA_CSV, fieldnames, append=not first_flush)
+    for row in rows:
+        w.writerow({k: row.get(k, 0) for k in fieldnames})
+    f.close()
 
 
 # ── Network ────────────────────────────────────────────────────────────────────
@@ -117,75 +148,87 @@ def parse_mesa_json(mesa_code: str, mpio_code: str, data: dict,
 async def fetch_one(session, sem, mesa_code, mpio_code):
     url = BASE_URL.format(code=mesa_code)
     async with sem:
-        for attempt in range(2):
+        for attempt in range(3):
             try:
                 async with session.get(url, headers=HEADERS,
                                        timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as resp:
-                    if resp.status == 404: return mesa_code, mpio_code, None, "404"
+                    if resp.status == 404:
+                        return mesa_code, mpio_code, None, "404"
                     if resp.status != 200:
-                        if attempt == 0: await asyncio.sleep(1); continue
+                        if attempt < 2:
+                            await asyncio.sleep(1)
+                            continue
                         return mesa_code, mpio_code, None, f"HTTP {resp.status}"
                     data = await resp.json(content_type=None)
                     return mesa_code, mpio_code, data, None
             except asyncio.TimeoutError:
-                if attempt == 0: await asyncio.sleep(2); continue
+                if attempt < 2:
+                    await asyncio.sleep(2)
+                    continue
                 return mesa_code, mpio_code, None, "timeout"
             except Exception as e:
-                if attempt == 0: await asyncio.sleep(1); continue
+                if attempt < 2:
+                    await asyncio.sleep(1)
+                    continue
                 return mesa_code, mpio_code, None, str(e)[:120]
     return mesa_code, mpio_code, None, "failed"
 
 
-async def scrape_all(mesa_pairs, codcan_map, cand_cols):
-    results, errors = [], []
-    sem = asyncio.Semaphore(CONCURRENCY)
-    t0  = time.time()
-    connector = aiohttp.TCPConnector(limit=CONCURRENCY + 5, ssl=False)
+async def scrape_async(pairs, codcan_map, cand_cols, counted_set, errored_set):
+    sem       = asyncio.Semaphore(CONCURRENCY)
+    connector = aiohttp.TCPConnector(limit=CONCURRENCY + 10, ssl=False)
+
+    fields = (["mesa_code", "mpio_reg_code_7", "counted",
+               "votantes", "votos_nulos", "votos_no_marcados",
+               "votos_blanco", "votos_validos"] + cand_cols)
+
+    batch        = []
+    errors       = []
+    first_flush  = not MESA_CSV.exists()
+    done         = 0
+    t0           = time.time()
+    total        = len(pairs)
+
     async with aiohttp.ClientSession(connector=connector) as session:
-        tasks = [fetch_one(session, sem, mc, mp) for mc, mp in mesa_pairs]
-        done  = 0
+        tasks = [fetch_one(session, sem, mc, mp) for mc, mp in pairs]
         for coro in asyncio.as_completed(tasks):
             mesa_code, mpio_code, data, err = await coro
             done += 1
+
             if err:
                 errors.append({"mesa_code": mesa_code, "error": err})
-            elif data:
-                results.append(parse_mesa_json(mesa_code, mpio_code, data, codcan_map, cand_cols))
-            if done % 500 == 0 or done == len(mesa_pairs):
-                e = time.time() - t0
-                r = done / e if e else 0
-                print(f"  [{done}/{len(mesa_pairs)}]  ok={len(results)}  err={len(errors)}"
-                      f"  {r:.0f}/s  eta={(len(mesa_pairs)-done)/r:.0f}s" if r else "")
-    return results, errors
+                errored_set.add(mesa_code)
+            elif data is not None:
+                row = parse_mesa_json(mesa_code, mpio_code, data, codcan_map, cand_cols)
+                batch.append(row)
+                if row["counted"]:
+                    counted_set.add(mesa_code)
+                errored_set.discard(mesa_code)
+            else:
+                errors.append({"mesa_code": mesa_code, "error": "no_data"})
 
+            # Batch flush
+            if len(batch) >= FLUSH_EVERY:
+                flush_rows(batch, fields, first_flush)
+                first_flush = False
+                save_checkpoint(counted_set, errored_set)
+                batch = []
 
-# ── Write ──────────────────────────────────────────────────────────────────────
+            if done % 500 == 0 or done == total:
+                elapsed = time.time() - t0
+                rate    = done / elapsed if elapsed else 0
+                eta     = (total - done) / rate if rate else 0
+                print(f"  [{done:,}/{total:,}]  counted={len(counted_set):,}  "
+                      f"err={len(errors)}  {rate:.0f}/s  eta={eta:.0f}s    ",
+                      end="\r", flush=True)
 
-def write_csv(path, rows, fieldnames):
-    with open(path, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
-        w.writeheader()
-        for row in rows:
-            w.writerow({k: row.get(k, 0) for k in fieldnames})
+    # Final flush
+    if batch:
+        flush_rows(batch, fields, first_flush)
 
-
-# ── Update mode helpers ────────────────────────────────────────────────────────
-
-def mesas_needing_update(all_pairs: list[tuple]) -> list[tuple]:
-    """Return (mesa_code, mpio_code) pairs where mesas_escrutadas == 0."""
-    if not MESA_CSV.exists():
-        return all_pairs
-    counted = set()
-    with open(MESA_CSV) as f:
-        for row in csv.DictReader(f):
-            if int(row.get("mesas_escrutadas") or 0) > 0:
-                counted.add(row["mesa_code"])
-    err_path = OUT / "scrape_errors_mesas.csv"
-    errored  = set()
-    if err_path.exists():
-        with open(err_path) as f:
-            errored = {row["mesa_code"] for row in csv.DictReader(f)}
-    return [(mc, mp) for mc, mp in all_pairs if mc not in counted or mc in errored]
+    save_checkpoint(counted_set, errored_set)
+    print()  # newline after \r progress
+    return errors
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
@@ -201,53 +244,63 @@ def scrape(update_mode=False):
         for row in csv.DictReader(f):
             all_pairs.append((row["mesa_code"], row["mpio_reg_code_7"]))
 
-    pairs = mesas_needing_update(all_pairs) if update_mode else all_pairs
-    if update_mode and not pairs:
-        print("All mesas counted — nothing to update.")
-        return
-    print(f"{'Update' if update_mode else 'Full'} scrape: {len(pairs):,} mesas …")
+    counted_set, errored_set = load_checkpoint()
 
-    results, errors = asyncio.run(scrape_all(pairs, codcan_map, cand_cols))
-    print(f"Done: {len(results):,} ok  {len(errors):,} errors")
+    if update_mode:
+        # Re-fetch: uncounted mesas + previously errored ones
+        pairs = [(mc, mp) for mc, mp in all_pairs
+                 if mc not in counted_set or mc in errored_set]
+        if not pairs:
+            print("All mesas counted — nothing to update.")
+            return
+        print(f"Update scrape: {len(pairs):,} mesas remaining "
+              f"({len(all_pairs)-len(pairs):,} already counted) …")
+    else:
+        pairs = all_pairs
+        counted_set.clear()
+        errored_set.clear()
+        if MESA_CSV.exists():
+            MESA_CSV.unlink()
+        print(f"Full scrape: {len(pairs):,} mesas …")
 
-    err_path = OUT / "scrape_errors_mesas.csv"
-    if errors:
-        write_csv(err_path, errors, ["mesa_code", "error"])
-    elif update_mode and err_path.exists():
-        err_path.unlink()
-
-    if not results:
-        return
-
-    fresh_codes = {r["mesa_code"] for r in results}
-
-    if update_mode and MESA_CSV.exists():
-        with open(MESA_CSV) as f:
-            existing = list(csv.DictReader(f))
-        results = [r for r in existing if r["mesa_code"] not in fresh_codes] + results
-
-    # Ensure every roll mesa has a row
-    scraped_codes = {r["mesa_code"] for r in results}
-    for mc, mp in all_pairs:
-        if mc not in scraped_codes:
-            results.append({"mesa_code": mc, "mpio_reg_code_7": mp})
-
-    order = {mc: i for i, (mc, _) in enumerate(all_pairs)}
-    results.sort(key=lambda r: order.get(r["mesa_code"], 999999))
-
-    fields = (
-        ["mesa_code", "mpio_reg_code_7", "censo",
-         "mesas_escrutadas", "votantes", "votos_nulos", "votos_no_marcados",
-         "votos_blanco", "votos_validos"]
-        + cand_cols
+    errors = asyncio.run(
+        scrape_async(pairs, codcan_map, cand_cols, counted_set, errored_set)
     )
-    write_csv(MESA_CSV, results, fields)
-    print(f"Saved: {len(results):,} mesa rows")
+
+    if errors:
+        with open(ERRORS_CSV, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["mesa_code", "error"])
+            w.writeheader()
+            w.writerows(errors)
+        print(f"  {len(errors)} errors saved to {ERRORS_CSV.name}")
+    elif ERRORS_CSV.exists():
+        ERRORS_CSV.unlink()
+
+    # Ensure every roll mesa has a row (fill zeros for any not yet fetched)
+    if MESA_CSV.exists():
+        with open(MESA_CSV) as f:
+            present = {row["mesa_code"] for row in csv.DictReader(f)}
+    else:
+        present = set()
+
+    missing = [(mc, mp) for mc, mp in all_pairs if mc not in present]
+    if missing:
+        fields = (["mesa_code", "mpio_reg_code_7", "counted",
+                   "votantes", "votos_nulos", "votos_no_marcados",
+                   "votos_blanco", "votos_validos"] + cand_cols)
+        with open(MESA_CSV, "a", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+            for mc, mp in missing:
+                w.writerow({"mesa_code": mc, "mpio_reg_code_7": mp, "counted": 0})
+
+    total_counted = len(counted_set)
+    print(f"Done: {total_counted:,}/{len(all_pairs):,} mesas counted  "
+          f"({total_counted/len(all_pairs)*100:.1f}%)")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--update", action="store_true",
-                        help="Only re-scrape mesas not yet counted")
+                        help="Only re-scrape uncounted mesas")
     args = parser.parse_args()
     scrape(update_mode=args.update)

@@ -32,9 +32,9 @@ RESULTS  = OUT / "results"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
 # ⚠️  UPDATE THIS URL BEFORE ELECTION DAY
-BASE_URL = "https://resultados1vuelta2026.registraduria.gov.co/json/ACT/PR/{code}.json"
+BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 HEADERS  = {
-    "Referer":    "https://resultados1vuelta2026.registraduria.gov.co/",
+    "Referer":    "https://resultados.registraduria.gov.co/",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
     "Accept":     "application/json, */*",
 }

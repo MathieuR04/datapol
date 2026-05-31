@@ -5,7 +5,9 @@
     "partido": "Pacto Histórico",
     "color": "#9D174D",
     "vp": "Aida Quilcué",
-    "image_id": "cepeda"
+    "image_id": "cepeda",
+    "codcan": 1,
+    "codpar": 7
   },
   {
     "code": "valencia",
@@ -13,7 +15,9 @@
     "partido": "Gran Consulta por Colombia",
     "color": "#1D4ED8",
     "vp": "Juan Daniel Oviedo",
-    "image_id": "valencia"
+    "image_id": "valencia",
+    "codcan": 11,
+    "codpar": 2
   },
   {
     "code": "delaespriella",
@@ -21,7 +25,9 @@
     "partido": "Defensores de la Patria",
     "color": "#1E293B",
     "vp": "José Manuel Restrepo",
-    "image_id": "abelardo"
+    "image_id": "abelardo",
+    "codcan": 4,
+    "codpar": 10
   },
   {
     "code": "claudialopez",
@@ -29,7 +35,9 @@
     "partido": "Imparables",
     "color": "#047857",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 2,
+    "codpar": 11
   },
   {
     "code": "barreras",
@@ -37,7 +45,9 @@
     "partido": "Frente por la Vida",
     "color": "#D97706",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 8,
+    "codpar": 6
   },
   {
     "code": "fajardo",
@@ -45,7 +55,9 @@
     "partido": "Dignidad y Compromiso",
     "color": "#65A30D",
     "vp": null,
-    "image_id": "fajardo"
+    "image_id": "fajardo",
+    "codcan": 12,
+    "codpar": 3
   },
   {
     "code": "caicedo",
@@ -53,7 +65,9 @@
     "partido": "Fuerza Ciudadana",
     "color": "#E53935",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 9,
+    "codpar": 13
   },
   {
     "code": "lizcano",
@@ -61,7 +75,9 @@
     "partido": "Coalición F.A.M.I.L.I.A.",
     "color": "#7C2D12",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 5,
+    "codpar": 14
   },
   {
     "code": "uribe",
@@ -69,7 +85,9 @@
     "partido": "Partido Demócrata Colombiano",
     "color": "#1E3A5F",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 6,
+    "codpar": 4
   },
   {
     "code": "botero",
@@ -77,7 +95,9 @@
     "partido": "Romper el Sistema",
     "color": "#374151",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 3,
+    "codpar": 8
   },
   {
     "code": "macollins",
@@ -85,7 +105,9 @@
     "partido": "Movimiento Ciudadano",
     "color": "#9333EA",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 7,
+    "codpar": 9
   },
   {
     "code": "matamoros",
@@ -93,14 +115,18 @@
     "partido": "Movimiento Independiente",
     "color": "#B45309",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 10,
+    "codpar": 5
   },
   {
-    "code": "claralopez",
-    "nombre": "CLARA LÓPEZ OBREGÓN",
+    "code": "murillo",
+    "nombre": "LUIS GILBERTO MURILLO",
     "partido": "Polo Democrático",
     "color": "#991B1B",
     "vp": null,
-    "image_id": null
+    "image_id": null,
+    "codcan": 13,
+    "codpar": 12
   }
 ]

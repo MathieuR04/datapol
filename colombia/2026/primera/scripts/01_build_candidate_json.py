@@ -37,7 +37,7 @@ CANDS_JSON = OUT / "candidates.json"
 
 # ⚠️  UPDATE THIS URL BEFORE ELECTION DAY
 # Template pattern (replace PR with actual election code if needed):
-BASE_URL = "https://resultados1vuelta2026.registraduria.gov.co/json/ACT/PR/{code}.json"
+BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 
 # National-level code for the index JSON (usually "00" or "0000000")
 NATIONAL_CODE = "00"
@@ -48,7 +48,7 @@ PRESIDENTIAL_CAM = 0
 
 def fetch_json(url: str) -> dict:
     req = urllib.request.Request(url, headers={
-        "Referer":    "https://resultados1vuelta2026.registraduria.gov.co/",
+        "Referer":    "https://resultados.registraduria.gov.co/",
         "User-Agent": "Mozilla/5.0",
         "Accept":     "application/json, */*",
     })
