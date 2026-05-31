@@ -749,6 +749,10 @@
   const map = L.map("map", MAP_OPTS);
   L.tileLayer(TILE.url, TILE.opts).addTo(map);
 
+  // Custom panes for z-ordering (comparison tab)
+  map.createPane("fillPane");   map.getPane("fillPane").style.zIndex   = 400;
+  map.createPane("borderPane"); map.getPane("borderPane").style.zIndex = 450;
+
   // ── State ────────────────────────────────────────────────────────────────
   let currentView      = "winner";
   let currentLevel     = "dept";
