@@ -861,7 +861,7 @@
   let mpioData = null, deptData = null;
   let candidatesData = null, aggStats = null, forecastData = null;
 
-  const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
+  const BUBBLE_VIEWS = new Set(["mesas", "votos", "candidate_bubble"]);
 
   // ── Candidate photo helper ────────────────────────────────────────────────
   // Images live at ../../../../../colombia/2026/primera/data/images/<image_id>.jpg
@@ -889,6 +889,12 @@
     return entry ? entry.votes / vv : 0;
   }
 
+  function getCandVotes(props, candName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
+    return (top5.find(c => c.name === candName) || {}).votes || 0;
+  }
+
   function candColor(candName) {
     return liveColor(candName) || ((candidatesData || []).find(c => c.nombre === candName)?.color) || "#9a8878";
   }
@@ -907,7 +913,7 @@
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
       const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
-      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.6));
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.7));
     }
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
   }
@@ -926,7 +932,7 @@
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
       const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
-      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.6));
+      fill = lerp("#e0d8cc", candColor(selectedCandidate), Math.pow(t, 0.7));
     }
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
@@ -974,7 +980,7 @@
   }
 
   // ── Render bubbles ────────────────────────────────────────────────────────
-  function renderBubbles(valueKey, labelFn) {
+  function renderBubbles(valueKey, labelFn, bubbleColor) {
     if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
 
     if (currentLevel === "municipio") {
@@ -1010,9 +1016,10 @@
       if (!val) return;
       const r = Math.max(2, Math.sqrt(val / maxVal) * maxR);
       const latlng = centroid(feat);
+      const bCol = bubbleColor || "#c4603a";
       const marker = L.circleMarker(latlng, {
-        radius: r, fillColor: "#c4603a", fillOpacity: 0.45,
-        weight: 0.8, color: "#8b3c1f"
+        radius: r, fillColor: bCol, fillOpacity: 0.45,
+        weight: 0.8, color: bCol
       });
       marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
       marker.on("click", e => {
@@ -1051,6 +1058,15 @@
       renderBubbles(
         p => parseInt(p.votos_validos) || 0,
         (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} votos válidos`
+      );
+    } else if (currentView === "candidate_bubble" && selectedCandidate) {
+      const col = candColor(selectedCandidate);
+      const shortName = selectedCandidate.split(" ")[0];
+      document.getElementById("bl-title").textContent = `Votos · ${shortName}`;
+      renderBubbles(
+        p => getCandVotes(p, selectedCandidate),
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} votos`,
+        col
       );
     } else {
       renderChoropleth();
@@ -1359,15 +1375,22 @@
         </div>`;
       }).join("");
 
-    // Click candidate → choropleth
+    // Click candidate → choropleth → bubbles → deselect
     el.querySelectorAll(".party-row").forEach(row => {
       row.addEventListener("click", () => {
         const name = row.dataset.cand;
         if (selectedCandidate === name) {
-          selectedCandidate = null;
-          el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
-          currentView = "winner";
-          document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+          if (currentView === "candidate") {
+            // 2nd click → bubble view
+            currentView = "candidate_bubble";
+            document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+          } else {
+            // 3rd click → deselect, back to winner
+            selectedCandidate = null;
+            el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+            currentView = "winner";
+            document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+          }
         } else {
           selectedCandidate = name;
           el.querySelectorAll(".party-row").forEach(r => r.classList.toggle("selected", r.dataset.cand === name));
@@ -1420,7 +1443,7 @@
   }
 
   // ── Exterior consulados panel ─────────────────────────────────────────────
-  const METADATA = "../../../colombia/2026/metadata/";
+  const METADATA = "../../../../colombia/2026/metadata/";
 
   function parseCSVLine(line) {
     const result = []; let cur = "", inQ = false;

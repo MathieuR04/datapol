@@ -741,6 +741,12 @@
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
 
+  function getPartyVotes(props, partyName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates||"[]"); } catch(e){}
+    return (top5.find(c=>c.name===partyName)||{}).votes || 0;
+  }
+
   function getPartyShare(props, partyName) {
     let top5 = [];
     try { top5 = JSON.parse(props.top5_candidates||"[]"); } catch(e){}
@@ -779,7 +785,7 @@
   }
 
   // ── Render bubbles ────────────────────────────────────────────────────────
-  function renderBubbles(valueKey, labelFn) {
+  function renderBubbles(valueKey, labelFn, bubbleColor) {
     if (curState.bubbleLayer) { curMap.removeLayer(curState.bubbleLayer); curState.bubbleLayer=null; }
 
     // Show polygon outlines as context underneath bubbles
@@ -819,12 +825,13 @@
       if (!val) return;
       const r = Math.max(2, Math.sqrt(val/maxVal)*maxR);
       const latlng = centroid(feat);
+      const bCol = bubbleColor || "#c4603a";
       const marker = L.circleMarker(latlng, {
         radius: r,
-        fillColor: "#c4603a",
+        fillColor: bCol,
         fillOpacity: 0.45,
         weight: 0.8,
-        color: "#8b3c1f",
+        color: bCol,
       });
       marker.bindTooltip(labelFn(feat.properties||{}, val), { sticky:true, className:"leaflet-tooltip" });
       marker.on("click", e => {
@@ -864,13 +871,22 @@
         p => parseInt(p.votos_validos)||0,
         (p, v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} votos válidos`
       );
+    } else if (currentView==="party_bubble" && selectedParty) {
+      const col = PARTY_COLORS[selectedParty] || "#c4603a";
+      const shortName = selectedParty.split(" ")[0];
+      document.getElementById("bl-title").textContent = `Votos · ${shortName}`;
+      renderBubbles(
+        p => getPartyVotes(p, selectedParty),
+        (p, v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} votos`,
+        col
+      );
     } else {
       renderChoropleth();
     }
     if (curState.activeLayer) curState.activeLayer.setStyle({ weight: 2, color: "#c4603a", fillOpacity: 1 });
   }
 
-  const BUBBLE_VIEWS = new Set(["mesas","votos"]);
+  const BUBBLE_VIEWS = new Set(["mesas","votos","party_bubble"]);
 
   // ── Feature interactions ──────────────────────────────────────────────────
   function onEachMpio(feat, layer) {
@@ -1152,15 +1168,22 @@
         </div>`;
       }).join("");
 
-    // Click party → choropleth
+    // Click party → choropleth → bubbles → deselect
     document.getElementById("view-partidos").querySelectorAll(".party-row").forEach(row=>{
       row.addEventListener("click",()=>{
         const name=row.dataset.party;
         if(selectedParty===name){
-          selectedParty=null;
-          document.querySelectorAll(".party-row").forEach(r=>r.classList.remove("selected"));
-          currentView="winner";
-          document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view==="winner"));
+          if(currentView==="party"){
+            // 2nd click → bubble view
+            currentView="party_bubble";
+            document.querySelectorAll(".view-btn").forEach(b=>b.classList.remove("active"));
+          } else {
+            // 3rd click → deselect, back to winner
+            selectedParty=null;
+            document.querySelectorAll(".party-row").forEach(r=>r.classList.remove("selected"));
+            currentView="winner";
+            document.querySelectorAll(".view-btn").forEach(b=>b.classList.toggle("active",b.dataset.view==="winner"));
+          }
         } else {
           selectedParty=name;
           document.querySelectorAll(".party-row").forEach(r=>r.classList.toggle("selected",r.dataset.party===name));
@@ -1214,7 +1237,7 @@
 
   // ── Load data ──────────────────────────────────────────────────────────────
   const BASE     = "../../../../colombia/2026/senado/data/";
-  const METADATA = "../../../colombia/2026/metadata/";
+  const METADATA = "../../../../colombia/2026/metadata/";
   let aggStats = null;
   Promise.all([
     fetch(BASE+"colombia_2026_municipio_senado_nacional.geojson").then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}),
