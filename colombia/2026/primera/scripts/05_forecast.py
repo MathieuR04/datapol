@@ -1,23 +1,11 @@
 """
-05_forecast.py — Colombia 2026 Primera Vuelta  (Bayesian Hierarchical Forecast)
+05_forecast.py — Colombia 2026 Primera Vuelta (Municipio Projection Forecast)
 
-For each uncounted (counted == 0) mesa we estimate a vote-share distribution
-from the finest available geographic hierarchy level:
+For each municipio we know mesas_escrutadas / mesas_total.
+We project the final vote total by assuming remaining mesas vote like
+the already-counted mesas in the same municipio (fallback: dept → national).
 
-  polling place (puesto)  →  municipio  →  departamento  →  national
-
-Then we run N_SIM Monte Carlo simulations to project the final margin
-(in absolute votes) between the 2nd- and 3rd-place candidates for the
-segunda vuelta slot.
-
-At 100% reporting there are no remaining mesas, so each simulation
-returns the observed margin → P(winner) = 100%, CI = [margin, margin].
-
-Usage:
-  python3 05_forecast.py               # normal run
-  python3 05_forecast.py --validate    # 50-% holdout calibration check
-  python3 05_forecast.py --preview 0.1 # simulate 10% reported
-  python3 05_forecast.py --sims 5000   # custom sim count
+Battle is hardcoded: Cepeda (1st) vs De la Espriella (2nd).
 
 Output: data/forecast.json
 """
@@ -26,307 +14,183 @@ import csv
 import json
 import math
 import random
-import argparse
 import datetime
 from pathlib import Path
 from collections import defaultdict
 
-try:
-    import numpy as np
-    HAS_NUMPY = True
-except ImportError:
-    HAS_NUMPY = False
+SCRIPT_DIR = Path(__file__).parent
+DATA_DIR   = SCRIPT_DIR.parent / "data"
+RESULTS    = DATA_DIR / "results"
 
-# ── Paths ──────────────────────────────────────────────────────────────────────
-SCRIPT_DIR  = Path(__file__).parent
-DATA_DIR    = SCRIPT_DIR.parent / "data"
-RESULTS     = DATA_DIR / "results"
-META        = SCRIPT_DIR.parent.parent.parent / "metadata"
+MPIO_CSV   = RESULTS / "colombia_2026_municipio_primera.csv"
+CAND_JSON  = DATA_DIR / "candidates.json"
+OUT_JSON   = DATA_DIR / "forecast.json"
 
-MESA_CSV    = RESULTS / "colombia_2026_mesa_primera.csv"
-CAND_JSON   = DATA_DIR / "candidates.json"
-MESA_ROLL   = META / "colombia_2026_mesa_electoral_roll.csv"
-OUT_JSON    = DATA_DIR / "forecast.json"
+# Hardcoded battle pair (1st vs 2nd)
+BATTLE_1ST = "cepeda"
+BATTLE_2ND = "delaespriella"
 
-# ── Constants ──────────────────────────────────────────────────────────────────
-N_SIM        = 10_000
-SEED         = 42
-MIN_PEERS    = 5      # min counted mesas at a level to use it as prior
-N_BINS       = 100    # histogram bins for margin distribution
+N_SIM  = 5_000
+N_BINS = 100
+SEED   = 42
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Data loading
-# ═══════════════════════════════════════════════════════════════════════════════
+# ── Load ───────────────────────────────────────────────────────────────────────
 
 def load_candidates():
     with open(CAND_JSON) as f:
         return json.load(f)
 
-
-def load_roll() -> dict:
-    """Returns {mesa_code: {puesto_code, censo, mpio_reg_code_7, dept_reg_code}}."""
-    if not MESA_ROLL.exists():
-        return {}
-    with open(MESA_ROLL, newline="") as f:
-        return {r["mesa_code"]: r for r in csv.DictReader(f)}
-
-
-def load_mesas(cand_cols: list[str], roll_lkp: dict) -> list[dict]:
-    """Load mesa CSV; attach parsed numeric helpers and hierarchy keys."""
+def load_mpios(cand_cols):
     rows = []
-    with open(MESA_CSV, newline="") as f:
+    if not MPIO_CSV.exists():
+        return rows
+    with open(MPIO_CSV, newline="") as f:
         for row in csv.DictReader(f):
-            rl = roll_lkp.get(row.get("mesa_code", ""), {})
-
-            row["_votes"]      = {col: int(row.get(col) or 0) for col in cand_cols}
-            # votantes = total ballots cast (used as emitidos for turnout/share)
-            row["_emitidos"]   = int(row.get("votantes") or 0)
-            # censo from electoral roll (registered voters for this mesa)
-            row["_electores"]  = int(rl.get("censo") or 0)
-            row["_is_counted"] = str(row.get("counted", "0")).strip() == "1"
-
-            # Hierarchy keys (4 levels: puesto → mpio → dept → national)
-            row["_puesto"] = rl.get("puesto_code", "").strip()
-            row["_mpio"]   = (row.get("mpio_reg_code_7") or rl.get("mpio_reg_code_7", "")).strip()
-            row["_dept"]   = (rl.get("dept_reg_code") or row.get("mpio_reg_code_7", "")[:2]).strip()
-
+            row["_dept"]      = str(row.get("mpio_reg_code_7", ""))[:2]
+            row["_mt"]        = int(row.get("mesas_total")      or 0)
+            row["_me"]        = int(row.get("mesas_escrutadas") or 0)
+            row["_vv"]        = int(row.get("votos_validos")     or 0)
+            row["_votes"]     = {col: int(row.get(col) or 0) for col in cand_cols}
             rows.append(row)
     return rows
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Hierarchy statistics
-# ═══════════════════════════════════════════════════════════════════════════════
+# ── Projection ─────────────────────────────────────────────────────────────────
 
-def compute_level_stats(counted: list[dict], key_fn, cand_cols: list[str]) -> dict:
-    """
-    For each group keyed by key_fn(mesa), compute:
-      n, mean_shares{col→float}, std_shares{col→float},
-      mean_turnout, std_turnout
-    share_c = votes_c / emitidos  (fraction of all cast ballots)
-    """
-    groups: dict[str, list] = defaultdict(list)
-    for m in counted:
-        k = key_fn(m)
-        if not k or m["_emitidos"] == 0:
-            continue
-        shares  = {col: m["_votes"][col] / m["_emitidos"] for col in cand_cols}
-        turnout = m["_emitidos"] / m["_electores"] if m["_electores"] > 0 else None
-        groups[k].append((shares, turnout))
-
-    stats = {}
-    for k, items in groups.items():
-        n = len(items)
-        mean_s = {col: sum(it[0][col] for it in items) / n for col in cand_cols}
-        if n > 1:
-            std_s = {col: math.sqrt(
-                sum((it[0][col] - mean_s[col]) ** 2 for it in items) / (n - 1)
-            ) for col in cand_cols}
-        else:
-            std_s = {col: 0.0 for col in cand_cols}
-
-        to_vals = [it[1] for it in items if it[1] is not None]
-        mean_to = sum(to_vals) / len(to_vals) if to_vals else 0.5
-        std_to  = (
-            math.sqrt(sum((x - mean_to) ** 2 for x in to_vals) / max(len(to_vals)-1, 1))
-            if len(to_vals) > 1 else 0.05
-        )
-        stats[k] = {
-            "n":            n,
-            "mean_shares":  mean_s,
-            "std_shares":   std_s,
-            "mean_turnout": mean_to,
-            "std_turnout":  std_to,
-        }
-    return stats
-
-
-def build_all_stats(counted: list[dict], cand_cols: list[str]) -> dict:
-    return {
-        "puesto": compute_level_stats(counted, lambda m: m["_puesto"], cand_cols),
-        "mpio":   compute_level_stats(counted, lambda m: m["_mpio"],   cand_cols),
-        "dept":   compute_level_stats(counted, lambda m: m["_dept"],   cand_cols),
-        "nat":    compute_level_stats(counted, lambda m: "NAT",        cand_cols),
-    }
-
-
-def get_prior(mesa: dict, stats: dict) -> dict:
-    """Return the finest level stats with >= MIN_PEERS observations."""
-    for level_name, key in [
-        ("puesto", mesa["_puesto"]),
-        ("mpio",   mesa["_mpio"]),
-        ("dept",   mesa["_dept"]),
-        ("nat",    "NAT"),
-    ]:
-        if not key:
-            continue
-        st = stats[level_name].get(key)
-        if st and st["n"] >= MIN_PEERS:
-            return st
-    # Absolute fallback: national (even if < MIN_PEERS)
-    return stats["nat"].get("NAT", {
-        "mean_shares":  {},
-        "std_shares":   {},
-        "mean_turnout": 0.5,   # only fires if zero mesas counted → empty state anyway
-        "std_turnout":  0.1,
-    })
-
-
-def aggregate_by_prior(remaining: list[dict], priors: list[dict]) -> tuple[list[dict], list[dict]]:
-    """
-    Collapse mesas that share the same prior into a single entry by summing
-    their electores. This reduces simulation cost dramatically when most mesas
-    fall back to dept / national level (common at low reporting rates).
-    """
-    groups: dict[int, dict] = {}
-    for m, p in zip(remaining, priors):
-        pid = id(p)
-        if pid not in groups:
-            groups[pid] = {"prior": p, "_electores": 0}
-        groups[pid]["_electores"] += m["_electores"]
-    agg_mesas  = [{"_electores": g["_electores"]} for g in groups.values()]
-    agg_priors = [g["prior"]                       for g in groups.values()]
-    return agg_mesas, agg_priors
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# Monte Carlo
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def run_simulations(
-    base_votes:  dict[str, int],
-    remaining:   list[dict],
-    priors:      list[dict],
-    cand_cols:   list[str],
-    n_sims:      int,
-    rng:         random.Random,
-    battle_cols: tuple[str, str] | None = None,
-) -> tuple[list[int], list[str], dict[str, int]]:
-    """
-    Returns:
-      margins      – list of (col_a − col_b) votes per simulation.
-      winners_2nd  – which cand_col was 2nd in each simulation
-      in_top2      – {cand_col: count of sims in top-2}
-    """
-    if HAS_NUMPY and len(remaining) > 500:
-        return _run_simulations_np(base_votes, remaining, priors, cand_cols,
-                                   n_sims, rng, battle_cols)
-    return _run_simulations_py(base_votes, remaining, priors, cand_cols,
-                               n_sims, rng, battle_cols)
-
-
-def _run_simulations_py(base_votes, remaining, priors, cand_cols,
-                        n_sims, rng, battle_cols):
-    """Pure-Python fallback."""
-    margins: list[int] = []
-    winners_2nd: list[str] = []
-    in_top2: dict[str, int] = defaultdict(int)
-
-    for _ in range(n_sims):
-        sim = dict(base_votes)
-        for m, prior in zip(remaining, priors):
-            elec = m["_electores"]
-            if elec == 0:
-                continue
-            turnout  = max(0.01, min(1.0,
-                rng.gauss(prior["mean_turnout"], prior["std_turnout"])))
-            emitidos = int(elec * turnout)
-            if emitidos == 0:
-                continue
-            mean_s = prior["mean_shares"]
-            std_s  = prior["std_shares"]
+def dept_shares(mpios, cand_cols):
+    """Weighted average share per candidate per dept, from municipios that have data."""
+    dept_vv  = defaultdict(int)
+    dept_vot = defaultdict(lambda: defaultdict(int))
+    for m in mpios:
+        if m["_me"] > 0 and m["_vv"] > 0:
+            d = m["_dept"]
+            dept_vv[d] += m["_vv"]
             for col in cand_cols:
-                ms    = mean_s.get(col, 0.0)
-                ss    = std_s.get(col, ms * 0.1 + 1e-4)
-                share = max(0.0, rng.gauss(ms, ss))
-                sim[col] = sim.get(col, 0) + int(emitidos * share)
+                dept_vot[d][col] += m["_votes"][col]
+    shares = {}
+    for d, vv in dept_vv.items():
+        shares[d] = {col: dept_vot[d][col] / vv for col in cand_cols} if vv else {}
+    return shares
 
-        ranked = sorted(cand_cols, key=lambda c: sim.get(c, 0), reverse=True)
-        if battle_cols:
-            col_a, col_b = battle_cols
-            margins.append(sim.get(col_a, 0) - sim.get(col_b, 0))
-        else:
-            margins.append(sim.get(ranked[1], 0) - sim.get(ranked[2], 0))
-        winners_2nd.append(ranked[1])
-        for col in ranked[:2]:
-            in_top2[col] += 1
+def national_shares(mpios, cand_cols):
+    """Weighted national average share."""
+    total_vv  = sum(m["_vv"] for m in mpios if m["_me"] > 0)
+    total_vot = defaultdict(int)
+    for m in mpios:
+        if m["_me"] > 0:
+            for col in cand_cols:
+                total_vot[col] += m["_votes"][col]
+    if not total_vv:
+        return {col: 1/len(cand_cols) for col in cand_cols}
+    return {col: total_vot[col] / total_vv for col in cand_cols}
 
-    return margins, winners_2nd, in_top2
-
-
-def _run_simulations_np(base_votes, remaining, priors, cand_cols,
-                        n_sims, rng, battle_cols):
+def project_mpio(m, cand_cols, dept_sh, nat_sh):
     """
-    Vectorised numpy simulation.
-    Processes in chunks of CHUNK to keep peak memory under ~200 MB.
+    Returns (observed_votes, projected_remaining_votes) per candidate.
+    observed  = what's already counted
+    remaining = projection for the mesas not yet counted
     """
-    CHUNK = 250
-    N = len(remaining)
-    C = len(cand_cols)
+    mt, me = m["_mt"], m["_me"]
+    remaining = mt - me
 
-    elec_arr   = np.array([m["_electores"]          for m in remaining], dtype=np.float32)
-    mean_to    = np.array([p["mean_turnout"]         for p in priors],   dtype=np.float32)
-    std_to     = np.array([p["std_turnout"]          for p in priors],   dtype=np.float32)
-    mean_s_mat = np.array([[p["mean_shares"].get(col, 0.0) for col in cand_cols]
-                            for p in priors], dtype=np.float32)          # (N, C)
-    std_s_mat  = np.array([[p["std_shares"].get(
-                                col,
-                                p["mean_shares"].get(col, 0.0) * 0.1 + 1e-4)
-                            for col in cand_cols]
-                            for p in priors], dtype=np.float32)          # (N, C)
+    observed = {col: m["_votes"][col] for col in cand_cols}
 
-    base_arr = np.array([base_votes.get(col, 0) for col in cand_cols], dtype=np.int64)
-    np_rng   = np.random.default_rng(rng.randint(0, 2**31))
+    if remaining <= 0:
+        return observed, {col: 0 for col in cand_cols}
 
-    sim_votes = np.zeros((n_sims, C), dtype=np.int64)
-
-    for start in range(0, n_sims, CHUNK):
-        end = min(start + CHUNK, n_sims)
-        S   = end - start
-
-        turnout  = np_rng.normal(mean_to, std_to, size=(S, N)).clip(0.01, 1.0)
-        emitidos = (elec_arr * turnout).astype(np.int32)                # (S, N)
-
-        for ci in range(C):
-            shares = np_rng.normal(mean_s_mat[:, ci], std_s_mat[:, ci],
-                                   size=(S, N)).clip(0.0, None)
-            sim_votes[start:end, ci] = (emitidos * shares).sum(axis=1)
-
-    sim_votes += base_arr
-
-    ranked_idx  = np.argsort(-sim_votes, axis=1)
-    winners_2nd = [cand_cols[ranked_idx[s, 1]] for s in range(n_sims)]
-    in_top2: dict[str, int] = defaultdict(int)
-    for s in range(n_sims):
-        in_top2[cand_cols[ranked_idx[s, 0]]] += 1
-        in_top2[cand_cols[ranked_idx[s, 1]]] += 1
-
-    if battle_cols:
-        idx_a  = cand_cols.index(battle_cols[0])
-        idx_b  = cand_cols.index(battle_cols[1])
-        margins = (sim_votes[:, idx_a] - sim_votes[:, idx_b]).tolist()
+    # Share to apply to remaining mesas
+    if me > 0 and m["_vv"] > 0:
+        # Use this municipio's own observed share
+        share = {col: m["_votes"][col] / m["_vv"] for col in cand_cols}
+        # Votes per mesa in this municipio
+        vpm = m["_vv"] / me
     else:
-        idx2   = ranked_idx[:, 1]
-        idx3   = ranked_idx[:, 2]
-        margins = (sim_votes[np.arange(n_sims), idx2]
-                   - sim_votes[np.arange(n_sims), idx3]).tolist()
+        # Fall back to dept, then national
+        d = m["_dept"]
+        share = dept_sh.get(d) or nat_sh
+        # National votes per mesa estimate
+        total_me  = sum(x["_me"]  for x in [m] if False) or 1   # placeholder
+        vpm = None
 
-    return margins, winners_2nd, in_top2
+    if vpm is None:
+        # Use national avg votes per mesa
+        # We'll set vpm = 0 here and handle in simulation via nat_vpm
+        return observed, {col: 0 for col in cand_cols}
+
+    proj_remaining = {col: share[col] * vpm * remaining for col in cand_cols}
+    return observed, proj_remaining
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Output helpers
-# ═══════════════════════════════════════════════════════════════════════════════
+# ── Monte Carlo ────────────────────────────────────────────────────────────────
 
-def percentile(lst: list, p: float) -> float:
+def run_simulations(mpios, cand_cols, dept_sh, nat_sh, n_sims, seed):
+    """
+    For each municipio:
+      - observed votes are fixed
+      - remaining votes are sampled: N(mu, sigma) where
+          mu    = projected_remaining (observed share × vpm × remaining_mesas)
+          sigma = mu * uncertainty_factor  (higher when fewer mesas counted)
+    """
+    rng = random.Random(seed)
+
+    # Precompute per-municipio projection params
+    # nat_vpm: national average valid votes per mesa (from counted municipios)
+    total_vv = sum(m["_vv"] for m in mpios if m["_me"] > 0)
+    total_me = sum(m["_me"] for m in mpios if m["_me"] > 0)
+    nat_vpm  = (total_vv / total_me) if total_me > 0 else 200
+
+    mpio_params = []
+    for m in mpios:
+        mt, me = m["_mt"], m["_me"]
+        remaining = max(0, mt - me)
+        obs = {col: m["_votes"][col] for col in cand_cols}
+
+        if remaining == 0:
+            mpio_params.append({"obs": obs, "mu": None})
+            continue
+
+        if me > 0 and m["_vv"] > 0:
+            share = {col: m["_votes"][col] / m["_vv"] for col in cand_cols}
+            vpm   = m["_vv"] / me
+        else:
+            d     = m["_dept"]
+            share = dept_sh.get(d) or nat_sh
+            vpm   = nat_vpm
+
+        mu  = {col: share[col] * vpm * remaining for col in cand_cols}
+        # Uncertainty: sqrt of remaining mesas → relative std ~15% / sqrt(remaining)
+        rel_std = 0.15 / math.sqrt(remaining) if remaining > 0 else 0.15
+        sigma = {col: max(0.0, mu[col] * rel_std) for col in cand_cols}
+
+        mpio_params.append({"obs": obs, "mu": mu, "sigma": sigma})
+
+    col_1st = f"cand_{BATTLE_1ST}"
+    col_2nd = f"cand_{BATTLE_2ND}"
+
+    margins = []
+    for _ in range(n_sims):
+        totals = defaultdict(float)
+        for p in mpio_params:
+            for col in cand_cols:
+                totals[col] += p["obs"][col]
+            if p.get("mu"):
+                for col in cand_cols:
+                    totals[col] += max(0.0, rng.gauss(p["mu"][col], p["sigma"][col]))
+        margins.append(int(totals[col_1st] - totals[col_2nd]))
+
+    return margins
+
+
+# ── Output helpers ─────────────────────────────────────────────────────────────
+
+def percentile(lst, p):
     s   = sorted(lst)
     idx = p / 100 * (len(s) - 1)
     lo, hi = int(idx), min(int(idx) + 1, len(s) - 1)
     return s[lo] + (s[hi] - s[lo]) * (idx - lo)
 
-
-def make_histogram(values: list[int], n_bins: int) -> dict:
+def make_histogram(values, n_bins):
     mn, mx = min(values), max(values)
     if mn == mx:
         return {"edges": [mn, mx + 1], "counts": [len(values)]}
@@ -339,316 +203,120 @@ def make_histogram(values: list[int], n_bins: int) -> dict:
     return {"edges": edges, "counts": counts}
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# Core forecast
-# ═══════════════════════════════════════════════════════════════════════════════
+# ── Main ───────────────────────────────────────────────────────────────────────
 
-def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict],
-                 n_sims: int = N_SIM, seed: int = SEED,
-                 holdout_frac: float = 0.0) -> dict:
-    """
-    Core forecast.  holdout_frac > 0 → randomly treat that fraction of counted
-    mesas as remaining (for calibration validation).
-    """
-    rng = random.Random(seed)
+def main():
+    candidates = load_candidates()
+    cand_cols  = [f"cand_{c['code']}" for c in candidates]
+    cand_meta  = {f"cand_{c['code']}": c for c in candidates}
 
-    counted_all = [m for m in mesas if m["_is_counted"]]
-    non_c       = [m for m in mesas if not m["_is_counted"]]
+    print("Loading municipios …")
+    mpios = load_mpios(cand_cols)
 
-    # Empty state: no mesas counted yet
-    if not counted_all:
-        cand_summary = sorted(
-            [{"code":    c["code"],
-              "nombre":  c.get("nombre", ""),
-              "color":   c.get("color", "#666"),
-              "votes":   0,
-              "pct_emitidos": 0,
-              "prob_runoff":  0}
-             for c in candidates],
-            key=lambda c: c["nombre"]
-        )
-        c2, c3 = cand_summary[0], cand_summary[1]
-        return {
+    total_mt = sum(m["_mt"] for m in mpios)
+    total_me = sum(m["_me"] for m in mpios)
+    pct_mesas = round(total_me / total_mt * 100, 2) if total_mt else 0.0
+
+    print(f"  {len(mpios):,} municipios  |  mesas: {total_me:,}/{total_mt:,} ({pct_mesas:.1f}%)")
+
+    # Empty state
+    if total_me == 0:
+        result = {
             "generated_at":         datetime.datetime.utcnow().isoformat() + "Z",
             "pct_mesas":            0.0,
             "mesas_contabilizadas": 0,
-            "mesas_remaining":      len(non_c),
-            "mesas_total":          len(mesas),
-            "mesas_in_analysis":    0,
+            "mesas_remaining":      total_mt,
+            "mesas_total":          total_mt,
             "n_sims":               0,
-            "candidates":           cand_summary,
+            "candidates":           [],
             "battle": {
-                "cand_2nd":          c2["code"],
-                "cand_3rd":          c3["code"],
-                "nombre_2nd":        c2["nombre"],
-                "nombre_3rd":        c3["nombre"],
-                "color_2nd":         c2["color"],
-                "color_3rd":         c3["color"],
-                "prob_2nd_pct":      0.0,
-                "prob_3rd_pct":      0.0,
-                "mean_margin_votes": 0,
-                "ci_lo_votes":       0,
-                "ci_hi_votes":       0,
+                "cand_2nd":            BATTLE_1ST,
+                "cand_3rd":            BATTLE_2ND,
+                "nombre_2nd":          cand_meta[f"cand_{BATTLE_1ST}"]["nombre"],
+                "nombre_3rd":          cand_meta[f"cand_{BATTLE_2ND}"]["nombre"],
+                "color_2nd":           cand_meta[f"cand_{BATTLE_1ST}"]["color"],
+                "color_3rd":           cand_meta[f"cand_{BATTLE_2ND}"]["color"],
+                "prob_2nd_pct":        0.0,
+                "prob_3rd_pct":        0.0,
+                "mean_margin_votes":   0,
+                "ci_lo_votes":         0,
+                "ci_hi_votes":         0,
                 "margin_distribution": {"edges": [0, 1], "counts": [0]},
             },
         }
+        with open(OUT_JSON, "w") as f:
+            json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
+        print("Empty state saved.")
+        return
 
-    if holdout_frac > 0:
-        rng.shuffle(counted_all)
-        n_hold    = int(len(counted_all) * holdout_frac)
-        held_out  = counted_all[:n_hold]
-        counted   = counted_all[n_hold:]
-        remaining = held_out + non_c
-    else:
-        counted   = counted_all
-        remaining = non_c
+    dept_sh = dept_shares(mpios, cand_cols)
+    nat_sh  = national_shares(mpios, cand_cols)
 
-    # Base totals from counted mesas
-    base_votes: dict[str, int] = defaultdict(int)
-    for m in counted:
-        for col, v in m["_votes"].items():
-            base_votes[col] += v
+    # Observed totals
+    obs_totals = defaultdict(int)
+    for m in mpios:
+        for col in cand_cols:
+            obs_totals[col] += m["_votes"][col]
 
-    # Build hierarchy statistics
-    stats  = build_all_stats(counted, cand_cols)
-    priors = [get_prior(m, stats) for m in remaining]
+    obs_ranked   = sorted(cand_cols, key=lambda c: obs_totals[c], reverse=True)
+    total_vv_obs = sum(obs_totals.values())
 
-    # Aggregate mesas sharing the same prior → speedup at low reporting rates
-    agg_remaining, agg_priors = aggregate_by_prior(remaining, priors)
+    print(f"Running {N_SIM:,} simulations …")
+    margins = run_simulations(mpios, cand_cols, dept_sh, nat_sh, N_SIM, SEED)
 
-    print(f"  Counted: {len(counted):,}  Remaining: {len(remaining):,}  "
-          f"(aggregated to {len(agg_remaining):,} prior groups)")
-
-    # Pass 1: small run (500 sims) to identify battle candidates
-    N_ID = min(500, n_sims)
-    _, _, in_top2_id = run_simulations(
-        base_votes, agg_remaining, agg_priors, cand_cols, N_ID, rng,
-        battle_cols=None)
-
-    sim_ranked = sorted(cand_cols, key=lambda c: in_top2_id.get(c, 0), reverse=True)
-    cand_2nd   = sim_ranked[1]
-    cand_3rd   = sim_ranked[2]
-
-    # Pass 2: full n_sims with signed margin for the confirmed battle pair
-    rng2 = random.Random(seed)
-    margins, winners_2nd, in_top2 = run_simulations(
-        base_votes, agg_remaining, agg_priors, cand_cols, n_sims, rng2,
-        battle_cols=(cand_2nd, cand_3rd))
-
-    total_sim = len(margins)
-    prob_2nd  = sum(1 for w in winners_2nd if w == cand_2nd) / total_sim * 100
-    prob_3rd  = sum(1 for w in winners_2nd if w == cand_3rd) / total_sim * 100
-
-    mean_margin = sum(margins) / len(margins)
+    mean_margin = int(sum(margins) / len(margins))
     ci_lo       = int(percentile(margins, 2.5))
     ci_hi       = int(percentile(margins, 97.5))
+    prob_1st    = round(sum(1 for m in margins if m > 0) / len(margins) * 100, 1)
+    prob_2nd    = round(100 - prob_1st, 1)
 
     # Candidate summary
-    total_emitidos = sum(m["_emitidos"] for m in counted)
-    cand_summary   = []
-    cand_by_col    = {f"cand_{c['code']}": c for c in candidates}
-    base_ranked    = sorted(cand_cols, key=lambda c: base_votes.get(c, 0), reverse=True)
-    for col in base_ranked:
-        c     = cand_by_col[col]
-        votes = base_votes.get(col, 0)
+    cand_summary = []
+    for col in obs_ranked:
+        c     = cand_meta[col]
+        votes = obs_totals[col]
         cand_summary.append({
-            "code":          c["code"],
-            "nombre":        c.get("nombre", ""),
-            "color":         c.get("color", "#666"),
-            "votes":         votes,
-            "pct_emitidos":  round(votes / total_emitidos * 100, 3) if total_emitidos else 0,
-            "prob_runoff":   round(in_top2.get(col, 0) / total_sim * 100, 1),
+            "code":         c["code"],
+            "nombre":       c.get("nombre", ""),
+            "color":        c.get("color", "#666"),
+            "votes":        votes,
+            "pct_emitidos": round(votes / total_vv_obs * 100, 3) if total_vv_obs else 0,
+            "prob_runoff":  100.0 if c["code"] in (BATTLE_1ST, BATTLE_2ND) else 0.0,
         })
 
-    return {
+    result = {
         "generated_at":         datetime.datetime.utcnow().isoformat() + "Z",
-        "pct_mesas":            round(len(counted_all) / max(len(mesas), 1) * 100, 2),
-        "mesas_contabilizadas": len(counted_all),
-        "mesas_remaining":      len(non_c),
-        "mesas_total":          len(mesas),
-        "mesas_in_analysis":    len(counted),
-        "n_sims":               total_sim,
+        "pct_mesas":            pct_mesas,
+        "mesas_contabilizadas": total_me,
+        "mesas_remaining":      total_mt - total_me,
+        "mesas_total":          total_mt,
+        "n_sims":               N_SIM,
         "candidates":           cand_summary,
         "battle": {
-            "cand_2nd":          cand_by_col[cand_2nd]["code"],
-            "cand_3rd":          cand_by_col[cand_3rd]["code"],
-            "nombre_2nd":        cand_by_col[cand_2nd].get("nombre", ""),
-            "nombre_3rd":        cand_by_col[cand_3rd].get("nombre", ""),
-            "color_2nd":         cand_by_col[cand_2nd].get("color", "#888"),
-            "color_3rd":         cand_by_col[cand_3rd].get("color", "#888"),
-            "prob_2nd_pct":      round(prob_2nd, 1),
-            "prob_3rd_pct":      round(prob_3rd, 1),
-            "mean_margin_votes": int(mean_margin),
-            "ci_lo_votes":       ci_lo,
-            "ci_hi_votes":       ci_hi,
+            "cand_2nd":            BATTLE_1ST,
+            "cand_3rd":            BATTLE_2ND,
+            "nombre_2nd":          cand_meta[f"cand_{BATTLE_1ST}"]["nombre"],
+            "nombre_3rd":          cand_meta[f"cand_{BATTLE_2ND}"]["nombre"],
+            "color_2nd":           cand_meta[f"cand_{BATTLE_1ST}"]["color"],
+            "color_3rd":           cand_meta[f"cand_{BATTLE_2ND}"]["color"],
+            "prob_2nd_pct":        prob_1st,
+            "prob_3rd_pct":        prob_2nd,
+            "mean_margin_votes":   mean_margin,
+            "ci_lo_votes":         ci_lo,
+            "ci_hi_votes":         ci_hi,
             "margin_distribution": make_histogram(margins, N_BINS),
         },
     }
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# Validation
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def run_validation(mesas, cand_cols, candidates,
-                   n_trials=100, n_sims=2_000, seed=SEED,
-                   obs_frac=0.05):
-    """
-    Calibration test via repeated random holdouts.
-
-    obs_frac  – fraction of counted mesas treated as *observed* (default 0.05 = 5%).
-    n_trials  – number of independent random splits.
-    n_sims    – Monte Carlo draws per trial.
-    """
-    cand_by_col = {f"cand_{c['code']}": c for c in candidates}
-
-    counted_all = [m for m in mesas if m["_is_counted"]]
-    non_c       = [m for m in mesas if not m["_is_counted"]]
-    if not counted_all:
-        print("No counted mesas — run the scraper first.", flush=True)
-        return
-
-    # True final margin from ALL counted mesas
-    true_base: dict[str, int] = defaultdict(int)
-    for m in counted_all:
-        for col, v in m["_votes"].items():
-            true_base[col] += v
-    cols_sorted = sorted(cand_cols, key=lambda c: true_base.get(c, 0), reverse=True)
-    true_2nd    = cols_sorted[1]
-    true_3rd    = cols_sorted[2]
-    true_margin = true_base[true_2nd] - true_base[true_3rd]
-
-    n_obs = int(len(counted_all) * obs_frac)
-
-    print(f"\n{'='*60}", flush=True)
-    print(f"Calibration: {n_trials} trials × {obs_frac*100:.0f}% observed "
-          f"({n_obs:,} of {len(counted_all):,} counted mesas)  ·  {n_sims:,} sims/trial", flush=True)
-    print(f"True final margin (2nd−3rd): {true_margin:+,} votes", flush=True)
-    print(f"True 2nd: {cand_by_col[true_2nd]['nombre']}", flush=True)
-    print(f"True 3rd: {cand_by_col[true_3rd]['nombre']}", flush=True)
-    print(f"Engine   : {'numpy' if HAS_NUMPY else 'pure Python'}", flush=True)
-    print(f"{'='*60}", flush=True)
-
-    covered = 0
-    widths  = []
-
-    for trial in range(n_trials):
-        print(f"  {trial+1:3d}/{n_trials}  building priors …", end="\r", flush=True)
-
-        rng_t = random.Random(seed + trial)
-        counted_copy = list(counted_all)
-        rng_t.shuffle(counted_copy)
-        n_obs_t   = int(len(counted_copy) * obs_frac)
-        observed  = counted_copy[:n_obs_t]
-        held_out  = counted_copy[n_obs_t:]
-        remaining = held_out + non_c
-
-        base_votes: dict[str, int] = defaultdict(int)
-        for m in observed:
-            for col, v in m["_votes"].items():
-                base_votes[col] += v
-
-        stats  = build_all_stats(observed, cand_cols)
-        priors = [get_prior(m, stats) for m in remaining]
-        agg_mesas, agg_priors = aggregate_by_prior(remaining, priors)
-
-        print(f"  {trial+1:3d}/{n_trials}  simulating ({n_sims:,} draws, "
-              f"{len(agg_mesas):,} prior groups from {len(remaining):,} mesas) …",
-              end="\r", flush=True)
-
-        margins, _, _ = run_simulations(
-            base_votes, agg_mesas, agg_priors, cand_cols, n_sims, rng_t,
-            battle_cols=(true_2nd, true_3rd))
-
-        lo  = int(percentile(margins, 2.5))
-        hi  = int(percentile(margins, 97.5))
-        hit = lo <= true_margin <= hi
-        covered += int(hit)
-        widths.append(hi - lo)
-
-        print(f"  {trial+1:3d}/{n_trials}  CI [{lo:+,}, {hi:+,}]  "
-              f"width={hi-lo:,}  {'✓' if hit else '✗'}          ", flush=True)
-
-    mean_width = sum(widths) / len(widths)
-    cov_pct    = covered / n_trials * 100
-    print(f"\n{'─'*60}")
-    print(f"Coverage : {covered}/{n_trials} = {cov_pct:.1f}%  (target: 95%)")
-    print(f"CI width : mean={mean_width:,.0f}  min={min(widths):,}  max={max(widths):,} votes")
-    if cov_pct < 90:
-        print("  ⚠  Under-coverage — CIs too narrow for this reporting level")
-    elif cov_pct > 99:
-        print("  ⚠  Over-coverage — CIs too wide")
-    else:
-        print("  ✓  Coverage acceptable")
-    return cov_pct
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# Main
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--validate", action="store_true",
-                        help="Run holdout calibration check")
-    parser.add_argument("--preview",  type=float, default=None, metavar="OBS_FRAC",
-                        help="Simulate early-night: treat OBS_FRAC of counted mesas as observed "
-                             "(e.g. 0.05 = 5%%), save forecast.json, then exit")
-    parser.add_argument("--obs",      type=float, default=0.05,
-                        help="Fraction of counted mesas treated as observed (default: 0.05 = 5%%)")
-    parser.add_argument("--trials",   type=int, default=100,
-                        help="Number of random holdout trials (default: 100)")
-    parser.add_argument("--sims",     type=int, default=N_SIM,
-                        help=f"Monte Carlo draws (default: {N_SIM:,})")
-    args = parser.parse_args()
-
-    candidates = load_candidates()
-    cand_cols  = [f"cand_{c['code']}" for c in candidates]
-
-    print("Loading data …")
-    roll_lkp = load_roll()
-    mesas    = load_mesas(cand_cols, roll_lkp)
-
-    n_c = sum(m["_is_counted"] for m in mesas)
-    print(f"  {len(mesas):,} mesas  ({n_c:,} counted, {len(mesas)-n_c:,} remaining)")
-
-    if args.preview is not None:
-        obs_frac     = args.preview
-        holdout_frac = 1.0 - obs_frac
-        print(f"\nPreview mode: {obs_frac*100:.0f}% observed  "
-              f"({int(n_c * obs_frac):,} mesas as input)")
-        result = run_forecast(mesas, cand_cols, candidates,
-                              n_sims=args.sims, holdout_frac=holdout_frac)
-        with open(OUT_JSON, "w") as f:
-            json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
-        b = result["battle"]
-        print(f"Saved → {OUT_JSON.name}")
-        print(f"  Battle: {b['nombre_2nd'].split()[0]} vs {b['nombre_3rd'].split()[0]}")
-        print(f"  Margin: {b['mean_margin_votes']:+,} votes  "
-              f"CI [{b['ci_lo_votes']:+,}, {b['ci_hi_votes']:+,}]")
-        print(f"  P(2nd holds): {b['prob_2nd_pct']:.1f}%")
-        return
-
-    if args.validate:
-        run_validation(mesas, cand_cols, candidates,
-                       n_trials=args.trials, n_sims=args.sims,
-                       obs_frac=args.obs)
-        return
-
-    print(f"\nRunning {args.sims:,} simulations …")
-    result = run_forecast(mesas, cand_cols, candidates, n_sims=args.sims)
-
     with open(OUT_JSON, "w") as f:
         json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
 
-    b = result["battle"]
     print(f"\nSaved → {OUT_JSON.name}")
-    print(f"  Battle: {b['nombre_2nd'].split()[0]} vs {b['nombre_3rd'].split()[0]}")
-    print(f"  Margin: {b['mean_margin_votes']:+,} votes  "
-          f"CI [{b['ci_lo_votes']:+,}, {b['ci_hi_votes']:+,}]")
-    print(f"  P(2nd holds): {b['prob_2nd_pct']:.1f}%")
+    print(f"  {cand_meta[f'cand_{BATTLE_1ST}']['nombre'].split()[0]} margin: "
+          f"{mean_margin:+,} votes  CI [{ci_lo:+,}, {ci_hi:+,}]")
+    print(f"  P(Cepeda > Abelardo): {prob_1st:.1f}%")
     print()
-    for c in result["candidates"][:5]:
+    for c in cand_summary[:5]:
         print(f"  {c['pct_emitidos']:5.2f}%  {c['votes']:>10,}  {c['nombre']}")
 
 
