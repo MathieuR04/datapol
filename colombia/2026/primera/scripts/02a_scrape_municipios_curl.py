@@ -13,6 +13,8 @@ import csv
 import json
 import subprocess
 import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 METADATA = Path(__file__).parent.parent.parent / "metadata"
@@ -22,7 +24,7 @@ RESULTS.mkdir(parents=True, exist_ok=True)
 
 BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 PRESIDENTIAL_CAM = 0
-DELAY    = 0.7   # seconds between requests
+WORKERS  = 6     # parallel curl subprocesses
 MPIO_CSV = RESULTS / "colombia_2026_municipio_primera.csv"
 
 
@@ -130,20 +132,29 @@ def scrape(update_mode=False):
     print(f"{'Update' if update_mode else 'Full'} scrape (curl): {len(codes):,} municipios …")
 
     results, errors = [], []
+    lock = threading.Lock()
+    done = [0]
     t0 = time.time()
-    for i, code in enumerate(codes):
+
+    def process(code):
         data, err = fetch_curl(code)
-        if err:
-            errors.append({"mpio_reg_code_7": code, "error": err})
-        elif data:
-            results.append(parse_mpio(code, data, codcan_map, cand_cols))
-        if (i + 1) % 50 == 0 or (i + 1) == len(codes):
-            elapsed = time.time() - t0
-            rate = (i + 1) / elapsed if elapsed else 0
-            eta  = (len(codes) - i - 1) / rate if rate else 0
-            print(f"  [{i+1:,}/{len(codes):,}]  ok={len(results):,}  err={len(errors)}  {rate:.1f}/s  eta={eta:.0f}s    ",
-                  end="\r", flush=True)
-        time.sleep(DELAY)
+        with lock:
+            done[0] += 1
+            if err:
+                errors.append({"mpio_reg_code_7": code, "error": err})
+            elif data:
+                results.append(parse_mpio(code, data, codcan_map, cand_cols))
+            if done[0] % 50 == 0 or done[0] == len(codes):
+                elapsed = time.time() - t0
+                rate = done[0] / elapsed if elapsed else 0
+                eta  = (len(codes) - done[0]) / rate if rate else 0
+                print(f"  [{done[0]:,}/{len(codes):,}]  ok={len(results):,}  err={len(errors)}  {rate:.1f}/s  eta={eta:.0f}s    ",
+                      end="\r", flush=True)
+
+    with ThreadPoolExecutor(max_workers=WORKERS) as ex:
+        futures = [ex.submit(process, code) for code in codes]
+        for f in as_completed(futures):
+            f.result()
 
     print()
     print(f"Done: {len(results):,} ok  {len(errors):,} errors")
