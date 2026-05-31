@@ -590,7 +590,7 @@
 
     <!-- Needle gauge -->
     <div class="needle-section" id="needle-section">
-      <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-title">1ra Vuelta 2026 · Batalla por el 2do puesto · 2da vuelta</div>
       <div class="needle-mesas-note" id="needle-mesas-note"></div>
       <div class="needle-gauge-row">
         <div id="needle-left-photo" class="needle-side-placeholder"></div>
@@ -1764,7 +1764,7 @@
     const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
     const niceMax = (() => {
       const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
-      for (const f of [1, 1.5, 2, 2.5, 5, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
+      for (const f of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
       return mag * 10;
     })();
     const MAX_RANGE = niceMax;
@@ -1810,16 +1810,21 @@
       const n = parseInt((hex||"#888888").replace("#",""), 16);
       return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
     }
-    if (Math.abs(ciArcL - ciArcR) > 0.01) {
-      const a0   = midA;
-      const aPos = Math.max(ciArcL, ciArcR);
-      const aNeg = Math.min(ciArcL, ciArcR);
-      if (Math.abs(aPos - a0) > 0.01)
-        svg.appendChild(mkEl("path", { d: wedgePath(a0, aPos),
-          fill: hexRgba(candLeft?.color, 0.28), stroke: "none", class: "ns-tick" }));
-      if (Math.abs(a0 - aNeg) > 0.01)
-        svg.appendChild(mkEl("path", { d: wedgePath(aNeg, a0),
-          fill: hexRgba(candRight?.color, 0.28), stroke: "none", class: "ns-tick" }));
+    // CI wedge: draw only the actual CI interval on the arc (not from center)
+    {
+      const ciMin  = Math.min(ciArcL, ciArcR);
+      const ciMax  = Math.max(ciArcL, ciArcR);
+      const midCi  = (ciMin + ciMax) / 2;
+      // Enforce minimum visible width of 4 degrees so the CI is always visible
+      const half   = Math.max((ciMax - ciMin) / 2, 0.07);
+      const visMin = Math.max(endA,  midCi - half);
+      const visMax = Math.min(startA, midCi + half);
+      // Color by which candidate the CI center favors
+      const ciColor = midCi < midA
+        ? hexRgba(candRight?.color, 0.5)   // right of center → right candidate
+        : hexRgba(candLeft?.color,  0.5);  // left of center  → left candidate
+      svg.appendChild(mkEl("path", { d: wedgePath(visMin, visMax),
+        fill: ciColor, stroke: "none", class: "ns-tick" }));
     }
 
     // Scale labels at 0, ±half, ±full
