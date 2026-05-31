@@ -502,7 +502,7 @@
   let winnerShareRange  = { min: 0, max: 1 }; // updated each render for dynamic coloring
   let candViewMaxShare  = 1;                  // max candidate share across features
 
-  const BUBBLE_VIEWS = new Set(["mesas", "votos"]);
+  const BUBBLE_VIEWS = new Set(["mesas", "votos", "candidate_bubble"]);
 
   // Active consulta helpers
   function mpioData()  { return DATA[currentConsulta].mpio;       }
@@ -537,6 +537,12 @@
   function defZoom() { return window.innerWidth <= 700 ? 4 : 5.5; }
 
   // ── Style functions ────────────────────────────────────────────────────────
+  function getCandVotes(props, candName) {
+    let top5 = [];
+    try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
+    return (top5.find(c => c.name === candName) || {}).votes || 0;
+  }
+
   function getCandShare(props, candName) {
     let top5 = [];
     try { top5 = JSON.parse(props.top5_candidates || "[]"); } catch(e) {}
@@ -570,7 +576,7 @@
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
       const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
-      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(t, 0.6));
+      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(t, 0.7));
     }
     return { fillColor: fill, weight: 0.3, color: "#cfc0ab", fillOpacity: 0.92 };
   }
@@ -590,7 +596,7 @@
     } else if (currentView === "candidate" && selectedCandidate) {
       const share = getCandShare(p, selectedCandidate);
       const t = candViewMaxShare > 0 ? Math.min(share / candViewMaxShare, 1) : 0;
-      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(t, 0.6));
+      fill = lerp("#e0d8cc", candColorByName(selectedCandidate), Math.pow(t, 0.7));
     }
     return { fillColor: fill, weight: 1.5, color: "#1a1209", fillOpacity: 0.88 };
   }
@@ -649,7 +655,7 @@
   }
 
   // ── Bubbles ────────────────────────────────────────────────────────────────
-  function renderBubbles(valueKey, labelFn) {
+  function renderBubbles(valueKey, labelFn, bubbleColor) {
     if (bubbleLayer) { map.removeLayer(bubbleLayer); bubbleLayer = null; }
     const mpio = mpioData(), dept = deptData();
 
@@ -686,7 +692,8 @@
       if (!val) return;
       const r      = Math.max(2, Math.sqrt(val / maxVal) * maxR);
       const latlng = centroid(feat);
-      const marker = L.circleMarker(latlng, { radius: r, fillColor: "#c4603a", fillOpacity: 0.45, weight: 0.8, color: "#8b3c1f" });
+      const bCol = bubbleColor || "#c4603a";
+      const marker = L.circleMarker(latlng, { radius: r, fillColor: bCol, fillOpacity: 0.45, weight: 0.8, color: bCol });
       marker.bindTooltip(labelFn(feat.properties || {}, val), { sticky: true });
       marker.on("click", e => {
         L.DomEvent.stopPropagation(e);
@@ -721,6 +728,15 @@
       renderBubbles(
         p => isInter ? (parseInt(p.votos_validos)||0) : (parseInt(p.consulta_votes_total)||0),
         (p,v) => `<b>${p.mpio_name_reg||p.dept_name_reg||"—"}</b><br>${fmtN(v)} ${isInter ? "votos válidos" : "votos en consulta"}`
+      );
+    } else if (currentView === "candidate_bubble" && selectedCandidate) {
+      const col = candColorByName(selectedCandidate);
+      const shortName = selectedCandidate.split(" ")[0];
+      document.getElementById("bl-title").textContent = `Votos · ${shortName}`;
+      renderBubbles(
+        p => getCandVotes(p, selectedCandidate),
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} votos`,
+        col
       );
     } else {
       renderChoropleth();
@@ -1018,15 +1034,22 @@
         </div>`;
       }).join("");
 
-    // Click → candidate choropleth
+    // Click → candidate choropleth → bubbles → deselect
     el.querySelectorAll(".party-row").forEach(row => {
       row.addEventListener("click", () => {
         const name = row.dataset.cand;
         if (selectedCandidate === name) {
-          selectedCandidate = null;
-          el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
-          currentView = "winner";
-          document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+          if (currentView === "candidate") {
+            // 2nd click → bubble view
+            currentView = "candidate_bubble";
+            document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+          } else {
+            // 3rd click → deselect, back to winner
+            selectedCandidate = null;
+            el.querySelectorAll(".party-row").forEach(r => r.classList.remove("selected"));
+            currentView = "winner";
+            document.querySelectorAll(".view-btn").forEach(b => b.classList.toggle("active", b.dataset.view === "winner"));
+          }
         } else {
           selectedCandidate = name;
           el.querySelectorAll(".party-row").forEach(r => r.classList.toggle("selected", r.dataset.cand === name));
