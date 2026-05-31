@@ -39,8 +39,9 @@ HEADERS  = {
 # ⚠️  VERIFY THIS ON ELECTION DAY
 PRESIDENTIAL_CAM = 0
 
-CONCURRENCY  = 50
+CONCURRENCY  = 10
 TIMEOUT      = 25
+DELAY        = 0.1     # seconds between requests to avoid 403
 FLUSH_EVERY  = 1_000   # rows before flushing to CSV
 
 MESA_CSV     = RESULTS / "colombia_2026_mesa_primera.csv"
@@ -146,14 +147,20 @@ def flush_rows(rows: list[dict], fieldnames: list[str], first_flush: bool):
 # ── Network ────────────────────────────────────────────────────────────────────
 
 async def fetch_one(session, sem, mesa_code, mpio_code):
-    url = BASE_URL.format(code=mesa_code)
+    # mesa_code is 19-digit (e.g. "1600001120031000001"); API uses 17-digit (dept2+mpio3+rest12)
+    api_code = mesa_code[:2] + mesa_code[4:]
+    url = BASE_URL.format(code=api_code)
     async with sem:
+        await asyncio.sleep(DELAY)
         for attempt in range(3):
             try:
                 async with session.get(url, headers=HEADERS,
                                        timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as resp:
                     if resp.status == 404:
                         return mesa_code, mpio_code, None, "404"
+                    if resp.status == 403:
+                        await asyncio.sleep(2 + attempt * 2)
+                        continue
                     if resp.status != 200:
                         if attempt < 2:
                             await asyncio.sleep(1)

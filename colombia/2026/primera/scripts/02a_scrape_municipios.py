@@ -42,8 +42,9 @@ HEADERS  = {
 # ⚠️  VERIFY THIS ON ELECTION DAY (camara index for presidential race)
 PRESIDENTIAL_CAM = 0
 
-CONCURRENCY = 30
+CONCURRENCY = 8
 TIMEOUT     = 30
+DELAY       = 0.15   # seconds between requests to avoid 403
 
 MPIO_CSV = RESULTS / "colombia_2026_municipio_primera.csv"
 
@@ -120,18 +121,21 @@ async def fetch_one(session, sem, code):
     api_code = code[:2] + code[4:]
     url = BASE_URL.format(code=api_code)
     async with sem:
-        for attempt in range(2):
+        await asyncio.sleep(DELAY)
+        for attempt in range(3):
             try:
                 async with session.get(url, headers=HEADERS,
                                        timeout=aiohttp.ClientTimeout(total=TIMEOUT)) as resp:
                     if resp.status == 404: return code, None, "404"
+                    if resp.status == 403:
+                        await asyncio.sleep(2 + attempt * 2); continue
                     if resp.status != 200:
-                        if attempt == 0: await asyncio.sleep(1); continue
+                        if attempt < 2: await asyncio.sleep(1); continue
                         return code, None, f"HTTP {resp.status}"
                     data = await resp.json(content_type=None)
                     return code, data, None
             except asyncio.TimeoutError:
-                if attempt == 0: await asyncio.sleep(2); continue
+                if attempt < 2: await asyncio.sleep(2); continue
                 return code, None, "timeout"
             except Exception as e:
                 if attempt == 0: await asyncio.sleep(1); continue
