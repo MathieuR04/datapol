@@ -222,8 +222,13 @@
       flex-direction: column;
       gap: 0.4rem;
       overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: background .12s;
     }
     .article-card:last-child { border-right: none; }
+    .article-card:hover { background: var(--surface); }
+    .article-card:hover .article-title { color: var(--terra); }
     .article-tag {
       font-size: 8px;
       font-weight: 700;
@@ -237,6 +242,7 @@
       letter-spacing: 0.03em;
       line-height: 1.1;
       color: var(--text);
+      transition: color .12s;
     }
     .article-body {
       font-size: 10px;
@@ -248,17 +254,11 @@
       -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
     }
-    .article-soon {
-      display: inline-block;
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
+    .article-date {
+      font-size: 9px;
       color: var(--dim);
-      border: 1px solid var(--border);
-      padding: 0.2rem 0.55rem;
-      border-radius: 2px;
-      width: fit-content;
+      letter-spacing: 0.03em;
+      margin-top: auto;
     }
 
     /* ── Mobile ───────────────────────────────────────────────────────────── */
@@ -339,24 +339,24 @@
     <!-- Right: Articles + Colombia -->
     <div class="col-right">
 
-      <!-- Article placeholders -->
+      <!-- Featured articles -->
       <div class="articles-block">
         <div class="articles-header">
           <div class="articles-label">ARTÍCULOS</div>
         </div>
         <div class="articles"><div class="articles-inner">
-          <div class="article-card">
-            <div class="article-tag">Análisis · Electoral</div>
-            <div class="article-title">¿Quién llega a la segunda vuelta?</div>
-            <div class="article-body">Un análisis de los escenarios más probables para la segunda vuelta presidencial peruana según los modelos estadísticos de Datapol.</div>
-            <span class="article-soon">Próximamente</span>
-          </div>
-          <div class="article-card">
-            <div class="article-tag">Metodología</div>
-            <div class="article-title">Cómo funciona el pronóstico</div>
-            <div class="article-body">Explicación del modelo bayesiano jerárquico utilizado para proyectar resultados en tiempo real a partir de actas contabilizadas.</div>
-            <span class="article-soon">Próximamente</span>
-          </div>
+          <a class="article-card" href="/articulos/recuentos-presidenciales-peru-2026/">
+            <div class="article-tag">Análisis · Perú 2026</div>
+            <div class="article-title">897 recuentos de actas: Keiko Fujimori es la candidata más beneficiada</div>
+            <div class="article-body">El recuento de 763 mesas muestra que Keiko gana en promedio 1.05 votos por mesa — el único resultado estadísticamente significativo entre los 36 candidatos.</div>
+            <div class="article-date">29 may. 2026</div>
+          </a>
+          <a class="article-card" href="/articulos/primarias-erm-2026-candidatos/">
+            <div class="article-tag">Análisis · Perú 2026</div>
+            <div class="article-title">171 mil candidaturas y 75 partidos: radiografía de las primarias ERM 2026</div>
+            <div class="article-body">Quién moviliza más, cómo se concentra el DESIGNADO en las cabezas de lista, y por qué Fuerza Popular y JxP dominan la presidencial pero tienen estructuras subnacionales débiles.</div>
+            <div class="article-date">30 may. 2026</div>
+          </a>
         </div></div>
       </div>
 
