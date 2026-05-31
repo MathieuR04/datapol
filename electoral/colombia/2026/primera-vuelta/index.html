@@ -91,6 +91,8 @@
     }
     .hp-bar { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
     .hp-fill { height: 100%; background: var(--terra); border-radius: 2px; transition: width 0.5s; }
+    .live-block { display: flex; flex-direction: row; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    #last-update-dist { font-size: 8.5px; color: var(--muted); letter-spacing: 0.02em; white-space: nowrap; }
     .live-tag {
       display: none;
       align-items: center;
@@ -314,173 +316,51 @@
     .detail-cand-votes { font-size: 9px; color: var(--muted); flex-shrink: 0; }
 
     /* ── Pronóstico view ─────────────────────────────────────────────────── */
-    #pronostico-view {
-      flex: 1;
-      display: none;
-      flex-direction: column;
-      overflow-y: auto;
-      background: var(--bg);
-      min-height: 0;
-    }
+    #pronostico-view { flex: 1; display: none; flex-direction: column; overflow-y: auto; background: var(--bg); min-height: 0; }
     #pronostico-view::-webkit-scrollbar { width: 3px; }
     #pronostico-view::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
-    .pron-inner {
-      max-width: 680px;
-      width: 100%;
-      align-self: center;
-      padding: 1.25rem 1.5rem 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    /* Needle section */
-    .needle-section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1rem 1.25rem 0.75rem;
-    }
-    .needle-title {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-align: center;
-      margin-bottom: 0.65rem;
-    }
-    .needle-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 360px;
-      margin: 0 auto;
-    }
+    .pron-inner { max-width: 680px; width: 100%; align-self: center; padding: 1.25rem 1.5rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    .needle-mesas-note { font-size: 8px; color: var(--dim); text-align: center; margin-top: -0.3rem; margin-bottom: 0.5rem; }
+    .needle-section { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem 0.75rem; }
+    .needle-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 0.65rem; }
+    .needle-wrap { position: relative; width: 100%; max-width: 360px; margin: 0 auto; }
     #needle-svg { display: block; width: 100%; height: auto; }
-    /* old needle-labels placeholder removed — defined in pronóstico section below */
-
-    /* Needle labels redesign */
-    .needle-labels {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      align-items: start;
-    }
+    .needle-labels { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.5rem; margin-top: 0.5rem; align-items: start; }
     .needle-label.left { text-align: left; }
     .needle-label.right { text-align: right; }
     .needle-label-name { font-size: 11px; font-weight: 700; }
-    .needle-label-prob {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
-      line-height: 1;
-    }
+    .needle-label-prob { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 28px; line-height: 1; }
     .needle-label-probsub { font-size: 8px; color: var(--muted); }
     .needle-label-votes { font-size: 9px; color: var(--muted); margin-top: 2px; }
     .needle-center-block { text-align: center; padding-top: 0.4rem; }
-    .needle-center-diff {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 20px;
-      line-height: 1;
-      color: var(--text);
-    }
+    .needle-center-diff { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 20px; line-height: 1; color: var(--text); }
     .needle-center-sub { font-size: 8px; color: var(--muted); margin-top: 2px; }
     .needle-center-ci { font-size: 8px; color: var(--dim); margin-top: 1px; }
-
-    /* Candidate probability bars */
-    .pron-section-head {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 16px;
-      letter-spacing: 0.05em;
-      color: var(--text);
-      border-bottom: 2px solid var(--text);
-      padding-bottom: 0.3rem;
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-    }
-    .pron-section-sub {
-      font-family: 'Inter', sans-serif;
-      font-size: 9px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      font-weight: 400;
-      text-transform: none;
-    }
-    .pron-prob-note {
-      font-size: 8.5px;
-      color: var(--dim);
-      font-style: italic;
-      padding: 0.3rem 0;
-      margin-bottom: 0.15rem;
-    }
+    .pron-section-head { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 16px; letter-spacing: 0.05em; color: var(--text); border-bottom: 2px solid var(--text); padding-bottom: 0.3rem; display: flex; align-items: baseline; gap: 0.75rem; }
+    .pron-section-sub { font-family: 'Inter', sans-serif; font-size: 9px; color: var(--muted); letter-spacing: 0.04em; font-weight: 400; text-transform: none; }
+    .pron-prob-note { font-size: 8.5px; color: var(--dim); font-style: italic; padding: 0.3rem 0; margin-bottom: 0.15rem; }
     .cand-prob-list { display: flex; flex-direction: column; gap: 0; }
-    .cand-prob-row {
-      padding: 0.65rem 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-    .cand-prob-top {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+    .cand-prob-row { padding: 0.65rem 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
+    .cand-prob-top { display: flex; align-items: center; gap: 0.5rem; }
     .cand-prob-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .cand-prob-nameblock { flex: 1; min-width: 0; }
     .cand-prob-name { font-size: 11px; font-weight: 700; color: var(--text); }
     .cand-prob-partido { font-size: 9px; color: var(--muted); }
     .cand-prob-right { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
-    .cand-prob-pct-val {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 30px;
-      line-height: 1;
-    }
+    .cand-prob-pct-val { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 30px; line-height: 1; }
     .cand-prob-pct-label { font-size: 7.5px; color: var(--muted); letter-spacing: 0.04em; }
-    .sv-badge {
-      font-size: 7.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      background: var(--terra-lt);
-      color: var(--terra-dk);
-      border: 1px solid var(--terra);
-      border-radius: 2px;
-      padding: 1px 5px;
-      margin-top: 2px;
-    }
-    .cand-prob-bar-wrap {
-      height: 5px;
-      background: var(--sand);
-      border-radius: 2px;
-      overflow: hidden;
-    }
+    .sv-badge { font-size: 7.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; background: var(--terra-lt); color: var(--terra-dk); border: 1px solid var(--terra); border-radius: 2px; padding: 1px 5px; margin-top: 2px; }
+    .cand-prob-bar-wrap { height: 5px; background: var(--sand); border-radius: 2px; overflow: hidden; }
     .cand-prob-bar { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
-    .cand-prob-bottom {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 9px;
-      color: var(--muted);
-    }
-    .cand-prob-votes {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 14px;
-      line-height: 1;
-      color: var(--text);
-    }
+    .cand-prob-bottom { display: flex; align-items: center; gap: 0.5rem; font-size: 9px; color: var(--muted); }
+    .cand-prob-votes { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 14px; line-height: 1; color: var(--text); }
     .cand-prob-ci { font-size: 8px; color: var(--dim); }
-
-    /* Methodology note */
-    .pron-note {
-      font-size: 9px;
-      color: var(--dim);
-      line-height: 1.7;
-      font-style: italic;
-      border-top: 1px solid var(--border);
-      padding-top: 0.75rem;
-    }
+    .pron-note { font-size: 9px; color: var(--dim); line-height: 1.7; font-style: italic; border-top: 1px solid var(--border); padding-top: 0.75rem; }
+    .margin-dist-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.85rem 1rem 0.55rem; }
+    .margin-dist-title { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; text-align: center; }
+    #margin-dist-svg { display: block; width: 100%; overflow: visible; }
+    .margin-dist-axis { display: flex; justify-content: space-between; font-size: 8px; color: var(--dim); margin-top: 2px; padding: 0 2px; }
+    .margin-dist-foot { display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 0.45rem; padding: 0 2px; }
 
     /* ── Bottom bar ──────────────────────────────────────────────────────── */
     .bottombar { background: var(--text); height: 32px; display: flex; align-items: center; padding: 0 1.25rem; gap: 1.5rem; flex-shrink: 0; overflow-x: auto; }
@@ -491,23 +371,21 @@
     .bbar-val.hi { color: var(--terra); }
     .bbar-sep { width: 1px; height: 14px; background: #333; flex-shrink: 0; }
 
-    /* ── Margin distribution chart ────────────────────────────────────────── */
-    .margin-dist-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.85rem 1rem 0.55rem; }
-    .margin-dist-title { font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.55rem; text-align: center; }
-    #margin-dist-svg { display: block; width: 100%; overflow: visible; }
-    .margin-dist-axis { display: flex; justify-content: space-between; font-size: 8px; color: var(--dim); margin-top: 2px; padding: 0 2px; }
-    .margin-dist-foot { display: flex; justify-content: space-between; font-size: 9.5px; font-weight: 700; margin-top: 0.45rem; padding: 0 2px; }
+    #mob-status { display: none; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    #mob-pct { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 17px; line-height: 1; color: var(--terra); }
+    #mob-ts { font-size: 9px; color: var(--muted); letter-spacing: 0.02em; white-space: nowrap; }
 
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 700px) {
-      body { overflow: auto; }
+      body { overflow-x: hidden; overflow-y: auto; }
       .body { flex-direction: column; }
       .map-wrap { height: 55vw; min-height: 280px; flex: none; }
       .panel { width: 100%; min-width: 0; border-left: none; border-top: 2px solid var(--text); max-height: 55vh; }
-      .header-sub, .live-tag { display: none !important; }
-      .header-stats { display: none !important; }
-      .header-progress { max-width: none; flex: 1; display: flex !important; }
-      .header-title { font-size: 15px; }
+      .header-sub, .live-tag, .header-stats, .header-progress, .live-block { display: none !important; }
+      #mob-status { display: flex !important; }
+      .header { gap: 0.5rem; padding: 0.4rem 0.75rem; overflow: hidden; }
+      .header-title { font-size: 13px !important; white-space: nowrap; }
+      .bottombar { display: none !important; }
       .map-controls { gap: 0.2rem; }
       .ctrl-group { gap: 0.1rem; }
       .ctrl-row { gap: 0.15rem; flex-wrap: wrap; }
@@ -591,6 +469,10 @@
   <div>
     <div class="header-title">🇨🇴 1ra Vuelta · Colombia 2026</div>
   </div>
+  <div id="mob-status">
+    <span id="mob-pct">—</span>
+    <span id="mob-ts"></span>
+  </div>
   <div class="header-sub">Resultados por municipio<br>Registraduría Nacional</div>
   <div class="header-progress">
     <div class="hp-labels">
@@ -599,7 +481,10 @@
     </div>
     <div class="hp-bar"><div class="hp-fill" id="hp-fill" style="width:0%"></div></div>
   </div>
-  <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+  <div class="live-block">
+    <div class="live-tag" id="live-tag"><div class="live-dot"></div>VIVO</div>
+    <div id="last-update-dist" style="display:none"></div>
+  </div>
   <div class="header-stats">
     <div class="hstat">
       <span class="hstat-label">Censo</span>
@@ -706,16 +591,13 @@
     <!-- Needle gauge -->
     <div class="needle-section" id="needle-section">
       <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-mesas-note" id="needle-mesas-note"></div>
       <div class="needle-gauge-row">
         <div id="needle-left-photo" class="needle-side-placeholder"></div>
         <div class="needle-wrap">
-          <svg id="needle-svg" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid meet">
-            <!-- Needle line -->
-            <line id="needle-line" x1="150" y1="148" x2="150" y2="60"
-                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Needle pivot -->
-            <circle cx="150" cy="148" r="5" fill="#1a1209"/>
-            <circle cx="150" cy="148" r="3" fill="var(--bg)"/>
+          <svg id="needle-svg" viewBox="0 0 300 175" preserveAspectRatio="xMidYMid meet">
+            <line id="needle-line" x1="150" y1="155" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="butt"/>
             <text id="needle-pct-text" x="150" y="162" text-anchor="middle"
                   font-family="'Bebas Neue', Impact, sans-serif" font-size="11"
                   fill="var(--muted)"></text>
@@ -732,7 +614,7 @@
         </div>
         <div class="needle-center-block">
           <div class="needle-center-diff" id="needle-center-diff">—</div>
-          <div class="needle-center-sub">margen proy. (pp)</div>
+          <div class="needle-center-sub">margen proyectado (votos)</div>
           <div class="needle-center-ci" id="needle-center-ci"></div>
         </div>
         <div class="needle-label right">
@@ -747,7 +629,7 @@
     <!-- Margin distribution -->
     <div class="margin-dist-wrap" id="margin-dist-wrap">
       <div class="margin-dist-title">Distribución del margen proyectado entre 2º y 3er puesto</div>
-      <svg id="margin-dist-svg" viewBox="0 0 480 80" preserveAspectRatio="none"></svg>
+      <svg id="margin-dist-svg" viewBox="0 0 480 96" preserveAspectRatio="none"></svg>
       <div class="margin-dist-axis" id="margin-dist-axis"></div>
       <div class="margin-dist-foot" id="margin-dist-foot"></div>
     </div>
@@ -1297,6 +1179,9 @@
     document.getElementById("hp-fill").style.width    = (pct * 100).toFixed(1) + "%";
     document.getElementById("hp-label").textContent   = `${(pct * 100).toFixed(1)}% · ${fmtN(mesaEsc)}/${fmtN(mesaTot)}`;
     if (pct > 0) document.getElementById("live-tag").style.display = "flex";
+    // Mobile status chip
+    const mobPct = document.getElementById("mob-pct");
+    if (mobPct) mobPct.textContent = pct > 0 ? (pct * 100).toFixed(1) + "%" : "—";
   }
 
   // ── Bottom bar ────────────────────────────────────────────────────────────
@@ -1664,7 +1549,7 @@
     A: { key: "A", line1: "IVÁN CEPEDA 2026",        line2: "VS. GUSTAVO PETRO 2022",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/cepeda.png",    color: "#c4603a" },
     B: { key: "B", line1: "DE LA ESPRIELLA 2026",     line2: "VS. RODOLFO HERNÁNDEZ 2022",   line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/abelardo.png",  color: "#5a7a3a" },
     C: { key: "C", line1: "PALOMA VALENCIA 2026",     line2: "VS. FICO GUTIÉRREZ 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/valencia.png",  color: "#1E3A8A" },
-    D: { key: "D", line1: "SERGIO FAJARDO 2026",      line2: "VS. SERGIO FAJARDO 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: null,                   color: "#b59a3a" },
+    D: { key: "D", line1: "SERGIO FAJARDO 2026",      line2: "VS. SERGIO FAJARDO 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/fajardo.png",   color: "#65A30D" },
   };
   const COMP_NAMES = {
     A: { c26: "Iván Cepeda",      c22: "Gustavo Petro" },
@@ -1852,9 +1737,8 @@
 
   // ── Needle gauge ──────────────────────────────────────────────────────────
   function buildNeedleArc(cx, cy, r, startAngle, endAngle) {
-    // angles in radians, measured from positive x-axis
     const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy - r * Math.sin(startAngle); // SVG y-axis is inverted
+    const y1 = cy - r * Math.sin(startAngle);
     const x2 = cx + r * Math.cos(endAngle);
     const y2 = cy - r * Math.sin(endAngle);
     const large = Math.abs(endAngle - startAngle) > Math.PI ? 1 : 0;
@@ -1863,80 +1747,96 @@
   }
 
   function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight) {
-    // Gauge shows projected VOTE DIFFERENCE: left = candLeft winning, right = candRight winning
-    // diffVotes  = projected_diff_votes (positive → candLeft ahead)
-    // ciLowVotes / ciHiVotes = CI bounds on that projection (in raw votes)
-    // Dynamic scale: gauge range auto-adjusts to CI extent (padded 10%)
     const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
-    // Round up to a nice number
     const niceMax = (() => {
       const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
       for (const f of [1, 1.5, 2, 2.5, 5, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
       return mag * 10;
     })();
     const MAX_RANGE = niceMax;
-
-    const cx = 150, cy = 148, r = 90;
+    const cx = 150, cy = 155, r = 88;
     const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
-    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE); // π at +MAX (left), 0 at -MAX (right)
-
+    // Positive d → left side (candLeft winning). angle=π at far left, angle=0 at far right.
+    const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE);
     const needleA = toAngle(diffVotes);
-    const ciArcL  = toAngle(ciHiVotes);   // high diff → more left
-    const ciArcR  = toAngle(ciLowVotes);  // low diff → more right
-
-    const startA = Math.PI;     // left
-    const endA   = 0;           // right
-    const midA   = Math.PI / 2; // center = tie
-
+    const ciArcL  = toAngle(ciHiVotes);
+    const ciArcR  = toAngle(ciLowVotes);
+    const startA = Math.PI, endA = 0, midA = Math.PI / 2;
     const svg = document.getElementById("needle-svg");
-    svg.querySelectorAll("path, line.needle-arc-path").forEach(e => e.remove());
+    svg.querySelectorAll("path, text.ns-lbl, line.ns-tick, circle.ns-dot").forEach(e => e.remove());
 
-    function mkPath(d, stroke, width, opacity, linecap) {
-      const el = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      el.setAttribute("d", d); el.setAttribute("fill", "none");
-      el.setAttribute("stroke", stroke); el.setAttribute("stroke-width", width || "18");
-      el.setAttribute("stroke-linecap", linecap || "butt");
-      if (opacity) el.setAttribute("opacity", opacity);
+    function mkEl(tag, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
       return el;
     }
-
-    // Dark base track
-    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
-    // Left half color (candLeft, dim) — 0.38 so color is clearly visible
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.38","butt"));
-    // Right half color (candRight, dim)
-    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA), candRight?.color||"#1D4ED8","18","0.38","butt"));
-
-    // CI band: bright arc spanning the confidence interval
-    if (Math.abs(ciArcL - ciArcR) > 0.01) {
-      const aL = Math.max(ciArcL, ciArcR);
-      const aR = Math.min(ciArcL, ciArcR);
-      // Use whichever candidate is ahead; at exact tie use left
-      const ciCol = diffVotes >= 0 ? (candLeft?.color||"#1E293B") : (candRight?.color||"#1D4ED8");
-      svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,aL,aR), ciCol, "18", "0.68", "butt"));
+    function mkPath(d, stroke, width, opacity, linecap) {
+      return mkEl("path", { d, fill:"none", stroke, "stroke-width": width||"18",
+        "stroke-linecap": linecap||"butt", ...(opacity ? {opacity} : {}) });
     }
 
-    // Center tick (tie mark)
-    const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    tick.setAttribute("x1", cx); tick.setAttribute("y1", cy-r-11);
-    tick.setAttribute("x2", cx); tick.setAttribute("y2", cy-r+11);
-    tick.setAttribute("stroke", "#bbb"); tick.setAttribute("stroke-width", "1.5");
-    svg.appendChild(tick);
+    // Background arc
+    svg.insertBefore(mkPath(buildNeedleArc(cx,cy,r,startA,endA), "#2a2a2a", "18"), svg.firstChild);
+    // Left half (candLeft color) and right half (candRight color)
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,startA,midA), candLeft?.color||"#1E293B","18","0.4","butt"));
+    svg.appendChild(mkPath(buildNeedleArc(cx,cy,r,midA,endA),   candRight?.color||"#888","18","0.4","butt"));
 
-    // Needle
-    const nxEnd = cx + (r-8) * Math.cos(needleA);
-    const nyEnd = cy - (r-8) * Math.sin(needleA);
+    // CI: two transparent pie wedges from pivot
+    function wedgePath(fromAngle, toAngle_) {
+      const wr = r - 9;
+      const large = Math.abs(toAngle_ - fromAngle) > Math.PI ? 1 : 0;
+      const sweep = toAngle_ < fromAngle ? 1 : 0;
+      const x1 = (cx + wr * Math.cos(fromAngle)).toFixed(1);
+      const y1 = (cy - wr * Math.sin(fromAngle)).toFixed(1);
+      const x2 = (cx + wr * Math.cos(toAngle_)).toFixed(1);
+      const y2 = (cy - wr * Math.sin(toAngle_)).toFixed(1);
+      return `M ${cx} ${cy} L ${x1} ${y1} A ${wr} ${wr} 0 ${large} ${sweep} ${x2} ${y2} Z`;
+    }
+    function hexRgba(hex, a) {
+      const n = parseInt((hex||"#888888").replace("#",""), 16);
+      return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+    }
+    if (Math.abs(ciArcL - ciArcR) > 0.01) {
+      const a0   = midA;
+      const aPos = Math.max(ciArcL, ciArcR);
+      const aNeg = Math.min(ciArcL, ciArcR);
+      if (Math.abs(aPos - a0) > 0.01)
+        svg.appendChild(mkEl("path", { d: wedgePath(a0, aPos),
+          fill: hexRgba(candLeft?.color, 0.28), stroke: "none", class: "ns-tick" }));
+      if (Math.abs(a0 - aNeg) > 0.01)
+        svg.appendChild(mkEl("path", { d: wedgePath(aNeg, a0),
+          fill: hexRgba(candRight?.color, 0.28), stroke: "none", class: "ns-tick" }));
+    }
+
+    // Scale labels at 0, ±half, ±full
+    const scaleVals = [-MAX_RANGE, -MAX_RANGE * 0.5, 0, MAX_RANGE * 0.5, MAX_RANGE];
+    const LBL_R = r + 22;
+    scaleVals.forEach(val => {
+      const a      = toAngle(val);
+      const tx     = cx + LBL_R * Math.cos(a);
+      const ty     = cy - LBL_R * Math.sin(a);
+      const anchor = val < -MAX_RANGE * 0.2 ? "start"
+                   : val >  MAX_RANGE * 0.2 ? "end" : "middle";
+      const lbl = mkEl("text", {
+        x: tx.toFixed(1), y: (ty + 3.5).toFixed(1),
+        "text-anchor": anchor, "font-size": "9", fill: "#999",
+        "font-family": "sans-serif", class: "ns-lbl"
+      });
+      lbl.textContent = val === 0 ? "0" : fmtVoteDiff(val);
+      svg.appendChild(lbl);
+    });
+
+    // Needle line + pivot dot
+    const nxEnd = cx + (r - 9) * Math.cos(needleA);
+    const nyEnd = cy - (r - 9) * Math.sin(needleA);
     const needleLine = svg.querySelector("#needle-line");
     needleLine.setAttribute("x1", cx); needleLine.setAttribute("y1", cy);
     needleLine.setAttribute("x2", nxEnd.toFixed(1)); needleLine.setAttribute("y2", nyEnd.toFixed(1));
-
-    // Center text in SVG (keep minimal — main labels are below)
-    const pctText = svg.querySelector("#needle-pct-text");
-    pctText.textContent = "";  // labels rendered in HTML below
-    pctText.setAttribute("y", (cy + 14).toString());
+    svg.querySelector("#needle-pct-text").textContent = "";
+    svg.appendChild(mkEl("circle", { cx, cy, r: "5",
+      fill: "var(--text)", stroke: "var(--bg)", "stroke-width": "1.5", class: "ns-dot" }));
   }
 
-  // ── Vote formatter for needle ─────────────────────────────────────────────
   function fmtVoteDiff(v) {
     const s = v >= 0 ? "+" : "−";
     const a = Math.abs(v);
@@ -1944,6 +1844,34 @@
     if (a >= 100000)  return `${s}${Math.round(a/1000)}k`;
     if (a >= 1000)    return `${s}${(a/1000).toFixed(1)}k`;
     return `${s}${a}`;
+  }
+
+  const _MESES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+  function fmtUpdateTime(isoStr) {
+    if (!isoStr) return null;
+    try {
+      const d = new Date(isoStr);
+      const parts = new Intl.DateTimeFormat("es-CO", {
+        timeZone: "America/Bogota",
+        day: "numeric", month: "numeric",
+        hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(d);
+      const get = t => parts.find(p => p.type === t)?.value || "";
+      const day = get("day"), mon = get("month"), hr = get("hour"), min = get("minute");
+      return `${parseInt(day)} ${_MESES[parseInt(mon)-1]} · ${hr}:${min}`;
+    } catch(e) { return null; }
+  }
+  function fmtUpdateHour(isoStr) {
+    if (!isoStr) return null;
+    try {
+      const d = new Date(isoStr);
+      const parts = new Intl.DateTimeFormat("es-CO", {
+        timeZone: "America/Bogota",
+        hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(d);
+      const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+      return `↻ ${p.hour.padStart(2,"0")}:${p.minute.padStart(2,"0")}`;
+    } catch(e) { return null; }
   }
 
   // ── Margin distribution chart ─────────────────────────────────────────────
@@ -1954,88 +1882,111 @@
     const svg  = document.getElementById("margin-dist-svg");
     const axis = document.getElementById("margin-dist-axis");
     const foot = document.getElementById("margin-dist-foot");
-
-    const W = 480, H = 72, PAD = 2;
+    const W = 480, H = 96, PAD = 4;
     const maxCount = Math.max(...counts, 1);
-    const n = counts.length;
-    const barW = (W - PAD * 2) / n;
-    const leftColor  = battle.left_color  || "#1E293B";
-    const rightColor = battle.right_color || "#1D4ED8";
+    const color2nd  = battle.color_2nd  || battle.left_color  || "#1E293B";
+    const color3rd  = battle.color_3rd  || battle.right_color || "#888";
+    const nombre2nd = battle.nombre_2nd || battle.left_nombre || "—";
+    const nombre3rd = battle.nombre_3rd || battle.right_nombre|| "—";
 
-    // Zero-crossing index
-    const zeroEdge = edges.findIndex(e => e >= 0);
+    // Symmetric display range centered at 0, positive on LEFT (matches needle)
+    const dataMin = edges[0];
+    const dataMax = edges[edges.length - 1];
+    const absMax  = Math.max(Math.abs(dataMin), Math.abs(dataMax));
+    const dispMin = -absMax, dispMax = absMax;
+    const dispRange = dispMax - dispMin;
+    // Mirror: flip x so positive (favorite winning) is on LEFT
+    const toX = v => (W - PAD) - (v - dispMin) / dispRange * (W - 2 * PAD);
+    const zeroX = toX(0).toFixed(1);
 
     let paths = "";
-    counts.forEach((c, i) => {
-      const x    = PAD + i * barW;
-      const barH = Math.max(1, (c / maxCount) * H);
+    const n = counts.length;
+    for (let i = 0; i < n; i++) {
+      const e0 = edges[i];
+      const e1 = edges[i + 1] ?? (e0 + (edges[1] - edges[0]));
+      const x    = toX(e0);
+      const bw   = Math.max(1.2, toX(e1) - x + 0.8);
+      const barH = Math.max(1, (counts[i] / maxCount) * H);
       const y    = H - barH;
-      // Left candidate (margin > 0) vs right candidate (margin < 0)
-      const midEdge = (edges[i] + (edges[i+1] ?? edges[i])) / 2;
-      const col = midEdge > 0 ? leftColor : midEdge < 0 ? rightColor : "#888";
-      const op  = midEdge === 0 ? "0.35" : "0.65";
-      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.8).toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="${op}"/>`;
-    });
-
-    // Center zero line
-    const zeroX = zeroEdge >= 0 ? (PAD + zeroEdge * barW).toFixed(1) : (W / 2).toFixed(1);
-    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>`;
-
+      const mid  = (e0 + e1) / 2;
+      const col  = mid > 0 ? color2nd : mid < 0 ? color3rd : "#888";
+      paths += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${barH.toFixed(1)}" fill="${col}" opacity="0.82"/>`;
+    }
+    paths += `<line x1="${zeroX}" y1="0" x2="${zeroX}" y2="${H}" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>`;
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.innerHTML = paths;
 
-    // Axis labels: 5 evenly-spaced labels using flex space-between
-    const m = edges.length - 1;
-    const keyIdxs = [0, Math.round(m/4), Math.round(m/2), Math.round(3*m/4), m];
-    axis.style.position = "";
-    axis.innerHTML = keyIdxs.map(i => {
-      const e = edges[i];
-      return `<span>${e > 0 ? "+" : ""}${e.toFixed(1)}pp</span>`;
-    }).join("");
+    // Axis labels: mirrored — positive on left, negative on right (matches needle)
+    const axisVals = [dispMax, dispMax / 2, 0, dispMin / 2, dispMin];
+    axis.innerHTML = axisVals.map(v => `<span>${v === 0 ? "0" : fmtVoteDiff(v)}</span>`).join("");
 
-    // Footer: left vs right names
+    // Foot: left = favorite (positive margin), right = underdog (negative margin)
     foot.innerHTML = `
-      <span style="color:${rightColor}">← ${battle.right_nombre || "—"} adelante</span>
-      <span style="color:${leftColor}">${battle.left_nombre || "—"} adelante →</span>`;
+      <span style="color:${color2nd}">← ${nombre2nd.split(" ")[0]} adelante</span>
+      <span style="color:${color3rd}">${nombre3rd.split(" ")[0]} adelante →</span>`;
   }
 
-  // ── Pronóstico view ───────────────────────────────────────────────────────
+  // ── Pronóstico rendering ──────────────────────────────────────────────────
   function renderPronostico() {
     if (!forecastData) return;
     const fd = forecastData;
-    const isLive = (fd.pct_mesas || 0) > 0;
+    const pctMesas  = fd.pct_mesas    ?? fd.pct_actas    ?? 0;
+    const nSims     = fd.n_simulations ?? fd.n_sims       ?? 0;
+    const mesasCont = fd.mesas_contabilizadas ?? 0;
+    const isLive    = pctMesas > 0;
 
-    // Source note
     document.getElementById("pron-source-note").textContent = isLive
-      ? `${fd.pct_mesas.toFixed(1)}% mesas · ${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones`
-      : `${(fd.n_simulations || 0).toLocaleString("es-CO")} simulaciones · pronóstico previo`;
+      ? `${pctMesas.toFixed(1)}% mesas · ${nSims.toLocaleString("es-CO")} simulaciones`
+      : `${nSims.toLocaleString("es-CO")} simulaciones · pronóstico previo`;
 
-    // Sort candidates by prob_runoff desc
+    // Mesas count note + last update timestamp
+    const mesasNote = document.getElementById("needle-mesas-note");
+    if (mesasNote) {
+      const forecastTs = fmtUpdateTime(fd.generated_at);
+      if (isLive && mesasCont > 0) {
+        const tsStr = forecastTs ? ` · ${forecastTs}` : "";
+        mesasNote.textContent = `${mesasCont.toLocaleString("es-CO")} mesas escrutadas${tsStr}`;
+      } else {
+        mesasNote.textContent = "";
+      }
+    }
+
     const cands = (fd.candidates || []).slice().sort((a, b) => (b.prob_runoff||0) - (a.prob_runoff||0));
-    const c2 = cands[1], c3 = cands[2];  // 2nd and 3rd most likely
 
-    // ── Needle ──
+    // Needle
     const battle = fd.battle || {};
-    if (battle.left_code && battle.right_code) {
-      const candLeft  = fd.candidates?.find(c => c.code === battle.left_code)  || c2 || {};
-      const candRight = fd.candidates?.find(c => c.code === battle.right_code) || c3 || {};
+    const hasBattle = battle.cand_2nd || battle.left_code;
+    let dispBattle = Object.assign({}, battle);
+    if (hasBattle) {
+      const cand2nd = fd.candidates?.find(c => c.code === battle.cand_2nd || c.code === battle.left_code)
+                   || cands[1] || {};
+      const cand3rd = fd.candidates?.find(c => c.code === battle.cand_3rd || c.code === battle.right_code)
+                   || cands[2] || {};
 
-      // Margin in percentage points (projected)
-      const marginPct  = battle.margin_pct_projected ?? 0;
-      const ciLowPct   = battle.ci_low_pct  ?? (marginPct - 5);
-      const ciHighPct  = battle.ci_high_pct ?? (marginPct + 5);
+      let marginV, ciLoV, ciHiV;
+      if (battle.mean_margin_votes !== undefined) {
+        marginV = battle.mean_margin_votes;
+        ciLoV   = battle.ci_lo_votes;
+        ciHiV   = battle.ci_hi_votes;
+      } else {
+        const scale = 1_000_000;
+        marginV = (battle.margin_pct_projected ?? 0) * scale;
+        ciLoV   = (battle.ci_low_pct  ?? marginV/scale - 3) * scale;
+        ciHiV   = (battle.ci_high_pct ?? marginV/scale + 3) * scale;
+      }
 
-      // Convert pct to "vote-like" units for the needle (scale by 1M for readability)
-      const scale = 1000000;
-      renderNeedle(marginPct * scale, ciLowPct * scale, ciHighPct * scale, candLeft, candRight);
+      const prob2nd = battle.prob_2nd_pct ?? cand2nd.prob_runoff ?? 0;
+      const prob3rd = battle.prob_3rd_pct ?? cand3rd.prob_runoff ?? 0;
+      const candLeft = cand2nd, candRight = cand3rd;
+
+      renderNeedle(marginV, ciLoV, ciHiV, candLeft, candRight);
 
       document.getElementById("needle-left-name").textContent  = candLeft.nombre  || "—";
-      document.getElementById("needle-left-name").style.color  = candLeft.color || "#888";
-      document.getElementById("needle-left-prob").textContent  = (candLeft.prob_runoff||0).toFixed(0) + "%";
-      document.getElementById("needle-left-prob").style.color  = candLeft.color || "#888";
-      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes_current || 0) + " votos" : "—";
+      document.getElementById("needle-left-name").style.color  = candLeft.color   || "#888";
+      document.getElementById("needle-left-prob").textContent  = prob2nd.toFixed(0) + "%";
+      document.getElementById("needle-left-prob").style.color  = candLeft.color   || "#888";
+      document.getElementById("needle-left-votes").textContent = isLive ? fmtN(candLeft.votes || 0) + " votos" : "—";
 
-      // Photos beside the gauge — inject img directly into side divs
       const leftPhotoEl  = document.getElementById("needle-left-photo");
       const rightPhotoEl = document.getElementById("needle-right-photo");
       const leftImgHtml  = candPhotoHtml(imageIdByCode(candLeft.code),  90, 120, "needle-side-photo");
@@ -2045,34 +1996,30 @@
       leftPhotoEl.className  = leftImgHtml  ? "needle-side-photo-wrap" : "needle-side-placeholder";
       rightPhotoEl.className = rightImgHtml ? "needle-side-photo-wrap" : "needle-side-placeholder";
 
-      document.getElementById("needle-right-name").textContent = candRight.nombre || "—";
-      document.getElementById("needle-right-name").style.color = candRight.color || "#888";
-      document.getElementById("needle-right-prob").textContent = (candRight.prob_runoff||0).toFixed(0) + "%";
-      document.getElementById("needle-right-prob").style.color = candRight.color || "#888";
-      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes_current || 0) + " votos" : "—";
+      document.getElementById("needle-right-name").textContent  = candRight.nombre  || "—";
+      document.getElementById("needle-right-name").style.color  = candRight.color   || "#888";
+      document.getElementById("needle-right-prob").textContent  = prob3rd.toFixed(0) + "%";
+      document.getElementById("needle-right-prob").style.color  = candRight.color   || "#888";
+      document.getElementById("needle-right-votes").textContent = isLive ? fmtN(candRight.votes || 0) + " votos" : "—";
 
-      const diffFmt = v => (v > 0 ? "+" : "") + v.toFixed(2) + "pp";
-      document.getElementById("needle-center-diff").textContent = isLive ? diffFmt(marginPct) : "—";
-      const ciLowFmt  = (ciLowPct  >= 0 ? "+" : "") + ciLowPct.toFixed(1)  + "pp";
-      const ciHighFmt = (ciHighPct >= 0 ? "+" : "") + ciHighPct.toFixed(1) + "pp";
-      document.getElementById("needle-center-ci").textContent = `IC 95%: [${ciLowFmt}, ${ciHighFmt}]`;
+      document.getElementById("needle-center-diff").textContent =
+        isLive ? fmtVoteDiff(marginV) : "—";
+      document.getElementById("needle-center-ci").textContent =
+        isLive ? `IC 95%: [${fmtVoteDiff(ciLoV)}, ${fmtVoteDiff(ciHiV)}]` : "";
     }
 
-    // ── Margin distribution ──
-    renderMarginDist(battle);
+    renderMarginDist(dispBattle ?? battle);
 
-    // ── Candidate probability bars ──
+    // Candidate probability bars
     const list = document.getElementById("cand-prob-list");
     list.innerHTML = cands.map((c, i) => {
-      const isSV   = i < 2;
-      const prob   = c.prob_runoff ?? 0;
-      const votes  = c.votes_current || 0;
-      const ciLow  = c.ci_low_pct  ?? 0;
-      const ciHigh = c.ci_high_pct ?? 0;
+      const isSV  = i < 2;
+      const prob  = c.prob_runoff ?? (i === 0 ? 100 : i < 2 ? (battle.prob_2nd_pct ?? 0) : 0);
+      const votes = c.votes || 0;
+      const pctEm = c.pct_emitidos ?? c.vote_pct_projected ?? 0;
       const voteDisplay = isLive
-        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · proy. ${(c.vote_pct_projected||0).toFixed(1)}%`
+        ? `<span class="cand-prob-votes">${fmtN(votes)}</span> votos · ${pctEm.toFixed(1)}%`
         : `<span class="cand-prob-votes">—</span> sin datos`;
-      const ciStr  = isLive ? `<span class="cand-prob-ci">[IC ${ciLow.toFixed(1)}–${ciHigh.toFixed(1)}%]</span>` : "";
       return `<div class="cand-prob-row">
         <div class="cand-prob-top">
           <div class="cand-prob-dot" style="background:${c.color||'#888'}"></div>
@@ -2089,16 +2036,15 @@
         <div class="cand-prob-bar-wrap">
           <div class="cand-prob-bar" style="width:${prob.toFixed(1)}%;background:${c.color||'#888'}"></div>
         </div>
-        <div class="cand-prob-bottom">${voteDisplay} ${ciStr}</div>
+        <div class="cand-prob-bottom">${voteDisplay}</div>
       </div>`;
     }).join("");
 
-    // ── Methodology note ──
     const note = document.getElementById("pron-note");
     note.style.display = "block";
     note.textContent = isLive
-      ? `Pronóstico calculado con ${(fd.n_simulations||0).toLocaleString("es-CO")} simulaciones Montecarlo (${fd.pct_mesas.toFixed(1)}% de mesas escrutadas). La distribución del margen muestra la probabilidad de cada rango de diferencia entre el 2º y 3er candidato al final del escrutinio.`
-      : "Pronóstico en estado vacío — sin mesas escrutadas. Las probabilidades se actualizarán automáticamente el 31 de mayo a medida que lleguen resultados de la Registraduría.";
+      ? `Proyección bayesiana jerárquica con ${nSims.toLocaleString("es-CO")} simulaciones (${pctMesas.toFixed(1)}% de mesas escrutadas). El margen se mide en votos entre el 2º y 3er candidato. El IC 95% cubre el rango esperado del resultado final.`
+      : "Pronóstico en estado inicial — sin mesas escrutadas.";
   }
 
   // ── Load data ──────────────────────────────────────────────────────────────
@@ -2113,6 +2059,14 @@
     candidatesData = cands;
     aggStats       = agg;
     forecastData   = forecast;
+
+    // ── Last-update timestamps ──────────────────────────────────────────────
+    const distTs = fmtUpdateTime(agg?.generated_at);
+    const elDist = document.getElementById("last-update-dist");
+    if (distTs && elDist) { elDist.textContent = distTs; elDist.style.display = ""; }
+    const hourTs = fmtUpdateHour(agg?.generated_at);
+    const mobTs  = document.getElementById("mob-ts");
+    if (hourTs && mobTs) mobTs.textContent = hourTs;
 
     if (mpioGeo) mpioData = mpioGeo;
     if (deptGeo) {
