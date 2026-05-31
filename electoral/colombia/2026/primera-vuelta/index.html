@@ -1594,7 +1594,8 @@
   }
 
   function fillNationalStats() {
-    const geo = compDeptData;
+    // Use municipio GeoJSON (includes exterior) so totals match the MAPA tab
+    const geo = compMpioData || compDeptData;
     if (!geo) return;
     let vv26 = 0, vv22 = 0;
     const v26 = {A:0,B:0,C:0,D:0}, v22 = {A:0,B:0,C:0,D:0};
