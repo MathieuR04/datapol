@@ -161,6 +161,14 @@
       transform-origin: top left;
       pointer-events: none;
     }
+    /* Peru embed: zoom in more so the map fills the frame; shift up to crop
+       the page's own nav/header chrome (~130px of underlying content) */
+    .peru-wrap iframe {
+      top: -85px;
+      width: 160%;
+      height: 220%;
+      transform: scale(0.625);
+    }
     .embed-link {
       position: absolute;
       inset: 0;
@@ -270,6 +278,14 @@
       .col-right { gap: 0.5rem; }
       .articles-block { flex: none; }
       .embed-block { min-height: 82vw; }
+      /* On mobile: zoom out to show more map context */
+      .embed-wrap iframe,
+      .peru-wrap iframe {
+        top: 0;
+        width: 250%;
+        height: 250%;
+        transform: scale(0.4);
+      }
       .embed-chip { opacity: 1; }
       .article-card { padding: 0.65rem 0.85rem; }
     }
@@ -324,7 +340,7 @@
           <div class="embed-block-label">RESULTADOS ELECTORALES</div>
           <div class="embed-block-title">🇵🇪 Perú · 2da Vuelta 2026</div>
         </div>
-        <div class="embed-wrap">
+        <div class="embed-wrap peru-wrap">
           <iframe src="/electoral/peru/2026eg/segunda-vuelta/"
                   title="Perú — 2da Vuelta 2026"
                   loading="eager"
