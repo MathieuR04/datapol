@@ -958,13 +958,13 @@
       document.getElementById("bl-title").textContent = "Mesas faltantes";
       renderBubbles(
         p => Math.max(0, (parseInt(p.mesas_total) || 0) - (parseInt(p.mesas_escrutadas) || 0)),
-        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} mesas pendientes`
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || p.NOMBRE_DPT || p.name || "—"}</b><br>${fmtN(v)} mesas pendientes`
       );
     } else if (currentView === "votos") {
       document.getElementById("bl-title").textContent = "Votos válidos";
       renderBubbles(
         p => parseInt(p.votos_validos) || 0,
-        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} votos válidos`
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || p.NOMBRE_DPT || p.name || "—"}</b><br>${fmtN(v)} votos válidos`
       );
     } else if (currentView === "candidate_bubble" && selectedCandidate) {
       const col = candColor(selectedCandidate);
@@ -972,7 +972,7 @@
       document.getElementById("bl-title").textContent = `Votos · ${shortName}`;
       renderBubbles(
         p => getCandVotes(p, selectedCandidate),
-        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || "—"}</b><br>${fmtN(v)} votos`,
+        (p, v) => `<b>${p.mpio_name_reg || p.dept_name_reg || p.NOMBRE_DPT || p.name || "—"}</b><br>${fmtN(v)} votos`,
         col
       );
     } else {
