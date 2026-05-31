@@ -31,9 +31,14 @@ RESULTS.mkdir(parents=True, exist_ok=True)
 # ⚠️  UPDATE THIS URL BEFORE ELECTION DAY
 BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 HEADERS  = {
-    "Referer":    "https://resultados.registraduria.gov.co/",
-    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
-    "Accept":     "application/json, */*",
+    "Referer":          "https://resultados.registraduria.gov.co/",
+    "Origin":           "https://resultados.registraduria.gov.co",
+    "User-Agent":       "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+    "Accept":           "application/json, text/javascript, */*; q=0.01",
+    "Accept-Language":  "es-CO,es;q=0.9,en;q=0.8",
+    "Accept-Encoding":  "gzip, deflate, br",
+    "X-Requested-With": "XMLHttpRequest",
+    "Connection":       "keep-alive",
 }
 
 # ⚠️  VERIFY THIS ON ELECTION DAY
