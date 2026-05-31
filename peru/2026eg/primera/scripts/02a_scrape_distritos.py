@@ -162,7 +162,9 @@ def fetch_district(session, ubigeo_dist: str, ubigeo_prov: str,
                          "eleccion-presidencial/participantes-ubicacion-geografica-nombre",
                          params_nivel)
 
-    if totales is None and participantes is None:
+    # Both endpoints must succeed — if either fails the whole district is
+    # skipped so we never write a partially-filled row.
+    if totales is None or participantes is None:
         return None
 
     votos_emitidos = int((totales or {}).get("totalVotosEmitidos", 0) or 0)
@@ -242,9 +244,10 @@ def scrape(update_mode: bool = False):
     if update_mode and DIST_CSV.exists():
         existing = load_existing()
         def _needs_update(row: dict) -> bool:
-            at = int(row.get("actas_total", 0))
-            ac = int(row.get("actas_contabilizadas", 0))
-            vv = int(row.get("votos_validos", 0))
+            def _int(v): return int(v) if str(v).strip() not in ("", "None") else 0
+            at = _int(row.get("actas_total", 0))
+            ac = _int(row.get("actas_contabilizadas", 0))
+            vv = _int(row.get("votos_validos", 0))
             return at == 0 or ac < at or vv == 0
         todo = [
             (u, p, d) for u, p, d in roll

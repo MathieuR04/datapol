@@ -1,0 +1,14 @@
+mesa_code,error
+2300139990038000001,Server disconnected
+1600001100055000004,HTTP 500
+8800815550002000001,Server disconnected
+2700001180003000003,Server disconnected
+1600001050005000043,"400, message='Expected HTTP/, RTSP/ or ICE/:\n\n  b\'25161977"",""nomcan"":""MARIA EUGENIA"",""apecan"":""LONDO\\xc3\\x91O OCAMP"
+1600001110060000021,HTTP 500
+2700071990018000001,Expecting value: line 1 column 1 (char 0)
+1200300000000000028,Server disconnected
+1600001040020000023,Server disconnected
+0100001070004000030,Server disconnected
+1900037990003000003,Server disconnected
+0100001070004000018,Server disconnected
+1600001090011000035,Server disconnected
