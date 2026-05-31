@@ -202,7 +202,7 @@ leg_elements = [
     Patch(facecolor=TERRA, alpha=0.85, label='Cabeza de lista (Gobernador / Alcalde)'),
     Patch(facecolor=BLUE,  alpha=0.85, label='Resto de lista (Consejero / Regidor)'),
 ]
-ax.legend(handles=leg_elements, fontsize=9, loc='lower right', framealpha=0.85, facecolor=BG)
+ax.legend(handles=leg_elements, fontsize=9, loc='upper right', framealpha=0.85, facecolor=BG)
 
 fig.tight_layout()
 fig.savefig('figures/fig2_designado_por_cargo.png', bbox_inches='tight', dpi=150, facecolor=BG)
@@ -241,6 +241,43 @@ fig.tight_layout()
 fig.savefig('figures/fig3_cobertura_gobernador.png', bbox_inches='tight', dpi=150, facecolor=BG)
 plt.close()
 print("Saved fig3")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# FIG 3B — Alcalde provincial coverage by party (# provincias)
+#
+# Same logic as fig 3: includes DESIGNADO, uses drop_duplicates() on
+# (REGION, PROVINCIA) to avoid double-counting parties with multiple
+# candidatos in the same provincia.
+# ═══════════════════════════════════════════════════════════════════════════════
+alcp_all = df[df['CARGO'] == 'ALCALDE PROVINCIAL']
+alcp_cov = (alcp_all
+            .groupby('PRESENTACION')
+            .apply(lambda x: x[['REGION','PROVINCIA']].drop_duplicates().shape[0],
+                   include_groups=False)
+            .sort_values(ascending=True)
+            .tail(20))
+ylabels3b = [short(p) for p in alcp_cov.index]
+
+fig, ax = plt.subplots(figsize=(11, 7.5))
+colors3b = [TERRA if v == 196 else (ORANGE if v >= 100 else BLUE) for v in alcp_cov.values]
+bars = ax.barh(ylabels3b, alcp_cov.values, color=colors3b, alpha=0.85,
+               edgecolor='white', linewidth=0.5, height=0.65)
+ax.axvline(196, color=MUTED, lw=1.2, ls='--', alpha=0.6, label='196 provincias (total)')
+for bar, val in zip(bars, alcp_cov.values):
+    pct = val / 196 * 100
+    ax.text(bar.get_width() + 1.5, bar.get_y() + bar.get_height()/2,
+            f'{val}  ({pct:.0f}%)', va='center', ha='left', fontsize=9, color=MUTED)
+ax.set_xlabel('Provincias con candidato a Alcalde Provincial (incl. DESIGNADO)', fontsize=10, labelpad=8)
+ax.set_title('Cobertura provincial — candidatos a Alcalde Provincial por partido\n(top 20, incluye DESIGNADO)',
+             fontsize=12, fontweight='bold', pad=12)
+ax.set_xlim(right=196 * 1.22)
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda x, _: f'{int(x):,}'))
+ax.legend(fontsize=9, framealpha=0.85, facecolor=BG)
+fig.tight_layout()
+fig.savefig('figures/fig3b_cobertura_provincial_partido.png', bbox_inches='tight', dpi=150, facecolor=BG)
+plt.close()
+print("Saved fig3b")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
