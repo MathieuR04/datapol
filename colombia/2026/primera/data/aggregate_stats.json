@@ -1,52 +1,52 @@
 {
-  "votantes": 0,
-  "votos_validos": 0,
-  "votos_blanco": 0,
-  "votos_nulos": 0,
-  "votos_no_marcados": 0,
-  "mesas_escrutadas": 0,
-  "mesas_total": 126647,
-  "censo": 42112284,
+  "votantes": 3282,
+  "votos_validos": 3262,
+  "votos_blanco": 55,
+  "votos_nulos": 18,
+  "votos_no_marcados": 2,
+  "mesas_escrutadas": 113,
+  "mesas_total": 122020,
+  "censo": 41421973,
   "candidates": [
     {
       "code": "cepeda",
-      "votes": 0
+      "votes": 2236
     },
     {
       "code": "valencia",
-      "votes": 0
+      "votes": 113
     },
     {
       "code": "delaespriella",
-      "votes": 0
+      "votes": 744
     },
     {
       "code": "claudialopez",
-      "votes": 0
+      "votes": 10
     },
     {
       "code": "barreras",
-      "votes": 0
+      "votes": 2
     },
     {
       "code": "fajardo",
-      "votes": 0
+      "votes": 71
     },
     {
       "code": "caicedo",
-      "votes": 0
+      "votes": 2
     },
     {
       "code": "lizcano",
-      "votes": 0
+      "votes": 3
     },
     {
       "code": "uribe",
-      "votes": 0
+      "votes": 3
     },
     {
       "code": "botero",
-      "votes": 0
+      "votes": 19
     },
     {
       "code": "macollins",
@@ -54,11 +54,11 @@
     },
     {
       "code": "matamoros",
-      "votes": 0
+      "votes": 2
     },
     {
-      "code": "claralopez",
-      "votes": 0
+      "code": "murillo",
+      "votes": 2
     }
   ]
 }

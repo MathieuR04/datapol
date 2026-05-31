@@ -35,7 +35,7 @@ RESULTS.mkdir(parents=True, exist_ok=True)
 BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 HEADERS  = {
     "Referer":    "https://resultados.registraduria.gov.co/",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
     "Accept":     "application/json, */*",
 }
 
@@ -64,8 +64,8 @@ def load_candidates() -> list[dict]:
 
 
 def build_codcan_map(candidates: list[dict]) -> dict[int, str]:
-    """Map codcan (int) → candidate code string."""
-    return {c["codcan"]: c["code"] for c in candidates}
+    """Map codpar (int) → candidate code string (API uses codpar in partotabla)."""
+    return {c["codpar"]: c["code"] for c in candidates}
 
 
 # ── Parse ──────────────────────────────────────────────────────────────────────
@@ -116,7 +116,9 @@ def parse_mpio_json(code: str, data: dict, codcan_map: dict[int, str],
 # ── Network ────────────────────────────────────────────────────────────────────
 
 async def fetch_one(session, sem, code):
-    url = BASE_URL.format(code=code)
+    # mpio_reg_code_7 is 7-digit (e.g. "6000010"); API uses 5-digit (dept 2 + mpio 3: "60010")
+    api_code = code[:2] + code[4:]
+    url = BASE_URL.format(code=api_code)
     async with sem:
         for attempt in range(2):
             try:

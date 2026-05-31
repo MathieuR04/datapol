@@ -32,7 +32,7 @@ RESULTS.mkdir(parents=True, exist_ok=True)
 BASE_URL = "https://resultados.registraduria.gov.co/json/ACT/PR/{code}.json"
 HEADERS  = {
     "Referer":    "https://resultados.registraduria.gov.co/",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
     "Accept":     "application/json, */*",
 }
 
@@ -62,7 +62,7 @@ def load_candidates() -> list[dict]:
     return cands
 
 def build_codcan_map(candidates: list[dict]) -> dict[int, str]:
-    return {c["codcan"]: c["code"] for c in candidates}
+    return {c["codpar"]: c["code"] for c in candidates}
 
 
 # ── Parse ──────────────────────────────────────────────────────────────────────
