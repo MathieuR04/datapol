@@ -1,24 +1,24 @@
 {
-  "votantes": 23951197,
-  "votos_validos": 23658282,
+  "votantes": 23951526,
+  "votos_validos": 23658608,
   "votos_blanco": 406830,
-  "votos_nulos": 245339,
+  "votos_nulos": 245342,
   "votos_no_marcados": 47576,
-  "mesas_escrutadas": 121868,
+  "mesas_escrutadas": 121872,
   "mesas_total": 122020,
   "censo": 41421973,
   "candidates": [
     {
       "code": "cepeda",
-      "votes": 9680548
+      "votes": 9680834
     },
     {
       "code": "valencia",
-      "votes": 1637690
+      "votes": 1637706
     },
     {
       "code": "delaespriella",
-      "votes": 10346212
+      "votes": 10346234
     },
     {
       "code": "claudialopez",
@@ -38,7 +38,7 @@
     },
     {
       "code": "lizcano",
-      "votes": 53829
+      "votes": 53830
     },
     {
       "code": "uribe",
@@ -54,7 +54,7 @@
     },
     {
       "code": "matamoros",
-      "votes": 5625
+      "votes": 5626
     },
     {
       "code": "murillo",
