@@ -397,7 +397,7 @@
   /* ── Comparison tab ── */
   .comp-btn { display: flex; flex-direction: column; width: 100%; text-align: left; padding: 0; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; position: relative; }
   .comp-btn:hover { background: var(--terra-lt); }
-  .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+  .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--cand-color, var(--terra)); }
   .comp-btn-top { display: flex; align-items: stretch; }
   .comp-btn-photo { width: 62px; flex-shrink: 0; overflow: hidden; }
   .comp-btn-photo img { width: 62px; height: 100%; object-fit: cover; object-position: top center; display: block; }
@@ -1546,9 +1546,9 @@
   const HOME_CENTER_CO = [4.5, -74.2];
 
   const COMPARISONS = {
-    A: { key: "A", line1: "IVÁN CEPEDA 2026",        line2: "VS. GUSTAVO PETRO 2022",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/cepeda.png",    color: "#c4603a" },
-    B: { key: "B", line1: "DE LA ESPRIELLA 2026",     line2: "VS. RODOLFO HERNÁNDEZ 2022",   line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/abelardo.png",  color: "#5a7a3a" },
-    C: { key: "C", line1: "PALOMA VALENCIA 2026",     line2: "VS. FICO GUTIÉRREZ 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/valencia.png",  color: "#1E3A8A" },
+    A: { key: "A", line1: "IVÁN CEPEDA 2026",        line2: "VS. GUSTAVO PETRO 2022",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/cepeda.png",    color: "#9D174D" },
+    B: { key: "B", line1: "DE LA ESPRIELLA 2026",     line2: "VS. RODOLFO HERNÁNDEZ 2022",   line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/abelardo.png",  color: "#1E293B" },
+    C: { key: "C", line1: "PALOMA VALENCIA 2026",     line2: "VS. FICO GUTIÉRREZ 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/valencia.png",  color: "#1D4ED8" },
     D: { key: "D", line1: "SERGIO FAJARDO 2026",      line2: "VS. SERGIO FAJARDO 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/fajardo.png",   color: "#65A30D" },
   };
   const COMP_NAMES = {
@@ -1621,6 +1621,7 @@
       const btn = document.createElement("button");
       btn.className  = "comp-btn" + (selectedComp === c.key ? " active" : "");
       btn.dataset.comp = c.key;
+      btn.style.setProperty("--cand-color", c.color);
       const photoHtml = c.imagen
         ? `<div class="comp-btn-photo"><img src="${BASE}${c.imagen}" alt=""></div>`
         : "";
