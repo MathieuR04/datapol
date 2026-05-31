@@ -516,6 +516,24 @@
       .bubble-legend { transform: scale(0.6); transform-origin: bottom right; }
       .pron-inner { padding: 0.75rem 0.85rem 1.5rem; }
     }
+  /* ── Comparison tab ── */
+  .comp-btn { display: flex; flex-direction: column; width: 100%; text-align: left; padding: 0; border: none; border-bottom: 1px solid var(--border); background: transparent; cursor: pointer; transition: background 0.1s; position: relative; }
+  .comp-btn:hover { background: var(--terra-lt); }
+  .comp-btn.active { background: var(--terra-lt); border-left: 3px solid var(--terra); }
+  .comp-btn-top { display: flex; align-items: stretch; }
+  .comp-btn-photo { width: 62px; flex-shrink: 0; overflow: hidden; }
+  .comp-btn-photo img { width: 62px; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .comp-btn-body { flex: 1; min-width: 0; padding: 0.55rem 0.75rem 0.55rem; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+  .comp-btn.active .comp-btn-body { padding-left: calc(0.75rem - 3px); }
+  .comp-btn-nat { display: flex; align-items: baseline; gap: 0.3rem; margin-bottom: 4px; }
+  .comp-btn-nat-26 { font-size: 20px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; line-height: 1; letter-spacing: 0.02em; }
+  .comp-btn-nat-vs  { font-size: 7.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .comp-btn-nat-22  { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--muted); line-height: 1; }
+  .comp-btn-nat-diff { font-size: 13px; font-weight: 700; font-family: 'Bebas Neue', sans-serif; margin-left: auto; line-height: 1; }
+  .comp-btn-l1 { font-size: 10px; font-weight: 800; color: var(--text); line-height: 1.2; letter-spacing: 0.04em; text-transform: uppercase; }
+  .comp-btn-l2 { font-size: 8.5px; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .comp-btn-l3 { font-size: 7.5px; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.7; }
+  .comp-btn-bar { height: 3px; width: 100%; flex-shrink: 0; }
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26RZM28VBS"></script>
@@ -565,6 +583,7 @@
 <div class="mode-bar">
   <button class="mode-tab active" data-mode="mapa">Mapa</button>
   <button class="mode-tab" data-mode="pronostico">Pronóstico</button>
+  <button class="mode-tab" data-mode="comparacion">Comparación</button>
 </div>
 
 <!-- Header -->
@@ -647,6 +666,8 @@
       <div id="panel-deptos" style="display:none"></div>
       <div id="panel-exterior" style="display:none"></div>
     </div>
+    <!-- Comparación mode panel -->
+    <div id="comparacion-panel" style="display:none;flex:1;overflow-y:auto;min-height:0;flex-direction:column"></div>
     <!-- Detail overlay -->
     <div class="detail-panel" id="detail-panel">
       <div class="detail-back" id="detail-back">← Volver</div>
@@ -1586,7 +1607,11 @@
       activeLayer = null;
       document.getElementById("map-topbar").style.display = "none";
       hideDetail();
-      render();
+      if (currentMode === "comparacion") {
+        renderComp();
+      } else {
+        render();
+      }
     });
   });
 
@@ -1599,20 +1624,231 @@
   });
 
   // ── Mode switching ────────────────────────────────────────────────────────
+  let currentMode = "mapa";
   function switchMode(mode) {
+    currentMode = mode;
     document.querySelectorAll(".mode-tab").forEach(t => t.classList.toggle("active", t.dataset.mode === mode));
-    const isMap = mode === "mapa";
-    document.getElementById("mapa-body").style.display       = isMap ? "flex"  : "none";
-    document.getElementById("pronostico-view").style.display = isMap ? "none"  : "flex";
-    document.getElementById("bottombar").style.display       = isMap ? "flex"  : "none";
-    if (isMap) {
+    const isMap  = mode === "mapa";
+    const isComp = mode === "comparacion";
+    document.getElementById("mapa-body").style.display       = (isMap || isComp) ? "flex" : "none";
+    document.getElementById("pronostico-view").style.display = (isMap || isComp) ? "none" : "flex";
+    document.getElementById("bottombar").style.display       = isMap ? "flex" : "none";
+    // Panel tabs visible only in mapa mode
+    document.getElementById("panel-tabs").style.display   = isComp ? "none" : "";
+    document.getElementById("panel-scroll").style.display = isComp ? "none" : "";
+    document.getElementById("comparacion-panel").style.display    = isComp ? "flex" : "none";
+    document.getElementById("comparacion-panel").style.flexDirection = "column";
+    if (isMap || isComp) {
       setTimeout(() => map.invalidateSize(), 50);
     }
     if (mode === "pronostico" && forecastData) {
       renderPronostico();
     }
+    if (isComp) {
+      buildCompList();
+      document.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === selectedComp));
+      loadCompData(() => renderComp());
+    }
+    if (isMap) {
+      // Restore normal map layers if coming back from comparacion
+      if (compLayer) { map.removeLayer(compLayer); compLayer = null; }
+      render();
+    }
   }
   document.querySelectorAll(".mode-tab").forEach(t => t.addEventListener("click", () => switchMode(t.dataset.mode)));
+
+  // ── Comparison tab ────────────────────────────────────────────────────────
+  const HOME_CENTER_CO = [4.5, -74.2];
+
+  const COMPARISONS = {
+    A: { key: "A", line1: "IVÁN CEPEDA 2026",        line2: "VS. GUSTAVO PETRO 2022",       line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/cepeda.png",    color: "#c4603a" },
+    B: { key: "B", line1: "DE LA ESPRIELLA 2026",     line2: "VS. RODOLFO HERNÁNDEZ 2022",   line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/abelardo.png",  color: "#5a7a3a" },
+    C: { key: "C", line1: "PALOMA VALENCIA 2026",     line2: "VS. FICO GUTIÉRREZ 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: "images/valencia.png",  color: "#1E3A8A" },
+    D: { key: "D", line1: "SERGIO FAJARDO 2026",      line2: "VS. SERGIO FAJARDO 2022",      line3: "1RA VUELTA PRESIDENCIAL", imagen: null,                   color: "#b59a3a" },
+  };
+  const COMP_NAMES = {
+    A: { c26: "Iván Cepeda",      c22: "Gustavo Petro" },
+    B: { c26: "De la Espriella",  c22: "Rodolfo Hernández" },
+    C: { c26: "Paloma Valencia",  c22: "Fico Gutiérrez" },
+    D: { c26: "Sergio Fajardo",   c22: "Sergio Fajardo" },
+  };
+
+  let compLayer    = null;
+  let selectedComp = null;
+  let selectedCompLayer = null;
+  let compDeptData = null, compMpioData = null;
+  let compDataLoading = false, compDataLoaded = false;
+
+  function loadCompData(cb) {
+    if (compDataLoaded) { cb(); return; }
+    if (compDataLoading) { setTimeout(() => loadCompData(cb), 200); return; }
+    compDataLoading = true;
+    Promise.all([
+      fetch(BASE + "comparison/colombia_2026_primera_departamento_comparison.geojson").then(r => r.json()).catch(() => null),
+      fetch(BASE + "comparison/colombia_2026_primera_municipio_comparison.geojson").then(r => r.json()).catch(() => null),
+    ]).then(([dept, mpio]) => {
+      if (dept) compDeptData = dept;
+      if (mpio) compMpioData = mpio;
+      compDataLoaded  = true;
+      compDataLoading = false;
+      fillNationalStats();
+      cb();
+    });
+  }
+
+  function fillNationalStats() {
+    const geo = compDeptData;
+    if (!geo) return;
+    let vv26 = 0, vv22 = 0;
+    const v26 = {A:0,B:0,C:0,D:0}, v22 = {A:0,B:0,C:0,D:0};
+    (geo.features || []).forEach(f => {
+      const p = f.properties || {};
+      vv26 += p.votos_validos       || 0;
+      vv22 += p.votos_validos_2022  || 0;
+      ["A","B","C","D"].forEach(k => {
+        v26[k] += p[`votes26_${k}`] || 0;
+        v22[k] += p[`votes22_${k}`] || 0;
+      });
+    });
+    ["A","B","C","D"].forEach(k => {
+      const el = document.getElementById(`comp-nat-${k}`);
+      if (!el) return;
+      const pct26 = vv26 > 0 ? v26[k] / vv26 * 100 : 0;
+      const pct22 = vv22 > 0 ? v22[k] / vv22 * 100 : 0;
+      const diff  = pct26 - pct22;
+      const sign  = diff >= 0 ? "+" : "";
+      const dCol  = diff >= 0 ? "#27ae60" : "#c0392b";
+      const cColor = COMPARISONS[k].color;
+      el.innerHTML = `
+        <span class="comp-btn-nat-26" style="color:${cColor}">${pct26.toFixed(1)}%</span>
+        <span class="comp-btn-nat-vs">vs</span>
+        <span class="comp-btn-nat-22">${pct22.toFixed(1)}%</span>
+        <span class="comp-btn-nat-diff" style="color:${dCol}">${sign}${diff.toFixed(1)} pp</span>`;
+    });
+  }
+
+  function buildCompList() {
+    const el = document.getElementById("comparacion-panel");
+    if (el.dataset.built === "1") return;
+    el.dataset.built = "1";
+    el.innerHTML = "";
+    Object.values(COMPARISONS).forEach(c => {
+      const btn = document.createElement("button");
+      btn.className  = "comp-btn" + (selectedComp === c.key ? " active" : "");
+      btn.dataset.comp = c.key;
+      const photoHtml = c.imagen
+        ? `<div class="comp-btn-photo"><img src="${BASE}${c.imagen}" alt=""></div>`
+        : "";
+      btn.innerHTML = `
+        <div class="comp-btn-top">
+          ${photoHtml}
+          <div class="comp-btn-body">
+            <div class="comp-btn-nat" id="comp-nat-${c.key}">
+              <span class="comp-btn-nat-26" style="opacity:0.3">—</span>
+            </div>
+            <div class="comp-btn-l1">${c.line1}</div>
+            <div class="comp-btn-l2">${c.line2}</div>
+            <div class="comp-btn-l3">${c.line3}</div>
+          </div>
+        </div>
+        <div class="comp-btn-bar" style="background:${c.color}"></div>`;
+      btn.addEventListener("click", () => {
+        selectedComp = c.key;
+        selectedCompLayer = null;
+        map.closePopup();
+        map.setView(HOME_CENTER_CO, defZoom());
+        el.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === c.key));
+        loadCompData(() => renderComp());
+      });
+      el.appendChild(btn);
+    });
+  }
+
+  function compGeoForLevel() {
+    return currentLevel === "municipio" ? compMpioData : compDeptData;
+  }
+
+  function styleComp(feat) {
+    const diff = feat.properties["diff_" + selectedComp];
+    let fillColor = "#e0d8cc";
+    if (diff != null && !isNaN(diff)) {
+      const t = Math.min(Math.abs(diff) / 20, 1);
+      fillColor = diff > 0
+        ? lerp("#e0d8cc", "#27ae60", Math.pow(t, 0.6))
+        : lerp("#e0d8cc", "#c0392b", Math.pow(t, 0.6));
+    }
+    return { fillColor, fillOpacity: 0.85, weight: 0.4, color: "#8a7a6a", pane: "fillPane" };
+  }
+
+  function renderComp() {
+    if (!selectedComp) return;
+    const geo = compGeoForLevel();
+    if (!geo) return;
+
+    if (compLayer)         { map.removeLayer(compLayer);         compLayer         = null; }
+    if (mpioLayer)         { map.removeLayer(mpioLayer);         mpioLayer         = null; }
+    if (deptLayer)         { map.removeLayer(deptLayer);         deptLayer         = null; }
+    if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+    if (bubbleLayer)       { map.removeLayer(bubbleLayer);       bubbleLayer       = null; }
+
+    const comp = COMPARISONS[selectedComp];
+    const names = COMP_NAMES[selectedComp] || { c26: "2026", c22: "2022" };
+
+    compLayer = L.geoJSON(geo, {
+      pane: "fillPane",
+      style: styleComp,
+      smoothFactor: 0,
+      onEachFeature(feat, layer) {
+        const getTooltip = () => {
+          const p    = feat.properties || {};
+          const name = currentLevel === "municipio"
+            ? (p.mpio_name_reg || "—")
+            : (p.nombre_dept || p.NOMBRE_DPT || "—");
+          const diff  = p["diff_"    + selectedComp];
+          const pct22 = p["pct22_"   + selectedComp];
+          const pct26 = p["pct26_"   + selectedComp];
+          const v22   = p["votes22_" + selectedComp];
+          const v26   = p["votes26_" + selectedComp];
+          const vv22  = p.votos_validos_2022;
+          const vv26  = p.votos_validos;
+          const sign  = diff > 0 ? "+" : "";
+          const color = diff > 0 ? "#27ae60" : "#c0392b";
+          const fmt    = n => n != null ? parseInt(n).toLocaleString("es-CO") : "—";
+          const fmtPct = n => n != null ? n.toFixed(1) + "%" : "—";
+          return `<b>${name}</b><br>
+            <span style="font-size:9px;opacity:0.7">2026</span>
+            ${names.c26}: ${fmtPct(pct26)} <span style="opacity:0.6">(${fmt(v26)} / ${fmt(vv26)})</span><br>
+            <span style="font-size:9px;opacity:0.7">2022</span>
+            ${names.c22}: ${fmtPct(pct22)} <span style="opacity:0.6">(${fmt(v22)} / ${fmt(vv22)})</span><br>
+            <span style="color:${color};font-weight:700">${sign}${diff != null ? diff.toFixed(1) : "—"} pp</span>`;
+        };
+        layer.on("mouseover", e => {
+          layer.bindTooltip(getTooltip(), { sticky: true, className: "map-tooltip" }).openTooltip(e.latlng);
+        });
+        layer.on("mouseout", () => layer.unbindTooltip());
+        layer.on("click", e => {
+          L.DomEvent.stopPropagation(e);
+          layer.unbindTooltip();
+          if (selectedCompLayer === layer) {
+            selectedCompLayer = null;
+            map.setView(HOME_CENTER_CO, defZoom(), { animate: true });
+          } else {
+            selectedCompLayer = layer;
+            map.fitBounds(layer.getBounds(), { padding: [40, 40], animate: true });
+          }
+        });
+      }
+    }).addTo(map);
+
+    // Dept border overlay always on top
+    if (deptData) {
+      deptBoundaryLayer = L.geoJSON(deptData, {
+        pane: "borderPane",
+        style: { fillColor: "transparent", fillOpacity: 0, weight: 2.0, color: "#1a1209" },
+        interactive: false, smoothFactor: 0
+      }).addTo(map);
+    }
+  }
 
   // ── Needle gauge ──────────────────────────────────────────────────────────
   function buildNeedleArc(cx, cy, r, startAngle, endAngle) {

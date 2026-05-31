@@ -189,9 +189,10 @@ def main():
     # ── Mesa CSV ──────────────────────────────────────────────────────────────
     # Mesa CSV stays all-zeros even in random mode — it's used only by the
     # Monte Carlo forecast, which handles the zero/empty state gracefully.
+    # Schema matches 02b_scrape_mesas.py output exactly.
     mesa_fields = (
-        ["mesa_code", "mpio_reg_code_7", "censo",
-         "mesas_escrutadas", "votantes", "votos_nulos", "votos_no_marcados",
+        ["mesa_code", "mpio_reg_code_7", "counted",
+         "votantes", "votos_nulos", "votos_no_marcados",
          "votos_blanco", "votos_validos"]
         + cand_cols
     )
@@ -205,7 +206,7 @@ def main():
         row = {f: 0 for f in mesa_fields}
         row["mesa_code"]       = mesa["mesa_code"]
         row["mpio_reg_code_7"] = mesa["mpio_reg_code_7"]
-        row["censo"]           = int(mesa.get("censo") or 0)
+        row["counted"]         = 0
         mesa_rows.append(row)
 
     print(f"\nWriting {mode} mock results …")
