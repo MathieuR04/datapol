@@ -1530,6 +1530,13 @@
       renderPronostico();
     }
     if (isComp) {
+      // Strip mapa layers immediately so the map doesn't bleed through
+      if (mpioLayer)         { map.removeLayer(mpioLayer);         mpioLayer         = null; }
+      if (deptLayer)         { map.removeLayer(deptLayer);         deptLayer         = null; }
+      if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
+      if (bubbleLayer)       { map.removeLayer(bubbleLayer);       bubbleLayer       = null; }
+      // Auto-select first comparison if none chosen yet
+      if (!selectedComp) selectedComp = "A";
       buildCompList();
       document.querySelectorAll(".comp-btn").forEach(b => b.classList.toggle("active", b.dataset.comp === selectedComp));
       loadCompData(() => renderComp());
@@ -1574,7 +1581,8 @@
     ]).then(([dept, mpio]) => {
       if (dept) compDeptData = dept;
       if (mpio) compMpioData = mpio;
-      compDataLoaded  = true;
+      // Only mark loaded if we got at least one dataset; otherwise retry next call
+      compDataLoaded  = !!(dept || mpio);
       compDataLoading = false;
       fillNationalStats();
       cb();
@@ -1667,15 +1675,16 @@
   }
 
   function renderComp() {
-    if (!selectedComp) return;
-    const geo = compGeoForLevel();
-    if (!geo) return;
-
+    // Always strip mapa/comp layers first, regardless of data availability
     if (compLayer)         { map.removeLayer(compLayer);         compLayer         = null; }
     if (mpioLayer)         { map.removeLayer(mpioLayer);         mpioLayer         = null; }
     if (deptLayer)         { map.removeLayer(deptLayer);         deptLayer         = null; }
     if (deptBoundaryLayer) { map.removeLayer(deptBoundaryLayer); deptBoundaryLayer = null; }
     if (bubbleLayer)       { map.removeLayer(bubbleLayer);       bubbleLayer       = null; }
+
+    if (!selectedComp) return;
+    const geo = compGeoForLevel();
+    if (!geo) return;
 
     const comp = COMPARISONS[selectedComp];
     const names = COMP_NAMES[selectedComp] || { c26: "2026", c22: "2022" };
