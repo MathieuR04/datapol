@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>171 mil candidaturas, 75 partidos y 196 distritos sin candidato: un radiografía de las primarias ERM 2026 — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="171 mil candidaturas, 75 partidos y 196 distritos sin candidato: radiografía de las primarias ERM 2026">
+  <meta property="og:description" content="Un análisis exploratorio de los 171,540 registros de candidaturas para las primarias de las Elecciones Regionales y Municipales 2026: quién participa, cómo se distribuye el DESIGNADO, y qué tan profunda es la cobertura territorial.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/primarias-erm-2026-candidatos/">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    .article { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body p:last-child { margin-bottom: 0; }
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.05em;
+      color: var(--text); margin: 2.2em 0 0.7em; padding-top: 0.2em; border-top: 1.5px solid var(--border);
+    }
+    .article-body h3 {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin: 2em 0 0.6em;
+    }
+
+    /* Key stats row */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 1.8em 0;
+    }
+    .stat-box {
+      background: var(--text);
+      color: var(--sand);
+      padding: 0.9rem 1rem;
+      border-radius: 3px;
+      text-align: center;
+    }
+    .stat-box-num {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 36px; letter-spacing: 0.04em; line-height: 1; color: #fff;
+    }
+    .stat-box-label { font-size: 10px; line-height: 1.45; opacity: 0.75; margin-top: 0.3rem; }
+
+    /* Inline highlight */
+    .highlight-box {
+      border-left: 3px solid var(--terra);
+      padding: 0.5rem 0 0.5rem 1.1rem;
+      margin: 1.6em 0;
+      background: rgba(196,96,58,0.06);
+      border-radius: 0 3px 3px 0;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: 14px; line-height: 1.7; }
+
+    /* Figures */
+    figure { margin: 2em 0; }
+    figure img { width: 100%; height: auto; display: block; border-radius: 3px; }
+    figcaption { font-size: 11px; line-height: 1.55; color: var(--muted); margin-top: 0.6rem; }
+    figcaption strong { color: var(--text); }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 1.4em 0; }
+    .data-table th { text-align: left; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--text); padding: 0.4rem 0.5rem; }
+    .data-table th:not(:first-child) { text-align: right; }
+    .data-table td { padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--border); }
+    .data-table td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    .data-table tr:last-child td { border-bottom: 1.5px solid var(--text); font-weight: 600; }
+
+    /* Footer */
+    .footnotes { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.6; color: var(--muted); }
+    .footnotes p { margin-bottom: 0.5em; }
+    .article-footer { margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 11px; color: var(--muted); }
+    .article-footer a { color: var(--muted); text-decoration: none; font-weight: 600; letter-spacing: 0.06em; font-size: 10px; text-transform: uppercase; }
+    .article-footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 34px; }
+      .article-body { font-size: 14px; }
+      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .stat-box-num { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · ERM 2026</div>
+    <h1 class="article-title">171 mil candidaturas, 75 partidos y 196 distritos sin candidato: radiografía de las primarias ERM 2026</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>30 de mayo, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>8 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+
+      <p>Las primarias de las Elecciones Regionales y Municipales (ERM) 2026 generaron <strong>171,540 registros de candidaturas</strong> distribuidas en cuatro niveles: gobernadores y vicegobernadores, consejeros regionales, alcaldes provinciales, alcaldes distritales y sus respectivos regidores. Lo que sigue es un análisis exploratorio de esos datos: quiénes participan, qué tan profunda es la cobertura territorial, y qué revela el fenómeno del candidato <em>DESIGNADO</em>.</p>
+
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-box-num">171,540</div>
+          <div class="stat-box-label">candidaturas registradas en total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">75</div>
+          <div class="stat-box-label">partidos y organizaciones participantes</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">33,378</div>
+          <div class="stat-box-label">candidaturas marcadas como DESIGNADO (19.5%)</div>
+        </div>
+      </div>
+
+      <h2>Quién moviliza más candidatos</h2>
+
+      <p>Alianza para el Progreso (APP) lidera ampliamente el número de candidatos con nombre inscritos: <strong>11,980 personas</strong>, casi un 23% más que el segundo lugar, Somos Perú (9,743). La brecha entre el primer y el cuarto lugar es de casi 3,000 candidatos, lo que da una idea de la escala organizacional que separa a los partidos con mayor estructura territorial.</p>
+
+      <p>El top 5 — APP, Somos Perú, Perú Primero, Podemos Perú y Ahora Nación — concentra el <strong>43%</strong> de todos los candidatos con nombre inscritos, en un campo de 75 organizaciones. En el extremo opuesto, la mayoría de partidos nacionales y movimientos regionales registra menos de 1,000 candidatos.</p>
+
+      <figure>
+        <img src="/articulos/candidatos-primarias-erm/figures/fig1_candidatos_por_partido.png"
+             alt="Candidatos inscritos por partido — primarias ERM 2026">
+        <figcaption><strong>Figura 1.</strong> Candidatos inscritos con nombre por partido (top 20). Alianza para el Progreso lidera con 11,980 candidatos, más del doble que la mayoría del campo y un 23% por encima del segundo lugar.</figcaption>
+      </figure>
+
+      <h2>El fenómeno DESIGNADO</h2>
+
+      <p>Uno de los rasgos más llamativos de los datos es la prevalencia del registro <em>DESIGNADO</em>: una candidatura sin nombre asignado aún, utilizada para reservar una posición en la lista sin tener al candidato confirmado. En total, <strong>33,378 de las 171,540 candidaturas</strong> — casi 1 de cada 5 — están en esta categoría.</p>
+
+      <p>La distribución del DESIGNADO no es homogénea entre niveles electorales. En los cargos municipales y de consejero regional, el porcentaje ronda el 19-20%, probablemente reflejo de dificultades para completar listas en posiciones bajas. Pero en las <strong>candidaturas a Gobernador y Vicegobernador</strong>, el fenómeno es cualitativamente distinto: el <strong>47%</strong> de esas candidaturas — prácticamente una de cada dos — están registradas como DESIGNADO.</p>
+
+      <div class="highlight-box">
+        <p>Casi la mitad de las candidaturas a Gobernador inscritas en las primarias ERM 2026 no tienen aún un candidato con nombre. Esto sugiere que muchos partidos están reservando posiciones en departamentos donde carecen de cuadros regionales propios, apostando a completar la fórmula más adelante.</p>
+      </div>
+
+      <figure>
+        <img src="/articulos/candidatos-primarias-erm/figures/fig2_designado_por_nivel.png"
+             alt="Proporción de candidaturas DESIGNADO por nivel electoral">
+        <figcaption><strong>Figura 2.</strong> Proporción de candidaturas DESIGNADO por nivel electoral. El patrón es notablemente más pronunciado en gobernadores y vicegobernadores (47%) que en el resto de cargos (~19%), lo que refleja la dificultad de los partidos nacionales para contar con cuadros en todas las regiones.</figcaption>
+      </figure>
+
+      <h2>Cobertura regional: ningún partido llega a los 24</h2>
+
+      <p>Para evaluar la cobertura, nos enfocamos en los candidatos con nombre — excluyendo DESIGNADO — a cada cargo de encabezamiento de lista. En el nivel regional, <strong>ningún partido logra cubrir los 24 departamentos</strong> del país con un candidato a Gobernador con nombre propio.</p>
+
+      <p>Los líderes de cobertura regional son Acción Popular y Somos Perú, con <strong>18 departamentos</strong> cada uno. Alianza para el Progreso — pese a liderar en candidatos totales — cubre solo 13 departamentos con gobernadores nombrados, con 7 posiciones todavía en DESIGNADO. Esto ilustra una tensión estructural: tener la mayor maquinaria electoral no equivale necesariamente a tener la mayor profundidad de cuadros regionales.</p>
+
+      <figure>
+        <img src="/articulos/candidatos-primarias-erm/figures/fig3_cobertura_gobernador.png"
+             alt="Cobertura regional por partido — candidatos a Gobernador">
+        <figcaption><strong>Figura 3.</strong> Número de departamentos con candidato a Gobernador con nombre por partido (top 20). La línea punteada marca los 24 departamentos. Ningún partido alcanza cobertura completa. Acción Popular y Somos Perú lideran con 18.</figcaption>
+      </figure>
+
+      <h2>Cobertura distrital: 89.6% del territorio con candidato</h2>
+
+      <p>En el nivel municipal, la cobertura es considerablemente más alta. Las <strong>196 provincias del país tienen al menos un candidato a Alcalde Provincial con nombre</strong> — cobertura completa a ese nivel.</p>
+
+      <p>En el nivel distrital — el más granular — los datos muestran que <strong>1,696 de los 1,892 distritos del país</strong> tienen al menos un candidato a Alcalde Distrital con nombre inscrito, lo que representa una cobertura del <strong>89.6%</strong>. Los <strong>196 distritos restantes</strong> — aproximadamente uno de cada diez — no registran ninguna candidatura distrital con nombre.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Nivel</th><th>Universo</th><th>Cubiertos</th><th>Cobertura</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Gobernador (con nombre)</td><td>24 departamentos</td><td>24</td><td>100%*</td></tr>
+          <tr><td>Alcalde Provincial</td><td>196 provincias</td><td>196</td><td>100%</td></tr>
+          <tr><td>Alcalde Distrital</td><td>1,892 distritos</td><td>1,696</td><td>89.6%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--muted);margin-top:-0.8em;">*Los 24 departamentos tienen al menos un gobernador inscrito, pero en 47% de las candidaturas ese candidato aparece como DESIGNADO.</p>
+
+      <h3>Los partidos con mayor cobertura distrital</h3>
+
+      <p>Alianza para el Progreso lidera también la cobertura distrital con candidatos en <strong>982 distritos</strong> — el 51.9% del total del país. Somos Perú sigue con 898 distritos. Ningún partido supera el 55% de cobertura distrital, lo que habla de la fragmentación territorial del sistema de partidos peruano.</p>
+
+      <figure>
+        <img src="/articulos/candidatos-primarias-erm/figures/fig4_cobertura_distrital_partido.png"
+             alt="Cobertura de alcaldías distritales por partido — top 20">
+        <figcaption><strong>Figura 4.</strong> Número de distritos con candidato a Alcalde Distrital con nombre por partido (top 20). La línea punteada marca los 1,892 distritos totales. Alianza para el Progreso lidera con cobertura en 982 distritos (52%).</figcaption>
+      </figure>
+
+      <h2>¿Dónde están los 196 distritos sin candidato?</h2>
+
+      <p>La cobertura distrital varía significativamente por región. Callao alcanza el <strong>100%</strong> (6 de 6 distritos). En el otro extremo, Madre de Dios cubre solo el <strong>73%</strong> de sus distritos (8 de 11), seguida por Tumbes (77%, 10 de 13) y La Libertad (87%, 72 de 83).</p>
+
+      <p>Las regiones con mayor número absoluto de distritos descubiertos son las de mayor extensión territorial: Áncash (20 distritos sin candidato), Cajamarca (13), Puno (12), Junín y Arequipa (8 cada una). En estos casos, la ausencia no refleja falta de partidos sino la dificultad de reclutar candidatos en distritos remotos con poca densidad poblacional.</p>
+
+      <figure>
+        <img src="/articulos/candidatos-primarias-erm/figures/fig5_cobertura_distrital_region.png"
+             alt="Cobertura de alcaldías distritales por región">
+        <figcaption><strong>Figura 5.</strong> Distritos con y sin candidato a Alcalde Distrital (con nombre) por región, ordenados por porcentaje de cobertura. Callao tiene cobertura completa; Madre de Dios y Tumbes registran la cobertura más baja.</figcaption>
+      </figure>
+
+      <h2>Síntesis</h2>
+
+      <p>Los datos de las primarias ERM 2026 dibujan un sistema de partidos con alta fragmentación y cobertura territorial desigual. Tres hallazgos merecen atención:</p>
+
+      <ol style="margin: 1em 0 1.4em 1.4em; line-height: 2.1;">
+        <li><strong>El DESIGNADO gobernatorial (47%)</strong> revela que los partidos nacionales están participando en regiones donde no tienen cuadros propios — una apuesta por presencia formal que puede no traducirse en competencia real.</li>
+        <li><strong>Ningún partido cubre los 24 departamentos</strong> con gobernadores con nombre. El líder en cobertura distrital (APP, 52%) tampoco alcanza la mayoría del territorio.</li>
+        <li><strong>196 distritos sin candidato</strong> — el 10.4% del total — quedan fuera del proceso primario. Son, en su mayoría, distritos pequeños y alejados donde la presencia partidaria es históricamente débil.</li>
+      </ol>
+
+      <p>La participación en primarias no es garantía de competitividad electoral. Pero estos registros ofrecen una primera fotografía de qué partidos tienen la capacidad organizacional para desplegar una estructura nacional — y cuáles están apostando a completarla sobre la marcha.</p>
+
+    </div>
+
+    <div class="footnotes">
+      <p><strong>Datos:</strong> Jurado Nacional de Elecciones (JNE) — padrón de candidatos inscritos en primarias ERM 2026. <strong>Nota metodológica:</strong> se excluyen las filas marcadas como DESIGNADO para el análisis de cobertura con nombre. Los totales distritales por región se basan en la división político-administrativa oficial (1,892 distritos, 196 provincias, 24 departamentos).</p>
+    </div>
+
+    <footer class="article-footer">
+      <a href="/articulos/">← Todos los artículos</a>
+      <span>© 2026 Datapol · Mathieu Rojas</span>
+    </footer>
+
+  </article>
+
+</body>
+</html>
