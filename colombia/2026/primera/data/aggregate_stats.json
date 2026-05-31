@@ -1,64 +1,64 @@
 {
-  "votantes": 23933224,
-  "votos_validos": 23640515,
-  "votos_blanco": 406594,
-  "votos_nulos": 245197,
-  "votos_no_marcados": 47512,
-  "mesas_escrutadas": 121711,
+  "votantes": 23943619,
+  "votos_validos": 23650845,
+  "votos_blanco": 406702,
+  "votos_nulos": 245245,
+  "votos_no_marcados": 47529,
+  "mesas_escrutadas": 121800,
   "mesas_total": 122020,
   "censo": 41421973,
   "candidates": [
     {
       "code": "cepeda",
-      "votes": 9673390
+      "votes": 9677533
     },
     {
       "code": "valencia",
-      "votes": 1636249
+      "votes": 1637134
     },
     {
       "code": "delaespriella",
-      "votes": 10338440
+      "votes": 10342932
     },
     {
       "code": "claudialopez",
-      "votes": 225121
+      "votes": 225231
     },
     {
       "code": "barreras",
-      "votes": 14098
+      "votes": 14103
     },
     {
       "code": "fajardo",
-      "votes": 1006870
+      "votes": 1007356
     },
     {
       "code": "caicedo",
-      "votes": 12677
+      "votes": 12684
     },
     {
       "code": "lizcano",
-      "votes": 53803
+      "votes": 53814
     },
     {
       "code": "uribe",
-      "votes": 28613
+      "votes": 28623
     },
     {
       "code": "botero",
-      "votes": 205922
+      "votes": 205980
     },
     {
       "code": "macollins",
-      "votes": 19860
+      "votes": 19868
     },
     {
       "code": "matamoros",
-      "votes": 5620
+      "votes": 5622
     },
     {
       "code": "murillo",
-      "votes": 13258
+      "votes": 13263
     }
   ]
 }
