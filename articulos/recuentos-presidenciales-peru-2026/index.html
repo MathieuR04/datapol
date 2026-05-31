@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análisis de los 897 recuentos de actas presidenciales: Keiko Fujimori es la candidata más beneficiada — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="897 recuentos de actas presidenciales: Keiko Fujimori es la candidata más beneficiada">
+  <meta property="og:description" content="El análisis de 763 mesas recuentadas muestra que Keiko Fujimori gana en promedio 1.05 votos por mesa en el recuento físico — el único resultado estadísticamente significativo entre los 36 candidatos presidenciales.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/recuentos-presidenciales-peru-2026/">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    /* ── Article container ────────────────────────────────────────────────── */
+    .article {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+
+    /* ── Back link ────────────────────────────────────────────────────────── */
+    .article-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    /* ── Header ───────────────────────────────────────────────────────────── */
+    .article-tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 0.6rem;
+    }
+    .article-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 48px;
+      letter-spacing: 0.03em;
+      line-height: 1.0;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .article-byline {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 11px;
+      color: var(--muted);
+      padding-bottom: 1.4rem;
+      border-bottom: 2px solid var(--text);
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .article-body {
+      font-size: 15px;
+      line-height: 1.82;
+      color: var(--text);
+    }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body p:last-child { margin-bottom: 0; }
+
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      margin: 2.2em 0 0.7em;
+      padding-top: 0.2em;
+      border-top: 1.5px solid var(--border);
+    }
+    .article-body h3 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 2em 0 0.6em;
+    }
+
+    .article-body blockquote {
+      border-left: 3px solid var(--terra);
+      padding: 0.15em 0 0.15em 1.2em;
+      margin: 1.8em 0;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+
+    /* ── Key stat callout ─────────────────────────────────────────────────── */
+    .stat-callout {
+      background: var(--text);
+      color: var(--sand);
+      padding: 1.1rem 1.4rem;
+      border-radius: 3px;
+      margin: 1.8em 0;
+    }
+    .stat-callout-number {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 42px;
+      letter-spacing: 0.05em;
+      line-height: 1;
+      color: #fff;
+    }
+    .stat-callout-label {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--sand);
+      margin-top: 0.3rem;
+      opacity: 0.8;
+    }
+    .stat-row {
+      display: flex;
+      gap: 1.5rem;
+      margin: 1.8em 0;
+      flex-wrap: wrap;
+    }
+    .stat-row .stat-callout { flex: 1; min-width: 160px; }
+
+    /* ── Table ────────────────────────────────────────────────────────────── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 1.6em 0;
+    }
+    .data-table th {
+      text-align: left;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1.5px solid var(--text);
+      padding: 0.4rem 0.5rem;
+    }
+    .data-table th:last-child { text-align: right; }
+    .data-table td {
+      padding: 0.5rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .data-table td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .data-table tr:last-child td { border-bottom: 1.5px solid var(--text); }
+    .data-table tr.highlight td { font-weight: 700; }
+
+    /* ── Figures ──────────────────────────────────────────────────────────── */
+    figure {
+      margin: 2em 0;
+    }
+    figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 3px;
+    }
+    figcaption {
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--muted);
+      margin-top: 0.6rem;
+      padding-left: 0.1rem;
+    }
+    figcaption strong { color: var(--text); }
+
+    /* ── Section break (responses section) ───────────────────────────────── */
+    .section-break {
+      margin: 3rem 0 2.5rem;
+      border-top: 2px solid var(--text);
+      padding-top: 1.5rem;
+    }
+    .section-break-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .section-break-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+
+    /* ── Criticism block ──────────────────────────────────────────────────── */
+    .criticism {
+      margin: 2.2em 0;
+    }
+    .criticism-question {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-style: italic;
+      margin-bottom: 0.8em;
+      padding: 0.6rem 0.9rem;
+      border-left: 3px solid var(--border);
+      background: rgba(207,192,171,0.18);
+      border-radius: 0 2px 2px 0;
+    }
+    .criticism-letter {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 14px;
+      color: var(--terra);
+      margin-right: 0.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Footnotes ────────────────────────────────────────────────────────── */
+    .footnotes {
+      margin-top: 3rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    .footnotes p { margin-bottom: 0.5em; }
+
+    /* ── Footer nav ───────────────────────────────────────────────────────── */
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .article-footer a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    .article-footer a:hover { color: var(--text); }
+
+    /* ── Mobile ───────────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 34px; }
+      .article-body { font-size: 14px; }
+      .stat-row { gap: 0.75rem; }
+      .stat-callout-number { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <!-- Yape modal -->
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',Arial Black,Arial,sans-serif;font-weight:900;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- Article -->
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · Perú 2026</div>
+    <h1 class="article-title">Análisis de los 897 recuentos de actas presidenciales: Keiko Fujimori es la candidata más beneficiada</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>29 de mayo, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>10 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+
+      <p>Las elecciones generales del Perú de 2026 marcan la primera vez en la historia electoral del país en que las cédulas de votación son conservadas en lugar de destruidas al cierre del escrutinio. Esta modificación normativa abre la posibilidad, también inédita, de realizar recuentos físicos que permitan comparar directamente el resultado consignado en el acta con el contenido real de las cédulas.</p>
+
+      <p>En el marco del proceso electoral de abril de 2026, el Jurado Nacional de Elecciones (JNE) ordenó el recuento de 897 mesas de votación. Este artículo presenta un análisis estadístico de esos recuentos. El resultado central: <strong>Keiko Fujimori (Fuerza Popular) es la única candidata cuyo beneficio en el recuento es estadísticamente significativo</strong>, y su ventaja supera en magnitud el margen que separó a Castillo de Keiko en la segunda vuelta de 2021.</p>
+
+      <h2>La muestra</h2>
+
+      <p>De las 897 mesas enviadas a recuento, se aplicaron filtros sucesivos para garantizar que el análisis se base en observaciones válidas y comparables:</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Criterio de exclusión</th><th>Mesas restantes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Total enviadas a recuento</td><td>897</td></tr>
+          <tr><td>Se eliminan 3 con audiencia pública pendiente</td><td>894</td></tr>
+          <tr><td>Se eliminan 57 sin imagen inicial del acta (pre-recuento)</td><td>837</td></tr>
+          <tr><td>Se eliminan 57 adicionales: 41 en blanco originalmente, 13 declaradas nulas, 3 en ambas situaciones</td><td>780</td></tr>
+          <tr><td>Se eliminan 17 sin pronunciamiento emitido aún</td><td>763</td></tr>
+          <tr class="highlight"><td>Muestra final de análisis</td><td>763</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Metodología</h2>
+
+      <p>Para cada mesa se registran los votos de cada candidato tanto en el acta original (<em>pre-recuento</em>) como en el resultado del recuento físico de cédulas (<em>post-recuento</em>). El <strong>delta</strong> de cada mesa es simplemente la diferencia:</p>
+
+      <blockquote>Δ = votos post-recuento − votos pre-recuento</blockquote>
+
+      <p>Un valor positivo indica que el recuento físico arroja más votos que el acta; uno negativo, que arroja menos. La hipótesis nula en todos los tests es que el cambio promedio es cero. Para los márgenes entre candidatos, se construye el cambio en el margen entre cada par y se testea de la misma manera. Todos los intervalos de confianza son al 95%.</p>
+
+      <h2>Resultados</h2>
+
+      <h3>Distribución de los cambios</h3>
+
+      <p>El primer gráfico muestra la distribución del delta por mesa para los tres candidatos principales. La asimetría en la distribución de Keiko Fujimori es visible a simple vista: mientras las tres distribuciones están centradas cerca de cero, la de Fuerza Popular tiene una cola derecha claramente más pronunciada, con casos de ganancias de hasta 60 votos por mesa. Es el único candidato con un valor p menor a 0.001.</p>
+
+      <figure>
+        <img src="/articulos/recuento/data/figures/fig1_distributions.png"
+             alt="Distribución del cambio de votos por mesa en el recuento para los tres candidatos principales">
+        <figcaption><strong>Figura 1.</strong> Distribución del cambio de votos por mesa en el recuento (Δ = post − pre). Cada barra representa un valor entero de cambio. La distribución de Fuerza Popular (Keiko Fujimori) muestra una asimetría a la derecha ausente en los otros dos candidatos.</figcaption>
+      </figure>
+
+      <h3>¿Quién gana y quién pierde?</h3>
+
+      <p>El patrón se confirma al descomponer las mesas por resultado: Keiko Fujimori gana votos netos en el <strong>43%</strong> de las mesas recuentadas, frente al 27% de Roberto Sánchez (Juntos por el Perú) y el 35% de Rafael López Aliaga (Renovación Popular). Lo que llama la atención no es solo que Keiko gane más frecuentemente, sino que su proporción de mesas con pérdidas (20%) es <em>comparable</em> a la de los otros dos candidatos (22% y 18%). El patrón no es simétrico en ningún sentido que sugiera aleatoriedad.</p>
+
+      <figure>
+        <img src="/articulos/recuento/data/figures/fig2_won_lost.png"
+             alt="Proporción de mesas donde cada candidato ganó, no cambió o perdió votos en el recuento">
+        <figcaption><strong>Figura 2.</strong> Proporción de mesas en que cada candidato ganó votos, no registró cambio, o perdió votos en el recuento. Keiko Fujimori gana votos en el 43% de las mesas — sustancialmente más que los otros dos candidatos — sin perderlos con mayor frecuencia.</figcaption>
+      </figure>
+
+      <h3>El cambio promedio</h3>
+
+      <p>Cuando se agrega el delta de todas las mesas, el resultado es inequívoco:</p>
+
+      <div class="stat-row">
+        <div class="stat-callout">
+          <div class="stat-callout-number">+1.052</div>
+          <div class="stat-callout-label">votos por mesa para Keiko Fujimori<br>IC 95%: [0.622, 1.483] · p &lt; 0.001 ***</div>
+        </div>
+        <div class="stat-callout" style="background: var(--surface, #ede8df); color: var(--text);">
+          <div class="stat-callout-number" style="color: var(--muted); font-size: 28px; padding-top: 0.3rem;">n.s.</div>
+          <div class="stat-callout-label" style="color: var(--muted);">Sánchez (+0.322) y López Aliaga (+0.182)<br>no son distinguibles de cero</div>
+        </div>
+      </div>
+
+      <p>En promedio, Keiko Fujimori obtiene <strong>1.052 votos más por mesa</strong> en el recuento que en el acta original. El intervalo de confianza al 95% va de 0.622 a 1.483 votos por mesa — enteramente por encima de cero. Los cambios para Sánchez y López Aliaga no son estadísticamente distinguibles de cero.</p>
+
+      <figure>
+        <img src="/articulos/recuento/data/figures/fig3_mean_delta_ci.png"
+             alt="Cambio promedio de votos por mesa con intervalos de confianza al 95% para los tres candidatos">
+        <figcaption><strong>Figura 3.</strong> Cambio promedio de votos por mesa con intervalo de confianza al 95%. El resultado de Keiko Fujimori (μ = 1.052, p &lt; 0.001) es el único estadísticamente significativo. Los intervalos de confianza de Sánchez y López Aliaga cruzan el cero.</figcaption>
+      </figure>
+
+      <h3>El cambio en el margen entre candidatos</h3>
+
+      <p>El recuento no solo modifica los votos absolutos: modifica también los márgenes relativos. Los tres pares de candidatos cuentan historias muy distintas:</p>
+
+      <ul style="margin: 1em 0 1.4em 1.4em; line-height: 2;">
+        <li><strong>Keiko vs. Sánchez:</strong> el margen de Keiko crece en promedio <strong>+0.730 votos por mesa</strong> (IC 95%: [0.184, 1.276], p = 0.009 **)</li>
+        <li><strong>Keiko vs. López Aliaga:</strong> el margen de Keiko crece en promedio <strong>+0.870 votos por mesa</strong> (IC 95%: [0.392, 1.349], p &lt; 0.001 ***)</li>
+        <li><strong>Sánchez vs. López Aliaga:</strong> sin cambio significativo (μ = 0.140, p = 0.589, n.s.)</li>
+      </ul>
+
+      <p>El patrón es consistente: el recuento beneficia la posición relativa de Keiko frente a ambos contrincantes. El margen entre los otros dos candidatos no se ve afectado, lo que descarta una explicación sistémica del proceso de recuento en sí.</p>
+
+      <figure>
+        <img src="/articulos/recuento/data/figures/fig4_margin_ci.png"
+             alt="Cambio promedio en el margen entre pares de candidatos, con intervalos de confianza al 95%">
+        <figcaption><strong>Figura 4.</strong> Cambio promedio en el margen entre pares de candidatos con intervalo de confianza al 95%. Los dos márgenes que involucran a Keiko Fujimori son positivos y estadísticamente significativos. El margen entre Sánchez y López Aliaga no varía.</figcaption>
+      </figure>
+
+      <h2>Discusión</h2>
+
+      <p>Quiero ser muy cuidadoso cuando digo lo siguiente.</p>
+
+      <p>Estos resultados no pueden generalizarse mecánicamente a todas las mesas de la elección de 2026, ni a las de la segunda vuelta de 2021 entre Keiko Fujimori y Pedro Castillo. Los recuentos corresponden a un subconjunto específico de mesas, seleccionadas bajo criterios propios del proceso.</p>
+
+      <p>Sin embargo, hay un dato que merece ser puesto en perspectiva. Uno de los argumentos centrales del equipo de Keiko durante la controversia electoral de 2021 fue que el resultado consignado en las actas difería del que arrojaban las cédulas de una manera que sistemáticamente perjudicaba su margen sobre Castillo. Ese argumento era técnicamente inverificable en ese momento: las cédulas habían sido destruidas.</p>
+
+      <p>Los 763 recuentos aquí analizados constituyen <strong>la primera evidencia empírica disponible</strong> sobre si ese tipo de discrepancia puede existir. Y lo que muestran es que, en estas mesas, el acta original subestima el margen de Keiko de manera estadísticamente significativa: en <strong>0.730 votos por mesa</strong> sobre Sánchez, y en <strong>0.870 votos por mesa</strong> sobre López Aliaga.</p>
+
+      <p>Para dimensionar esa magnitud: el margen de Pedro Castillo sobre Keiko Fujimori en la segunda vuelta de 2021 fue de aproximadamente <strong>0.533 votos por mesa</strong>. El cambio en el margen que el recuento produce en favor de Keiko, en candidatos distintos, en un año distinto, supera esa cifra.</p>
+
+      <p>Esto no demuestra que Keiko ganó en 2021. Pero sí es evidencia de que el resultado consignado en actas puede diferir del resultado de las cédulas de una manera suficientemente sistemática como para impactar el resultado de una elección — y de que conservar las cédulas y realizar recuentos no es un formalismo: es lo que hace posible verificar si el acta refleja fielmente la voluntad del elector.</p>
+
+    </div><!-- /article-body -->
+
+    <!-- ── Criticisms section ──────────────────────────────────────────────── -->
+    <div class="section-break">
+      <div class="section-break-label">Respuesta a cuestionamientos</div>
+      <div class="section-break-title">Tres objeciones al análisis — y los datos que las responden</div>
+    </div>
+
+    <div class="article-body">
+
+      <p>El análisis anterior generó algunos cuestionamientos válidos. Me tomo el tiempo de responderlos con datos.</p>
+
+      <div class="criticism">
+        <div class="criticism-question"><span class="criticism-letter">A.</span> "¿Y los otros 33 candidatos?"</div>
+        <p>Es verdad que el análisis original solo incluía tres candidatos. El gráfico a continuación muestra el análisis completo con los 36 partidos con suficientes observaciones. El resultado se mantiene sin ambigüedad: <strong>Keiko Fujimori no solo es la candidata que más votos gana en los recuentos, sino que también es la única para la cual ese impacto positivo es estadísticamente significativo al nivel p &lt; 0.001.</strong> La mayoría del resto de candidatos tiene un cambio promedio negativo — lo que refuerza que el proceso de recuento no tiene un sesgo general en favor de nadie, sino uno específico.</p>
+        <figure>
+          <img src="/articulos/recuento/data/figures/fig5_all_candidates_delta.png"
+               alt="Cambio promedio de votos en el recuento para todos los candidatos presidenciales">
+          <figcaption><strong>Figura 5.</strong> Cambio promedio de votos por mesa en el recuento para los 36 candidatos con suficientes observaciones, ordenados de mayor a menor beneficio. Keiko Fujimori (Fuerza Popular) es la única candidata con un resultado significativo a p &lt; 0.001. La mayoría del campo tiene cambios negativos o nulos.</figcaption>
+        </figure>
+      </div>
+
+      <div class="criticism">
+        <div class="criticism-question"><span class="criticism-letter">B.</span> "Las actas enviadas a recuento tienen errores materiales — por eso el resultado cambiaría, pero no esperaríamos eso en el resto de mesas."</div>
+        <p>Es verdad que todas las actas enviadas a recuento contienen errores materiales. Sin embargo, <strong>la ausencia de un error aritmético no implica que el resultado en acta coincida con el de las cédulas.</strong> El error aritmético (que los votos no sumen al total declarado) y la discrepancia acta-cédula son fenómenos distintos.</p>
+        <p>El gráfico lo muestra con claridad: el error aritmético absoluto promedio en las actas originales es de <strong>13 votos por mesa</strong>. El cambio absoluto total que introduce el recuento es de <strong>34 votos por mesa</strong> — más del doble. La discrepancia entre acta y cédula no se explica únicamente por el error aritmético preexistente.</p>
+        <figure>
+          <img src="/articulos/recuento/data/figures/fig6_discrepancy_vs_recount.png"
+               alt="Error aritmético original versus cambio absoluto del recuento por mesa">
+          <figcaption><strong>Figura 6.</strong> Error aritmético absoluto en el acta original (|Σvotos − total|) versus cambio absoluto total que introduce el recuento (Σ|Δ| por mesa). El cambio del recuento es 2.6 veces mayor que el error aritmético previo, lo que indica que la discrepancia acta-cédula no se reduce a errores de suma.</figcaption>
+        </figure>
+      </div>
+
+      <div class="criticism">
+        <div class="criticism-question"><span class="criticism-letter">C.</span> "Los candidatos más votados naturalmente tienen más votos que ganar o perder — el resultado solo reflejaría que Keiko recibió más votos."</div>
+        <p>El argumento es plausible a priori y merece ser evaluado con datos. El gráfico de la izquierda muestra la relación general: sí existe una correlación positiva entre la votación promedio de un partido y cuánto cambia en el recuento, con una tendencia estadísticamente significativa (β = 0.177, p &lt; 0.001). Los candidatos más votados tienden a ver mayores cambios absolutos.</p>
+        <p>Pero Keiko Fujimori es una anomalía evidente respecto a esa tendencia. El gráfico de la derecha muestra la misma relación excluyendo a Fuerza Popular y marcando cuánto se desvía Keiko del valor predicho por su votación. El resultado: <strong>su beneficio supera en +0.87 votos por mesa lo que su nivel de votación predice.</strong> Sánchez y López Aliaga, con votaciones similares, caen sobre la línea de tendencia. El tamaño del voto de Keiko explica solo una fracción mínima del impacto observado a su favor.</p>
+        <figure>
+          <img src="/articulos/recuento/data/figures/fig7_votes_vs_delta_party.png"
+               alt="Relación entre votación promedio y cambio en el recuento, con residual de Keiko Fujimori">
+          <figcaption><strong>Figura 7.</strong> Izquierda: relación entre log(votos promedio por mesa) y delta promedio para todos los candidatos. Derecha: misma relación excluyendo a Fuerza Popular, con Keiko marcada como punto observado y punto predicho. El residual de +0.87 votos por mesa no se explica por el volumen de su votación.</figcaption>
+        </figure>
+      </div>
+
+      <h2>Conclusión</h2>
+
+      <p>El análisis de 763 recuentos en las elecciones generales del Perú de 2026 produce tres hallazgos que se mantienen ante las objeciones más razonables:</p>
+
+      <ol style="margin: 1em 0 1.4em 1.4em; line-height: 2.1;">
+        <li>El recuento físico genera en promedio <strong>1.052 votos adicionales para Keiko Fujimori</strong> por mesa (p &lt; 0.001). Es el único resultado significativo entre los 36 candidatos.</li>
+        <li>El beneficio no obedece a un sesgo general del proceso: el margen entre Sánchez y López Aliaga no varía. Tampoco se reduce a los errores aritméticos previos del acta: el cambio absoluto del recuento es 2.6 veces mayor que el error aritmético original.</li>
+        <li>El nivel de votación de Keiko explica solo una fracción del efecto: su residual respecto a la tendencia es de +0.87 votos por mesa, superando en magnitud el margen que separó a Castillo de Keiko en la segunda vuelta de 2021 (≈ 0.533 votos por mesa).</li>
+      </ol>
+
+      <p>La primera experiencia peruana de conservación de cédulas y recuento físico de votos produce evidencia concreta de que la discrepancia entre acta y cédula existe, es medible, y no es aleatoria.</p>
+
+    </div><!-- /article-body -->
+
+    <div class="footnotes">
+      <p><strong>Datos:</strong> Jurado Nacional de Elecciones (JNE) — resoluciones de recuento. <strong>Código y datos:</strong> disponibles en el repositorio de este artículo.</p>
+      <p><strong>Metodología:</strong> t-tests de una muestra contra cero sobre el delta promedio por candidato. Niveles de significancia: * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001. Los intervalos de confianza son al 95%.</p>
+    </div>
+
+    <footer class="article-footer">
+      <a href="/articulos/">← Todos los artículos</a>
+      <span>© 2026 Datapol · Mathieu Rojas</span>
+    </footer>
+
+  </article>
+
+</body>
+</html>
