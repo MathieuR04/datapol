@@ -1517,7 +1517,7 @@
     const isComp = mode === "comparacion";
     document.getElementById("mapa-body").style.display       = (isMap || isComp) ? "flex" : "none";
     document.getElementById("pronostico-view").style.display = (isMap || isComp) ? "none" : "flex";
-    document.getElementById("bottombar").style.display       = isMap ? "flex" : "none";
+    document.getElementById("bottombar").style.display       = (isMap || isComp) ? "flex" : "none";
     // Panel tabs visible only in mapa mode
     document.getElementById("panel-tabs").style.display   = isComp ? "none" : "";
     document.getElementById("panel-scroll").style.display = isComp ? "none" : "";
