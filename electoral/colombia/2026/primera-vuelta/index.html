@@ -16,12 +16,12 @@
   <meta property="og:title"       content="Colombia — 1ª Vuelta 2026">
   <meta property="og:description" content="Resultados en tiempo real, pronóstico estadístico y mapas interactivos.">
   <meta property="og:url"         content="https://datapol.lat/electoral/colombia/2026/primera-vuelta/">
-  <meta property="og:image"       content="https://datapol.lat/shared/images/og_co_primera.png">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_co1v_v2.png">
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:site"        content="@KhamaRamaq">
   <meta name="twitter:title"       content="Colombia — 1ª Vuelta 2026">
   <meta name="twitter:description" content="Resultados en tiempo real, pronóstico estadístico y mapas interactivos.">
-  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_co_primera.png">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_co1v_v2.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -1148,7 +1148,7 @@
 
   function hideDetail() {
     document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-scroll").style.display = "";
+    document.getElementById("panel-scroll").style.display = currentMode === "comparacion" ? "none" : "";
     // Re-activate the correct tab
     document.querySelectorAll(".ptab").forEach(t => t.classList.toggle("active", t.dataset.ptab === previousTab));
     if (activeLayer) {
@@ -1208,7 +1208,7 @@
     document.getElementById("panel-exterior").style.display   = tab === "exterior"   ? "" : "none";
     // Dismiss detail overlay
     document.getElementById("detail-panel").classList.remove("active");
-    document.getElementById("panel-scroll").style.display = "";
+    document.getElementById("panel-scroll").style.display = currentMode === "comparacion" ? "none" : "";
     // Reset map: clear active selection + zoom to full Colombia
     if (activeLayer) {
       if (BUBBLE_VIEWS.has(currentView)) {

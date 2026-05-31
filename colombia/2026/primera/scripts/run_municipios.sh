@@ -46,12 +46,19 @@ run_once() {
     return
   }
 
+  echo "▶ 06 — build comparison GeoJSONs"
+  python3 "$SCRIPT_DIR/06_build_comparison.py" || {
+    echo "  ⚠  06 exited with error — continuing anyway"
+  }
+
   echo "▶ git — staging municipio data"
   git -C "$REPO_ROOT" add \
     "colombia/2026/primera/data/results/colombia_2026_municipio_primera.csv" \
     "colombia/2026/primera/data/aggregate_stats.json" \
     "colombia/2026/primera/data/colombia_2026_municipio_primera.geojson" \
-    "colombia/2026/primera/data/colombia_2026_dept_primera.geojson"
+    "colombia/2026/primera/data/colombia_2026_dept_primera.geojson" \
+    "colombia/2026/primera/data/comparison/colombia_2026_primera_municipio_comparison.geojson" \
+    "colombia/2026/primera/data/comparison/colombia_2026_primera_departamento_comparison.geojson"
 
   TIMESTAMP="$(date '+%Y-%m-%d %H:%M')"
   git -C "$REPO_ROOT" commit \
