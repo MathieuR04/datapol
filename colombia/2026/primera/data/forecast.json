@@ -1,7 +1,7 @@
 {
   "pct_mesas": 0.0,
   "n_simulations": 10000,
-  "timestamp": "2026-05-21T20:01:29Z",
+  "generated_at": "2026-05-31T20:00:00Z",
   "candidates": [
     {
       "code": "cepeda",
@@ -16,18 +16,6 @@
       "prob_runoff": 100.0
     },
     {
-      "code": "valencia",
-      "nombre": "PALOMA VALENCIA LASERNA",
-      "partido": "Gran Consulta por Colombia",
-      "color": "#1D4ED8",
-      "votes_current": 0,
-      "vote_pct_current": 0.0,
-      "vote_pct_projected": 0.0,
-      "ci_low_pct": -10.0,
-      "ci_high_pct": 10.0,
-      "prob_runoff": 100.0
-    },
-    {
       "code": "delaespriella",
       "nombre": "ABELARDO DE LA ESPRIELLA",
       "partido": "Defensores de la Patria",
@@ -37,7 +25,19 @@
       "vote_pct_projected": 0.0,
       "ci_low_pct": 0.0,
       "ci_high_pct": 0.0,
-      "prob_runoff": 0.0
+      "prob_runoff": 51.0
+    },
+    {
+      "code": "valencia",
+      "nombre": "PALOMA VALENCIA LASERNA",
+      "partido": "Gran Consulta por Colombia",
+      "color": "#1D4ED8",
+      "votes_current": 0,
+      "vote_pct_current": 0.0,
+      "vote_pct_projected": 0.0,
+      "ci_low_pct": 0.0,
+      "ci_high_pct": 0.0,
+      "prob_runoff": 49.0
     },
     {
       "code": "claudialopez",
@@ -161,60 +161,26 @@
     }
   ],
   "battle": {
-    "left_code": "valencia",
-    "right_code": "delaespriella",
-    "left_nombre": "PALOMA VALENCIA LASERNA",
-    "right_nombre": "ABELARDO DE LA ESPRIELLA",
-    "left_color": "#1D4ED8",
-    "right_color": "#1E293B",
-    "margin_pct_projected": 0.0,
-    "ci_low_pct": -10.0,
-    "ci_high_pct": 10.0,
+    "left_code": "delaespriella",
+    "right_code": "valencia",
+    "left_nombre": "ABELARDO DE LA ESPRIELLA",
+    "right_nombre": "PALOMA VALENCIA LASERNA",
+    "left_color": "#1E293B",
+    "right_color": "#1D4ED8",
+    "prob_2nd_pct": 51.0,
+    "prob_3rd_pct": 49.0,
+    "margin_pct_projected": 0.025,
+    "ci_low_pct": -0.5,
+    "ci_high_pct": 0.5,
     "margin_distribution": {
       "edges": [
-        -20.0,
-        -18.0,
-        -16.0,
-        -14.0,
-        -12.0,
-        -10.0,
-        -8.0,
-        -6.0,
-        -4.0,
-        -2.0,
-        0.0,
-        2.0,
-        4.0,
-        6.0,
-        8.0,
-        10.0,
-        12.0,
-        14.0,
-        16.0,
-        18.0,
-        20.0
+        -500000, -450000, -400000, -350000, -300000, -250000, -200000,
+        -150000, -100000, -50000, 0,
+        50000, 100000, 150000, 200000, 250000, 300000, 350000, 400000, 450000, 500000
       ],
       "counts": [
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500,
-        500
+        9, 25, 60, 129, 250, 434, 674, 938, 1169, 1306,
+        1306, 1169, 938, 674, 434, 250, 129, 60, 25, 9
       ]
     }
   }
