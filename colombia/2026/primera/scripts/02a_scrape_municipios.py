@@ -47,9 +47,9 @@ HEADERS  = {
 # ⚠️  VERIFY THIS ON ELECTION DAY (camara index for presidential race)
 PRESIDENTIAL_CAM = 0
 
-CONCURRENCY = 8
+CONCURRENCY = 3
 TIMEOUT     = 30
-DELAY       = 0.15   # seconds between requests to avoid 403
+DELAY       = 0.8    # seconds between requests to avoid 403
 
 MPIO_CSV = RESULTS / "colombia_2026_municipio_primera.csv"
 

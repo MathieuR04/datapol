@@ -29,8 +29,8 @@ run_once() {
   echo " Municipios pipeline — $(date '+%Y-%m-%d %H:%M:%S')"
   echo "══════════════════════════════════════════════════"
 
-  echo "▶ 02a — scrape municipios (update)"
-  python3 "$SCRIPT_DIR/02a_scrape_municipios.py" --update || {
+  echo "▶ 02a — scrape municipios (update, curl fallback)"
+  python3 "$SCRIPT_DIR/02a_scrape_municipios_curl.py" --update || {
     echo "  ⚠  02a exited with error — continuing anyway"
   }
 
