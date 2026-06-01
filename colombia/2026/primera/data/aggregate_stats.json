@@ -1,16 +1,16 @@
 {
-  "votantes": 23960857,
-  "votos_validos": 23667909,
+  "votantes": 23961059,
+  "votos_validos": 23668108,
   "votos_blanco": 406888,
-  "votos_nulos": 245364,
+  "votos_nulos": 245367,
   "votos_no_marcados": 47584,
-  "mesas_escrutadas": 121924,
+  "mesas_escrutadas": 121925,
   "mesas_total": 122020,
   "censo": 41421973,
   "candidates": [
     {
       "code": "cepeda",
-      "votes": 9683549
+      "votes": 9683743
     },
     {
       "code": "valencia",
@@ -18,11 +18,11 @@
     },
     {
       "code": "delaespriella",
-      "votes": 10351544
+      "votes": 10351548
     },
     {
       "code": "claudialopez",
-      "votes": 225352
+      "votes": 225353
     },
     {
       "code": "barreras",
