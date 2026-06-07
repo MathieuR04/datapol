@@ -60,7 +60,7 @@ DATA_DIR   = SCRIPT_DIR.parent / "data"
 RESULTS    = DATA_DIR / "results"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
-BASE_URL      = "https://resultadoelectoral.onpe.gob.pe/presentacion-backend"
+BASE_URL      = "https://resultadosegundavuelta.onpe.gob.pe/presentacion-backend"
 ID_ELECCION   = 10  # Confirmed: segunda vuelta uses same idEleccion=10 as primera (presidencial)
 TOTAL_MESAS   = 92_791      # national + exterior sequential range
 
