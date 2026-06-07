@@ -87,15 +87,15 @@ def _is_exterior(ubigeo: str) -> bool:
 
 
 def _build_params(ubigeo_dist: str, ubigeo_prov: str, ubigeo_dept: str) -> dict:
-    """Build query params; ubigeos sent as integers (API ignores leading zeros)."""
+    """Build query params; ubigeos sent as zero-padded strings (API requires this)."""
     amb = 2 if _is_exterior(ubigeo_dist) else 1
     return {
         "idAmbitoGeografico":  amb,
         "idEleccion":          ID_ELECCION,
         "tipoFiltro":          TIPO_FILTRO,
-        "idUbigeoDepartamento": int(ubigeo_dept),
-        "idUbigeoProvincia":   int(ubigeo_prov),
-        "idUbigeoDistrito":    int(ubigeo_dist),
+        "idUbigeoDepartamento": ubigeo_dept,
+        "idUbigeoProvincia":   ubigeo_prov,
+        "idUbigeoDistrito":    ubigeo_dist,
     }
 
 
