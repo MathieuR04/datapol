@@ -3199,6 +3199,47 @@
     }
 
     document.getElementById("loading").style.display = "none";
+
+    // ── Auto-refresh every 90s ──────────────────────────────────────────────
+    setInterval(() => {
+      const cb = `?v=${Date.now()}`;
+      Promise.all([
+        fetch(BASE + "aggregate_stats.json" + cb).then(r => r.json()).catch(() => null),
+        fetch(BASE + "forecast.json"         + cb).then(r => r.json()).catch(() => null),
+        fetch(BASE + "peru_2026eg_distrito_segunda.geojson"    + cb).then(r => r.json()).catch(() => null),
+        fetch(BASE + "peru_2026eg_provincia_segunda.geojson"   + cb).then(r => r.json()).catch(() => null),
+        fetch(BASE + "peru_2026eg_departamento_segunda.geojson"+ cb).then(r => r.json()).catch(() => null),
+      ]).then(([agg, forecast, distGeo, provGeo, deptGeo]) => {
+        if (!agg) return;
+        aggStats     = agg;
+        forecastData = forecast;
+        if (distGeo) distData = distGeo;
+        if (provGeo) provData = provGeo;
+        if (deptGeo) {
+          deptData = deptGeo;
+          deptGeo.features.forEach(f => {
+            const key = (f.properties || {}).ubigeo_dept || "";
+            if (key) deptFeatMap[key] = f;
+          });
+        }
+        const distTs = fmtUpdateTime(agg?.generated_at);
+        const elDist = document.getElementById("last-update-dist");
+        if (distTs && elDist) { elDist.textContent = distTs; elDist.style.display = ""; }
+        const hourTs = fmtUpdateHour(agg?.generated_at);
+        const mobTs  = document.getElementById("mob-ts");
+        if (hourTs && mobTs) mobTs.textContent = hourTs;
+        updateHeaderStats();
+        updateBottomBar();
+        buildCandList();
+        buildDeptList();
+        render();
+        // invalidate lazy-loaded caches so next tab-open re-fetches
+        _exteriorRows = null;
+        compDataLoaded = false; compDataLoading = false;
+        compMpioData = null; compDeptData = null;
+      }).catch(() => {});
+    }, 90_000);
+
   }).catch(err => {
     document.getElementById("loading").innerHTML =
       `<p style="color:#c4603a;font-weight:700">${err.message}</p>
