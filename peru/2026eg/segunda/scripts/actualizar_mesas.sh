@@ -46,7 +46,7 @@ run_once() {
   echo "══════════════════════════════════════════════════════════"
 
   step "02b — Scrape ONPE mesas (--update)"
-  python3 "$SCRIPT_DIR/02b_scrape_mesas.py" --update || {
+  python3 "$SCRIPT_DIR/02b_scrape_mesas.py" --update --workers 50 || {
     warn "02b falló — abortando ciclo"
     return
   }
