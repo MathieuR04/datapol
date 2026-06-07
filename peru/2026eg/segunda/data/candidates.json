@@ -4,7 +4,7 @@
     "nombre": "KEIKO SOFIA FUJIMORI HIGUCHI",
     "partido": "FUERZA POPULAR",
     "color": "#EA580C",
-    "codcan": 1,
+    "codcan": 8,
     "imagen": "images/keiko.png"
   },
   {
@@ -12,7 +12,7 @@
     "nombre": "ROBERTO HELBERT SANCHEZ PALOMINO",
     "partido": "JUNTOS POR EL PERÚ",
     "color": "#166534",
-    "codcan": 2,
+    "codcan": 10,
     "imagen": "images/roberto.png"
   }
 ]
