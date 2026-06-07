@@ -61,7 +61,7 @@ RESULTS    = DATA_DIR / "results"
 RESULTS.mkdir(parents=True, exist_ok=True)
 
 BASE_URL      = "https://resultadoelectoral.onpe.gob.pe/presentacion-backend"
-ID_ELECCION   = 11  # TODO: confirm segunda vuelta election ID from ONPE before election day          # Presidencial
+ID_ELECCION   = 10  # Confirmed: segunda vuelta uses same idEleccion=10 as primera (presidencial)
 TOTAL_MESAS   = 92_791      # national + exterior sequential range
 
 MESA_CSV   = RESULTS / "peru_2026eg_mesa_segunda.csv"
@@ -105,8 +105,8 @@ def make_session():
     s.headers.update({
         "Accept":          "application/json, text/plain, */*",
         "Accept-Language": "es-PE,es;q=0.9,en;q=0.8",
-        "Referer":         "https://resultadoelectoral.onpe.gob.pe/main/actas",
-        "Origin":          "https://resultadoelectoral.onpe.gob.pe",
+        "Referer":         "https://resultadosegundavuelta.onpe.gob.pe/main/actas",
+        "Origin":          "https://resultadosegundavuelta.onpe.gob.pe",
     })
     return s
 

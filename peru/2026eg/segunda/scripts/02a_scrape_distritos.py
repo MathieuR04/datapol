@@ -48,7 +48,7 @@ DIST_CSV = RESULTS / "peru_2026eg_distrito_segunda.csv"
 ROLL_CSV = METADATA / "peru_2026_distrito_electoral_roll.csv"
 
 BASE_URL    = "https://resultadoelectoral.onpe.gob.pe/presentacion-backend/"
-ID_ELECCION = 11  # TODO: confirm segunda vuelta election ID from ONPE before election day
+ID_ELECCION = 10  # Confirmed: segunda vuelta uses same idEleccion=10 as primera (presidencial)
 TIPO_FILTRO = "ubigeo_nivel_03"
 CONCURRENCY = 20
 DELAY_MIN   = 0.02
@@ -74,8 +74,8 @@ def make_session():
     s.headers.update({
         "Accept":          "application/json, text/plain, */*",
         "Accept-Language": "es-PE,es;q=0.9,en;q=0.8",
-        "Referer":         "https://resultadoelectoral.onpe.gob.pe/main/presidenciales",
-        "Origin":          "https://resultadoelectoral.onpe.gob.pe",
+        "Referer":         "https://resultadosegundavuelta.onpe.gob.pe/main/presidenciales",
+        "Origin":          "https://resultadosegundavuelta.onpe.gob.pe",
     })
     return s
 
