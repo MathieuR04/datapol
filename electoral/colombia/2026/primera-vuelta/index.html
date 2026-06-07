@@ -1594,24 +1594,30 @@
   }
 
   function fillNationalStats() {
-    // Use municipio GeoJSON (includes exterior) so totals match the MAPA tab
+    // 2026 data: use aggStats (same source as MAPA tab) so numbers always match
+    // 2022 data: sum from comparison GeoJSON
     const geo = compMpioData || compDeptData;
     if (!geo) return;
-    let vv26 = 0, vv22 = 0;
-    const v26 = {A:0,B:0,C:0,D:0}, v22 = {A:0,B:0,C:0,D:0};
+
+    // 2022 totals from GeoJSON
+    let vv22 = 0;
+    const v22 = {A:0,B:0,C:0,D:0};
     (geo.features || []).forEach(f => {
       const p = f.properties || {};
-      vv26 += p.votos_validos       || 0;
       vv22 += p.votos_validos_2022  || 0;
-      ["A","B","C","D"].forEach(k => {
-        v26[k] += p[`votes26_${k}`] || 0;
-        v22[k] += p[`votes22_${k}`] || 0;
-      });
+      ["A","B","C","D"].forEach(k => { v22[k] += p[`votes22_${k}`] || 0; });
     });
+
+    // 2026 totals from aggStats (live, matches MAPA)
+    const COMP_CAND = { A: "cepeda", B: "delaespriella", C: "valencia", D: "fajardo" };
+    const vv26 = aggStats?.votos_validos || 0;
+    const candVotes = Object.fromEntries((aggStats?.candidates || []).map(c => [c.code, c.votes || 0]));
+
     ["A","B","C","D"].forEach(k => {
       const el = document.getElementById(`comp-nat-${k}`);
       if (!el) return;
-      const pct26 = vv26 > 0 ? v26[k] / vv26 * 100 : 0;
+      const v26k  = candVotes[COMP_CAND[k]] || 0;
+      const pct26 = vv26 > 0 ? v26k / vv26 * 100 : 0;
       const pct22 = vv22 > 0 ? v22[k] / vv22 * 100 : 0;
       const diff  = pct26 - pct22;
       const sign  = diff >= 0 ? "+" : "";

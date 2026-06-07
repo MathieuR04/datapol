@@ -1889,10 +1889,14 @@
       const distRows = parseCSV(csvText).filter(r => String(r.ubigeo_distrito || "").startsWith("9"));
       const roll = parseCSV(rollText);
 
-      // Build lookup: ubigeo_distrito → {ubigeo_provincia, nombre_provincia}
+      // Build lookup: ubigeo_distrito → {ubigeo_provincia, nombre_provincia, num_electores}
       const rollLkp = {};
       roll.filter(r => r.is_exterior === "True").forEach(r => {
-        rollLkp[r.ubigeo_distrito] = { ubigeo_provincia: r.ubigeo_provincia, nombre_provincia: r.nombre_provincia };
+        rollLkp[r.ubigeo_distrito] = {
+          ubigeo_provincia: r.ubigeo_provincia,
+          nombre_provincia: r.nombre_provincia,
+          num_electores:    parseInt(r.num_electores) || 0,
+        };
       });
 
       // Aggregate district rows up to country (ubigeo_provincia) level
@@ -1904,6 +1908,7 @@
           byProv[provKey] = {
             ubigeo_provincia:     provKey,
             nombre_provincia:     info.nombre_provincia || r.ubigeo_distrito,
+            num_electores:        0,
             votos_emitidos:       0, votos_validos: 0,
             votos_blancos:        0, votos_nulos: 0,
             actas_contabilizadas: 0, actas_total: 0,
@@ -1911,6 +1916,7 @@
           };
         }
         const g = byProv[provKey];
+        g.num_electores        += info.num_electores || 0;
         g.votos_emitidos       += parseInt(r.votos_emitidos)       || 0;
         g.votos_validos        += parseInt(r.votos_validos)        || 0;
         g.votos_blancos        += parseInt(r.votos_blancos)        || 0;
@@ -1980,7 +1986,7 @@
           winner:                 winner ? winner.name : "",
           winner_color:           winner ? winner.color : "#888",
           votos_emitidos:         r.votos_emitidos,
-          num_electores:          0,
+          num_electores:          r.num_electores || 0,
           votos_validos:          r.votos_validos,
           votos_blancos:          r.votos_blancos,
           votos_nulos:            r.votos_nulos,

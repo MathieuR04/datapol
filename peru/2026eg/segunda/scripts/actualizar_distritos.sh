@@ -1,87 +1,113 @@
 #!/usr/bin/env bash
 # actualizar_distritos.sh — Peru 2026 EG Segunda Vuelta
-# Pipeline de noche electoral — resultados a nivel distrital.
+# Pipeline DISTRITAL de noche electoral (ALTA PRIORIDAD — alimenta el mapa).
 #
-# Ejecuta en orden:
-#   02a  Scrape ONPE (solo distritos incompletos, --update)
-#   03   GeoJSON distrital/provincial/departamental
-#   04   Estadísticas nacionales (aggregate_stats.json)
-#   06   Comparación 2021-2026
-#   08   Datos análisis scatter-plot
-# Luego hace git commit + push con timestamp.
+# Ciclo: 02a --update → 03 → 04 → 06 → 08 → git commit + push
 #
 # Uso:
-#   bash scripts/actualizar_distritos.sh
+#   bash scripts/actualizar_distritos.sh            # loop continuo (default 120s)
+#   bash scripts/actualizar_distritos.sh --no-push  # sin git push (testing)
+#   bash scripts/actualizar_distritos.sh --once     # ejecutar una sola vez
+#   bash scripts/actualizar_distritos.sh --sleep 60 # intervalo personalizado
 #
-# Requiere: curl_cffi, geopandas, pandas  (pip install curl_cffi geopandas pandas)
+# Requiere: curl_cffi, geopandas, pandas
 
-set -euo pipefail
-
-# ── Rutas ──────────────────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SEGUNDA_DIR="$(dirname "$SCRIPT_DIR")"          # segunda/
-DATAPOL_DIR="$(dirname "$(dirname "$(dirname "$SEGUNDA_DIR")")")"  # datapol/
-DATA_DIR="$SEGUNDA_DIR/data"
+SEGUNDA_DIR="$(dirname "$SCRIPT_DIR")"
+DATAPOL_DIR="$(dirname "$(dirname "$(dirname "$SEGUNDA_DIR")")")"
 
-# ── Colores para la terminal ───────────────────────────────────────────────────
-BOLD="\033[1m"
-GREEN="\033[32m"
-YELLOW="\033[33m"
-RED="\033[31m"
-RESET="\033[0m"
+PUSH=true
+LOOP=true
+SLEEP_SECS=120
 
+# ── Parse args ──────────────────────────────────────────────────────────────────
+i=1
+while [[ $i -le $# ]]; do
+  arg="${!i}"
+  case "$arg" in
+    --no-push) PUSH=false ;;
+    --once)    LOOP=false ;;
+    --sleep)
+      i=$((i+1)); SLEEP_SECS="${!i}" ;;
+  esac
+  i=$((i+1))
+done
+
+# ── Colores ─────────────────────────────────────────────────────────────────────
+BOLD="\033[1m"; GREEN="\033[32m"; YELLOW="\033[33m"; RED="\033[31m"; RESET="\033[0m"
 step() { echo -e "\n${BOLD}${GREEN}▶ $*${RESET}"; }
 warn() { echo -e "${YELLOW}⚠  $*${RESET}"; }
-fail() { echo -e "${RED}✗  $*${RESET}"; exit 1; }
 
-# ── 1. Scrape distritos (solo incompletos) ─────────────────────────────────────
-step "02a — Scrape ONPE (--update)"
-python3 "$SCRIPT_DIR/02a_scrape_distritos.py" --update || fail "02a falló"
+# ── Un ciclo ─────────────────────────────────────────────────────────────────────
+run_once() {
+  echo ""
+  echo "══════════════════════════════════════════════════════════"
+  echo " Distritos pipeline — $(date '+%Y-%m-%d %H:%M:%S')"
+  echo "══════════════════════════════════════════════════════════"
 
-# ── 2. GeoJSONs ────────────────────────────────────────────────────────────────
-step "03 — Build GeoJSONs"
-python3 "$SCRIPT_DIR/03_build_geojson.py" || fail "03 falló"
+  step "02a — Scrape ONPE distritos (--update)"
+  python3 "$SCRIPT_DIR/02a_scrape_distritos.py" --update || {
+    warn "02a falló — abortando ciclo"
+    return
+  }
 
-# ── 3. Estadísticas nacionales ─────────────────────────────────────────────────
-step "04 — Aggregate stats"
-python3 "$SCRIPT_DIR/04_aggregate_stats.py" || fail "04 falló"
+  step "03 — Build GeoJSONs"
+  python3 "$SCRIPT_DIR/03_build_geojson.py" || {
+    warn "03 falló — abortando ciclo"
+    return
+  }
 
-# ── 4. Comparación 2021-2026 ───────────────────────────────────────────────────
-step "06 — Comparison GeoJSONs"
-python3 "$SCRIPT_DIR/06_build_comparison.py" || fail "06 falló"
+  step "04 — Aggregate stats"
+  python3 "$SCRIPT_DIR/04_aggregate_stats.py" || {
+    warn "04 falló — abortando ciclo"
+    return
+  }
 
-# ── 5. Análisis scatter-plot ───────────────────────────────────────────────────
-step "08 — Analisis data"
-python3 "$SCRIPT_DIR/08_build_analisis.py" || fail "08 falló"
+  step "06 — Comparison GeoJSONs"
+  python3 "$SCRIPT_DIR/06_build_comparison.py" || {
+    warn "06 falló — continuando de todas formas"
+  }
 
-# ── 6. Git commit + push ───────────────────────────────────────────────────────
-step "Git — staging archivos de resultados"
+  step "08 — Analisis scatter-plot"
+  python3 "$SCRIPT_DIR/08_build_analisis.py" || {
+    warn "08 falló — continuando de todas formas"
+  }
 
-cd "$DATAPOL_DIR"
+  step "Git — staging archivos distritales"
+  cd "$DATAPOL_DIR"
+  git add \
+    "peru/2026eg/segunda/data/results/peru_2026eg_distrito_segunda.csv" \
+    "peru/2026eg/segunda/data/peru_2026eg_distrito_segunda.geojson" \
+    "peru/2026eg/segunda/data/peru_2026eg_provincia_segunda.geojson" \
+    "peru/2026eg/segunda/data/peru_2026eg_departamento_segunda.geojson" \
+    "peru/2026eg/segunda/data/aggregate_stats.json" \
+    "peru/2026eg/segunda/data/comparison/peru_2026_segunda_distrito_comparison.geojson" \
+    "peru/2026eg/segunda/data/comparison/peru_2026_segunda_provincia_comparison.geojson" \
+    "peru/2026eg/segunda/data/comparison/peru_2026_segunda_departamento_comparison.geojson" \
+    "peru/2026eg/segunda/data/analisis/analisis_data.json" 2>/dev/null || true
 
-git add \
-  "peru/2026eg/segunda/data/results/peru_2026eg_distrito_segunda.csv" \
-  "peru/2026eg/segunda/data/peru_2026eg_distrito_segunda.geojson" \
-  "peru/2026eg/segunda/data/peru_2026eg_provincia_segunda.geojson" \
-  "peru/2026eg/segunda/data/peru_2026eg_departamento_segunda.geojson" \
-  "peru/2026eg/segunda/data/aggregate_stats.json" \
-  "peru/2026eg/segunda/data/comparison/peru_2026_segunda_distrito_comparison.geojson" \
-  "peru/2026eg/segunda/data/comparison/peru_2026_segunda_provincia_comparison.geojson" \
-  "peru/2026eg/segunda/data/comparison/peru_2026_segunda_departamento_comparison.geojson" \
-  "peru/2026eg/segunda/data/analisis/analisis_data.json"
+  TIMESTAMP="$(date '+%Y-%m-%d %H:%M')"
+  if git diff --cached --quiet; then
+    warn "Sin cambios — nada que commitear."
+  else
+    git commit -m "data: distritos segunda vuelta — $TIMESTAMP"
+    if $PUSH; then
+      step "Git push"
+      git push && echo -e "\n${GREEN}✔  Publicado — $TIMESTAMP${RESET}"
+    else
+      warn "(--no-push: omitiendo push)"
+    fi
+  fi
+}
 
-TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-
-if git diff --cached --quiet; then
-  warn "Sin cambios — nada que commitear."
+# ── Bucle principal ──────────────────────────────────────────────────────────────
+if $LOOP; then
+  while true; do
+    run_once
+    echo ""
+    echo "  ⏱  Esperando ${SLEEP_SECS}s antes del próximo ciclo …"
+    sleep "$SLEEP_SECS"
+  done
 else
-  git commit -m "$(cat <<EOF
-Actualizar resultados distritales segunda vuelta: $TIMESTAMP
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
-EOF
-)"
-  echo -e "\n${BOLD}${GREEN}▶ Git push${RESET}"
-  git push
-  echo -e "\n${GREEN}✔  Publicado en GitHub Pages — $TIMESTAMP${RESET}"
+  run_once
 fi
