@@ -93,7 +93,11 @@ run_once() {
     git commit -m "data: distritos segunda vuelta — $TIMESTAMP"
     if $PUSH; then
       step "Git push"
-      git push && echo -e "\n${GREEN}✔  Publicado — $TIMESTAMP${RESET}"
+      for attempt in 1 2 3; do
+        git push && echo -e "\n${GREEN}✔  Publicado — $TIMESTAMP${RESET}" && break
+        warn "Push falló (intento $attempt/3) — reintentando en 10s…"
+        sleep 10
+      done
     else
       warn "(--no-push: omitiendo push)"
     fi
