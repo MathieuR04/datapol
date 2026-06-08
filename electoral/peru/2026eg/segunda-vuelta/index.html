@@ -3211,16 +3211,23 @@
 
     document.getElementById("loading").style.display = "none";
 
-    // ── Auto-refresh every 90s ──────────────────────────────────────────────
+    // ── Auto-refresh every 90s ─────────────────────────────────────────────
+    // Only re-fetch lightweight JSON files. GeoJSONs (16MB distrito etc.)
+    // are re-fetched separately every 10 cycles (~15 min) to avoid choking
+    // slow connections on every tick.
+    let _refreshCount = 0;
     setInterval(() => {
+      _refreshCount++;
       const cb = `?v=${Date.now()}`;
-      Promise.all([
+      const geoRefresh = _refreshCount % 10 === 0;
+      const fetches = [
         fetch(BASE + "aggregate_stats.json" + cb).then(r => r.json()).catch(() => null),
         fetch(BASE + "forecast.json"         + cb).then(r => r.json()).catch(() => null),
-        fetch(BASE + "peru_2026eg_distrito_segunda.geojson"    + cb).then(r => r.json()).catch(() => null),
-        fetch(BASE + "peru_2026eg_provincia_segunda.geojson"   + cb).then(r => r.json()).catch(() => null),
-        fetch(BASE + "peru_2026eg_departamento_segunda.geojson"+ cb).then(r => r.json()).catch(() => null),
-      ]).then(([agg, forecast, distGeo, provGeo, deptGeo]) => {
+        geoRefresh ? fetch(BASE + "peru_2026eg_distrito_segunda.geojson"    + cb).then(r => r.json()).catch(() => null) : Promise.resolve(null),
+        geoRefresh ? fetch(BASE + "peru_2026eg_provincia_segunda.geojson"   + cb).then(r => r.json()).catch(() => null) : Promise.resolve(null),
+        fetch(BASE + "peru_2026eg_departamento_segunda.geojson" + cb).then(r => r.json()).catch(() => null),
+      ];
+      Promise.all(fetches).then(([agg, forecast, distGeo, provGeo, deptGeo]) => {
         if (!agg) return;
         aggStats     = agg;
         forecastData = forecast;
@@ -3244,7 +3251,6 @@
         buildCandList();
         buildDeptList();
         render();
-        // invalidate lazy-loaded caches so next tab-open re-fetches
         _exteriorRows = null;
         compDataLoaded = false; compDataLoading = false;
         compMpioData = null; compDeptData = null;
