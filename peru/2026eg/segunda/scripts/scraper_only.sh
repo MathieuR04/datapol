@@ -19,7 +19,7 @@ PUSH=true
 DO_DIST=true
 DO_MESA=true
 SLEEP_SECS=120
-WORKERS=10
+WORKERS=3
 
 for arg in "$@"; do
   [[ "$arg" == "--once"           ]] && LOOP=false
@@ -59,7 +59,9 @@ run_once() {
 
   # Pull latest before scraping so we don't overwrite newer data
   echo "▶ git pull"
+  git -C "$REPO_ROOT" stash --quiet 2>/dev/null || true
   git -C "$REPO_ROOT" pull --rebase --quiet || echo "  ⚠ pull failed — continuing"
+  git -C "$REPO_ROOT" stash pop --quiet 2>/dev/null || true
 
   if $DO_DIST; then
     echo "▶ 02a — Scrape distritos (--update)"
