@@ -1,33 +1,33 @@
 {
   "n_distritos": 2102,
   "num_electores": 27325432,
-  "votos_emitidos": 2013153,
-  "votos_validos": 1880745,
-  "votos_blancos": 10023,
-  "votos_nulos": 122385,
-  "actas_contabilizadas": 8902,
+  "votos_emitidos": 2725025,
+  "votos_validos": 2546358,
+  "votos_blancos": 13755,
+  "votos_nulos": 164912,
+  "actas_contabilizadas": 12050,
   "actas_total": 92766,
-  "participacion_pct": 7.37,
-  "actas_pct": 9.6,
+  "participacion_pct": 9.97,
+  "actas_pct": 12.99,
   "candidatos": [
     {
       "codigo": "01",
       "nombre": "KEIKO SOFIA FUJIMORI HIGUCHI",
       "partido": "FUERZA POPULAR",
       "color": "#EA580C",
-      "votos": 991049,
-      "pct_validos": 52.694,
-      "pct_emitidos": 49.229
+      "votos": 1336761,
+      "pct_validos": 52.497,
+      "pct_emitidos": 49.055
     },
     {
       "codigo": "02",
       "nombre": "ROBERTO HELBERT SANCHEZ PALOMINO",
       "partido": "JUNTOS POR EL PERÚ",
       "color": "#166534",
-      "votos": 889696,
-      "pct_validos": 47.306,
-      "pct_emitidos": 44.194
+      "votos": 1209597,
+      "pct_validos": 47.503,
+      "pct_emitidos": 44.388
     }
   ],
-  "generated_at": "2026-06-08T00:51:47.195579Z"
+  "generated_at": "2026-06-08T00:56:27.878878Z"
 }
