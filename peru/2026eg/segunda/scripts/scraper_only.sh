@@ -19,7 +19,7 @@ PUSH=true
 DO_DIST=true
 DO_MESA=true
 SLEEP_SECS=120
-WORKERS=3
+WORKERS=5
 
 for arg in "$@"; do
   [[ "$arg" == "--once"           ]] && LOOP=false
