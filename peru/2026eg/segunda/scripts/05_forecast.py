@@ -419,6 +419,8 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     mean_margin = sum(margins) / len(margins)
     ci_lo       = int(percentile(margins, 2.5))
     ci_hi       = int(percentile(margins, 97.5))
+    ci_lo_99    = int(percentile(margins, 0.5))
+    ci_hi_99    = int(percentile(margins, 99.5))
 
     # Candidate summary
     total_emitidos = sum(m["_emitidos"] for m in counted)
@@ -460,6 +462,8 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
             "mean_margin_votes": int(mean_margin),
             "ci_lo_votes":       ci_lo,
             "ci_hi_votes":       ci_hi,
+            "ci_lo_99_votes":    ci_lo_99,
+            "ci_hi_99_votes":    ci_hi_99,
             "margin_distribution": make_histogram(margins, N_BINS),
         },
     }

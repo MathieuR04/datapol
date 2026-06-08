@@ -2048,7 +2048,7 @@
     return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
   }
 
-  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight) {
+  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight, ciLow99Votes, ciHi99Votes) {
     const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
     const niceMax = (() => {
       const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
@@ -2099,20 +2099,28 @@
       const n = parseInt((hex||"#888888").replace("#",""), 16);
       return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
     }
-    if (Math.abs(ciArcL - ciArcR) > 0.01) {
-      // Draw a single wedge spanning only the CI interval (not from 0 to each bound)
-      const ciMin  = Math.min(ciArcL, ciArcR);
-      const ciMax  = Math.max(ciArcL, ciArcR);
+    // Helper to draw a single CI wedge
+    function drawCiWedge(loVotes, hiVotes, alpha) {
+      const arcL = toAngle(hiVotes), arcR = toAngle(loVotes);
+      if (Math.abs(arcL - arcR) <= 0.01) return;
+      const ciMin  = Math.min(arcL, arcR);
+      const ciMax  = Math.max(arcL, arcR);
       const midCi  = (ciMin + ciMax) / 2;
       const half   = Math.max((ciMax - ciMin) / 2, 0.07);
-      const visMin = Math.max(endA,  midCi - half);
+      const visMin = Math.max(endA,   midCi - half);
       const visMax = Math.min(startA, midCi + half);
       const ciColor = midCi > midA
-        ? hexRgba(candLeft?.color,  0.5)
-        : hexRgba(candRight?.color, 0.5);
+        ? hexRgba(candLeft?.color,  alpha)
+        : hexRgba(candRight?.color, alpha);
       svg.appendChild(mkEl("path", { d: wedgePath(visMin, visMax),
         fill: ciColor, stroke: "none", class: "ns-tick" }));
     }
+    // 99% CI — lighter shade (drawn first so 95% sits on top)
+    if (ciLow99Votes !== undefined && ciHi99Votes !== undefined) {
+      drawCiWedge(ciLow99Votes, ciHi99Votes, 0.2);
+    }
+    // 95% CI — darker shade
+    drawCiWedge(ciLowVotes, ciHiVotes, 0.5);
 
     // Scale labels at 0, ±half, ±full (no tick marks — labels only)
     const scaleVals = [-MAX_RANGE, -MAX_RANGE * 0.5, 0, MAX_RANGE * 0.5, MAX_RANGE];
@@ -2272,7 +2280,9 @@
       const probLeft  = prob2nd, probRight = prob3rd;
       const dispMarginV = marginV, dispCiLoV = ciLoV, dispCiHiV = ciHiV;
 
-      renderNeedle(dispMarginV, dispCiLoV, dispCiHiV, candLeft, candRight);
+      const ciLo99V = battle.ci_lo_99_votes;
+      const ciHi99V = battle.ci_hi_99_votes;
+      renderNeedle(dispMarginV, dispCiLoV, dispCiHiV, candLeft, candRight, ciLo99V, ciHi99V);
 
       document.getElementById("needle-left-name").textContent  = candLeft.nombre || "—";
       document.getElementById("needle-left-name").style.color  = candLeft.color  || "#888";
