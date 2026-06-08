@@ -31,7 +31,9 @@ run_once() {
   echo "══════════════════════════════════════════════════════════"
 
   step "git pull — fetching latest CSVs from scraper"
+  git -C "$REPO_ROOT" stash --quiet 2>/dev/null || true
   git -C "$REPO_ROOT" pull --rebase --quiet || warn "pull falló — usando datos locales"
+  git -C "$REPO_ROOT" stash pop --quiet 2>/dev/null || true
 
   step "03 — Build GeoJSONs"
   python3 "$SCRIPT_DIR/03_build_geojson.py" || {
