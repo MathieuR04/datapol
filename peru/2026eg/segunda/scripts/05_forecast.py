@@ -58,6 +58,7 @@ N_BINS       = 100    # histogram bins for margin distribution
 EXTERIOR_PRIOR_SHARES  = {"cand_01": 0.60, "cand_02": 0.40}  # conservative: keiko 60%, roberto 40%
 EXTERIOR_PRIOR_TURNOUT = 0.30                                  # conservative: 30% turnout
 EXTERIOR_PRIOR_TURNOUT_STD = 0.08
+EXTERIOR_MIN_PEERS     = 150  # need 150 counted exterior mesas before overriding the prior
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -171,6 +172,9 @@ def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
     Exterior mesas with no counted peers fall back to 2021 exterior prior
     instead of the national average (which reflects only domestic mesas).
     """
+    # For exterior mesas use a higher threshold before trusting observed data
+    min_peers = EXTERIOR_MIN_PEERS if mesa.get("_is_exterior") else MIN_PEERS
+
     for level_name, key in [
         ("local", mesa["_local"]),
         ("dist",  mesa["_dist"]),
@@ -180,7 +184,7 @@ def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
         if not key:
             continue
         st = stats[level_name].get(key)
-        if st and st["n"] >= MIN_PEERS:
+        if st and st["n"] >= min_peers:
             return st
 
     # Exterior fallback: use 2021 exterior shares instead of domestic national avg
