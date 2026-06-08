@@ -28,10 +28,25 @@ for arg in "$@"; do
   [[ "$arg" == "--mesas-only"     ]] && DO_DIST=false
 done
 
+# ── Find Python 3.9+ ────────────────────────────────────────────────────────────
+PYTHON=""
+for candidate in python3.12 python3.11 python3.10 python3.9 python3; do
+  if command -v "$candidate" &>/dev/null; then
+    ver=$("$candidate" -c "import sys; print(sys.version_info.minor)" 2>/dev/null)
+    maj=$("$candidate" -c "import sys; print(sys.version_info.major)" 2>/dev/null)
+    if [[ "$maj" -ge 3 && "$ver" -ge 9 ]]; then
+      PYTHON="$candidate"
+      echo "Using $PYTHON"
+      break
+    fi
+  fi
+done
+[[ -z "$PYTHON" ]] && { echo "Need Python 3.9+. Install with: brew install python@3.12"; exit 1; }
+
 # ── Check deps ──────────────────────────────────────────────────────────────────
-python3 -c "import curl_cffi" 2>/dev/null || {
+$PYTHON -c "import curl_cffi" 2>/dev/null || {
   echo "Installing curl_cffi…"
-  pip3 install curl_cffi --quiet
+  $PYTHON -m pip install curl_cffi --break-system-packages --quiet
 }
 
 # ── One cycle ────────────────────────────────────────────────────────────────────
@@ -47,7 +62,7 @@ run_once() {
 
   if $DO_DIST; then
     echo "▶ 02a — Scrape distritos (--update)"
-    python3 "$SCRIPT_DIR/02a_scrape_distritos.py" --update || {
+    $PYTHON "$SCRIPT_DIR/02a_scrape_distritos.py" --update || {
       echo "  ⚠ 02a falló — skipping commit"
       return
     }
@@ -55,7 +70,7 @@ run_once() {
 
   if $DO_MESA; then
     echo "▶ 02b — Scrape mesas (--update)"
-    python3 "$SCRIPT_DIR/02b_scrape_mesas.py" --update --workers $WORKERS || {
+    $PYTHON "$SCRIPT_DIR/02b_scrape_mesas.py" --update --workers $WORKERS || {
       echo "  ⚠ 02b falló — continuando"
     }
   fi
