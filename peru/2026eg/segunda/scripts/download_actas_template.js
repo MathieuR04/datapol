@@ -59,7 +59,7 @@ async function downloadAll() {
       const url = await getPresignedUrl(fileId);
       if (!url) { results.noUrl++; failed.push({mesaId, reason:'noUrl'}); continue; }
 
-      await downloadPdf(url, `AEPRE${mesaId}_ONPE.pdf`);
+      await downloadPdf(url, `${mesaId}.pdf`);
       results.ok++;
       if (i % 10 === 0) console.log(`[${i+1}/${MESA_IDS.length}] ✓ ${mesaId}`);
     } catch(e) {
