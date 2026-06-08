@@ -1,14 +1,14 @@
 {
   "n_distritos": 2102,
   "num_electores": 27325432,
-  "votos_emitidos": 18718773,
+  "votos_emitidos": 18721929,
   "votos_validos": 17495530,
   "votos_blancos": 111605,
   "votos_nulos": 1114099,
-  "actas_contabilizadas": 86466,
+  "actas_contabilizadas": 86484,
   "actas_total": 92766,
-  "participacion_pct": 68.5,
-  "actas_pct": 93.21,
+  "participacion_pct": 68.51,
+  "actas_pct": 93.23,
   "candidatos": [
     {
       "codigo": "01",
@@ -17,7 +17,7 @@
       "color": "#EA580C",
       "votos": 8759302,
       "pct_validos": 50.066,
-      "pct_emitidos": 46.794
+      "pct_emitidos": 46.786
     },
     {
       "codigo": "02",
@@ -26,8 +26,8 @@
       "color": "#166534",
       "votos": 8736228,
       "pct_validos": 49.934,
-      "pct_emitidos": 46.671
+      "pct_emitidos": 46.663
     }
   ],
-  "generated_at": "2026-06-08T14:46:52.112617Z"
+  "generated_at": "2026-06-08T14:50:23.271340Z"
 }
