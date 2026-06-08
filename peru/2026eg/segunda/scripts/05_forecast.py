@@ -51,6 +51,14 @@ SEED         = 42
 MIN_PEERS    = 5      # min counted mesas at a level to use it as prior
 N_BINS       = 100    # histogram bins for margin distribution
 
+# ── Exterior prior (from 2021 segunda vuelta exterior mesas) ──────────────────
+# Keiko (FP) 66.19%, Castillo (PL) 33.81% — P2=FP, P1=PL in 2021 dictionary
+# Turnout 36.5%, ~106 votes/mesa
+# Used as fallback when no exterior mesas are yet counted at any hierarchy level.
+EXTERIOR_PRIOR_SHARES  = {"cand_01": 0.6619, "cand_02": 0.3381}  # keiko, roberto
+EXTERIOR_PRIOR_TURNOUT = 0.365
+EXTERIOR_PRIOR_TURNOUT_STD = 0.08
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Data loading
@@ -80,10 +88,11 @@ def attach_hierarchy(mesas: list[dict], roll_lkp: dict):
         rl = roll_lkp.get(m["codigo_mesa"], {})
         local_raw = (m.get("codigo_local_votacion") or "").strip()
         dist      = m.get("ubigeo_distrito", "")
-        m["_local"] = f"{dist}_{local_raw}" if local_raw else ""
-        m["_dist"]  = dist
-        m["_prov"]  = (rl.get("ubigeo_provincia") or dist[:4] or "")
-        m["_dept"]  = (rl.get("ubigeo_dept")      or dist[:2] or "")
+        m["_local"]      = f"{dist}_{local_raw}" if local_raw else ""
+        m["_dist"]       = dist
+        m["_prov"]       = (rl.get("ubigeo_provincia") or dist[:4] or "")
+        m["_dept"]       = (rl.get("ubigeo_dept")      or dist[:2] or "")
+        m["_is_exterior"] = rl.get("is_exterior") == "True"
 
 
 def load_roll_lkp() -> dict:
@@ -157,8 +166,11 @@ def aggregate_by_prior(remaining: list[dict], priors: list[dict]) -> tuple[list[
     return agg_mesas, agg_priors
 
 
-def get_prior(mesa: dict, stats: dict) -> dict:
-    """Return the finest level stats with >= MIN_PEERS observations."""
+def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
+    """Return the finest level stats with >= MIN_PEERS observations.
+    Exterior mesas with no counted peers fall back to 2021 exterior prior
+    instead of the national average (which reflects only domestic mesas).
+    """
     for level_name, key in [
         ("local", mesa["_local"]),
         ("dist",  mesa["_dist"]),
@@ -171,6 +183,20 @@ def get_prior(mesa: dict, stats: dict) -> dict:
         st = stats[level_name].get(key)
         if st and st["n"] >= MIN_PEERS:
             return st
+
+    # Exterior fallback: use 2021 exterior shares instead of domestic national avg
+    if mesa.get("_is_exterior"):
+        shares = {col: EXTERIOR_PRIOR_SHARES.get(col, 1/len(cand_cols))
+                  for col in cand_cols}
+        std_s  = {col: 0.06 for col in cand_cols}  # modest uncertainty
+        return {
+            "mean_shares":   shares,
+            "std_shares":    std_s,
+            "mean_turnout":  EXTERIOR_PRIOR_TURNOUT,
+            "std_turnout":   EXTERIOR_PRIOR_TURNOUT_STD,
+            "n": 0,
+        }
+
     return stats["nat"].get("NAT", {
         "mean_shares": {}, "std_shares": {},
         "mean_turnout": 0.7, "std_turnout": 0.1
@@ -391,7 +417,7 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
 
     # Hierarchy priors
     stats  = build_all_stats(counted, cand_cols)
-    priors = [get_prior(m, stats) for m in remaining]
+    priors = [get_prior(m, stats, cand_cols) for m in remaining]
 
     # Aggregate mesas sharing the same prior
     agg_remaining, agg_priors = aggregate_by_prior(remaining, priors)
@@ -517,7 +543,7 @@ def run_validation(mesas, cand_cols, candidates,
                 base_votes[col] += v
 
         stats  = build_all_stats(observed, cand_cols)
-        priors = [get_prior(m, stats) for m in remaining]
+        priors = [get_prior(m, stats, cand_cols) for m in remaining]
         agg_mesas, agg_priors = aggregate_by_prior(remaining, priors)
 
         margins, _ = run_simulations(
