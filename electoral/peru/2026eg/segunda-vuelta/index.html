@@ -2052,7 +2052,7 @@
     const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
     const niceMax = (() => {
       const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
-      for (const f of [1, 1.5, 2, 2.5, 5, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
+      for (const f of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 10]) { if (mag * f >= absMax * 1.05) return mag * f; }
       return mag * 10;
     })();
     const MAX_RANGE = niceMax;
@@ -2100,17 +2100,18 @@
       return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
     }
     if (Math.abs(ciArcL - ciArcR) > 0.01) {
-      const a0   = midA;                          // angle for margin = 0
-      const aPos = Math.max(ciArcL, ciArcR);      // candLeft's CI extreme (positive side)
-      const aNeg = Math.min(ciArcL, ciArcR);      // candRight's CI extreme (negative side)
-      // Positive wedge: 0 → aPos (candLeft color)
-      if (Math.abs(aPos - a0) > 0.01)
-        svg.appendChild(mkEl("path", { d: wedgePath(a0, aPos),
-          fill: hexRgba(candLeft?.color, 0.28), stroke: "none", class: "ns-tick" }));
-      // Negative wedge: aNeg → 0 (candRight color)
-      if (Math.abs(a0 - aNeg) > 0.01)
-        svg.appendChild(mkEl("path", { d: wedgePath(aNeg, a0),
-          fill: hexRgba(candRight?.color, 0.28), stroke: "none", class: "ns-tick" }));
+      // Draw a single wedge spanning only the CI interval (not from 0 to each bound)
+      const ciMin  = Math.min(ciArcL, ciArcR);
+      const ciMax  = Math.max(ciArcL, ciArcR);
+      const midCi  = (ciMin + ciMax) / 2;
+      const half   = Math.max((ciMax - ciMin) / 2, 0.07);
+      const visMin = Math.max(endA,  midCi - half);
+      const visMax = Math.min(startA, midCi + half);
+      const ciColor = midCi > midA
+        ? hexRgba(candLeft?.color,  0.5)
+        : hexRgba(candRight?.color, 0.5);
+      svg.appendChild(mkEl("path", { d: wedgePath(visMin, visMax),
+        fill: ciColor, stroke: "none", class: "ns-tick" }));
     }
 
     // Scale labels at 0, ±half, ±full (no tick marks — labels only)
