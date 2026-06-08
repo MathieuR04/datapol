@@ -38,7 +38,7 @@ except ImportError:
 SCRIPT_DIR  = Path(__file__).parent
 DATA_DIR    = SCRIPT_DIR.parent / "data"
 RESULTS     = DATA_DIR / "results"
-META        = SCRIPT_DIR.parent.parent.parent / "metadata"
+META        = SCRIPT_DIR.parent.parent / "metadata"
 
 MESA_CSV    = RESULTS / "peru_2026eg_mesa_segunda.csv"
 CAND_JSON   = DATA_DIR / "candidates.json"
@@ -176,7 +176,6 @@ def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
         ("dist",  mesa["_dist"]),
         ("prov",  mesa["_prov"]),
         ("dept",  mesa["_dept"]),
-        ("nat",   "NAT"),
     ]:
         if not key:
             continue
@@ -185,6 +184,7 @@ def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
             return st
 
     # Exterior fallback: use 2021 exterior shares instead of domestic national avg
+    # Must be checked BEFORE national prior, which would otherwise always match
     if mesa.get("_is_exterior"):
         shares = {col: EXTERIOR_PRIOR_SHARES.get(col, 1/len(cand_cols))
                   for col in cand_cols}
