@@ -306,9 +306,10 @@ def scrape(update_mode: bool = False):
     if errors:
         err_path = DATA_DIR / "scrape_errors_distritos.csv"
         with open(err_path, "w", newline="") as f:
-            csv.DictWriter(f, fieldnames=["ubigeo_distrito"]).writeheader()
+            w = csv.DictWriter(f, fieldnames=["ubigeo_distrito"])
+            w.writeheader()
             for u in errors:
-                f.writerow({"ubigeo_distrito": u})
+                w.writerow({"ubigeo_distrito": u})
         print(f"  {len(errors)} errors → {err_path.name}")
 
 
