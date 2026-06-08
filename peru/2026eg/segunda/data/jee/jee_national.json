@@ -1,14 +1,14 @@
 {
   "total_actas": 92766,
-  "ever_e": 1176,
+  "ever_e": 1182,
   "ever_e_pct": 1.27,
   "estado_C": 7,
-  "estado_E": 1169,
+  "estado_E": 1175,
   "estado_P": 0,
   "error_counts": {
     "err_aritmetico": 526,
-    "err_firmas": 258,
-    "err_impugnada": 394,
+    "err_firmas": 263,
+    "err_impugnada": 395,
     "err_ilegible": 93,
     "err_incompleta": 10,
     "err_reprocesada": 0,
@@ -32,8 +32,8 @@
     },
     "E": {
       "err_aritmetico": 523,
-      "err_firmas": 257,
-      "err_impugnada": 393,
+      "err_firmas": 262,
+      "err_impugnada": 394,
       "err_ilegible": 91,
       "err_incompleta": 10,
       "err_reprocesada": 0,
@@ -57,10 +57,10 @@
   },
   "domestico": {
     "total_actas": 90223,
-    "ever_e": 1176,
-    "ever_e_pct": 1.3,
+    "ever_e": 1182,
+    "ever_e_pct": 1.31,
     "estado_C": 7,
-    "estado_E": 1169,
+    "estado_E": 1175,
     "estado_P": 0,
     "error_counts_by_estado": {
       "C": {
@@ -77,8 +77,8 @@
       },
       "E": {
         "err_aritmetico": 523,
-        "err_firmas": 257,
-        "err_impugnada": 393,
+        "err_firmas": 262,
+        "err_impugnada": 394,
         "err_ilegible": 91,
         "err_incompleta": 10,
         "err_reprocesada": 0,
