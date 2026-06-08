@@ -22,10 +22,10 @@ SLEEP_SECS=120
 WORKERS=10
 
 for arg in "$@"; do
-  [[ "$arg" == "--once"          ]] && LOOP=false
-  [[ "$arg" == "--no-push"       ]] && PUSH=false
-  [[ "$arg" == "--distritos-only"]] && DO_MESA=false
-  [[ "$arg" == "--mesas-only"    ]] && DO_DIST=false
+  [[ "$arg" == "--once"           ]] && LOOP=false
+  [[ "$arg" == "--no-push"        ]] && PUSH=false
+  [[ "$arg" == "--distritos-only" ]] && DO_MESA=false
+  [[ "$arg" == "--mesas-only"     ]] && DO_DIST=false
 done
 
 # ── Check deps ──────────────────────────────────────────────────────────────────
