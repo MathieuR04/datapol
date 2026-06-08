@@ -890,7 +890,7 @@
 
     <!-- Needle gauge -->
     <div class="needle-section" id="needle-section">
-      <div class="needle-title">Batalla por el 2do puesto · entrada a segunda vuelta</div>
+      <div class="needle-title">Batalla por la presidencia · 2da vuelta 2026</div>
       <div class="needle-mesas-note" id="needle-mesas-note"></div>
       <div class="needle-gauge-row">
         <div id="needle-left-photo" class="needle-side-placeholder"></div>
@@ -909,7 +909,7 @@
         <div class="needle-label left">
           <div class="needle-label-name" id="needle-left-name">—</div>
           <div class="needle-label-prob" id="needle-left-prob">—%</div>
-          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-probsub">prob. de ganar</div>
           <div class="needle-label-votes" id="needle-left-votes">—</div>
         </div>
         <div class="needle-center-block">
@@ -920,7 +920,7 @@
         <div class="needle-label right">
           <div class="needle-label-name" id="needle-right-name">—</div>
           <div class="needle-label-prob" id="needle-right-prob">—%</div>
-          <div class="needle-label-probsub">prob. 2da vuelta</div>
+          <div class="needle-label-probsub">prob. de ganar</div>
           <div class="needle-label-votes" id="needle-right-votes">—</div>
         </div>
       </div>
@@ -928,7 +928,7 @@
 
     <!-- Margin distribution -->
     <div class="margin-dist-wrap" id="margin-dist-wrap">
-      <div class="margin-dist-title">Distribución del margen proyectado entre 2º y 3er puesto</div>
+      <div class="margin-dist-title">Distribución del margen proyectado entre 1er y 2do puesto</div>
       <svg id="margin-dist-svg" viewBox="0 0 480 96" preserveAspectRatio="none"></svg>
       <div class="margin-dist-axis" id="margin-dist-axis"></div>
       <div class="margin-dist-foot" id="margin-dist-foot"></div>
@@ -937,10 +937,10 @@
     <!-- Candidate bars -->
     <div>
       <div class="pron-section-head">
-        Probabilidades de segunda vuelta
+        Probabilidades de ganar la presidencia
         <span class="pron-section-sub" id="pron-source-note">Escrutinio</span>
       </div>
-      <div class="pron-prob-note">Cada candidato tiene su propia probabilidad de clasificar. La suma ronda el 200% porque exactamente 2 candidatos pasan a segunda vuelta.</div>
+      <div class="pron-prob-note">Probabilidad de ganar la presidencia en la segunda vuelta basada en la proyección de mesas restantes.</div>
       <div class="cand-prob-list" id="cand-prob-list"></div>
     </div>
 
@@ -2320,7 +2320,7 @@
           </div>
           <div class="cand-prob-right">
             <span class="cand-prob-pct-val" style="color:${c.color||'#888'}">${prob.toFixed(0)}%</span>
-            <span class="cand-prob-pct-label">prob. 2da vuelta</span>
+            <span class="cand-prob-pct-label">prob. de ganar</span>
             ${isSV ? `<span class="sv-badge">→ 2da Vuelta</span>` : ""}
           </div>
         </div>
@@ -2334,7 +2334,7 @@
     const note = document.getElementById("pron-note");
     note.style.display = "block";
     note.textContent = isLive
-      ? `Proyección bayesiana jerárquica con ${nSims.toLocaleString("es-PE")} simulaciones (${pctActas.toFixed(1)}% de mesas contabilizadas). El margen se mide en votos entre el 2º y 3er candidato. El IC 95% cubre el rango esperado del resultado final.`
+      ? `Proyección bayesiana jerárquica con ${nSims.toLocaleString("es-PE")} simulaciones (${pctActas.toFixed(1)}% de mesas contabilizadas). El margen se mide en votos entre el 1er y 2do candidato. El IC 95% cubre el rango esperado del resultado final.`
       : "Pronóstico en estado inicial — sin mesas contabilizadas.";
   }
 
