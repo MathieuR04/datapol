@@ -30,23 +30,24 @@ done
 
 # ── Find Python 3.9+ ────────────────────────────────────────────────────────────
 PYTHON=""
-for candidate in python3.12 python3.11 python3.10 python3.9 python3; do
+for candidate in /usr/local/bin/python3.12 /opt/homebrew/bin/python3.12 python3.12 python3.11 python3.10 python3.9; do
   if command -v "$candidate" &>/dev/null; then
     ver=$("$candidate" -c "import sys; print(sys.version_info.minor)" 2>/dev/null)
     maj=$("$candidate" -c "import sys; print(sys.version_info.major)" 2>/dev/null)
     if [[ "$maj" -ge 3 && "$ver" -ge 9 ]]; then
       PYTHON="$candidate"
-      echo "Using $PYTHON"
+      echo "Using $PYTHON ($(${PYTHON} --version))"
       break
     fi
   fi
 done
-[[ -z "$PYTHON" ]] && { echo "Need Python 3.9+. Install with: brew install python@3.12"; exit 1; }
+[[ -z "$PYTHON" ]] && { echo "Need Python 3.9+. Install: brew install python@3.12"; exit 1; }
 
 # ── Check deps ──────────────────────────────────────────────────────────────────
-$PYTHON -c "import curl_cffi" 2>/dev/null || {
-  echo "Installing curl_cffi…"
-  $PYTHON -m pip install curl_cffi --break-system-packages --quiet
+$PYTHON -c "import curl_cffi; print('curl_cffi ok')" 2>/dev/null || {
+  echo "Installing curl_cffi for $PYTHON…"
+  $PYTHON -m pip install curl_cffi --break-system-packages
+  $PYTHON -c "import curl_cffi" || { echo "ERROR: could not install curl_cffi"; exit 1; }
 }
 
 # ── One cycle ────────────────────────────────────────────────────────────────────
