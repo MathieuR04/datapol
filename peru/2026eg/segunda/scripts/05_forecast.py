@@ -55,8 +55,8 @@ N_BINS       = 100    # histogram bins for margin distribution
 # Keiko (FP) 66.19%, Castillo (PL) 33.81% — P2=FP, P1=PL in 2021 dictionary
 # Turnout 36.5%, ~106 votes/mesa
 # Used as fallback when no exterior mesas are yet counted at any hierarchy level.
-EXTERIOR_PRIOR_SHARES  = {"cand_01": 0.6619, "cand_02": 0.3381}  # keiko, roberto
-EXTERIOR_PRIOR_TURNOUT = 0.365
+EXTERIOR_PRIOR_SHARES  = {"cand_01": 0.60, "cand_02": 0.40}  # conservative: keiko 60%, roberto 40%
+EXTERIOR_PRIOR_TURNOUT = 0.30                                  # conservative: 30% turnout
 EXTERIOR_PRIOR_TURNOUT_STD = 0.08
 
 
