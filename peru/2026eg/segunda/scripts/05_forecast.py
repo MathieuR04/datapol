@@ -56,9 +56,9 @@ N_BINS       = 100    # histogram bins for margin distribution
 # Turnout 36.5%, ~106 votes/mesa
 # Used as fallback when no exterior mesas are yet counted at any hierarchy level.
 EXTERIOR_PRIOR_SHARES  = {"cand_01": 0.60, "cand_02": 0.40}  # conservative: keiko 60%, roberto 40%
-EXTERIOR_PRIOR_TURNOUT = 0.30                                  # conservative: 30% turnout
-EXTERIOR_PRIOR_TURNOUT_STD = 0.08
-EXTERIOR_MIN_PEERS     = 150  # need 150 counted exterior mesas before overriding the prior
+EXTERIOR_PRIOR_TURNOUT = 0.26924058463                         # from consulate participation report
+EXTERIOR_PRIOR_TURNOUT_STD = 0.06
+EXTERIOR_MIN_PEERS     = 20   # use observed country-level data once 20 mesas counted there
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -167,39 +167,77 @@ def aggregate_by_prior(remaining: list[dict], priors: list[dict]) -> tuple[list[
     return agg_mesas, agg_priors
 
 
-def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
-    """Return the finest level stats with >= MIN_PEERS observations.
-    Exterior mesas with no counted peers fall back to 2021 exterior prior
-    instead of the national average (which reflects only domestic mesas).
-    """
-    # For exterior mesas use a higher threshold before trusting observed data
-    min_peers = EXTERIOR_MIN_PEERS if mesa.get("_is_exterior") else MIN_PEERS
+EXTERIOR_PRIOR_WEIGHT = 50   # virtual observations anchoring the prior
 
+# Module-level cache: one shared prior dict per blend key so that mesas
+# sharing the same effective prior get aggregated in aggregate_by_prior,
+# capturing correlated (systematic) uncertainty across the entire exterior.
+_ext_prior_cache: dict = {}
+
+def _make_ext_prior(cand_cols, obs):
+    """Bayesian blend of 2021 exterior prior and observed country data.
+    Mesas with the same obs dict (same country) share the same returned object,
+    so aggregate_by_prior groups them together → one correlated draw per sim."""
+    w_obs = (obs["n"] / (obs["n"] + EXTERIOR_PRIOR_WEIGHT)) if obs else 0.0
+    w_pri = 1.0 - w_obs
+    shares = {}; stds = {}
+    for col in cand_cols:
+        p_s = EXTERIOR_PRIOR_SHARES.get(col, 1/len(cand_cols))
+        o_s = obs["mean_shares"].get(col, p_s) if obs else p_s
+        shares[col] = w_pri * p_s + w_obs * o_s
+        o_std = obs["std_shares"].get(col, 0.06) if obs else 0.06
+        stds[col]   = w_pri * 0.06 + w_obs * o_std
+    p_to = EXTERIOR_PRIOR_TURNOUT
+    o_to = obs["mean_turnout"] if obs else p_to
+    o_to_std = obs["std_turnout"] if obs else EXTERIOR_PRIOR_TURNOUT_STD
+    return {
+        "mean_shares":  shares,
+        "std_shares":   stds,
+        "mean_turnout": w_pri * p_to + w_obs * o_to,
+        "std_turnout":  w_pri * EXTERIOR_PRIOR_TURNOUT_STD + w_obs * o_to_std,
+        "n": obs["n"] if obs else 0,
+    }
+
+
+def get_prior(mesa: dict, stats: dict, cand_cols: list) -> dict:
+    """Return prior for a remaining mesa.
+    For exterior mesas: Bayesian blend of the 2021-derived prior and observed
+    country/region data. Mesas with no country-level data share ONE prior object
+    so aggregate_by_prior groups them → one correlated systematic draw per sim,
+    capturing the risk that turnout / share is off for ALL exterior at once.
+    """
+    if mesa.get("_is_exterior"):
+        obs = None
+        for level_name, key in [
+            ("local", mesa["_local"]),
+            ("dist",  mesa["_dist"]),
+            ("prov",  mesa["_prov"]),
+            ("dept",  mesa["_dept"]),
+        ]:
+            if not key: continue
+            st = stats[level_name].get(key)
+            if st and st["n"] >= MIN_PEERS:
+                obs = st
+                break
+
+        # Cache key: use id of obs dict (same country → same object → aggregated)
+        # Mesas with no obs use key None → all share ONE global exterior prior
+        cache_key = (id(obs), tuple(cand_cols))
+        if cache_key not in _ext_prior_cache:
+            _ext_prior_cache[cache_key] = _make_ext_prior(cand_cols, obs)
+        return _ext_prior_cache[cache_key]
+
+    # Domestic: standard hierarchical prior
     for level_name, key in [
         ("local", mesa["_local"]),
         ("dist",  mesa["_dist"]),
         ("prov",  mesa["_prov"]),
         ("dept",  mesa["_dept"]),
     ]:
-        if not key:
-            continue
+        if not key: continue
         st = stats[level_name].get(key)
-        if st and st["n"] >= min_peers:
+        if st and st["n"] >= MIN_PEERS:
             return st
-
-    # Exterior fallback: use 2021 exterior shares instead of domestic national avg
-    # Must be checked BEFORE national prior, which would otherwise always match
-    if mesa.get("_is_exterior"):
-        shares = {col: EXTERIOR_PRIOR_SHARES.get(col, 1/len(cand_cols))
-                  for col in cand_cols}
-        std_s  = {col: 0.06 for col in cand_cols}  # modest uncertainty
-        return {
-            "mean_shares":   shares,
-            "std_shares":    std_s,
-            "mean_turnout":  EXTERIOR_PRIOR_TURNOUT,
-            "std_turnout":   EXTERIOR_PRIOR_TURNOUT_STD,
-            "n": 0,
-        }
 
     return stats["nat"].get("NAT", {
         "mean_shares": {}, "std_shares": {},
@@ -421,6 +459,7 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
 
     # Hierarchy priors
     stats  = build_all_stats(counted, cand_cols)
+    _ext_prior_cache.clear()   # reset per run so cache reflects current observed data
     priors = [get_prior(m, stats, cand_cols) for m in remaining]
 
     # Aggregate mesas sharing the same prior; preserve exterior flag per group
