@@ -2107,7 +2107,7 @@
     return `M ${x1} ${y1} A ${r} ${r} 0 ${large} ${sweep} ${x2} ${y2}`;
   }
 
-  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight, ciLow99Votes, ciHi99Votes) {
+  function renderNeedle(diffVotes, ciLowVotes, ciHiVotes, candLeft, candRight, ciLow99Votes, ciHi99Votes, _svgEl) {
     const absMax = Math.max(Math.abs(ciLowVotes), Math.abs(ciHiVotes), Math.abs(diffVotes), 1);
     const niceMax = (() => {
       const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
@@ -2123,7 +2123,7 @@
     const ciArcL  = toAngle(ciHiVotes);
     const ciArcR  = toAngle(ciLowVotes);
     const startA = Math.PI, endA = 0, midA = Math.PI / 2;
-    const svg = document.getElementById("needle-svg");
+    const svg = _svgEl || document.getElementById("needle-svg");
     svg.querySelectorAll("path, text.ns-lbl, line.ns-tick, circle.ns-dot").forEach(e => e.remove());
 
     function mkEl(tag, attrs) {
@@ -2391,16 +2391,10 @@
       const dispCiHi   = isKeikoLeader ? ciHi   : -ciLo;
       const dispCiLo99 = ciLo99 != null ? (isKeikoLeader ? ciLo99 : -ciHi99) : undefined;
       const dispCiHi99 = ciHi99 != null ? (isKeikoLeader ? ciHi99 : -ciLo99) : undefined;
-      // Render arc on sub-svg using SVG id swap
-      const origSvg = document.getElementById("needle-svg");
-      const subSvg  = document.getElementById(svgId);
+      // Render arc directly on sub-svg element (no ID swap needed)
+      const subSvg = document.getElementById(svgId);
       if (!subSvg) return;
-      try {
-        origSvg.id = "__needle-svg-bak"; subSvg.id = "needle-svg";
-        renderNeedle(dispMargin, dispCiLo, dispCiHi, keiko, roberto, dispCiLo99, dispCiHi99);
-      } finally {
-        subSvg.id = svgId; origSvg.id = "needle-svg";
-      }
+      renderNeedle(dispMargin, dispCiLo, dispCiHi, keiko, roberto, dispCiLo99, dispCiHi99, subSvg);
       // Update needle line position for sub-svg
       const lineEl = subSvg.querySelector("line");
       if (lineEl) {
