@@ -423,11 +423,26 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     stats  = build_all_stats(counted, cand_cols)
     priors = [get_prior(m, stats, cand_cols) for m in remaining]
 
-    # Aggregate mesas sharing the same prior
-    agg_remaining, agg_priors = aggregate_by_prior(remaining, priors)
+    # Aggregate mesas sharing the same prior; preserve exterior flag per group
+    groups: dict[int, dict] = {}
+    for m, p in zip(remaining, priors):
+        pid = id(p)
+        if pid not in groups:
+            groups[pid] = {"prior": p, "_electores": 0, "_is_exterior": m.get("_is_exterior", False)}
+        groups[pid]["_electores"] += m["_electores"]
+    agg_remaining = [{"_electores": g["_electores"], "_is_exterior": g["_is_exterior"]} for g in groups.values()]
+    agg_priors    = [g["prior"] for g in groups.values()]
 
     print(f"  Counted: {len(counted):,}  Remaining: {len(remaining):,}  "
           f"(aggregated to {len(agg_remaining):,} prior groups)")
+
+    # Base votes split by domestic/exterior
+    base_dom: dict[str, int] = defaultdict(int)
+    base_ext: dict[str, int] = defaultdict(int)
+    for m in counted:
+        target = base_ext if m.get("_is_exterior") else base_dom
+        for col, v in m["_votes"].items():
+            target[col] += v
 
     # The two candidates — determine who is currently leading to assign
     # cand_2nd (the "favorite" displayed on the left of the needle).
@@ -437,10 +452,38 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     else:
         col_leader, col_trailer = col_1, col_0
 
-    # Simulation — signed margin: positive = col_leader winning
-    margins, wins = run_simulations(
-        base_votes, agg_remaining, agg_priors, cand_cols, n_sims, rng,
-        col_a=col_leader, col_b=col_trailer)
+    # Single simulation loop tracking global + domestic + exterior margins
+    rng2 = random.Random(42)
+    margins, margins_dom, margins_ext = [], [], []
+    wins = {col_leader: 0, col_trailer: 0}
+    wins_dom = {col_0: 0, col_1: 0}
+    wins_ext = {col_0: 0, col_1: 0}
+
+    for _ in range(n_sims):
+        sim_dom = dict(base_dom); sim_ext = dict(base_ext)
+        for m, prior in zip(agg_remaining, agg_priors):
+            elec = m["_electores"]
+            if elec == 0: continue
+            turnout  = max(0.01, min(1.0, rng2.gauss(prior["mean_turnout"], prior["std_turnout"])))
+            emitidos = int(elec * turnout)
+            if emitidos == 0: continue
+            mean_s = prior["mean_shares"]; std_s = prior["std_shares"]
+            target = sim_ext if m.get("_is_exterior") else sim_dom
+            for col in cand_cols:
+                ms = mean_s.get(col, 0.0); ss = std_s.get(col, ms * 0.1 + 1e-4)
+                target[col] = target.get(col, 0) + int(emitidos * max(0.0, rng2.gauss(ms, ss)))
+
+        sim_all = {col: sim_dom.get(col, 0) + sim_ext.get(col, 0) for col in cand_cols}
+        mg  = sim_all.get(col_leader, 0) - sim_all.get(col_trailer, 0)
+        mgd = sim_dom.get(col_0, 0)      - sim_dom.get(col_1, 0)
+        mge = sim_ext.get(col_0, 0)      - sim_ext.get(col_1, 0)
+        margins.append(mg); margins_dom.append(mgd); margins_ext.append(mge)
+        if mg  > 0: wins[col_leader]  += 1
+        else:       wins[col_trailer] += 1
+        if mgd > 0: wins_dom[col_0]   += 1
+        else:       wins_dom[col_1]   += 1
+        if mge > 0: wins_ext[col_0]   += 1
+        else:       wins_ext[col_1]   += 1
 
     total_sim    = len(margins)
     prob_leader  = wins[col_leader]  / total_sim * 100
@@ -451,6 +494,37 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
     ci_hi       = int(percentile(margins, 97.5))
     ci_lo_99    = int(percentile(margins, 0.5))
     ci_hi_99    = int(percentile(margins, 99.5))
+
+    # Sub-battle stats (domestic / exterior) — same simulation, subset of mesas
+    def sub_battle(mgs, c0, c1, cand_by_col):
+        # mgs: signed margin = c0_votes - c1_votes (positive = c0 winning)
+        mgs.sort()
+        mean_m   = sum(mgs) / len(mgs)
+        p_c0     = sum(1 for m in mgs if m > 0) / len(mgs) * 100
+        p_c1     = 100 - p_c0
+        # leader = candidate winning more often in this sub-battle
+        if p_c0 >= 50:
+            leader, trailer, p_lead, p_trail = c0, c1, p_c0, p_c1
+            sign = 1
+        else:
+            leader, trailer, p_lead, p_trail = c1, c0, p_c1, p_c0
+            sign = -1   # flip so positive = leader winning
+        return {
+            "cand_2nd":          cand_by_col[leader]["codigo"],
+            "cand_3rd":          cand_by_col[trailer]["codigo"],
+            "nombre_2nd":        cand_by_col[leader].get("nombre",""),
+            "nombre_3rd":        cand_by_col[trailer].get("nombre",""),
+            "color_2nd":         cand_by_col[leader].get("color","#888"),
+            "color_3rd":         cand_by_col[trailer].get("color","#888"),
+            "prob_2nd_pct":      round(p_lead, 1),
+            "prob_3rd_pct":      round(p_trail, 1),
+            "mean_margin_votes": int(mean_m * sign),
+            "ci_lo_votes":       int(percentile(mgs, 2.5  if sign > 0 else 97.5) * sign),
+            "ci_hi_votes":       int(percentile(mgs, 97.5 if sign > 0 else 2.5 ) * sign),
+            "ci_lo_99_votes":    int(percentile(mgs, 0.5  if sign > 0 else 99.5) * sign),
+            "ci_hi_99_votes":    int(percentile(mgs, 99.5 if sign > 0 else 0.5 ) * sign),
+            "margin_distribution": make_histogram([m * sign for m in mgs], N_BINS),
+        }
 
     # Candidate summary
     total_emitidos = sum(m["_emitidos"] for m in counted)
@@ -496,6 +570,8 @@ def run_forecast(mesas: list[dict], cand_cols: list[str], candidates: list[dict]
             "ci_hi_99_votes":    ci_hi_99,
             "margin_distribution": make_histogram(margins, N_BINS),
         },
+        "battle_domestic": sub_battle(margins_dom, col_0, col_1, cand_by_col),
+        "battle_exterior": sub_battle(margins_ext, col_0, col_1, cand_by_col),
     }
 
 
@@ -618,57 +694,7 @@ def main():
     print(f"\nRunning {N_SIM:,} simulations …")
     result = run_forecast(mesas, cand_cols, candidates, n_sims=N_SIM)
 
-    # ── Domestic-only sub-forecast ────────────────────────────────────────────
-    print("Running domestic sub-forecast …")
-    dom_mesas = [m for m in mesas if not m.get("_is_exterior")]
-    dom_result = run_forecast(dom_mesas, cand_cols, candidates, n_sims=N_SIM)
-    result["battle_domestic"] = dom_result["battle"]
-
-    # ── Exterior sub-forecast (consulate prior: 326k total votes) ────────────
-    print("Running exterior sub-forecast …")
-    CONSULATE_VOTES = 326_000
-    ext_counted   = [m for m in mesas if m.get("_is_exterior") and m["_is_C"]]
-    ext_remaining = [m for m in mesas if m.get("_is_exterior") and not m["_is_C"]]
-    ext_v01 = sum(m["_votes"].get(cand_cols[0], 0) for m in ext_counted)
-    ext_v02 = sum(m["_votes"].get(cand_cols[1], 0) for m in ext_counted)
-    ext_emit_c = sum(m["_emitidos"] for m in ext_counted)
-    rem_votes = max(0, CONSULATE_VOTES - ext_emit_c)
-    obs_k = ext_v01 / (ext_v01 + ext_v02) if (ext_v01 + ext_v02) > 0 else 0.60
-
-    rng_ext = random.Random(42)
-    ext_margins = []
-    for _ in range(N_SIM):
-        total_rem = max(0, int(rng_ext.gauss(rem_votes, rem_votes * 0.05)))
-        k_share   = max(0.40, min(0.80, rng_ext.gauss(0.60, 0.05)))
-        net       = (ext_v01 - ext_v02) + int(total_rem * (2 * k_share - 1))
-        ext_margins.append(net)
-    ext_margins.sort()
-    ext_mean  = int(sum(ext_margins) / N_SIM)
-    ext_ci_lo = int(percentile(ext_margins, 2.5))
-    ext_ci_hi = int(percentile(ext_margins, 97.5))
-    ext_ci_lo_99 = int(percentile(ext_margins, 0.5))
-    ext_ci_hi_99 = int(percentile(ext_margins, 99.5))
-    ext_p_keiko  = round(sum(1 for m in ext_margins if m > 0) / N_SIM * 100, 1)
-    ext_p_rob    = round(100 - ext_p_keiko, 1)
-    cand_by_col  = {f"cand_{c['codigo']}": c for c in candidates}
-    result["battle_exterior"] = {
-        "cand_2nd":          cand_by_col[cand_cols[0]]["codigo"],
-        "cand_3rd":          cand_by_col[cand_cols[1]]["codigo"],
-        "nombre_2nd":        cand_by_col[cand_cols[0]].get("nombre",""),
-        "nombre_3rd":        cand_by_col[cand_cols[1]].get("nombre",""),
-        "color_2nd":         cand_by_col[cand_cols[0]].get("color","#EA580C"),
-        "color_3rd":         cand_by_col[cand_cols[1]].get("color","#166534"),
-        "prob_2nd_pct":      ext_p_keiko,
-        "prob_3rd_pct":      ext_p_rob,
-        "mean_margin_votes": ext_mean,
-        "ci_lo_votes":       ext_ci_lo,
-        "ci_hi_votes":       ext_ci_hi,
-        "ci_lo_99_votes":    ext_ci_lo_99,
-        "ci_hi_99_votes":    ext_ci_hi_99,
-        "consulate_votes":   CONSULATE_VOTES,
-        "margin_distribution": make_histogram(ext_margins, N_BINS),
-    }
-
+    # battle_domestic and battle_exterior are already in result from run_forecast
     with open(OUT_JSON, "w") as f:
         json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
 
