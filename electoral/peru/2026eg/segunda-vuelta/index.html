@@ -2391,27 +2391,42 @@
       const dispCiHi   = isKeikoLeader ? ciHi   : -ciLo;
       const dispCiLo99 = ciLo99 != null ? (isKeikoLeader ? ciLo99 : -ciHi99) : undefined;
       const dispCiHi99 = ciHi99 != null ? (isKeikoLeader ? ciHi99 : -ciLo99) : undefined;
-      // Render on sub-svg
+      // Render arc on sub-svg using SVG id swap
       const origSvg = document.getElementById("needle-svg");
       const subSvg  = document.getElementById(svgId);
       if (!subSvg) return;
-      // Temporarily swap svg id so renderNeedle draws on sub-svg
-      origSvg.id = "__needle-svg-bak"; subSvg.id = "needle-svg";
-      renderNeedle(dispMargin, dispCiLo, dispCiHi, keiko, roberto, dispCiLo99, dispCiHi99);
-      subSvg.id = svgId; origSvg.id = "needle-svg";
+      try {
+        origSvg.id = "__needle-svg-bak"; subSvg.id = "needle-svg";
+        renderNeedle(dispMargin, dispCiLo, dispCiHi, keiko, roberto, dispCiLo99, dispCiHi99);
+      } finally {
+        subSvg.id = svgId; origSvg.id = "needle-svg";
+      }
+      // Update needle line position for sub-svg
+      const lineEl = subSvg.querySelector("line");
+      if (lineEl) {
+        const cx = 150, cy = 155, r = 88;
+        const MAX_RANGE = Math.max(Math.abs(dispCiLo), Math.abs(dispCiHi), Math.abs(dispMargin), 1);
+        const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
+        const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE);
+        const needleA = toAngle(dispMargin);
+        lineEl.setAttribute("x2", (cx + (r + 5) * Math.cos(needleA)).toFixed(1));
+        lineEl.setAttribute("y2", (cy - (r + 5) * Math.sin(needleA)).toFixed(1));
+      }
       // Labels
-      const probKeiko  = isKeikoLeader ? battle_sub.prob_2nd_pct : battle_sub.prob_3rd_pct;
-      const probRoberto = 100 - probKeiko;
-      document.getElementById(leftNameId).textContent  = "Keiko";
-      document.getElementById(leftNameId).style.color  = keiko.color || "#EA580C";
-      document.getElementById(leftProbId).textContent  = probKeiko.toFixed(0) + "%";
-      document.getElementById(leftProbId).style.color  = keiko.color || "#EA580C";
-      document.getElementById(rightNameId).textContent = "Roberto";
-      document.getElementById(rightNameId).style.color = roberto.color || "#166534";
-      document.getElementById(rightProbId).textContent = probRoberto.toFixed(0) + "%";
-      document.getElementById(rightProbId).style.color = roberto.color || "#166534";
-      document.getElementById(centerDiffId).textContent = fmtVoteDiff(dispMargin);
-      document.getElementById(centerCiId).textContent   = `IC 95%: [${fmtVoteDiff(dispCiLo)}, ${fmtVoteDiff(dispCiHi)}]`;
+      const probKeiko   = isKeikoLeader ? battle_sub.prob_2nd_pct : battle_sub.prob_3rd_pct;
+      const probRoberto = 100 - (probKeiko || 0);
+      const elLN  = document.getElementById(leftNameId);
+      const elLP  = document.getElementById(leftProbId);
+      const elRN  = document.getElementById(rightNameId);
+      const elRP  = document.getElementById(rightProbId);
+      const elCD  = document.getElementById(centerDiffId);
+      const elCCI = document.getElementById(centerCiId);
+      if (elLN)  { elLN.textContent = "Keiko";   elLN.style.color = keiko.color || "#EA580C"; }
+      if (elLP)  { elLP.textContent = (probKeiko || 0).toFixed(0) + "%"; elLP.style.color = keiko.color || "#EA580C"; }
+      if (elRN)  { elRN.textContent = "Roberto";  elRN.style.color = roberto.color || "#166534"; }
+      if (elRP)  { elRP.textContent = probRoberto.toFixed(0) + "%"; elRP.style.color = roberto.color || "#166534"; }
+      if (elCD)  elCD.textContent  = fmtVoteDiff(dispMargin);
+      if (elCCI) elCCI.textContent = `IC 95%: [${fmtVoteDiff(dispCiLo)}, ${fmtVoteDiff(dispCiHi)}]`;
     }
     renderSubNeedle("needle-svg-dom", fd.battle_domestic,
       "needle-dom-left-name","needle-dom-left-prob","needle-dom-right-name","needle-dom-right-prob",
