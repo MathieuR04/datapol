@@ -67,6 +67,8 @@ run_once() {
     "peru/2026eg/segunda/data/peru_2026eg_departamento_segunda.geojson" \
     "peru/2026eg/segunda/data/aggregate_stats.json" \
     "peru/2026eg/segunda/data/forecast.json" \
+    "peru/2026eg/segunda/data/forecast_national.json" \
+    "peru/2026eg/segunda/data/forecast_exterior.json" \
     "peru/2026eg/segunda/data/comparison/peru_2026_segunda_distrito_comparison.geojson" \
     "peru/2026eg/segunda/data/comparison/peru_2026_segunda_provincia_comparison.geojson" \
     "peru/2026eg/segunda/data/comparison/peru_2026_segunda_departamento_comparison.geojson" \
