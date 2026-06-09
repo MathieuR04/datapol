@@ -618,6 +618,57 @@ def main():
     print(f"\nRunning {N_SIM:,} simulations …")
     result = run_forecast(mesas, cand_cols, candidates, n_sims=N_SIM)
 
+    # ── Domestic-only sub-forecast ────────────────────────────────────────────
+    print("Running domestic sub-forecast …")
+    dom_mesas = [m for m in mesas if not m.get("_is_exterior")]
+    dom_result = run_forecast(dom_mesas, cand_cols, candidates, n_sims=N_SIM)
+    result["battle_domestic"] = dom_result["battle"]
+
+    # ── Exterior sub-forecast (consulate prior: 326k total votes) ────────────
+    print("Running exterior sub-forecast …")
+    CONSULATE_VOTES = 326_000
+    ext_counted   = [m for m in mesas if m.get("_is_exterior") and m["_is_C"]]
+    ext_remaining = [m for m in mesas if m.get("_is_exterior") and not m["_is_C"]]
+    ext_v01 = sum(m["_votes"].get(cand_cols[0], 0) for m in ext_counted)
+    ext_v02 = sum(m["_votes"].get(cand_cols[1], 0) for m in ext_counted)
+    ext_emit_c = sum(m["_emitidos"] for m in ext_counted)
+    rem_votes = max(0, CONSULATE_VOTES - ext_emit_c)
+    obs_k = ext_v01 / (ext_v01 + ext_v02) if (ext_v01 + ext_v02) > 0 else 0.60
+
+    rng_ext = random.Random(42)
+    ext_margins = []
+    for _ in range(N_SIM):
+        total_rem = max(0, int(rng_ext.gauss(rem_votes, rem_votes * 0.05)))
+        k_share   = max(0.40, min(0.80, rng_ext.gauss(0.60, 0.05)))
+        net       = (ext_v01 - ext_v02) + int(total_rem * (2 * k_share - 1))
+        ext_margins.append(net)
+    ext_margins.sort()
+    ext_mean  = int(sum(ext_margins) / N_SIM)
+    ext_ci_lo = int(percentile(ext_margins, 2.5))
+    ext_ci_hi = int(percentile(ext_margins, 97.5))
+    ext_ci_lo_99 = int(percentile(ext_margins, 0.5))
+    ext_ci_hi_99 = int(percentile(ext_margins, 99.5))
+    ext_p_keiko  = round(sum(1 for m in ext_margins if m > 0) / N_SIM * 100, 1)
+    ext_p_rob    = round(100 - ext_p_keiko, 1)
+    cand_by_col  = {f"cand_{c['codigo']}": c for c in candidates}
+    result["battle_exterior"] = {
+        "cand_2nd":          cand_by_col[cand_cols[0]]["codigo"],
+        "cand_3rd":          cand_by_col[cand_cols[1]]["codigo"],
+        "nombre_2nd":        cand_by_col[cand_cols[0]].get("nombre",""),
+        "nombre_3rd":        cand_by_col[cand_cols[1]].get("nombre",""),
+        "color_2nd":         cand_by_col[cand_cols[0]].get("color","#EA580C"),
+        "color_3rd":         cand_by_col[cand_cols[1]].get("color","#166534"),
+        "prob_2nd_pct":      ext_p_keiko,
+        "prob_3rd_pct":      ext_p_rob,
+        "mean_margin_votes": ext_mean,
+        "ci_lo_votes":       ext_ci_lo,
+        "ci_hi_votes":       ext_ci_hi,
+        "ci_lo_99_votes":    ext_ci_lo_99,
+        "ci_hi_99_votes":    ext_ci_hi_99,
+        "consulate_votes":   CONSULATE_VOTES,
+        "margin_distribution": make_histogram(ext_margins, N_BINS),
+    }
+
     with open(OUT_JSON, "w") as f:
         json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
 
@@ -626,6 +677,10 @@ def main():
     print(f"  Leader: {b['nombre_2nd'].split()[0]}  Margin: {b['mean_margin_votes']:+,} votes  "
           f"CI [{b['ci_lo_votes']:+,}, {b['ci_hi_votes']:+,}]")
     print(f"  P(winner): {b['prob_2nd_pct']:.1f}%")
+    bd = result["battle_domestic"]
+    print(f"  Domestic:  {bd['mean_margin_votes']:+,}  CI [{bd['ci_lo_votes']:+,}, {bd['ci_hi_votes']:+,}]  P={bd['prob_2nd_pct']:.1f}%")
+    be = result["battle_exterior"]
+    print(f"  Exterior:  {be['mean_margin_votes']:+,}  CI [{be['ci_lo_votes']:+,}, {be['ci_hi_votes']:+,}]  P={be['prob_2nd_pct']:.1f}%")
     print()
     for c in result["candidates"]:
         print(f"  {c['pct_emitidos']:5.2f}%  {c['votes']:>10,}  {c['nombre']}")

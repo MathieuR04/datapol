@@ -934,6 +934,65 @@
       <div class="margin-dist-foot" id="margin-dist-foot"></div>
     </div>
 
+    <!-- Sub-needles: Nacional vs Exterior -->
+    <div style="display:flex;gap:0.75rem;margin-top:0.5rem" id="sub-needles-wrap">
+
+      <div class="needle-section" id="needle-section-dom" style="flex:1;min-width:0">
+        <div class="needle-title" style="font-size:9px">Votos nacionales (sin exterior)</div>
+        <div class="needle-wrap">
+          <svg id="needle-svg-dom" viewBox="0 0 300 175" preserveAspectRatio="xMidYMid meet">
+            <line id="needle-line-dom" x1="150" y1="155" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="butt"/>
+          </svg>
+        </div>
+        <div class="needle-labels">
+          <div class="needle-label left">
+            <div class="needle-label-name" id="needle-dom-left-name">—</div>
+            <div class="needle-label-prob" id="needle-dom-left-prob">—%</div>
+            <div class="needle-label-probsub" style="font-size:7px">prob. de ganar</div>
+          </div>
+          <div class="needle-center-block">
+            <div class="needle-center-diff" id="needle-dom-center-diff" style="font-size:14px">—</div>
+            <div class="needle-center-sub" style="font-size:7px">margen proy.</div>
+            <div class="needle-center-ci" id="needle-dom-center-ci" style="font-size:7px"></div>
+          </div>
+          <div class="needle-label right">
+            <div class="needle-label-name" id="needle-dom-right-name">—</div>
+            <div class="needle-label-prob" id="needle-dom-right-prob">—%</div>
+            <div class="needle-label-probsub" style="font-size:7px">prob. de ganar</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="needle-section" id="needle-section-ext" style="flex:1;min-width:0">
+        <div class="needle-title" style="font-size:9px">Votos en el exterior</div>
+        <div class="needle-wrap">
+          <svg id="needle-svg-ext" viewBox="0 0 300 175" preserveAspectRatio="xMidYMid meet">
+            <line id="needle-line-ext" x1="150" y1="155" x2="150" y2="60"
+                  stroke="#1a1209" stroke-width="2.5" stroke-linecap="butt"/>
+          </svg>
+        </div>
+        <div class="needle-labels">
+          <div class="needle-label left">
+            <div class="needle-label-name" id="needle-ext-left-name">—</div>
+            <div class="needle-label-prob" id="needle-ext-left-prob">—%</div>
+            <div class="needle-label-probsub" style="font-size:7px">prob. de ganar</div>
+          </div>
+          <div class="needle-center-block">
+            <div class="needle-center-diff" id="needle-ext-center-diff" style="font-size:14px">—</div>
+            <div class="needle-center-sub" style="font-size:7px">margen proy.</div>
+            <div class="needle-center-ci" id="needle-ext-center-ci" style="font-size:7px"></div>
+          </div>
+          <div class="needle-label right">
+            <div class="needle-label-name" id="needle-ext-right-name">—</div>
+            <div class="needle-label-prob" id="needle-ext-right-prob">—%</div>
+            <div class="needle-label-probsub" style="font-size:7px">prob. de ganar</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- Candidate bars -->
     <div>
       <div class="pron-section-head">
@@ -2311,6 +2370,55 @@
     }
 
     renderMarginDist(dispBattle ?? battle);
+
+    // ── Sub-needles: domestic + exterior ──────────────────────────────────────
+    function renderSubNeedle(svgId, battle_sub, leftNameId, leftProbId, rightNameId, rightProbId, centerDiffId, centerCiId) {
+      if (!battle_sub || !isLive) return;
+      const c01 = fd.candidates?.find(c => c.codigo === "01");
+      const c02 = fd.candidates?.find(c => c.codigo === "02");
+      if (!c01 || !c02) return;
+      // cand_2nd is the sub-battle leader; keep Keiko always on left
+      const keiko  = c01, roberto = c02;
+      const margin = battle_sub.mean_margin_votes ?? 0;
+      const ciLo   = battle_sub.ci_lo_votes ?? 0;
+      const ciHi   = battle_sub.ci_hi_votes ?? 0;
+      const ciLo99 = battle_sub.ci_lo_99_votes;
+      const ciHi99 = battle_sub.ci_hi_99_votes;
+      // Flip sign so positive = Keiko winning (cand_01)
+      const isKeikoLeader = battle_sub.cand_2nd === "01";
+      const dispMargin = isKeikoLeader ? margin : -margin;
+      const dispCiLo   = isKeikoLeader ? ciLo   : -ciHi;
+      const dispCiHi   = isKeikoLeader ? ciHi   : -ciLo;
+      const dispCiLo99 = ciLo99 != null ? (isKeikoLeader ? ciLo99 : -ciHi99) : undefined;
+      const dispCiHi99 = ciHi99 != null ? (isKeikoLeader ? ciHi99 : -ciLo99) : undefined;
+      // Render on sub-svg
+      const origSvg = document.getElementById("needle-svg");
+      const subSvg  = document.getElementById(svgId);
+      if (!subSvg) return;
+      // Temporarily swap svg id so renderNeedle draws on sub-svg
+      origSvg.id = "__needle-svg-bak"; subSvg.id = "needle-svg";
+      renderNeedle(dispMargin, dispCiLo, dispCiHi, keiko, roberto, dispCiLo99, dispCiHi99);
+      subSvg.id = svgId; origSvg.id = "needle-svg";
+      // Labels
+      const probKeiko  = isKeikoLeader ? battle_sub.prob_2nd_pct : battle_sub.prob_3rd_pct;
+      const probRoberto = 100 - probKeiko;
+      document.getElementById(leftNameId).textContent  = "Keiko";
+      document.getElementById(leftNameId).style.color  = keiko.color || "#EA580C";
+      document.getElementById(leftProbId).textContent  = probKeiko.toFixed(0) + "%";
+      document.getElementById(leftProbId).style.color  = keiko.color || "#EA580C";
+      document.getElementById(rightNameId).textContent = "Roberto";
+      document.getElementById(rightNameId).style.color = roberto.color || "#166534";
+      document.getElementById(rightProbId).textContent = probRoberto.toFixed(0) + "%";
+      document.getElementById(rightProbId).style.color = roberto.color || "#166534";
+      document.getElementById(centerDiffId).textContent = fmtVoteDiff(dispMargin);
+      document.getElementById(centerCiId).textContent   = `IC 95%: [${fmtVoteDiff(dispCiLo)}, ${fmtVoteDiff(dispCiHi)}]`;
+    }
+    renderSubNeedle("needle-svg-dom", fd.battle_domestic,
+      "needle-dom-left-name","needle-dom-left-prob","needle-dom-right-name","needle-dom-right-prob",
+      "needle-dom-center-diff","needle-dom-center-ci");
+    renderSubNeedle("needle-svg-ext", fd.battle_exterior,
+      "needle-ext-left-name","needle-ext-left-prob","needle-ext-right-name","needle-ext-right-prob",
+      "needle-ext-center-diff","needle-ext-center-ci");
 
     // Candidate probability bars — data from mesa CSV (via forecast.json candidates)
     const list = document.getElementById("cand-prob-list");
