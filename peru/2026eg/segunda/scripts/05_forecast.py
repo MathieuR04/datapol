@@ -57,7 +57,7 @@ N_BINS       = 100    # histogram bins for margin distribution
 # Used as fallback when no exterior mesas are yet counted at any hierarchy level.
 EXTERIOR_PRIOR_SHARES  = {"cand_01": 0.60, "cand_02": 0.40}  # conservative: keiko 60%, roberto 40%
 EXTERIOR_PRIOR_TURNOUT = 0.26924058463                         # from consulate participation report
-EXTERIOR_PRIOR_TURNOUT_STD = 0.06
+EXTERIOR_PRIOR_TURNOUT_STD = 0.13                              # wider — reflects real turnout uncertainty
 EXTERIOR_MIN_PEERS     = 20   # use observed country-level data once 20 mesas counted there
 
 
@@ -185,8 +185,8 @@ def _make_ext_prior(cand_cols, obs):
         p_s = EXTERIOR_PRIOR_SHARES.get(col, 1/len(cand_cols))
         o_s = obs["mean_shares"].get(col, p_s) if obs else p_s
         shares[col] = w_pri * p_s + w_obs * o_s
-        o_std = obs["std_shares"].get(col, 0.06) if obs else 0.06
-        stds[col]   = w_pri * 0.06 + w_obs * o_std
+        o_std = obs["std_shares"].get(col, 0.12) if obs else 0.12
+        stds[col]   = w_pri * 0.12 + w_obs * o_std
     p_to = EXTERIOR_PRIOR_TURNOUT
     o_to = obs["mean_turnout"] if obs else p_to
     o_to_std = obs["std_turnout"] if obs else EXTERIOR_PRIOR_TURNOUT_STD
