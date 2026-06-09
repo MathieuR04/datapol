@@ -733,9 +733,17 @@ def main():
     print(f"\nRunning {N_SIM:,} simulations …")
     result = run_forecast(mesas, cand_cols, candidates, n_sims=N_SIM)
 
-    # battle_domestic and battle_exterior are already in result from run_forecast
+    # Write main forecast.json
     with open(OUT_JSON, "w") as f:
         json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
+
+    # Write separate sub-forecast JSONs for frontend needles
+    nat_json = DATA_DIR / "forecast_national.json"
+    ext_json = DATA_DIR / "forecast_exterior.json"
+    with open(nat_json, "w") as f:
+        json.dump(result["battle_domestic"], f, ensure_ascii=False, separators=(",", ":"))
+    with open(ext_json, "w") as f:
+        json.dump(result["battle_exterior"], f, ensure_ascii=False, separators=(",", ":"))
 
     b = result["battle"]
     print(f"\nSaved → {OUT_JSON.name}")

@@ -2372,62 +2372,7 @@
     renderMarginDist(dispBattle ?? battle);
 
     // ── Sub-needles: domestic + exterior ──────────────────────────────────────
-    function renderSubNeedle(svgId, battle_sub, leftNameId, leftProbId, rightNameId, rightProbId, centerDiffId, centerCiId) {
-      if (!battle_sub || !isLive) return;
-      const c01 = fd.candidates?.find(c => c.codigo === "01");
-      const c02 = fd.candidates?.find(c => c.codigo === "02");
-      if (!c01 || !c02) return;
-      // cand_2nd is the sub-battle leader; keep Keiko always on left
-      const keiko  = c01, roberto = c02;
-      const margin = battle_sub.mean_margin_votes ?? 0;
-      const ciLo   = battle_sub.ci_lo_votes ?? 0;
-      const ciHi   = battle_sub.ci_hi_votes ?? 0;
-      const ciLo99 = battle_sub.ci_lo_99_votes;
-      const ciHi99 = battle_sub.ci_hi_99_votes;
-      // Flip sign so positive = Keiko winning (cand_01)
-      const isKeikoLeader = battle_sub.cand_2nd === "01";
-      const dispMargin = isKeikoLeader ? margin : -margin;
-      const dispCiLo   = isKeikoLeader ? ciLo   : -ciHi;
-      const dispCiHi   = isKeikoLeader ? ciHi   : -ciLo;
-      const dispCiLo99 = ciLo99 != null ? (isKeikoLeader ? ciLo99 : -ciHi99) : undefined;
-      const dispCiHi99 = ciHi99 != null ? (isKeikoLeader ? ciHi99 : -ciLo99) : undefined;
-      // Render arc directly on sub-svg element (no ID swap needed)
-      const subSvg = document.getElementById(svgId);
-      if (!subSvg) return;
-      renderNeedle(dispMargin, dispCiLo, dispCiHi, keiko, roberto, dispCiLo99, dispCiHi99, subSvg);
-      // Update needle line position for sub-svg
-      const lineEl = subSvg.querySelector("line");
-      if (lineEl) {
-        const cx = 150, cy = 155, r = 88;
-        const MAX_RANGE = Math.max(Math.abs(dispCiLo), Math.abs(dispCiHi), Math.abs(dispMargin), 1);
-        const clamp = v => Math.max(-MAX_RANGE, Math.min(MAX_RANGE, v));
-        const toAngle = d => Math.PI * 0.5 * (1 + clamp(d) / MAX_RANGE);
-        const needleA = toAngle(dispMargin);
-        lineEl.setAttribute("x2", (cx + (r + 5) * Math.cos(needleA)).toFixed(1));
-        lineEl.setAttribute("y2", (cy - (r + 5) * Math.sin(needleA)).toFixed(1));
-      }
-      // Labels
-      const probKeiko   = isKeikoLeader ? battle_sub.prob_2nd_pct : battle_sub.prob_3rd_pct;
-      const probRoberto = 100 - (probKeiko || 0);
-      const elLN  = document.getElementById(leftNameId);
-      const elLP  = document.getElementById(leftProbId);
-      const elRN  = document.getElementById(rightNameId);
-      const elRP  = document.getElementById(rightProbId);
-      const elCD  = document.getElementById(centerDiffId);
-      const elCCI = document.getElementById(centerCiId);
-      if (elLN)  { elLN.textContent = "Keiko";   elLN.style.color = keiko.color || "#EA580C"; }
-      if (elLP)  { elLP.textContent = (probKeiko || 0).toFixed(0) + "%"; elLP.style.color = keiko.color || "#EA580C"; }
-      if (elRN)  { elRN.textContent = "Roberto";  elRN.style.color = roberto.color || "#166534"; }
-      if (elRP)  { elRP.textContent = probRoberto.toFixed(0) + "%"; elRP.style.color = roberto.color || "#166534"; }
-      if (elCD)  elCD.textContent  = fmtVoteDiff(dispMargin);
-      if (elCCI) elCCI.textContent = `IC 95%: [${fmtVoteDiff(dispCiLo)}, ${fmtVoteDiff(dispCiHi)}]`;
-    }
-    renderSubNeedle("needle-svg-dom", fd.battle_domestic,
-      "needle-dom-left-name","needle-dom-left-prob","needle-dom-right-name","needle-dom-right-prob",
-      "needle-dom-center-diff","needle-dom-center-ci");
-    renderSubNeedle("needle-svg-ext", fd.battle_exterior,
-      "needle-ext-left-name","needle-ext-left-prob","needle-ext-right-name","needle-ext-right-prob",
-      "needle-ext-center-diff","needle-ext-center-ci");
+    // Sub-needles are loaded from separate JSON files and rendered independently
 
     // Candidate probability bars — data from mesa CSV (via forecast.json candidates)
     const list = document.getElementById("cand-prob-list");
@@ -3596,6 +3541,138 @@
     return svg;
   }
 
+})();
+
+// ── Sub-needles: national + exterior — loaded independently ─────────────────
+(function() {
+  const BASE = "../../../../peru/2026eg/segunda/data/";
+  const KEIKO_COLOR  = "#EA580C";
+  const ROB_COLOR    = "#166534";
+
+  function applySubNeedle(battle, svgId, lName, lProb, rName, rProb, cDiff, cCI) {
+    if (!battle) return;
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+
+    const margin = battle.mean_margin_votes ?? 0;
+    const ciLo   = battle.ci_lo_votes ?? 0;
+    const ciHi   = battle.ci_hi_votes ?? 0;
+    const ciLo99 = battle.ci_lo_99_votes ?? undefined;
+    const ciHi99 = battle.ci_hi_99_votes ?? undefined;
+    // positive = Keiko winning (cand_01)
+    const isKeiko = battle.cand_2nd === "01";
+    const dm   = isKeiko ? margin : -margin;
+    const dlo  = isKeiko ? ciLo   : -ciHi;
+    const dhi  = isKeiko ? ciHi   : -ciLo;
+    const dlo99 = ciLo99 != null ? (isKeiko ? ciLo99 : -ciHi99) : null;
+    const dhi99 = ciHi99 != null ? (isKeiko ? ciHi99 : -ciLo99) : null;
+
+    // Draw arc + CI on sub-svg
+    const absMax = Math.max(Math.abs(dlo), Math.abs(dhi), Math.abs(dm), 1);
+    const mag = Math.pow(10, Math.floor(Math.log10(absMax)));
+    let niceMax = mag * 10;
+    for (const f of [1,1.5,2,2.5,3,4,5,6,7,8,10]) { if (mag*f >= absMax*1.05) { niceMax=mag*f; break; } }
+    const MAX = niceMax;
+    const cx=150, cy=155, r=88;
+    const clamp = v => Math.max(-MAX, Math.min(MAX, v));
+    const toA   = d => Math.PI * 0.5 * (1 + clamp(d) / MAX);
+    const startA=Math.PI, endA=0, midA=Math.PI/2;
+
+    svg.querySelectorAll("path,text.ns-lbl,line.ns-tick,circle.ns-dot").forEach(e=>e.remove());
+
+    function arc(a1, a2) {
+      const x1=(cx+r*Math.cos(a1)).toFixed(1), y1=(cy-r*Math.sin(a1)).toFixed(1);
+      const x2=(cx+r*Math.cos(a2)).toFixed(1), y2=(cy-r*Math.sin(a2)).toFixed(1);
+      const lg = Math.abs(a2-a1)>Math.PI?1:0;
+      const sw = a2<a1?1:0;
+      return `M${x1} ${y1} A${r} ${r} 0 ${lg} ${sw} ${x2} ${y2}`;
+    }
+    function mkP(d,stroke,w,op){
+      const p=document.createElementNS("http://www.w3.org/2000/svg","path");
+      p.setAttribute("d",d); p.setAttribute("fill","none"); p.setAttribute("stroke",stroke);
+      p.setAttribute("stroke-width",w||"18"); p.setAttribute("stroke-linecap","butt");
+      if(op) p.setAttribute("opacity",op); return p;
+    }
+    function hexRgba(hex,a){const n=parseInt((hex||"#888").replace("#",""),16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;}
+    function wedge(fa,ta){
+      const wr=r-9; const lg=Math.abs(ta-fa)>Math.PI?1:0; const sw=ta<fa?1:0;
+      const x1=(cx+wr*Math.cos(fa)).toFixed(1),y1=(cy-wr*Math.sin(fa)).toFixed(1);
+      const x2=(cx+wr*Math.cos(ta)).toFixed(1),y2=(cy-wr*Math.sin(ta)).toFixed(1);
+      return `M${cx} ${cy} L${x1} ${y1} A${wr} ${wr} 0 ${lg} ${sw} ${x2} ${y2} Z`;
+    }
+
+    svg.insertBefore(mkP(arc(startA,endA),"#2a2a2a","18"), svg.firstChild);
+    svg.appendChild(mkP(arc(startA,midA), KEIKO_COLOR,"18","0.4"));
+    svg.appendChild(mkP(arc(midA,endA),   ROB_COLOR,  "18","0.4"));
+
+    // 99% CI
+    if (dlo99!=null && dhi99!=null) {
+      const a99lo=toA(dhi99), a99hi=toA(dlo99);
+      const mid99=(a99lo+a99hi)/2, h99=Math.max((a99hi-a99lo)/2,0.07);
+      const v99lo=Math.max(endA,mid99-h99), v99hi=Math.min(startA,mid99+h99);
+      const col99=mid99>midA?hexRgba(KEIKO_COLOR,0.2):hexRgba(ROB_COLOR,0.2);
+      const pw=document.createElementNS("http://www.w3.org/2000/svg","path");
+      pw.setAttribute("d",wedge(v99lo,v99hi)); pw.setAttribute("fill",col99); pw.setAttribute("stroke","none");
+      svg.appendChild(pw);
+    }
+    // 95% CI
+    const arcL=toA(dhi), arcR=toA(dlo);
+    const ciMin=Math.min(arcL,arcR), ciMax=Math.max(arcL,arcR);
+    const midCi=(ciMin+ciMax)/2, half=Math.max((ciMax-ciMin)/2,0.07);
+    const visMin=Math.max(endA,midCi-half), visMax=Math.min(startA,midCi+half);
+    const ciCol=midCi>midA?hexRgba(KEIKO_COLOR,0.5):hexRgba(ROB_COLOR,0.5);
+    const pw95=document.createElementNS("http://www.w3.org/2000/svg","path");
+    pw95.setAttribute("d",wedge(visMin,visMax)); pw95.setAttribute("fill",ciCol); pw95.setAttribute("stroke","none");
+    svg.appendChild(pw95);
+
+    // Scale labels
+    [-MAX,-MAX*0.5,0,MAX*0.5,MAX].forEach(v=>{
+      const a=toA(v), tx=cx+(r+22)*Math.cos(a), ty=cy-(r+22)*Math.sin(a);
+      const anc=v<-MAX*0.2?"start":v>MAX*0.2?"end":"middle";
+      const lbl=document.createElementNS("http://www.w3.org/2000/svg","text");
+      lbl.setAttribute("x",tx.toFixed(1)); lbl.setAttribute("y",(ty+3.5).toFixed(1));
+      lbl.setAttribute("text-anchor",anc); lbl.setAttribute("font-size","9");
+      lbl.setAttribute("fill","#999"); lbl.setAttribute("font-family","sans-serif");
+      lbl.setAttribute("class","ns-lbl");
+      const abs=Math.abs(v); const sign=v>=0?"+":"−";
+      lbl.textContent=v===0?"0":(abs>=1e6?`${sign}${(abs/1e6).toFixed(1)}M`:abs>=1e5?`${sign}${Math.round(abs/1e3)}k`:`${sign}${(abs/1e3).toFixed(1)}k`);
+      svg.appendChild(lbl);
+    });
+
+    // Move needle line
+    const line=svg.querySelector("line");
+    if(line){const na=toA(dm); line.setAttribute("x2",(cx+(r+5)*Math.cos(na)).toFixed(1)); line.setAttribute("y2",(cy-(r+5)*Math.sin(na)).toFixed(1));}
+
+    // Labels outside SVG
+    function fmt(v){const s=v>=0?"+":"−";const a=Math.abs(v);return a>=1e5?`${s}${Math.round(a/1e3)}k`:a>=1e3?`${s}${(a/1e3).toFixed(1)}k`:`${s}${Math.round(a)}`;}
+    const probK = isKeiko ? battle.prob_2nd_pct : battle.prob_3rd_pct;
+    const probR = 100 - (probK||0);
+    const set=(id,txt,col)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(col)el.style.color=col;}};
+    set(lName,"Keiko",KEIKO_COLOR); set(lProb,(probK||0).toFixed(0)+"%",KEIKO_COLOR);
+    set(rName,"Roberto",ROB_COLOR); set(rProb,probR.toFixed(0)+"%",ROB_COLOR);
+    set(cDiff,fmt(dm)); set(cCI,`IC 95%: [${fmt(dlo)}, ${fmt(dhi)}]`);
+  }
+
+  function loadSubNeedles(cb) {
+    const v = "?v=" + Date.now();
+    Promise.all([
+      fetch(BASE + "forecast_national.json" + v).then(r=>r.json()).catch(()=>null),
+      fetch(BASE + "forecast_exterior.json"  + v).then(r=>r.json()).catch(()=>null),
+    ]).then(([nat, ext]) => {
+      applySubNeedle(nat, "needle-svg-dom",
+        "needle-dom-left-name","needle-dom-left-prob","needle-dom-right-name","needle-dom-right-prob",
+        "needle-dom-center-diff","needle-dom-center-ci");
+      applySubNeedle(ext, "needle-svg-ext",
+        "needle-ext-left-name","needle-ext-left-prob","needle-ext-right-name","needle-ext-right-prob",
+        "needle-ext-center-diff","needle-ext-center-ci");
+      if (cb) cb();
+    });
+  }
+
+  // Initial load
+  loadSubNeedles();
+  // Auto-refresh every 90s (in sync with main data)
+  setInterval(() => loadSubNeedles(), 90_000);
 })();
 </script>
 </body>
