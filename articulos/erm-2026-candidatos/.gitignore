@@ -1,0 +1,15 @@
+# OS / editor junk
+.DS_Store
+__pycache__/
+*.pyc
+.Rhistory
+docs/.Rhistory
+
+# Local Claude settings
+.claude/
+
+# Scraper-internal resumability state (regenerated locally; not data)
+data/.eg2026_checkpoint.json
+data/.erm2026_checkpoint.json
+data/.erm2026_state.json
+data/.erm2026_ubigeo_tree.json
