@@ -55,7 +55,7 @@
       letter-spacing: 1px; color: var(--muted); margin-top: 0.2rem;
     }
     .hero .intro {
-      font-size: 0.92rem; color: var(--muted); max-width: 62ch; margin-top: 0.9rem;
+      font-size: 0.92rem; color: var(--muted); max-width: none; margin-top: 0.9rem;
     }
     .hero .intro b { color: var(--text); font-weight: 600; }
 
@@ -110,12 +110,15 @@
       padding: 0.16rem 0.5rem; border-radius: 999px; text-transform: uppercase;
       align-self: center; white-space: nowrap;
     }
-    .b-INSCRITO   { background:#d8e8d0; color:#3a5a2a; }
-    .b-ADMITIDO   { background:#d3e2ea; color:#2c5566; }
-    .b-RECIBIDO   { background:var(--sand); color:#6a5640; }
-    .b-PERIODO    { background:#f0e0bf; color:#7a5a1a; }
-    .b-INADMISIBLE,.b-IMPROCEDENTE,.b-EXCLUIDO,.b-RETIRADO { background:#ecd2cc; color:#8a3320; }
-    .b-OTRO       { background:var(--sand); color:#6a5640; }
+    .b-RECIBIDO    { background:#e5dcc9; color:#6a5640; }   /* in process — neutral  */
+    .b-ADMITIDO    { background:#d3e2da; color:#2f5d49; }   /* advanced — positive   */
+    .b-INSCRITO    { background:#cfe3c4; color:#39591f; }   /* valid/final — positive*/
+    .b-TACHA       { background:#f0e0bf; color:#7a5a1a; }   /* en tacha — caution    */
+    .b-APELACION   { background:#f0e0bf; color:#7a5a1a; }   /* apelación — caution   */
+    .b-INADMISIBLE,
+    .b-IMPROCEDENTE{ background:#ecd2cc; color:#8a3320; }   /* rechazada — negative  */
+    .b-RENUNCIA    { background:#ddd6ca; color:#7a6858; }   /* retirada — muted      */
+    .b-OTRO        { background:#e5dcc9; color:#6a5640; }
     .chev { transition: transform 0.18s; color: var(--dim); font-size: 0.8rem; align-self:center; }
     .card.open .chev { transform: rotate(90deg); }
 
@@ -288,10 +291,26 @@
 
   function badgeClass(estado) {
     var e = (estado || '').toUpperCase();
-    if (e.indexOf('PERIODO') === 0) return 'b-PERIODO';
-    if (['INSCRITO','ADMITIDO','RECIBIDO','INADMISIBLE','IMPROCEDENTE','EXCLUIDO','RETIRADO'].indexOf(e) >= 0)
+    if (e.indexOf('TACHA') >= 0) return 'b-TACHA';
+    if (e.indexOf('APELACI') >= 0) return 'b-APELACION';     // APELACIÓN (avoid the accent)
+    if (['RECIBIDO','ADMITIDO','INSCRITO','INADMISIBLE','IMPROCEDENTE','RENUNCIA'].indexOf(e) >= 0)
       return 'b-' + e;
     return 'b-OTRO';
+  }
+
+  // Regional candidate order: GOBERNADOR, VICEGOBERNADOR, then CONSEJERO+ACCESITARIO
+  // grouped by provincia (A→Z), by posición within a provincia, CONSEJERO before ACCESITARIO.
+  // (cargos are unaccented in the data, so plain uppercase comparison is safe.)
+  function regGroup(c) { var x = (c[3] || '').toUpperCase(); return x.indexOf('GOBERNADOR') === 0 ? 0 : x.indexOf('VICEGOBERNADOR') === 0 ? 1 : 2; }
+  function regCmp(a, b) {
+    var ga = regGroup(a), gb = regGroup(b);
+    if (ga !== gb) return ga - gb;
+    if (ga !== 2) return (a[0] || 0) - (b[0] || 0);                 // gob / vicegob: by posición
+    var pa = a[6] || '', pb = b[6] || '';
+    if (pa !== pb) return pa.localeCompare(pb, 'es');               // provincia A→Z
+    if ((a[0] || 0) !== (b[0] || 0)) return (a[0] || 0) - (b[0] || 0); // posición
+    return ((a[3] || '').toUpperCase().indexOf('CONSEJERO') === 0 ? 0 : 1) -   // consejero before accesitario
+           ((b[3] || '').toUpperCase().indexOf('CONSEJERO') === 0 ? 0 : 1);
   }
   function esc(s) {
     return (s == null ? '' : String(s)).replace(/[&<>"]/g, function (c) {
@@ -308,16 +327,17 @@
 
     circ.listas.forEach(function (l, i) {
       var total = l.cands.length;
+      var color = DATA.colores[l.org];
+      var orgStyle = color ? ' style="color:' + color + '"' : '';
       html += '<div class="card" data-i="' + i + '">' +
         '<div class="card-head">' +
-          '<span class="card-org">' + esc(l.org) + '</span>' +
-          '<span class="card-tipo-org">' + esc(l.tipo_org) + '</span>' +
+          '<span class="card-org"' + orgStyle + '>' + esc(l.org) + '</span>' +
           '<span class="badge ' + badgeClass(l.estado) + '">' + esc(l.estado) + '</span>' +
           '<span class="chev">▶</span>' +
           '<span class="card-sub">' +
             '<span class="cabeza"><span class="cargo-lbl">' + esc(l.cabeza.cargo) + ':</span> <b>' +
               esc(l.cabeza.nombre) + '</b></span>' +
-            '<span>' + l.h + ' H · ' + l.m + ' M · ' + total + ' candidato' + (total === 1 ? '' : 's') + '</span>' +
+            '<span>' + total + ' candidato' + (total === 1 ? '' : 's') + '</span>' +
           '</span>' +
         '</div>' +
         '<div class="card-body">' + tableFor(l, esRegional) + '</div>' +
@@ -333,7 +353,8 @@
       '<th class="th-cargo">Cargo</th>' +
       (esRegional ? '<th>Provincia</th>' : '') +
       '<th>Sexo</th><th>Edad</th></tr></thead>';
-    var body = l.cands.map(function (c) {
+    var cands = esRegional ? l.cands.slice().sort(regCmp) : l.cands;   // regional-only reorder
+    var body = cands.map(function (c) {
       var isHead = (c[3] || '').match(/^(GOBERNADOR|ALCALDE)/);
       return '<tr' + (isHead ? ' class="head-row"' : '') + '>' +
         '<td class="t-pos">' + (c[0] || '') + '</td>' +
