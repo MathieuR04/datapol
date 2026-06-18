@@ -26,7 +26,6 @@ Candidate rows are arrays (per cand_campos) to keep the single file compact.
 
 import csv
 import json
-import unicodedata
 from collections import defaultdict
 from datetime import date
 from pathlib import Path
@@ -36,11 +35,8 @@ PROJECT    = SCRIPT_DIR.parent
 CSV_PATH   = PROJECT / "data" / "erm2026_candidatos.csv"
 OUT_PATH   = PROJECT / "buscador" / "data" / "candidatos.json"
 
-# Party colors: a hand-editable project-local map { "ORG NAME": "#hex" }. Seeded
-# from the EG2026 presidential palette (accent-insensitive match) and extendable by
-# hand for parties it doesn't cover (regional movements, name variants). Empty/missing
-# values mean "no color" → the finder shows the party name in the default text color.
-COLORS_PATH = PROJECT / "data" / "party_colors.json"
+# Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
+# decided in the frontend — no per-party color map here.
 
 TIPOS = [
     {"id": 4, "nombre": "REGIONAL",             "depth": 1},
@@ -58,20 +54,6 @@ def _int(s):
         return 0
 
 
-def _norm(s):
-    """Uppercase, trim, collapse spaces, strip accents — for party-name matching."""
-    s = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode()
-    return " ".join(s.upper().split())
-
-
-def load_party_colors() -> dict:
-    """{normalized org name → #hex} from the project-local party_colors.json."""
-    if not COLORS_PATH.exists():
-        return {}
-    raw = json.load(open(COLORS_PATH, encoding="utf-8"))
-    return {_norm(k): v for k, v in raw.items() if v}
-
-
 def build() -> dict:
     # circ[(te, ubi)][sl] = [candidate rows];  cmeta[(te, ubi)] = (dep, prov, dist)
     circ  = defaultdict(lambda: defaultdict(list))
@@ -84,8 +66,6 @@ def build() -> dict:
 
     out_circ = {str(t["id"]): {} for t in TIPOS}
     total_cands = total_lists = 0
-    party_colors = load_party_colors()
-    orgs_seen, colores = set(), {}
 
     for (te, ubi), lists in circ.items():
         if te not in out_circ:           # ignore anything outside the 3 ERM tipos
@@ -98,12 +78,6 @@ def build() -> dict:
                       r["sexo"], _int(r["edad"]), r["provincia_consejero"]] for r in rows]
             head = next((r for r in rows if (r["cargo"] or "").startswith(HEAD_PREFIX)), rows[0])
             f0 = rows[0]
-            org = f0["organizacion"]
-            if org not in orgs_seen:
-                orgs_seen.add(org)
-                hexc = party_colors.get(_norm(org))
-                if hexc:
-                    colores[org] = hexc
             listas.append({
                 "org":      f0["organizacion"],
                 "tipo_org": f0["tipo_organizacion"],
@@ -124,7 +98,6 @@ def build() -> dict:
         "total_listas":     total_lists,
         "cand_campos":      CAND_CAMPOS,
         "tipos":            TIPOS,
-        "colores":          colores,
         "circ":             out_circ,
     }
 
