@@ -231,13 +231,14 @@
 
   var nf = new Intl.NumberFormat('es-PE');
 
-  // Party-name color by tipo de organización política — a small range of browns.
+  // Party-name color by tipo de organización política — shades in the terracotta
+  // tone of the title's candidate count (--terra #c4603a).
   var ORG_COLORS = {
-    'PARTIDOS POLITICOS':                       '#5a3d22',  // dark coffee brown
-    'ALIANZAS ELECTORALES':                     '#b06a2c',  // caramel / terracotta brown
-    'MOVIMIENTOS REGIONALES O DEPARTAMENTALES': '#856f4a'   // muted khaki brown
+    'PARTIDOS POLITICOS':                       '#c4603a',  // terracotta (matches the title number)
+    'ALIANZAS ELECTORALES':                     '#9a4526',  // deeper burnt sienna
+    'MOVIMIENTOS REGIONALES O DEPARTAMENTALES': '#b27a4a'   // lighter tawny brown
   };
-  var ORG_COLOR_DEFAULT = '#5a3d22';
+  var ORG_COLOR_DEFAULT = '#c4603a';
 
   function opt(sel, value, label) {
     var o = document.createElement('option');
