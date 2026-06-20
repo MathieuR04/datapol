@@ -46,6 +46,11 @@ PARTIDOS_PATH = PROJECT.parent / "partidos-erm-2026" / "data" / "partidos.json"
 # articulos/candidatos-eg-erm-2026/. Joins the two CSVs on normalized DNI.
 REPITEN_PATH = PROJECT.parent / "candidatos-eg-erm-2026" / "data" / "repeticiones.json"
 
+# Every derived artifact this build (over)writes. The auto-publisher in
+# scrape_erm2026.py stages exactly these (plus the CSVs), so adding an output here
+# is enough to get it committed — nothing is missed by reading data another way.
+OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH]
+
 # Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
 # decided in the frontend — no per-party color map here.
 
@@ -204,7 +209,8 @@ def build_repeticiones() -> dict:
     def card(d):
         return {"nombre": ert[d]["candidato"], "eg": eg_lbl(d),
                 "eg_org": egt[d]["organizacion"], "erm": erm_lbl(d),
-                "dep": ert[d]["departamento"], "erm_org": ert[d]["organizacion"],
+                "dep": ert[d]["departamento"], "prov": ert[d]["provincia"],
+                "dist": ert[d]["distrito"], "erm_org": ert[d]["organizacion"],
                 "switch": _na(egt[d]["organizacion"]) != _na(ert[d]["organizacion"])}
 
     presidenciales = [card(d) for d in rep if EG_RANK[egt[d]["cargo"]] <= 2]

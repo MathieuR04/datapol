@@ -79,10 +79,12 @@ import argparse
 import csv
 import json
 import random
+import subprocess
 import sys
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 from threading import Lock
 
@@ -412,7 +414,9 @@ def main():
     ap.add_argument("--full-refresh", action="store_true", help="wipe CSV + checkpoint + ledger")
     ap.add_argument("--rebuild-tree", action="store_true", help="re-walk the ubigeo tree cache")
     ap.add_argument("--no-build", action="store_true",
-                    help="skip the automatic finder-JSON rebuild at the end")
+                    help="skip the JSON rebuild (commit CSV only, still pushes)")
+    ap.add_argument("--no-push", action="store_true",
+                    help="dry run: scrape + build but DON'T commit or push (leave git clean)")
     args = ap.parse_args()
 
     if args.full_refresh:
@@ -489,14 +493,56 @@ def main():
     print(f"  http: challenges={_stats['challenges']}  "
           f"non200={_stats['non200']}  neterr={_stats['neterr']}  (all auto-retried)")
 
-    # Single source of truth: regenerate the finder JSON from the fresh CSV so the
-    # buscador never drifts. Failure here must not invalidate a good scrape.
+    # Single source of truth: regenerate all derived JSON (buscador candidatos.json,
+    # partidos.json, repeticiones.json) from the fresh CSVs so nothing drifts.
+    # Failure here must not invalidate a good scrape.
+    artifacts = [OUT_CSV]
     if not args.no_build:
         try:
             import build_finder_json
             build_finder_json.main()
+            artifacts += list(build_finder_json.OUTPUTS)
         except Exception as e:
-            print(f"  ⚠ finder JSON rebuild failed ({e}); run scripts/build_finder_json.py manually.")
+            print(f"  ⚠ JSON rebuild failed ({e}); run scripts/build_finder_json.py manually.")
+
+    # Auto-publish: stage the artifacts, commit + push if (and only if) something changed.
+    if not args.no_push:
+        publish(artifacts)
+    else:
+        print("  (--no-push: skipping commit + push; working tree left as-is)")
+
+
+def publish(artifacts):
+    """Stage the data artifacts, and commit + push only if they actually changed.
+    Reuses the election-night push pattern: pull --rebase (autostash) + push, retry 3×."""
+    repo = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                          cwd=str(SCRIPT_DIR), capture_output=True, text=True)
+    if repo.returncode != 0:
+        print("  ⚠ not a git repo — skipping publish."); return
+    root = repo.stdout.strip()
+
+    def git(*a, **kw):
+        return subprocess.run(["git", "-C", root, *a], text=True, **kw)
+
+    paths = [str(p) for p in artifacts if Path(p).exists()]
+    git("add", "--", *paths)
+
+    # Guard: nothing staged different from HEAD → clean exit, no empty commit, no push.
+    if git("diff", "--cached", "--quiet", "--", *paths).returncode == 0:
+        print("  nothing changed — no commit, no push.")
+        return
+
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+    git("commit", "-m", f"data: actualizar candidatos ERM 2026 — {ts}", "--", *paths)
+    print(f"  committed: data: actualizar candidatos ERM 2026 — {ts}")
+
+    for attempt in (1, 2, 3):
+        git("pull", "--rebase", "--autostash", "--quiet")
+        if git("push").returncode == 0:
+            print("  ✔ pushed to main."); return
+        print(f"  push failed (attempt {attempt}/3) — retrying in 10s …")
+        time.sleep(10)
+    print("  ⚠ push failed after 3 attempts; commit is local — push manually.")
 
 
 if __name__ == "__main__":

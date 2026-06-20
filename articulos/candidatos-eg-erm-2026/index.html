@@ -84,9 +84,14 @@
     .ctable td.nm { font-weight: 600; }
     .ctable td.frm { color: var(--muted); white-space: nowrap; }
     .ctable td.arw { color: var(--dim); text-align: center; width: 1.2rem; }
-    .ctable td.to { color: var(--terra); font-weight: 600; white-space: nowrap; }
+    .ctable td.to { color: var(--terra); font-weight: 600; }
+    .ctable td.to .loc { display: block; color: var(--muted); font-weight: 400; font-size: 11px; margin-top: 1px; }
     .ctable td.dep { color: var(--muted); font-size: 11px; }
-    .swtag { font-size: 9px; color: var(--terra); border: 1px solid var(--terra); border-radius: 3px; padding: 0 3px; margin-left: 4px; vertical-align: 1px; }
+    .swtag { font-size: 9px; color: var(--terra); border: 1px solid var(--terra); border-radius: 3px; padding: 0 3px; margin-left: 4px; vertical-align: 1px; white-space: nowrap; }
+
+    /* Sankey ribbons: hover to highlight + read the count (native tooltip) */
+    .flow-wrap path.rib { transition: fill-opacity .12s; cursor: default; }
+    .flow-wrap path.rib:hover { fill-opacity: 0.8; }
 
     .note { font-size: 11px; line-height: 1.6; color: var(--muted); margin-top: 0.8rem; }
     .footnotes { margin-top: 2.6rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.6; color: var(--muted); }
@@ -164,7 +169,7 @@
       <strong id="ejec-line">decenas buscan un cargo ejecutivo</strong>.
     </p>
 
-    <div class="flow-wrap"><svg id="sankey" viewBox="0 0 760 470" role="img" aria-label="Flujo de cargos"></svg></div>
+    <div class="flow-wrap"><svg id="sankey" viewBox="0 0 760 540" role="img" aria-label="Flujo de cargos"></svg></div>
     <p class="legend" id="legend"></p>
 
     <h2>Algunos casos</h2>
@@ -176,9 +181,6 @@
       Es una muestra de lo ya inscrito: con las listas aún en proceso, es probable que aparezcan más
       nombres conocidos en las próximas actualizaciones.
     </p>
-
-    <h2>Dónde y quiénes</h2>
-    <p id="donde">…</p>
 
     <div class="footnotes">
       <p><strong>Método.</strong> Se identifican personas distintas por DNI (normalizado: sin espacios
@@ -226,7 +228,7 @@
     var stats = [
       ['', nf.format(d.n_repiten), 'candidatos de las Generales que repiten en las Regionales y Municipales'],
       ['pct', d.pct_eg + '%', 'de todos los candidatos de las Generales 2026'],
-      ['', d.n_pres_sen, 'postularon a la Presidencia, vicepresidencia o el Senado'],
+      ['', d.presidenciales.length, 'postularon a la Presidencia o una vicepresidencia'],
       ['', d.n_gobernacion, 'ahora aspiran a una gobernación regional']
     ];
     document.getElementById('stats').innerHTML = stats.map(function(s){
@@ -245,81 +247,63 @@
         return '<span style="color:'+COLOR[l]+';font-weight:700">■</span> '+l;
       }).join('&nbsp;&nbsp;');
 
-    // Cases
+    // Cases — only the presidential/VP candidates, with party and exactly what they run for now
     document.getElementById('casos-intro').innerHTML =
-      'Siete excandidatos a la <strong>Presidencia o vicepresidencia</strong> ya figuran en las listas ' +
-      'regionales y municipales, y <strong>' + d.n_gobernacion + '</strong> expostulantes nacionales aspiran a ' +
-      'una <strong>gobernación regional</strong>:';
+      'Los <strong>' + d.presidenciales.length + '</strong> excandidatos a la <strong>Presidencia o ' +
+      'una vicepresidencia</strong> de 2026 que ya figuran en las listas regionales y municipales —con ' +
+      'qué organización postularon y a qué postulan ahora:';
 
-    var pres = '<h3>Excandidatos presidenciales y vicepresidenciales</h3><table class="ctable"><tbody>' +
-      d.presidenciales.map(function(c){
+    document.getElementById('cases').innerHTML =
+      '<table class="ctable"><tbody>' + d.presidenciales.map(function(c){
+        var loc = [c.dep, c.prov, c.dist].filter(Boolean).map(titulo).join(' · ');
         return '<tr><td class="nm">' + esc(titulo(c.nombre)) + '</td>' +
-          '<td class="frm">' + c.eg + '</td><td class="arw">→</td>' +
-          '<td class="to">' + c.erm + (c.switch?'<span class="swtag">cambió</span>':'') + '</td>' +
-          '<td class="dep">' + esc(titulo(c.dep)) + '</td></tr>';
+          '<td class="frm">' + c.eg + ' · ' + esc(titulo(c.eg_org)) + '</td>' +
+          '<td class="arw">→</td>' +
+          '<td class="to">' + c.erm +
+            '<span class="loc">' + esc(loc) + ' · ' + esc(titulo(c.erm_org)) +
+            (c.switch ? ' <span class="swtag">cambió de partido</span>' : '') + '</span></td></tr>';
       }).join('') + '</tbody></table>';
-
-    var gob = '<h3>Aspiran a una gobernación regional</h3><table class="ctable"><tbody>' +
-      d.gobernadores.map(function(c){
-        return '<tr><td class="nm">' + esc(titulo(c.nombre)) + '</td>' +
-          '<td class="frm">ex-' + c.eg.toLowerCase() + '</td><td class="arw">→</td>' +
-          '<td class="dep">' + esc(titulo(c.dep)) + '</td>' +
-          '<td class="frm" style="color:var(--text)">' + esc(titulo(c.erm_org)) + (c.switch?'<span class="swtag">cambió</span>':'') + '</td></tr>';
-      }).join('') + '</tbody></table>';
-
-    document.getElementById('cases').innerHTML = pres + gob;
-
-    // Dónde y quiénes
-    var lima = d.depts[0];
-    var muj = d.sexo.F || 0, tot = (d.sexo.F||0)+(d.sexo.M||0);
-    document.getElementById('donde').innerHTML =
-      'La mitad se concentra en <strong>Lima</strong> (' + lima.n + ' de ' + d.n_repiten + ', ' +
-      Math.round(100*lima.n/d.n_repiten) + '%), seguida de ' +
-      d.depts.slice(1,4).map(function(x){ return titulo(x.dep)+' ('+x.n+')'; }).join(', ') + '. ' +
-      'Son <strong>' + Math.round(100*muj/tot) + '% mujeres</strong> y su edad mediana ronda los <strong>' +
-      d.edad_media + ' años</strong>.';
   }
 
   function drawSankey(d) {
-    var W=760, H=470, nodeW=13, gap=7, padL=132, padR=150;
+    var W=760, H=540, nodeW=13, gap=10, padL=132, padR=152, topPad=32, botPad=14;
     var total = d.n_repiten;
     var egList = d.eg_dist, ermList = d.erm_dist;
     var maxGaps = Math.max(egList.length, ermList.length) - 1;
-    var unit = (H - maxGaps*gap) / total;
+    var avail = H - topPad - botPad;
+    var unit = (avail - maxGaps*gap) / total;
 
     function layout(list, x) {
-      var colH = total*unit + (list.length-1)*gap, y = (H-colH)/2, nodes = {};
+      var colH = total*unit + (list.length-1)*gap, y = topPad + (avail-colH)/2, nodes = {};
       list.forEach(function(it){ var h=it.n*unit; nodes[it.label]={x:x,y:y,h:h,n:it.n,out:y,inc:y}; y+=h+gap; });
       return nodes;
     }
     var L = layout(egList, padL), R = layout(ermList, W-padR-nodeW);
     var fmap = {}; d.flujo.forEach(function(f){ fmap[f.from+'|'+f.to]=f.n; });
 
-    var svg = '', links = '';
+    var svg = '';
     egList.forEach(function(s){
       ermList.forEach(function(t){
         var n = fmap[s.label+'|'+t.label]; if(!n) return;
         var w=n*unit, ln=L[s.label], rn=R[t.label];
         var x0=ln.x+nodeW, y0=ln.out, x1=rn.x, y1=rn.inc, xm=(x0+x1)/2;
         ln.out+=w; rn.inc+=w;
-        links += '<path d="M'+x0+','+y0+' C'+xm+','+y0+' '+xm+','+y1+' '+x1+','+y1+
+        svg += '<path class="rib" d="M'+x0+','+y0+' C'+xm+','+y0+' '+xm+','+y1+' '+x1+','+y1+
           ' L'+x1+','+(y1+w)+' C'+xm+','+(y1+w)+' '+xm+','+(y0+w)+' '+x0+','+(y0+w)+' Z" '+
-          'fill="'+COLOR[s.label]+'" fill-opacity="0.42"/>';
+          'fill="'+COLOR[s.label]+'" fill-opacity="0.42"><title>'+s.label+' → '+t.label+': '+n+'</title></path>';
       });
     });
-    svg += links;
-    svg += '<text class="flow-cap" x="'+padL+'" y="14">Elecciones Generales</text>';
-    svg += '<text class="flow-cap" x="'+(W-padR-nodeW)+'" y="14" text-anchor="end">Reg. y Municipales</text>';
+    svg += '<text class="flow-cap" x="'+padL+'" y="16">Elecciones Generales</text>';
+    svg += '<text class="flow-cap" x="'+(W-padR-nodeW+nodeW)+'" y="16" text-anchor="end">Reg. y Municipales</text>';
     function nodes(map, list, side) {
       list.forEach(function(it){
-        var n=map[it.label];
-        svg += '<rect x="'+n.x+'" y="'+n.y+'" width="'+nodeW+'" height="'+Math.max(n.h,1)+'" rx="1.5" fill="'+
+        var n=map[it.label], cy=n.y+n.h/2;
+        svg += '<rect x="'+n.x+'" y="'+n.y+'" width="'+nodeW+'" height="'+Math.max(n.h,1.5)+'" rx="1.5" fill="'+
           (side==='L'?(COLOR[it.label]||'#8a6a47'):'#5a4632')+'"/>';
-        var cy=n.y+n.h/2;
-        if(side==='L') svg += '<text class="flow-node" x="'+(n.x-7)+'" y="'+(cy-1)+'" text-anchor="end">'+it.label+
-          '</text><text class="flow-node-n" x="'+(n.x-7)+'" y="'+(cy+10)+'" text-anchor="end">'+it.n+'</text>';
-        else svg += '<text class="flow-node" x="'+(n.x+nodeW+7)+'" y="'+(cy-1)+'">'+it.label+
-          '</text><text class="flow-node-n" x="'+(n.x+nodeW+7)+'" y="'+(cy+10)+'">'+it.n+'</text>';
+        if(side==='L') svg += '<text class="flow-node" x="'+(n.x-8)+'" y="'+(cy+3.6)+'" text-anchor="end">'+
+          it.label+' <tspan class="flow-node-n">'+it.n+'</tspan></text>';
+        else svg += '<text class="flow-node" x="'+(n.x+nodeW+8)+'" y="'+(cy+3.6)+'"><tspan class="flow-node-n">'+
+          it.n+'</tspan> '+it.label+'</text>';
       });
     }
     nodes(L, egList, 'L'); nodes(R, ermList, 'R');
