@@ -35,6 +35,11 @@ PROJECT    = SCRIPT_DIR.parent
 CSV_PATH   = PROJECT / "data" / "erm2026_candidatos.csv"
 OUT_PATH   = PROJECT / "buscador" / "data" / "candidatos.json"
 
+# Second output: per-party list-count table for the standalone article
+# articulos/partidos-erm-2026/ (sibling of this project). Same single source (the CSV),
+# regenerated on every scrape --update alongside the finder JSON.
+PARTIDOS_PATH = PROJECT.parent / "partidos-erm-2026" / "data" / "partidos.json"
+
 # Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
 # decided in the frontend — no per-party color map here.
 
@@ -45,6 +50,11 @@ TIPOS = [
 ]
 CAND_CAMPOS = ["pos", "nombre", "dni", "cargo", "sexo", "edad", "prov_consejero"]
 HEAD_PREFIX = ("GOBERNADOR", "ALCALDE")   # cabeza de lista by cargo
+
+# Universe of circunscripciones per tipo, for territorial-coverage %:
+# 25 regiones, 196 provincias, 1 696 distritos con elección distrital (1 892 − 196 cercados).
+TOTALES = {"regional": 25, "provincial": 196, "distrital": 1696}
+TE_KEY  = {"4": "reg", "5": "prov", "6": "dist"}
 
 
 def _int(s):
@@ -102,19 +112,51 @@ def build() -> dict:
     }
 
 
+def build_partidos() -> dict:
+    """Per-party list counts by tipo. A list is counted once per (party, tipo) —
+    deduped on idSolicitudLista so multiple candidate rows don't double-count it."""
+    seen = set()
+    party = {}
+    with open(CSV_PATH, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            key = TE_KEY.get(r["tipo_eleccion_id"])
+            if not key:
+                continue
+            sl = r["solicitud_lista_id"]
+            if sl in seen:
+                continue
+            seen.add(sl)
+            org = r["organizacion"]
+            p = party.setdefault(org, {"org": org, "tipo_org": r["tipo_organizacion"],
+                                       "reg": 0, "prov": 0, "dist": 0})
+            p[key] += 1
+    partidos = sorted(party.values(),
+                      key=lambda p: (-p["reg"], -p["prov"], -p["dist"], p["org"]))
+    return {"generado": date.today().isoformat(), "totales": TOTALES, "partidos": partidos}
+
+
+def _write_json(path: Path, data: dict):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".json.tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+    tmp.replace(path)
+
+
 def main():
     if not CSV_PATH.exists():
         print(f"  build_finder_json: {CSV_PATH.name} not found — skipping.")
         return
     data = build()
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp = OUT_PATH.with_suffix(".json.tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
-    tmp.replace(OUT_PATH)
+    _write_json(OUT_PATH, data)
     mb = OUT_PATH.stat().st_size / 1_048_576
     print(f"  build_finder_json: {data['total_candidatos']:,} candidatos / "
           f"{data['total_listas']:,} listas → {OUT_PATH.relative_to(PROJECT)} ({mb:.1f} MB)")
+
+    partidos = build_partidos()
+    _write_json(PARTIDOS_PATH, partidos)
+    print(f"  build_finder_json: {len(partidos['partidos'])} organizaciones → "
+          f"{PARTIDOS_PATH.name}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuántas listas tiene cada organización en las ERM 2026 — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Cuántas listas tiene cada organización en las ERM 2026">
+  <meta property="og:description" content="Listas inscritas por cada organización política a las Elecciones Regionales y Municipales 2026, por tipo de elección y cobertura territorial.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/partidos-erm-2026/">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@KhamaRamaq">
+  <meta name="twitter:title"       content="Cuántas listas tiene cada organización en las ERM 2026">
+  <meta name="twitter:description" content="Listas inscritas por cada organización política a las Elecciones Regionales y Municipales 2026.">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    .article { max-width: 720px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body strong { font-weight: 600; }
+
+    /* Toggle (lets you preview the table with / without coverage %) */
+    .opt {
+      display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;
+      font-size: 11px; color: var(--muted); margin: 0.4em 0 0.2em; user-select: none;
+    }
+    .opt input { accent-color: var(--terra); }
+
+    /* Party × tipo table */
+    .tbl-wrap { overflow-x: auto; margin: 1.4em 0 0.6em; }
+    .ptable { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .ptable thead th {
+      text-align: right; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--muted); padding: 0 0.55rem 0.5rem; border-bottom: 2px solid var(--text); vertical-align: bottom;
+      white-space: nowrap;
+    }
+    .ptable thead th.org { text-align: left; }
+    .ptable thead th .den { display: block; font-size: 9px; font-weight: 600; color: var(--dim); letter-spacing: 0.03em; margin-top: 2px; }
+    .ptable td { padding: 0.5rem 0.55rem; border-bottom: 1px solid #e7e0d2; vertical-align: top; }
+    .ptable td.org { font-weight: 600; line-height: 1.25; min-width: 11rem; }
+    .ptable td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .ptable td.num.zero { color: var(--dim); font-weight: 400; }
+    .ptable td.num .cov { display: block; font-size: 10px; color: var(--dim); font-weight: 400; margin-top: 1px; }
+    .ptable tbody tr:hover { background: rgba(196,96,58,0.05); }
+    /* hide coverage lines when toggled off */
+    .ptable.no-cov td.num .cov { display: none; }
+
+    .note { font-size: 11px; line-height: 1.6; color: var(--muted); margin-top: 0.8rem; }
+
+    .article-footer { margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .article-footer a { color: var(--muted); text-decoration: none; font-weight: 600; letter-spacing: 0.06em; font-size: 10px; text-transform: uppercase; }
+    .article-footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 34px; }
+      .article-body { font-size: 14px; }
+      .ptable { font-size: 13px; }
+      .ptable td.org { min-width: 9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <div class="nav-social">
+    <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+    </a>
+    <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+      <span class="nav-yape-label">YAPE</span>
+    </button>
+    <div class="nav-sep" style="margin:0 0.4rem"></div>
+    <span class="nav-author">MATHIEU ROJAS</span>
+  </div>
+</div>
+
+<div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+    <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+    <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+    <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+  </div>
+</div>
+
+<article class="article">
+
+  <a class="article-back" href="/articulos/">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+    Todos los artículos
+  </a>
+
+  <div class="article-tag">Datos · Perú 2026</div>
+  <h1 class="article-title">Cuántas listas presentó cada organización a las ERM 2026</h1>
+  <div class="article-byline">
+    <span class="article-byline-author">Mathieu Rojas</span>
+    <span class="article-byline-sep"></span>
+    <span id="fecha">datos al …</span>
+  </div>
+
+  <div class="article-body">
+    <p>
+      Cada organización política puede inscribir una lista por circunscripción. Esta tabla cuenta
+      cuántas inscribió cada una para los <strong>gobiernos regionales</strong> (25 regiones), las
+      <strong>municipalidades provinciales</strong> (196) y las <strong>distritales</strong> (1 696),
+      ordenadas por presencia regional. Los datos provienen del Jurado Nacional de Elecciones y
+      <strong>siguen en proceso</strong>: muchas listas aún figuran como recibidas y se siguen
+      registrando, así que los conteos irán aumentando.
+    </p>
+
+    <label class="opt"><input type="checkbox" id="cov-toggle" checked> Mostrar cobertura territorial (%)</label>
+
+    <div class="tbl-wrap">
+      <table class="ptable" id="tabla">
+        <thead>
+          <tr>
+            <th class="org">Organización política</th>
+            <th class="num">Regional<span class="den">de 25</span></th>
+            <th class="num">Prov.<span class="den">de 196</span></th>
+            <th class="num">Distrital<span class="den">de 1 696</span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"><tr><td colspan="4" style="color:var(--muted);padding:1.5rem 0">Cargando…</td></tr></tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      Una lista se cuenta una sola vez por organización y tipo de elección. La cobertura es el
+      porcentaje de circunscripciones de cada tipo donde la organización tiene lista. Distrital se
+      mide sobre 1 696 distritos con elección distrital (1 892 distritos menos 196 cercados de
+      capital provincial, que no eligen alcalde distrital).
+    </p>
+  </div>
+
+  <div class="article-footer">
+    <a href="/articulos/erm-2026-candidatos/buscador/">Buscador de candidatos →</a>
+    <a href="/articulos/">← Todos los artículos</a>
+  </div>
+
+</article>
+
+<script>
+(function () {
+  "use strict";
+  var MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+               'septiembre','octubre','noviembre','diciembre'];
+  var nf = new Intl.NumberFormat('es-PE');
+
+  function fechaLarga(iso) {
+    var p = (iso || '').split('-');
+    if (p.length !== 3) return iso || '';
+    return p[2].replace(/^0/, '') + ' de ' + MESES[+p[1] - 1] + ' de ' + p[0];
+  }
+  function esc(s) {
+    return (s == null ? '' : String(s)).replace(/[&<>"]/g, function (c) {
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c];
+    });
+  }
+  function cell(n, total) {
+    if (!n) return '<td class="num zero">0</td>';
+    var pct = Math.round(n / total * 100);
+    return '<td class="num">' + nf.format(n) + '<span class="cov">' + pct + '%</span></td>';
+  }
+
+  fetch('./data/partidos.json')
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) {
+      document.getElementById('fecha').textContent = 'datos al ' + fechaLarga(d.generado);
+      var T = d.totales;
+      var rows = d.partidos.map(function (p) {
+        return '<tr><td class="org">' + esc(p.org) + '</td>' +
+          cell(p.reg, T.regional) + cell(p.prov, T.provincial) + cell(p.dist, T.distrital) + '</tr>';
+      }).join('');
+      document.getElementById('rows').innerHTML = rows;
+    })
+    .catch(function (err) {
+      document.getElementById('rows').innerHTML =
+        '<tr><td colspan="4" style="color:var(--muted);padding:1.5rem 0">No se pudieron cargar los datos (' + err.message + ').</td></tr>';
+    });
+
+  document.getElementById('cov-toggle').addEventListener('change', function () {
+    document.getElementById('tabla').classList.toggle('no-cov', !this.checked);
+  });
+})();
+</script>
+</body>
+</html>
