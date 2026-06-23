@@ -1,0 +1,8236 @@
+{
+ "updated": "2026-06-23 22:47 UTC",
+ "n_sims": 10000,
+ "teams": {
+  "Mexico": {
+   "group": "A",
+   "flag": "🇲🇽",
+   "code": "MEX",
+   "elo": 1810,
+   "form": 34,
+   "rating": 1844,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.5788,
+    "QF": 0.2729,
+    "SF": 0.1224,
+    "F": 0.0516,
+    "champion": 0.0217
+   },
+   "group_finish": {
+    "1": 1.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Scotland",
+      "p": 0.3034
+     },
+     {
+      "team": "Sweden",
+      "p": 0.2158
+     },
+     {
+      "team": "Senegal",
+      "p": 0.1546
+     },
+     {
+      "team": "Ecuador",
+      "p": 0.0887
+     },
+     {
+      "team": "Japan",
+      "p": 0.0661
+     },
+     {
+      "team": "Uruguay",
+      "p": 0.0539
+     }
+    ],
+    "R16": [
+     {
+      "team": "England",
+      "p": 0.5947
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.1234
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0726
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0378
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0361
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0327
+     }
+    ],
+    "QF": [
+     {
+      "team": "Brazil",
+      "p": 0.2671
+     },
+     {
+      "team": "Norway",
+      "p": 0.2279
+     },
+     {
+      "team": "Japan",
+      "p": 0.1187
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.1048
+     },
+     {
+      "team": "France",
+      "p": 0.0894
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0832
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.4477
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1511
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0825
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0556
+     },
+     {
+      "team": "Canada",
+      "p": 0.0384
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0376
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1841
+     },
+     {
+      "team": "Spain",
+      "p": 0.1667
+     },
+     {
+      "team": "Germany",
+      "p": 0.1163
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0969
+     },
+     {
+      "team": "United States",
+      "p": 0.0678
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0329
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Scotland",
+     "p": 0.3034
+    },
+    "R16": {
+     "team": "England",
+     "p": 0.5947
+    },
+    "QF": {
+     "team": "Brazil",
+     "p": 0.2671
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.4477
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1841
+    }
+   }
+  },
+  "South Korea": {
+   "group": "A",
+   "flag": "🇰🇷",
+   "code": "KOR",
+   "elo": 1775,
+   "form": 3,
+   "rating": 1778,
+   "survival": {
+    "R32": 0.9111,
+    "R16": 0.4276,
+    "QF": 0.1574,
+    "SF": 0.0519,
+    "F": 0.0179,
+    "champion": 0.0045
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.8095,
+    "3": 0.1425,
+    "4": 0.048
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Switzerland",
+      "p": 0.5174
+     },
+     {
+      "team": "Canada",
+      "p": 0.3696
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0493
+     },
+     {
+      "team": "Germany",
+      "p": 0.0331
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0228
+     },
+     {
+      "team": "Iran",
+      "p": 0.0063
+     }
+    ],
+    "R16": [
+     {
+      "team": "Netherlands",
+      "p": 0.4135
+     },
+     {
+      "team": "Morocco",
+      "p": 0.2519
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1176
+     },
+     {
+      "team": "Japan",
+      "p": 0.0716
+     },
+     {
+      "team": "United States",
+      "p": 0.0554
+     },
+     {
+      "team": "Scotland",
+      "p": 0.026
+     }
+    ],
+    "QF": [
+     {
+      "team": "France",
+      "p": 0.3437
+     },
+     {
+      "team": "Germany",
+      "p": 0.3024
+     },
+     {
+      "team": "Spain",
+      "p": 0.0521
+     },
+     {
+      "team": "Norway",
+      "p": 0.0426
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0368
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0241
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.2813
+     },
+     {
+      "team": "United States",
+      "p": 0.1541
+     },
+     {
+      "team": "Portugal",
+      "p": 0.079
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0482
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0462
+     },
+     {
+      "team": "Austria",
+      "p": 0.0424
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2849
+     },
+     {
+      "team": "England",
+      "p": 0.1341
+     },
+     {
+      "team": "Portugal",
+      "p": 0.095
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0726
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0503
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0503
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Switzerland",
+     "p": 0.5174
+    },
+    "R16": {
+     "team": "Netherlands",
+     "p": 0.4135
+    },
+    "QF": {
+     "team": "France",
+     "p": 0.3437
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.2813
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2849
+    }
+   }
+  },
+  "Czech Republic": {
+   "group": "A",
+   "flag": "🇨🇿",
+   "code": "CZE",
+   "elo": 1760,
+   "form": -28,
+   "rating": 1732,
+   "survival": {
+    "R32": 0.2792,
+    "R16": 0.1172,
+    "QF": 0.0474,
+    "SF": 0.0135,
+    "F": 0.0046,
+    "champion": 0.0013
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0439,
+    "3": 0.6642,
+    "4": 0.2919
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Egypt",
+      "p": 0.3968
+     },
+     {
+      "team": "Germany",
+      "p": 0.2034
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1855
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0931
+     },
+     {
+      "team": "Canada",
+      "p": 0.0641
+     },
+     {
+      "team": "Iran",
+      "p": 0.0569
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.4386
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.1246
+     },
+     {
+      "team": "France",
+      "p": 0.0947
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0725
+     },
+     {
+      "team": "Morocco",
+      "p": 0.052
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0358
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.3439
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1076
+     },
+     {
+      "team": "Austria",
+      "p": 0.0949
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0802
+     },
+     {
+      "team": "France",
+      "p": 0.0485
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0443
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1778
+     },
+     {
+      "team": "Germany",
+      "p": 0.1556
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0889
+     },
+     {
+      "team": "Spain",
+      "p": 0.0815
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0593
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0593
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.3043
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1304
+     },
+     {
+      "team": "England",
+      "p": 0.1304
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0652
+     },
+     {
+      "team": "France",
+      "p": 0.0652
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0435
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Egypt",
+     "p": 0.3968
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.4386
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.3439
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1778
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.3043
+    }
+   }
+  },
+  "South Africa": {
+   "group": "A",
+   "flag": "🇿🇦",
+   "code": "RSA",
+   "elo": 1660,
+   "form": -9,
+   "rating": 1651,
+   "survival": {
+    "R32": 0.191,
+    "R16": 0.0664,
+    "QF": 0.0187,
+    "SF": 0.0042,
+    "F": 0.0012,
+    "champion": 0.0002
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.1466,
+    "3": 0.1933,
+    "4": 0.6601
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Switzerland",
+      "p": 0.4565
+     },
+     {
+      "team": "Canada",
+      "p": 0.3094
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1073
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0565
+     },
+     {
+      "team": "Germany",
+      "p": 0.045
+     },
+     {
+      "team": "Iran",
+      "p": 0.0236
+     }
+    ],
+    "R16": [
+     {
+      "team": "Netherlands",
+      "p": 0.3449
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1913
+     },
+     {
+      "team": "United States",
+      "p": 0.1536
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0979
+     },
+     {
+      "team": "Japan",
+      "p": 0.0617
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0392
+     }
+    ],
+    "QF": [
+     {
+      "team": "France",
+      "p": 0.2995
+     },
+     {
+      "team": "Germany",
+      "p": 0.1925
+     },
+     {
+      "team": "Spain",
+      "p": 0.107
+     },
+     {
+      "team": "Norway",
+      "p": 0.0535
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0428
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0428
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.1429
+     },
+     {
+      "team": "Austria",
+      "p": 0.0952
+     },
+     {
+      "team": "United States",
+      "p": 0.0952
+     },
+     {
+      "team": "Germany",
+      "p": 0.0714
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0714
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0714
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.5833
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0833
+     },
+     {
+      "team": "England",
+      "p": 0.0833
+     },
+     {
+      "team": "France",
+      "p": 0.0833
+     },
+     {
+      "team": "Japan",
+      "p": 0.0833
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0833
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Switzerland",
+     "p": 0.4565
+    },
+    "R16": {
+     "team": "Netherlands",
+     "p": 0.3449
+    },
+    "QF": {
+     "team": "France",
+     "p": 0.2995
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.1429
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.5833
+    }
+   }
+  },
+  "Canada": {
+   "group": "B",
+   "flag": "🇨🇦",
+   "code": "CAN",
+   "elo": 1760,
+   "form": 11,
+   "rating": 1771,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.54,
+    "QF": 0.2252,
+    "SF": 0.07,
+    "F": 0.0281,
+    "champion": 0.0103
+   },
+   "group_finish": {
+    "1": 0.5846,
+    "2": 0.4137,
+    "3": 0.0017,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "South Korea",
+      "p": 0.3367
+     },
+     {
+      "team": "Iran",
+      "p": 0.1615
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0848
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0814
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0783
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0726
+     }
+    ],
+    "R16": [
+     {
+      "team": "Portugal",
+      "p": 0.2356
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1917
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1437
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1185
+     },
+     {
+      "team": "Ghana",
+      "p": 0.09
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0639
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.393
+     },
+     {
+      "team": "France",
+      "p": 0.1647
+     },
+     {
+      "team": "Germany",
+      "p": 0.1314
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0857
+     },
+     {
+      "team": "Australia",
+      "p": 0.0422
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0275
+     }
+    ],
+    "SF": [
+     {
+      "team": "England",
+      "p": 0.1571
+     },
+     {
+      "team": "Spain",
+      "p": 0.1271
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1229
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0671
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0614
+     },
+     {
+      "team": "United States",
+      "p": 0.06
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1352
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1139
+     },
+     {
+      "team": "Spain",
+      "p": 0.1103
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0747
+     },
+     {
+      "team": "Germany",
+      "p": 0.0605
+     },
+     {
+      "team": "England",
+      "p": 0.0498
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "South Korea",
+     "p": 0.3367
+    },
+    "R16": {
+     "team": "Portugal",
+     "p": 0.2356
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.393
+    },
+    "SF": {
+     "team": "England",
+     "p": 0.1571
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1352
+    }
+   }
+  },
+  "Switzerland": {
+   "group": "B",
+   "flag": "🇨🇭",
+   "code": "SUI",
+   "elo": 1815,
+   "form": 9,
+   "rating": 1824,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.5548,
+    "QF": 0.2293,
+    "SF": 0.0815,
+    "F": 0.0349,
+    "champion": 0.012
+   },
+   "group_finish": {
+    "1": 0.4154,
+    "2": 0.5846,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "South Korea",
+      "p": 0.4714
+     },
+     {
+      "team": "Iran",
+      "p": 0.1142
+     },
+     {
+      "team": "South Africa",
+      "p": 0.0872
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0583
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0579
+     },
+     {
+      "team": "Algeria",
+      "p": 0.056
+     }
+    ],
+    "R16": [
+     {
+      "team": "Netherlands",
+      "p": 0.2817
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1624
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1606
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1051
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0721
+     },
+     {
+      "team": "Ghana",
+      "p": 0.062
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.2817
+     },
+     {
+      "team": "France",
+      "p": 0.2386
+     },
+     {
+      "team": "Germany",
+      "p": 0.1862
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0567
+     },
+     {
+      "team": "Australia",
+      "p": 0.0371
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0345
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.1448
+     },
+     {
+      "team": "England",
+      "p": 0.1153
+     },
+     {
+      "team": "United States",
+      "p": 0.0785
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0687
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0564
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0552
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2149
+     },
+     {
+      "team": "France",
+      "p": 0.1003
+     },
+     {
+      "team": "Spain",
+      "p": 0.0974
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0659
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0573
+     },
+     {
+      "team": "England",
+      "p": 0.0573
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "South Korea",
+     "p": 0.4714
+    },
+    "R16": {
+     "team": "Netherlands",
+     "p": 0.2817
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.2817
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.1448
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2149
+    }
+   }
+  },
+  "Bosnia and Herzegovina": {
+   "group": "B",
+   "flag": "🇧🇦",
+   "code": "BIH",
+   "elo": 1700,
+   "form": -15,
+   "rating": 1685,
+   "survival": {
+    "R32": 0.6854,
+    "R16": 0.2065,
+    "QF": 0.0778,
+    "SF": 0.0214,
+    "F": 0.0068,
+    "champion": 0.0019
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0017,
+    "3": 0.8704,
+    "4": 0.1279
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "United States",
+      "p": 0.7024
+     },
+     {
+      "team": "Germany",
+      "p": 0.2952
+     },
+     {
+      "team": "South Korea",
+      "p": 0.002
+     },
+     {
+      "team": "South Africa",
+      "p": 0.0004
+     }
+    ],
+    "R16": [
+     {
+      "team": "Egypt",
+      "p": 0.2295
+     },
+     {
+      "team": "France",
+      "p": 0.1521
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1429
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0915
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0746
+     },
+     {
+      "team": "Czech Republic",
+      "p": 0.0707
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.3728
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1157
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0938
+     },
+     {
+      "team": "Austria",
+      "p": 0.0861
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.054
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0488
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.2664
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1495
+     },
+     {
+      "team": "Germany",
+      "p": 0.1449
+     },
+     {
+      "team": "Spain",
+      "p": 0.0467
+     },
+     {
+      "team": "Norway",
+      "p": 0.0374
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0327
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2941
+     },
+     {
+      "team": "England",
+      "p": 0.1029
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0882
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0735
+     },
+     {
+      "team": "France",
+      "p": 0.0588
+     },
+     {
+      "team": "Norway",
+      "p": 0.0588
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "United States",
+     "p": 0.7024
+    },
+    "R16": {
+     "team": "Egypt",
+     "p": 0.2295
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.3728
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.2664
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2941
+    }
+   }
+  },
+  "Qatar": {
+   "group": "B",
+   "flag": "🇶🇦",
+   "code": "QAT",
+   "elo": 1600,
+   "form": -5,
+   "rating": 1595,
+   "survival": {
+    "R32": 0.1274,
+    "R16": 0.0326,
+    "QF": 0.0107,
+    "SF": 0.003,
+    "F": 0.0007,
+    "champion": 0.0001
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.1279,
+    "4": 0.8721
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "United States",
+      "p": 0.7951
+     },
+     {
+      "team": "Germany",
+      "p": 0.2049
+     }
+    ],
+    "R16": [
+     {
+      "team": "Egypt",
+      "p": 0.2577
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1442
+     },
+     {
+      "team": "France",
+      "p": 0.1104
+     },
+     {
+      "team": "Algeria",
+      "p": 0.1012
+     },
+     {
+      "team": "Senegal",
+      "p": 0.089
+     },
+     {
+      "team": "Czech Republic",
+      "p": 0.0583
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.3832
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1215
+     },
+     {
+      "team": "Austria",
+      "p": 0.1028
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0935
+     },
+     {
+      "team": "England",
+      "p": 0.0374
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0374
+     }
+    ],
+    "SF": [
+     {
+      "team": "Germany",
+      "p": 0.3
+     },
+     {
+      "team": "France",
+      "p": 0.2667
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0667
+     },
+     {
+      "team": "Spain",
+      "p": 0.0667
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2857
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1429
+     },
+     {
+      "team": "Norway",
+      "p": 0.1429
+     },
+     {
+      "team": "England",
+      "p": 0.1429
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1429
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1429
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "United States",
+     "p": 0.7951
+    },
+    "R16": {
+     "team": "Egypt",
+     "p": 0.2577
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.3832
+    },
+    "SF": {
+     "team": "Germany",
+     "p": 0.3
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2857
+    }
+   }
+  },
+  "Brazil": {
+   "group": "C",
+   "flag": "🇧🇷",
+   "code": "BRA",
+   "elo": 2010,
+   "form": -1,
+   "rating": 2009,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.6024,
+    "QF": 0.3811,
+    "SF": 0.2309,
+    "F": 0.1238,
+    "champion": 0.0631
+   },
+   "group_finish": {
+    "1": 0.6483,
+    "2": 0.2305,
+    "3": 0.1212,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Japan",
+      "p": 0.4333
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.318
+     },
+     {
+      "team": "Sweden",
+      "p": 0.1275
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0504
+     },
+     {
+      "team": "Germany",
+      "p": 0.037
+     },
+     {
+      "team": "France",
+      "p": 0.0265
+     }
+    ],
+    "R16": [
+     {
+      "team": "Norway",
+      "p": 0.3342
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.2425
+     },
+     {
+      "team": "France",
+      "p": 0.1212
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0835
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0664
+     },
+     {
+      "team": "Canada",
+      "p": 0.0442
+     }
+    ],
+    "QF": [
+     {
+      "team": "England",
+      "p": 0.2637
+     },
+     {
+      "team": "Mexico",
+      "p": 0.1913
+     },
+     {
+      "team": "France",
+      "p": 0.0937
+     },
+     {
+      "team": "Germany",
+      "p": 0.0729
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0462
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.0349
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.3478
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1217
+     },
+     {
+      "team": "Spain",
+      "p": 0.1018
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0667
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0559
+     },
+     {
+      "team": "Canada",
+      "p": 0.0372
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1478
+     },
+     {
+      "team": "Spain",
+      "p": 0.147
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0937
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0921
+     },
+     {
+      "team": "Germany",
+      "p": 0.0824
+     },
+     {
+      "team": "Portugal",
+      "p": 0.059
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Japan",
+     "p": 0.4333
+    },
+    "R16": {
+     "team": "Norway",
+     "p": 0.3342
+    },
+    "QF": {
+     "team": "England",
+     "p": 0.2637
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.3478
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1478
+    }
+   }
+  },
+  "Morocco": {
+   "group": "C",
+   "flag": "🇲🇦",
+   "code": "MAR",
+   "elo": 1840,
+   "form": 28,
+   "rating": 1868,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.4466,
+    "QF": 0.2463,
+    "SF": 0.1051,
+    "F": 0.0439,
+    "champion": 0.0182
+   },
+   "group_finish": {
+    "1": 0.3273,
+    "2": 0.6656,
+    "3": 0.0071,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Netherlands",
+      "p": 0.593
+     },
+     {
+      "team": "Japan",
+      "p": 0.3123
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0876
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0027
+     },
+     {
+      "team": "Germany",
+      "p": 0.0021
+     },
+     {
+      "team": "France",
+      "p": 0.0017
+     }
+    ],
+    "R16": [
+     {
+      "team": "South Korea",
+      "p": 0.2412
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1995
+     },
+     {
+      "team": "Norway",
+      "p": 0.1845
+     },
+     {
+      "team": "Canada",
+      "p": 0.1433
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.1272
+     },
+     {
+      "team": "France",
+      "p": 0.0542
+     }
+    ],
+    "QF": [
+     {
+      "team": "France",
+      "p": 0.285
+     },
+     {
+      "team": "Germany",
+      "p": 0.2241
+     },
+     {
+      "team": "England",
+      "p": 0.1267
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0922
+     },
+     {
+      "team": "Norway",
+      "p": 0.0321
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0292
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.1855
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1732
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1123
+     },
+     {
+      "team": "United States",
+      "p": 0.1113
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0618
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0561
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.1663
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1185
+     },
+     {
+      "team": "Spain",
+      "p": 0.0843
+     },
+     {
+      "team": "France",
+      "p": 0.0797
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0797
+     },
+     {
+      "team": "England",
+      "p": 0.0638
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Netherlands",
+     "p": 0.593
+    },
+    "R16": {
+     "team": "South Korea",
+     "p": 0.2412
+    },
+    "QF": {
+     "team": "France",
+     "p": 0.285
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.1855
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.1663
+    }
+   }
+  },
+  "Scotland": {
+   "group": "C",
+   "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+   "code": "SCO",
+   "elo": 1760,
+   "form": -8,
+   "rating": 1752,
+   "survival": {
+    "R32": 0.7247,
+    "R16": 0.2507,
+    "QF": 0.0899,
+    "SF": 0.032,
+    "F": 0.0103,
+    "champion": 0.0028
+   },
+   "group_finish": {
+    "1": 0.0244,
+    "2": 0.1039,
+    "3": 0.8717,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Mexico",
+      "p": 0.4187
+     },
+     {
+      "team": "Germany",
+      "p": 0.1856
+     },
+     {
+      "team": "France",
+      "p": 0.1783
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.12
+     },
+     {
+      "team": "Japan",
+      "p": 0.0447
+     },
+     {
+      "team": "Norway",
+      "p": 0.0404
+     }
+    ],
+    "R16": [
+     {
+      "team": "England",
+      "p": 0.2972
+     },
+     {
+      "team": "France",
+      "p": 0.1153
+     },
+     {
+      "team": "Germany",
+      "p": 0.1141
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.0491
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0471
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0443
+     }
+    ],
+    "QF": [
+     {
+      "team": "Brazil",
+      "p": 0.1958
+     },
+     {
+      "team": "France",
+      "p": 0.1123
+     },
+     {
+      "team": "Norway",
+      "p": 0.1057
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1023
+     },
+     {
+      "team": "Japan",
+      "p": 0.0834
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0801
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.25
+     },
+     {
+      "team": "Spain",
+      "p": 0.1469
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1062
+     },
+     {
+      "team": "United States",
+      "p": 0.0781
+     },
+     {
+      "team": "Belgium",
+      "p": 0.075
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0531
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.1845
+     },
+     {
+      "team": "France",
+      "p": 0.1165
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1165
+     },
+     {
+      "team": "England",
+      "p": 0.0777
+     },
+     {
+      "team": "Spain",
+      "p": 0.0777
+     },
+     {
+      "team": "Brazil",
+      "p": 0.068
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Mexico",
+     "p": 0.4187
+    },
+    "R16": {
+     "team": "England",
+     "p": 0.2972
+    },
+    "QF": {
+     "team": "Brazil",
+     "p": 0.1958
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.25
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.1845
+    }
+   }
+  },
+  "Haiti": {
+   "group": "C",
+   "flag": "🇭🇹",
+   "code": "HAI",
+   "elo": 1530,
+   "form": -20,
+   "rating": 1510,
+   "survival": {
+    "R32": 0.0,
+    "R16": 0.0,
+    "QF": 0.0,
+    "SF": 0.0,
+    "F": 0.0,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 1.0
+   },
+   "opponents": {},
+   "path": {}
+  },
+  "United States": {
+   "group": "D",
+   "flag": "🇺🇸",
+   "code": "USA",
+   "elo": 1800,
+   "form": 40,
+   "rating": 1840,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.6487,
+    "QF": 0.3759,
+    "SF": 0.1644,
+    "F": 0.0727,
+    "champion": 0.0305
+   },
+   "group_finish": {
+    "1": 1.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.4814
+     },
+     {
+      "team": "Sweden",
+      "p": 0.1178
+     },
+     {
+      "team": "Senegal",
+      "p": 0.1083
+     },
+     {
+      "team": "Algeria",
+      "p": 0.1031
+     },
+     {
+      "team": "Qatar",
+      "p": 0.1013
+     },
+     {
+      "team": "Austria",
+      "p": 0.0471
+     }
+    ],
+    "R16": [
+     {
+      "team": "Egypt",
+      "p": 0.2798
+     },
+     {
+      "team": "Belgium",
+      "p": 0.2036
+     },
+     {
+      "team": "Algeria",
+      "p": 0.1062
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0873
+     },
+     {
+      "team": "Czech Republic",
+      "p": 0.0792
+     },
+     {
+      "team": "Uruguay",
+      "p": 0.0433
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.4251
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1365
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1043
+     },
+     {
+      "team": "Austria",
+      "p": 0.0942
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0681
+     },
+     {
+      "team": "Ghana",
+      "p": 0.05
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.2616
+     },
+     {
+      "team": "Germany",
+      "p": 0.1977
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.188
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0712
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0523
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0487
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.271
+     },
+     {
+      "team": "England",
+      "p": 0.1293
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0949
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0894
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0509
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0481
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Bosnia and Herzegovina",
+     "p": 0.4814
+    },
+    "R16": {
+     "team": "Egypt",
+     "p": 0.2798
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.4251
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.2616
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.271
+    }
+   }
+  },
+  "Australia": {
+   "group": "D",
+   "flag": "🇦🇺",
+   "code": "AUS",
+   "elo": 1720,
+   "form": 12,
+   "rating": 1732,
+   "survival": {
+    "R32": 0.9265,
+    "R16": 0.3468,
+    "QF": 0.087,
+    "SF": 0.0339,
+    "F": 0.0111,
+    "champion": 0.003
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.6789,
+    "3": 0.3211,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Belgium",
+      "p": 0.4093
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1576
+     },
+     {
+      "team": "Iran",
+      "p": 0.1324
+     },
+     {
+      "team": "Germany",
+      "p": 0.1119
+     },
+     {
+      "team": "France",
+      "p": 0.107
+     },
+     {
+      "team": "New Zealand",
+      "p": 0.0335
+     }
+    ],
+    "R16": [
+     {
+      "team": "Argentina",
+      "p": 0.6716
+     },
+     {
+      "team": "Cape Verde",
+      "p": 0.0649
+     },
+     {
+      "team": "Germany",
+      "p": 0.0536
+     },
+     {
+      "team": "France",
+      "p": 0.0519
+     },
+     {
+      "team": "Spain",
+      "p": 0.0288
+     },
+     {
+      "team": "Saudi Arabia",
+      "p": 0.0288
+     }
+    ],
+    "QF": [
+     {
+      "team": "Portugal",
+      "p": 0.2046
+     },
+     {
+      "team": "Canada",
+      "p": 0.1092
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1057
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0977
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0747
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0529
+     }
+    ],
+    "SF": [
+     {
+      "team": "Brazil",
+      "p": 0.1534
+     },
+     {
+      "team": "England",
+      "p": 0.1504
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0973
+     },
+     {
+      "team": "Norway",
+      "p": 0.0914
+     },
+     {
+      "team": "Japan",
+      "p": 0.0649
+     },
+     {
+      "team": "Spain",
+      "p": 0.0442
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.2342
+     },
+     {
+      "team": "Spain",
+      "p": 0.1261
+     },
+     {
+      "team": "Germany",
+      "p": 0.1081
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0991
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0631
+     },
+     {
+      "team": "Brazil",
+      "p": 0.045
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Belgium",
+     "p": 0.4093
+    },
+    "R16": {
+     "team": "Argentina",
+     "p": 0.6716
+    },
+    "QF": {
+     "team": "Portugal",
+     "p": 0.2046
+    },
+    "SF": {
+     "team": "Brazil",
+     "p": 0.1534
+    },
+    "F": {
+     "team": "France",
+     "p": 0.2342
+    }
+   }
+  },
+  "Paraguay": {
+   "group": "D",
+   "flag": "🇵🇾",
+   "code": "PAR",
+   "elo": 1720,
+   "form": 7,
+   "rating": 1727,
+   "survival": {
+    "R32": 0.884,
+    "R16": 0.281,
+    "QF": 0.0769,
+    "SF": 0.0254,
+    "F": 0.0088,
+    "champion": 0.0035
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.3211,
+    "3": 0.6789,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Germany",
+      "p": 0.2542
+     },
+     {
+      "team": "France",
+      "p": 0.2536
+     },
+     {
+      "team": "Belgium",
+      "p": 0.2042
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0779
+     },
+     {
+      "team": "Iran",
+      "p": 0.0623
+     },
+     {
+      "team": "Norway",
+      "p": 0.0592
+     }
+    ],
+    "R16": [
+     {
+      "team": "Argentina",
+      "p": 0.3957
+     },
+     {
+      "team": "Germany",
+      "p": 0.1577
+     },
+     {
+      "team": "France",
+      "p": 0.1299
+     },
+     {
+      "team": "Scotland",
+      "p": 0.042
+     },
+     {
+      "team": "Cape Verde",
+      "p": 0.0342
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0281
+     }
+    ],
+    "QF": [
+     {
+      "team": "Netherlands",
+      "p": 0.1469
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1027
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0988
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0884
+     },
+     {
+      "team": "Canada",
+      "p": 0.0806
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0754
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.1693
+     },
+     {
+      "team": "England",
+      "p": 0.1142
+     },
+     {
+      "team": "United States",
+      "p": 0.0984
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0669
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0669
+     },
+     {
+      "team": "Brazil",
+      "p": 0.063
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1591
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1364
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0909
+     },
+     {
+      "team": "Spain",
+      "p": 0.0795
+     },
+     {
+      "team": "United States",
+      "p": 0.0682
+     },
+     {
+      "team": "England",
+      "p": 0.0682
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Germany",
+     "p": 0.2542
+    },
+    "R16": {
+     "team": "Argentina",
+     "p": 0.3957
+    },
+    "QF": {
+     "team": "Netherlands",
+     "p": 0.1469
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.1693
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1591
+    }
+   }
+  },
+  "Turkey": {
+   "group": "D",
+   "flag": "🇹🇷",
+   "code": "TUR",
+   "elo": 1800,
+   "form": -58,
+   "rating": 1742,
+   "survival": {
+    "R32": 0.0,
+    "R16": 0.0,
+    "QF": 0.0,
+    "SF": 0.0,
+    "F": 0.0,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 1.0
+   },
+   "opponents": {},
+   "path": {}
+  },
+  "Germany": {
+   "group": "E",
+   "flag": "🇩🇪",
+   "code": "GER",
+   "elo": 1945,
+   "form": 22,
+   "rating": 1967,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.6955,
+    "QF": 0.3409,
+    "SF": 0.1953,
+    "F": 0.108,
+    "champion": 0.0528
+   },
+   "group_finish": {
+    "1": 1.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Paraguay",
+      "p": 0.2247
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.2023
+     },
+     {
+      "team": "Scotland",
+      "p": 0.1345
+     },
+     {
+      "team": "Sweden",
+      "p": 0.107
+     },
+     {
+      "team": "Australia",
+      "p": 0.1037
+     },
+     {
+      "team": "Japan",
+      "p": 0.0655
+     }
+    ],
+    "R16": [
+     {
+      "team": "France",
+      "p": 0.6313
+     },
+     {
+      "team": "Norway",
+      "p": 0.1065
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0637
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0411
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0311
+     },
+     {
+      "team": "Australia",
+      "p": 0.0267
+     }
+    ],
+    "QF": [
+     {
+      "team": "Netherlands",
+      "p": 0.3233
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1619
+     },
+     {
+      "team": "South Korea",
+      "p": 0.1396
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1253
+     },
+     {
+      "team": "Canada",
+      "p": 0.0868
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0815
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.3098
+     },
+     {
+      "team": "United States",
+      "p": 0.1664
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0783
+     },
+     {
+      "team": "Austria",
+      "p": 0.0609
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0589
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0471
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.3093
+     },
+     {
+      "team": "England",
+      "p": 0.1065
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0944
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0824
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0556
+     },
+     {
+      "team": "France",
+      "p": 0.0481
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Paraguay",
+     "p": 0.2247
+    },
+    "R16": {
+     "team": "France",
+     "p": 0.6313
+    },
+    "QF": {
+     "team": "Netherlands",
+     "p": 0.3233
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.3098
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.3093
+    }
+   }
+  },
+  "Ivory Coast": {
+   "group": "E",
+   "flag": "🇨🇮",
+   "code": "CIV",
+   "elo": 1740,
+   "form": 14,
+   "rating": 1754,
+   "survival": {
+    "R32": 0.9758,
+    "R16": 0.3572,
+    "QF": 0.1197,
+    "SF": 0.0424,
+    "F": 0.013,
+    "champion": 0.005
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.9464,
+    "3": 0.0395,
+    "4": 0.0141
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Norway",
+      "p": 0.7868
+     },
+     {
+      "team": "France",
+      "p": 0.183
+     },
+     {
+      "team": "Canada",
+      "p": 0.006
+     },
+     {
+      "team": "United States",
+      "p": 0.0057
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0044
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.004
+     }
+    ],
+    "R16": [
+     {
+      "team": "Brazil",
+      "p": 0.409
+     },
+     {
+      "team": "Japan",
+      "p": 0.2189
+     },
+     {
+      "team": "Morocco",
+      "p": 0.159
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1053
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0633
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0095
+     }
+    ],
+    "QF": [
+     {
+      "team": "England",
+      "p": 0.3701
+     },
+     {
+      "team": "Mexico",
+      "p": 0.2389
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0443
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0426
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.0351
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0334
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.4481
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1156
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0802
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0472
+     },
+     {
+      "team": "Canada",
+      "p": 0.0448
+     },
+     {
+      "team": "Australia",
+      "p": 0.033
+     }
+    ],
+    "F": [
+     {
+      "team": "Spain",
+      "p": 0.2385
+     },
+     {
+      "team": "France",
+      "p": 0.1462
+     },
+     {
+      "team": "Germany",
+      "p": 0.1154
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0692
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0538
+     },
+     {
+      "team": "United States",
+      "p": 0.0462
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Norway",
+     "p": 0.7868
+    },
+    "R16": {
+     "team": "Brazil",
+     "p": 0.409
+    },
+    "QF": {
+     "team": "England",
+     "p": 0.3701
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.4481
+    },
+    "F": {
+     "team": "Spain",
+     "p": 0.2385
+    }
+   }
+  },
+  "Ecuador": {
+   "group": "E",
+   "flag": "🇪🇨",
+   "code": "ECU",
+   "elo": 1790,
+   "form": -40,
+   "rating": 1750,
+   "survival": {
+    "R32": 0.2655,
+    "R16": 0.1045,
+    "QF": 0.0403,
+    "SF": 0.0142,
+    "F": 0.0036,
+    "champion": 0.0011
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0141,
+    "3": 0.8921,
+    "4": 0.0938
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Mexico",
+      "p": 0.3341
+     },
+     {
+      "team": "England",
+      "p": 0.18
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1638
+     },
+     {
+      "team": "Belgium",
+      "p": 0.081
+     },
+     {
+      "team": "United States",
+      "p": 0.0524
+     },
+     {
+      "team": "Norway",
+      "p": 0.0444
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.2105
+     },
+     {
+      "team": "England",
+      "p": 0.1656
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0976
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0517
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0488
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0478
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.1514
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1191
+     },
+     {
+      "team": "Norway",
+      "p": 0.1141
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.0744
+     },
+     {
+      "team": "Japan",
+      "p": 0.0695
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0571
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.2746
+     },
+     {
+      "team": "Germany",
+      "p": 0.1197
+     },
+     {
+      "team": "France",
+      "p": 0.1127
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0915
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0704
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0563
+     }
+    ],
+    "F": [
+     {
+      "team": "Germany",
+      "p": 0.1389
+     },
+     {
+      "team": "France",
+      "p": 0.1111
+     },
+     {
+      "team": "Canada",
+      "p": 0.0833
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0833
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0833
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0556
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Mexico",
+     "p": 0.3341
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.2105
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.1514
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.2746
+    },
+    "F": {
+     "team": "Germany",
+     "p": 0.1389
+    }
+   }
+  },
+  "Curaçao": {
+   "group": "E",
+   "flag": "🇨🇼",
+   "code": "CUW",
+   "elo": 1530,
+   "form": 4,
+   "rating": 1534,
+   "survival": {
+    "R32": 0.0536,
+    "R16": 0.0096,
+    "QF": 0.0018,
+    "SF": 0.0001,
+    "F": 0.0,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0395,
+    "3": 0.0684,
+    "4": 0.8921
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Norway",
+      "p": 0.6119
+     },
+     {
+      "team": "France",
+      "p": 0.125
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0989
+     },
+     {
+      "team": "England",
+      "p": 0.0504
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0299
+     },
+     {
+      "team": "Egypt",
+      "p": 0.028
+     }
+    ],
+    "R16": [
+     {
+      "team": "Brazil",
+      "p": 0.2812
+     },
+     {
+      "team": "Japan",
+      "p": 0.2188
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1042
+     },
+     {
+      "team": "England",
+      "p": 0.0625
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0521
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0521
+     }
+    ],
+    "QF": [
+     {
+      "team": "Croatia",
+      "p": 0.1667
+     },
+     {
+      "team": "Spain",
+      "p": 0.1667
+     },
+     {
+      "team": "England",
+      "p": 0.1111
+     },
+     {
+      "team": "Mexico",
+      "p": 0.1111
+     },
+     {
+      "team": "Uruguay",
+      "p": 0.1111
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0556
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 1.0
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Norway",
+     "p": 0.6119
+    },
+    "R16": {
+     "team": "Brazil",
+     "p": 0.2812
+    },
+    "QF": {
+     "team": "Croatia",
+     "p": 0.1667
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 1.0
+    }
+   }
+  },
+  "Netherlands": {
+   "group": "F",
+   "flag": "🇳🇱",
+   "code": "NED",
+   "elo": 1970,
+   "form": 9,
+   "rating": 1979,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.5763,
+    "QF": 0.3824,
+    "SF": 0.2013,
+    "F": 0.1126,
+    "champion": 0.0548
+   },
+   "group_finish": {
+    "1": 0.7921,
+    "2": 0.2059,
+    "3": 0.002,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Morocco",
+      "p": 0.593
+     },
+     {
+      "team": "Brazil",
+      "p": 0.318
+     },
+     {
+      "team": "Scotland",
+      "p": 0.087
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0007
+     },
+     {
+      "team": "Germany",
+      "p": 0.0005
+     },
+     {
+      "team": "Canada",
+      "p": 0.0003
+     }
+    ],
+    "R16": [
+     {
+      "team": "South Korea",
+      "p": 0.3068
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.2712
+     },
+     {
+      "team": "Canada",
+      "p": 0.1796
+     },
+     {
+      "team": "Norway",
+      "p": 0.0908
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.0652
+     },
+     {
+      "team": "South Africa",
+      "p": 0.0397
+     }
+    ],
+    "QF": [
+     {
+      "team": "France",
+      "p": 0.336
+     },
+     {
+      "team": "Germany",
+      "p": 0.2882
+     },
+     {
+      "team": "England",
+      "p": 0.068
+     },
+     {
+      "team": "Mexico",
+      "p": 0.052
+     },
+     {
+      "team": "Norway",
+      "p": 0.0397
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0296
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.2444
+     },
+     {
+      "team": "United States",
+      "p": 0.1535
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0914
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0889
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0641
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0497
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2469
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1012
+     },
+     {
+      "team": "England",
+      "p": 0.0995
+     },
+     {
+      "team": "France",
+      "p": 0.0764
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0684
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0444
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Morocco",
+     "p": 0.593
+    },
+    "R16": {
+     "team": "South Korea",
+     "p": 0.3068
+    },
+    "QF": {
+     "team": "France",
+     "p": 0.336
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.2444
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2469
+    }
+   }
+  },
+  "Japan": {
+   "group": "F",
+   "flag": "🇯🇵",
+   "code": "JPN",
+   "elo": 1820,
+   "form": 29,
+   "rating": 1849,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.4118,
+    "QF": 0.2043,
+    "SF": 0.0897,
+    "F": 0.0368,
+    "champion": 0.0143
+   },
+   "group_finish": {
+    "1": 0.1736,
+    "2": 0.6044,
+    "3": 0.222,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Brazil",
+      "p": 0.4333
+     },
+     {
+      "team": "Morocco",
+      "p": 0.3123
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0661
+     },
+     {
+      "team": "Germany",
+      "p": 0.0655
+     },
+     {
+      "team": "France",
+      "p": 0.0436
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0324
+     }
+    ],
+    "R16": [
+     {
+      "team": "Norway",
+      "p": 0.3084
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.1899
+     },
+     {
+      "team": "France",
+      "p": 0.1202
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0743
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.058
+     },
+     {
+      "team": "England",
+      "p": 0.0488
+     }
+    ],
+    "QF": [
+     {
+      "team": "England",
+      "p": 0.2095
+     },
+     {
+      "team": "Mexico",
+      "p": 0.1586
+     },
+     {
+      "team": "France",
+      "p": 0.0915
+     },
+     {
+      "team": "Germany",
+      "p": 0.0759
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0504
+     },
+     {
+      "team": "Sweden",
+      "p": 0.047
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.32
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1159
+     },
+     {
+      "team": "Spain",
+      "p": 0.1059
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0769
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0535
+     },
+     {
+      "team": "United States",
+      "p": 0.0401
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1658
+     },
+     {
+      "team": "Spain",
+      "p": 0.1223
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0924
+     },
+     {
+      "team": "Argentina",
+      "p": 0.087
+     },
+     {
+      "team": "Germany",
+      "p": 0.0571
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0543
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Brazil",
+     "p": 0.4333
+    },
+    "R16": {
+     "team": "Norway",
+     "p": 0.3084
+    },
+    "QF": {
+     "team": "England",
+     "p": 0.2095
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.32
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1658
+    }
+   }
+  },
+  "Sweden": {
+   "group": "F",
+   "flag": "🇸🇪",
+   "code": "SWE",
+   "elo": 1790,
+   "form": 4,
+   "rating": 1794,
+   "survival": {
+    "R32": 0.905,
+    "R16": 0.3558,
+    "QF": 0.1512,
+    "SF": 0.0585,
+    "F": 0.0218,
+    "champion": 0.0068
+   },
+   "group_finish": {
+    "1": 0.0343,
+    "2": 0.1897,
+    "3": 0.776,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Mexico",
+      "p": 0.2385
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1409
+     },
+     {
+      "team": "United States",
+      "p": 0.1302
+     },
+     {
+      "team": "Germany",
+      "p": 0.1182
+     },
+     {
+      "team": "France",
+      "p": 0.1019
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0968
+     }
+    ],
+    "R16": [
+     {
+      "team": "England",
+      "p": 0.154
+     },
+     {
+      "team": "Norway",
+      "p": 0.1121
+     },
+     {
+      "team": "France",
+      "p": 0.0919
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0742
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0644
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.0635
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.1157
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0853
+     },
+     {
+      "team": "England",
+      "p": 0.0747
+     },
+     {
+      "team": "Spain",
+      "p": 0.0675
+     },
+     {
+      "team": "Japan",
+      "p": 0.0635
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0635
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.2239
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0974
+     },
+     {
+      "team": "Spain",
+      "p": 0.0718
+     },
+     {
+      "team": "France",
+      "p": 0.0462
+     },
+     {
+      "team": "Belgium",
+      "p": 0.041
+     },
+     {
+      "team": "United States",
+      "p": 0.0393
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1468
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1422
+     },
+     {
+      "team": "Spain",
+      "p": 0.133
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0917
+     },
+     {
+      "team": "United States",
+      "p": 0.0642
+     },
+     {
+      "team": "Germany",
+      "p": 0.0596
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Mexico",
+     "p": 0.2385
+    },
+    "R16": {
+     "team": "England",
+     "p": 0.154
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.1157
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.2239
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1468
+    }
+   }
+  },
+  "Tunisia": {
+   "group": "F",
+   "flag": "🇹🇳",
+   "code": "TUN",
+   "elo": 1690,
+   "form": -42,
+   "rating": 1648,
+   "survival": {
+    "R32": 0.0,
+    "R16": 0.0,
+    "QF": 0.0,
+    "SF": 0.0,
+    "F": 0.0,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 1.0
+   },
+   "opponents": {},
+   "path": {}
+  },
+  "Egypt": {
+   "group": "G",
+   "flag": "🇪🇬",
+   "code": "EGY",
+   "elo": 1720,
+   "form": 24,
+   "rating": 1744,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.4673,
+    "QF": 0.1767,
+    "SF": 0.0599,
+    "F": 0.0185,
+    "champion": 0.0055
+   },
+   "group_finish": {
+    "1": 0.5824,
+    "2": 0.2149,
+    "3": 0.2027,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Australia",
+      "p": 0.146
+     },
+     {
+      "team": "Algeria",
+      "p": 0.1249
+     },
+     {
+      "team": "Czech Republic",
+      "p": 0.1108
+     },
+     {
+      "team": "Senegal",
+      "p": 0.1098
+     },
+     {
+      "team": "Canada",
+      "p": 0.0783
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0689
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.3884
+     },
+     {
+      "team": "Argentina",
+      "p": 0.19
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.1014
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0499
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0291
+     },
+     {
+      "team": "Sweden",
+      "p": 0.027
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.2903
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1279
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0996
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0838
+     },
+     {
+      "team": "Austria",
+      "p": 0.064
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0492
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1937
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1235
+     },
+     {
+      "team": "Germany",
+      "p": 0.1235
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0701
+     },
+     {
+      "team": "England",
+      "p": 0.0601
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0534
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.227
+     },
+     {
+      "team": "France",
+      "p": 0.1027
+     },
+     {
+      "team": "England",
+      "p": 0.0811
+     },
+     {
+      "team": "Spain",
+      "p": 0.0703
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0595
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0541
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Australia",
+     "p": 0.146
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.3884
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.2903
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1937
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.227
+    }
+   }
+  },
+  "Iran": {
+   "group": "G",
+   "flag": "🇮🇷",
+   "code": "IRN",
+   "elo": 1760,
+   "form": -5,
+   "rating": 1755,
+   "survival": {
+    "R32": 0.6151,
+    "R16": 0.2742,
+    "QF": 0.0944,
+    "SF": 0.0305,
+    "F": 0.0096,
+    "champion": 0.0033
+   },
+   "group_finish": {
+    "1": 0.0944,
+    "2": 0.1778,
+    "3": 0.6994,
+    "4": 0.0284
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Canada",
+      "p": 0.2626
+     },
+     {
+      "team": "Australia",
+      "p": 0.1995
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1857
+     },
+     {
+      "team": "France",
+      "p": 0.0915
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0896
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0364
+     }
+    ],
+    "R16": [
+     {
+      "team": "Argentina",
+      "p": 0.2797
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1838
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1112
+     },
+     {
+      "team": "United States",
+      "p": 0.097
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0646
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0511
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.3167
+     },
+     {
+      "team": "Spain",
+      "p": 0.1017
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0975
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0636
+     },
+     {
+      "team": "Egypt",
+      "p": 0.053
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0487
+     }
+    ],
+    "SF": [
+     {
+      "team": "Brazil",
+      "p": 0.1738
+     },
+     {
+      "team": "England",
+      "p": 0.1541
+     },
+     {
+      "team": "Norway",
+      "p": 0.0918
+     },
+     {
+      "team": "France",
+      "p": 0.0721
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0721
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0656
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1562
+     },
+     {
+      "team": "Spain",
+      "p": 0.125
+     },
+     {
+      "team": "Germany",
+      "p": 0.0833
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0729
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0729
+     },
+     {
+      "team": "England",
+      "p": 0.0729
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Canada",
+     "p": 0.2626
+    },
+    "R16": {
+     "team": "Argentina",
+     "p": 0.2797
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.3167
+    },
+    "SF": {
+     "team": "Brazil",
+     "p": 0.1738
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1562
+    }
+   }
+  },
+  "Belgium": {
+   "group": "G",
+   "flag": "🇧🇪",
+   "code": "BEL",
+   "elo": 1910,
+   "form": -19,
+   "rating": 1891,
+   "survival": {
+    "R32": 0.934,
+    "R16": 0.5943,
+    "QF": 0.26,
+    "SF": 0.1282,
+    "F": 0.0586,
+    "champion": 0.0235
+   },
+   "group_finish": {
+    "1": 0.3232,
+    "2": 0.5597,
+    "3": 0.0653,
+    "4": 0.0518
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Australia",
+      "p": 0.406
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.1933
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0839
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0694
+     },
+     {
+      "team": "Czech Republic",
+      "p": 0.0555
+     },
+     {
+      "team": "Austria",
+      "p": 0.0268
+     }
+    ],
+    "R16": [
+     {
+      "team": "Argentina",
+      "p": 0.5127
+     },
+     {
+      "team": "United States",
+      "p": 0.2223
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0496
+     },
+     {
+      "team": "Cape Verde",
+      "p": 0.0471
+     },
+     {
+      "team": "Saudi Arabia",
+      "p": 0.0249
+     },
+     {
+      "team": "Spain",
+      "p": 0.0212
+     }
+    ],
+    "QF": [
+     {
+      "team": "Portugal",
+      "p": 0.2165
+     },
+     {
+      "team": "Spain",
+      "p": 0.18
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1188
+     },
+     {
+      "team": "Canada",
+      "p": 0.0742
+     },
+     {
+      "team": "Austria",
+      "p": 0.0535
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0523
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1591
+     },
+     {
+      "team": "England",
+      "p": 0.124
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1201
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0788
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.078
+     },
+     {
+      "team": "Norway",
+      "p": 0.0749
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1433
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1109
+     },
+     {
+      "team": "Spain",
+      "p": 0.099
+     },
+     {
+      "team": "Germany",
+      "p": 0.0751
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0751
+     },
+     {
+      "team": "United States",
+      "p": 0.0631
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Australia",
+     "p": 0.406
+    },
+    "R16": {
+     "team": "Argentina",
+     "p": 0.5127
+    },
+    "QF": {
+     "team": "Portugal",
+     "p": 0.2165
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1591
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1433
+    }
+   }
+  },
+  "New Zealand": {
+   "group": "G",
+   "flag": "🇳🇿",
+   "code": "NZL",
+   "elo": 1500,
+   "form": 0,
+   "rating": 1500,
+   "survival": {
+    "R32": 0.0655,
+    "R16": 0.0166,
+    "QF": 0.0026,
+    "SF": 0.0008,
+    "F": 0.0,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0476,
+    "3": 0.0326,
+    "4": 0.9198
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Australia",
+      "p": 0.4733
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.2534
+     },
+     {
+      "team": "Canada",
+      "p": 0.1206
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.084
+     },
+     {
+      "team": "France",
+      "p": 0.0504
+     },
+     {
+      "team": "Norway",
+      "p": 0.0183
+     }
+    ],
+    "R16": [
+     {
+      "team": "Argentina",
+      "p": 0.6325
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0783
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0542
+     },
+     {
+      "team": "Cape Verde",
+      "p": 0.0482
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0361
+     },
+     {
+      "team": "Germany",
+      "p": 0.0301
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.2308
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1923
+     },
+     {
+      "team": "Canada",
+      "p": 0.1538
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0769
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0769
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0769
+     }
+    ],
+    "SF": [
+     {
+      "team": "England",
+      "p": 0.25
+     },
+     {
+      "team": "Scotland",
+      "p": 0.125
+     },
+     {
+      "team": "Morocco",
+      "p": 0.125
+     },
+     {
+      "team": "Mexico",
+      "p": 0.125
+     },
+     {
+      "team": "United States",
+      "p": 0.125
+     },
+     {
+      "team": "Brazil",
+      "p": 0.125
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Australia",
+     "p": 0.4733
+    },
+    "R16": {
+     "team": "Argentina",
+     "p": 0.6325
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.2308
+    },
+    "SF": {
+     "team": "England",
+     "p": 0.25
+    }
+   }
+  },
+  "Spain": {
+   "group": "H",
+   "flag": "🇪🇸",
+   "code": "ESP",
+   "elo": 2050,
+   "form": -8,
+   "rating": 2042,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.7061,
+    "QF": 0.466,
+    "SF": 0.3344,
+    "F": 0.1943,
+    "champion": 0.1114
+   },
+   "group_finish": {
+    "1": 0.8606,
+    "2": 0.0847,
+    "3": 0.0547,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Austria",
+      "p": 0.6476
+     },
+     {
+      "team": "Algeria",
+      "p": 0.213
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0847
+     },
+     {
+      "team": "Mexico",
+      "p": 0.013
+     },
+     {
+      "team": "Egypt",
+      "p": 0.011
+     },
+     {
+      "team": "France",
+      "p": 0.01
+     }
+    ],
+    "R16": [
+     {
+      "team": "Portugal",
+      "p": 0.2222
+     },
+     {
+      "team": "Colombia",
+      "p": 0.2194
+     },
+     {
+      "team": "Croatia",
+      "p": 0.1606
+     },
+     {
+      "team": "Ghana",
+      "p": 0.1442
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.0828
+     },
+     {
+      "team": "England",
+      "p": 0.0724
+     }
+    ],
+    "QF": [
+     {
+      "team": "United States",
+      "p": 0.3429
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1101
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1004
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0622
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0601
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0592
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.2703
+     },
+     {
+      "team": "Germany",
+      "p": 0.1809
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1471
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0703
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0583
+     },
+     {
+      "team": "South Korea",
+      "p": 0.0437
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.3062
+     },
+     {
+      "team": "England",
+      "p": 0.1019
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0937
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0839
+     },
+     {
+      "team": "France",
+      "p": 0.0504
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0443
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Austria",
+     "p": 0.6476
+    },
+    "R16": {
+     "team": "Portugal",
+     "p": 0.2222
+    },
+    "QF": {
+     "team": "United States",
+     "p": 0.3429
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.2703
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.3062
+    }
+   }
+  },
+  "Uruguay": {
+   "group": "H",
+   "flag": "🇺🇾",
+   "code": "URU",
+   "elo": 1895,
+   "form": -27,
+   "rating": 1868,
+   "survival": {
+    "R32": 0.3791,
+    "R16": 0.1875,
+    "QF": 0.0956,
+    "SF": 0.0467,
+    "F": 0.0194,
+    "champion": 0.0072
+   },
+   "group_finish": {
+    "1": 0.1175,
+    "2": 0.0726,
+    "3": 0.7079,
+    "4": 0.102
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Austria",
+      "p": 0.2348
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1915
+     },
+     {
+      "team": "Mexico",
+      "p": 0.1422
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1158
+     },
+     {
+      "team": "France",
+      "p": 0.1047
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0752
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.1499
+     },
+     {
+      "team": "England",
+      "p": 0.1216
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1061
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0965
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0704
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0699
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.1234
+     },
+     {
+      "team": "United States",
+      "p": 0.1213
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0701
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0596
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0533
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0439
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1713
+     },
+     {
+      "team": "Germany",
+      "p": 0.1156
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1006
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0835
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0471
+     },
+     {
+      "team": "Brazil",
+      "p": 0.045
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.1856
+     },
+     {
+      "team": "Spain",
+      "p": 0.1186
+     },
+     {
+      "team": "France",
+      "p": 0.0979
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0722
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0722
+     },
+     {
+      "team": "Norway",
+      "p": 0.0619
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Austria",
+     "p": 0.2348
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.1499
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.1234
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1713
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.1856
+    }
+   }
+  },
+  "Cape Verde": {
+   "group": "H",
+   "flag": "🇨🇻",
+   "code": "CPV",
+   "elo": 1640,
+   "form": 31,
+   "rating": 1671,
+   "survival": {
+    "R32": 0.6711,
+    "R16": 0.1178,
+    "QF": 0.0436,
+    "SF": 0.0146,
+    "F": 0.0042,
+    "champion": 0.0009
+   },
+   "group_finish": {
+    "1": 0.0219,
+    "2": 0.5577,
+    "3": 0.188,
+    "4": 0.2324
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Argentina",
+      "p": 0.831
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0387
+     },
+     {
+      "team": "Egypt",
+      "p": 0.03
+     },
+     {
+      "team": "France",
+      "p": 0.0253
+     },
+     {
+      "team": "Austria",
+      "p": 0.0247
+     },
+     {
+      "team": "Belgium",
+      "p": 0.018
+     }
+    ],
+    "R16": [
+     {
+      "team": "Belgium",
+      "p": 0.2377
+     },
+     {
+      "team": "Australia",
+      "p": 0.191
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0874
+     },
+     {
+      "team": "United States",
+      "p": 0.0849
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0815
+     },
+     {
+      "team": "Iran",
+      "p": 0.0586
+     }
+    ],
+    "QF": [
+     {
+      "team": "Portugal",
+      "p": 0.2294
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1101
+     },
+     {
+      "team": "Canada",
+      "p": 0.0894
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0665
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0573
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0482
+     }
+    ],
+    "SF": [
+     {
+      "team": "England",
+      "p": 0.226
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1096
+     },
+     {
+      "team": "Norway",
+      "p": 0.1096
+     },
+     {
+      "team": "Japan",
+      "p": 0.0616
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0616
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0479
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1667
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1429
+     },
+     {
+      "team": "Spain",
+      "p": 0.1429
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0714
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0714
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0714
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Argentina",
+     "p": 0.831
+    },
+    "R16": {
+     "team": "Belgium",
+     "p": 0.2377
+    },
+    "QF": {
+     "team": "Portugal",
+     "p": 0.2294
+    },
+    "SF": {
+     "team": "England",
+     "p": 0.226
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1667
+    }
+   }
+  },
+  "Saudi Arabia": {
+   "group": "H",
+   "flag": "🇸🇦",
+   "code": "KSA",
+   "elo": 1640,
+   "form": 3,
+   "rating": 1643,
+   "survival": {
+    "R32": 0.3284,
+    "R16": 0.0518,
+    "QF": 0.0184,
+    "SF": 0.0058,
+    "F": 0.0011,
+    "champion": 0.0002
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.285,
+    "3": 0.0494,
+    "4": 0.6656
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Argentina",
+      "p": 0.8678
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0384
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0274
+     },
+     {
+      "team": "France",
+      "p": 0.0207
+     },
+     {
+      "team": "England",
+      "p": 0.0174
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0128
+     }
+    ],
+    "R16": [
+     {
+      "team": "Belgium",
+      "p": 0.2857
+     },
+     {
+      "team": "Australia",
+      "p": 0.1931
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0927
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0907
+     },
+     {
+      "team": "Iran",
+      "p": 0.0811
+     },
+     {
+      "team": "United States",
+      "p": 0.0792
+     }
+    ],
+    "QF": [
+     {
+      "team": "Portugal",
+      "p": 0.2228
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1033
+     },
+     {
+      "team": "Canada",
+      "p": 0.1033
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0924
+     },
+     {
+      "team": "Croatia",
+      "p": 0.087
+     },
+     {
+      "team": "Ghana",
+      "p": 0.038
+     }
+    ],
+    "SF": [
+     {
+      "team": "Brazil",
+      "p": 0.1552
+     },
+     {
+      "team": "France",
+      "p": 0.1379
+     },
+     {
+      "team": "England",
+      "p": 0.1034
+     },
+     {
+      "team": "Japan",
+      "p": 0.1034
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0862
+     },
+     {
+      "team": "Germany",
+      "p": 0.069
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.2727
+     },
+     {
+      "team": "Germany",
+      "p": 0.1818
+     },
+     {
+      "team": "Spain",
+      "p": 0.0909
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0909
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0909
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0909
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Argentina",
+     "p": 0.8678
+    },
+    "R16": {
+     "team": "Belgium",
+     "p": 0.2857
+    },
+    "QF": {
+     "team": "Portugal",
+     "p": 0.2228
+    },
+    "SF": {
+     "team": "Brazil",
+     "p": 0.1552
+    },
+    "F": {
+     "team": "France",
+     "p": 0.2727
+    }
+   }
+  },
+  "France": {
+   "group": "I",
+   "flag": "🇫🇷",
+   "code": "FRA",
+   "elo": 2060,
+   "form": 21,
+   "rating": 2081,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.7702,
+    "QF": 0.5081,
+    "SF": 0.3428,
+    "F": 0.2197,
+    "champion": 0.1357
+   },
+   "group_finish": {
+    "1": 0.8124,
+    "2": 0.1876,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Paraguay",
+      "p": 0.2242
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.1786
+     },
+     {
+      "team": "Scotland",
+      "p": 0.1292
+     },
+     {
+      "team": "Australia",
+      "p": 0.0991
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0922
+     },
+     {
+      "team": "Iran",
+      "p": 0.0563
+     }
+    ],
+    "R16": [
+     {
+      "team": "Germany",
+      "p": 0.5701
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0948
+     },
+     {
+      "team": "Japan",
+      "p": 0.0643
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0474
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0425
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0408
+     }
+    ],
+    "QF": [
+     {
+      "team": "Netherlands",
+      "p": 0.2529
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1382
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1077
+     },
+     {
+      "team": "South Korea",
+      "p": 0.1065
+     },
+     {
+      "team": "Canada",
+      "p": 0.073
+     },
+     {
+      "team": "England",
+      "p": 0.0714
+     }
+    ],
+    "SF": [
+     {
+      "team": "Spain",
+      "p": 0.2637
+     },
+     {
+      "team": "United States",
+      "p": 0.1254
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0963
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0837
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0618
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0595
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2631
+     },
+     {
+      "team": "England",
+      "p": 0.0988
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0833
+     },
+     {
+      "team": "Portugal",
+      "p": 0.076
+     },
+     {
+      "team": "Norway",
+      "p": 0.0473
+     },
+     {
+      "team": "Spain",
+      "p": 0.0446
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Paraguay",
+     "p": 0.2242
+    },
+    "R16": {
+     "team": "Germany",
+     "p": 0.5701
+    },
+    "QF": {
+     "team": "Netherlands",
+     "p": 0.2529
+    },
+    "SF": {
+     "team": "Spain",
+     "p": 0.2637
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2631
+    }
+   }
+  },
+  "Norway": {
+   "group": "I",
+   "flag": "🇳🇴",
+   "code": "NOR",
+   "elo": 1830,
+   "form": 37,
+   "rating": 1867,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.6071,
+    "QF": 0.2735,
+    "SF": 0.1295,
+    "F": 0.0511,
+    "champion": 0.0217
+   },
+   "group_finish": {
+    "1": 0.1876,
+    "2": 0.8124,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Ivory Coast",
+      "p": 0.7678
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0523
+     },
+     {
+      "team": "Curaçao",
+      "p": 0.0328
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0293
+     },
+     {
+      "team": "Australia",
+      "p": 0.0219
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0212
+     }
+    ],
+    "R16": [
+     {
+      "team": "Brazil",
+      "p": 0.3316
+     },
+     {
+      "team": "Japan",
+      "p": 0.2092
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1357
+     },
+     {
+      "team": "Germany",
+      "p": 0.1221
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0861
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0657
+     }
+    ],
+    "QF": [
+     {
+      "team": "England",
+      "p": 0.3027
+     },
+     {
+      "team": "Mexico",
+      "p": 0.2274
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0556
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.0428
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0395
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0347
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.3683
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1359
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0741
+     },
+     {
+      "team": "Spain",
+      "p": 0.0687
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0548
+     },
+     {
+      "team": "Canada",
+      "p": 0.0301
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.2035
+     },
+     {
+      "team": "Spain",
+      "p": 0.1135
+     },
+     {
+      "team": "Germany",
+      "p": 0.0959
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0763
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0705
+     },
+     {
+      "team": "United States",
+      "p": 0.0568
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Ivory Coast",
+     "p": 0.7678
+    },
+    "R16": {
+     "team": "Brazil",
+     "p": 0.3316
+    },
+    "QF": {
+     "team": "England",
+     "p": 0.3027
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.3683
+    },
+    "F": {
+     "team": "France",
+     "p": 0.2035
+    }
+   }
+  },
+  "Senegal": {
+   "group": "I",
+   "flag": "🇸🇳",
+   "code": "SEN",
+   "elo": 1790,
+   "form": -33,
+   "rating": 1757,
+   "survival": {
+    "R32": 0.6908,
+    "R16": 0.2876,
+    "QF": 0.1217,
+    "SF": 0.0393,
+    "F": 0.0124,
+    "champion": 0.0042
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.9149,
+    "4": 0.0851
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Mexico",
+      "p": 0.2238
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1589
+     },
+     {
+      "team": "United States",
+      "p": 0.1568
+     },
+     {
+      "team": "Canada",
+      "p": 0.1228
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0938
+     },
+     {
+      "team": "England",
+      "p": 0.0909
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.1968
+     },
+     {
+      "team": "England",
+      "p": 0.1311
+     },
+     {
+      "team": "Portugal",
+      "p": 0.096
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0713
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0535
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0511
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.2268
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1413
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0649
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0551
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0526
+     },
+     {
+      "team": "Austria",
+      "p": 0.0468
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1883
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1527
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0891
+     },
+     {
+      "team": "Germany",
+      "p": 0.0865
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0509
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0509
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.1774
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.121
+     },
+     {
+      "team": "France",
+      "p": 0.1129
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0726
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0565
+     },
+     {
+      "team": "England",
+      "p": 0.0565
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Mexico",
+     "p": 0.2238
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.1968
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.2268
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1883
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.1774
+    }
+   }
+  },
+  "Iraq": {
+   "group": "I",
+   "flag": "🇮🇶",
+   "code": "IRQ",
+   "elo": 1620,
+   "form": -26,
+   "rating": 1594,
+   "survival": {
+    "R32": 0.0316,
+    "R16": 0.0092,
+    "QF": 0.0031,
+    "SF": 0.0008,
+    "F": 0.0001,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0851,
+    "4": 0.9149
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Canada",
+      "p": 0.2658
+     },
+     {
+      "team": "United States",
+      "p": 0.212
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1804
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1203
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0918
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0886
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.1957
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1739
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1304
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0652
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0652
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0435
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.2258
+     },
+     {
+      "team": "Spain",
+      "p": 0.1935
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1613
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0968
+     },
+     {
+      "team": "Austria",
+      "p": 0.0645
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0645
+     }
+    ],
+    "SF": [
+     {
+      "team": "Netherlands",
+      "p": 0.25
+     },
+     {
+      "team": "Morocco",
+      "p": 0.125
+     },
+     {
+      "team": "South Korea",
+      "p": 0.125
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.125
+     },
+     {
+      "team": "Colombia",
+      "p": 0.125
+     },
+     {
+      "team": "Sweden",
+      "p": 0.125
+     }
+    ],
+    "F": [
+     {
+      "team": "Spain",
+      "p": 1.0
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Canada",
+     "p": 0.2658
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.1957
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.2258
+    },
+    "SF": {
+     "team": "Netherlands",
+     "p": 0.25
+    },
+    "F": {
+     "team": "Spain",
+     "p": 1.0
+    }
+   }
+  },
+  "Argentina": {
+   "group": "J",
+   "flag": "🇦🇷",
+   "code": "ARG",
+   "elo": 2090,
+   "form": 22,
+   "rating": 2112,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.8248,
+    "QF": 0.6354,
+    "SF": 0.4624,
+    "F": 0.3105,
+    "champion": 0.2039
+   },
+   "group_finish": {
+    "1": 1.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Cape Verde",
+      "p": 0.5577
+     },
+     {
+      "team": "Saudi Arabia",
+      "p": 0.285
+     },
+     {
+      "team": "Spain",
+      "p": 0.0847
+     },
+     {
+      "team": "Uruguay",
+      "p": 0.0726
+     }
+    ],
+    "R16": [
+     {
+      "team": "Belgium",
+      "p": 0.3694
+     },
+     {
+      "team": "Australia",
+      "p": 0.2824
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.1348
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1077
+     },
+     {
+      "team": "Iran",
+      "p": 0.093
+     },
+     {
+      "team": "New Zealand",
+      "p": 0.0127
+     }
+    ],
+    "QF": [
+     {
+      "team": "Portugal",
+      "p": 0.2661
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1448
+     },
+     {
+      "team": "Canada",
+      "p": 0.1393
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1017
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0648
+     },
+     {
+      "team": "Croatia",
+      "p": 0.059
+     }
+    ],
+    "SF": [
+     {
+      "team": "England",
+      "p": 0.2141
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1737
+     },
+     {
+      "team": "Mexico",
+      "p": 0.1185
+     },
+     {
+      "team": "Norway",
+      "p": 0.1032
+     },
+     {
+      "team": "France",
+      "p": 0.0621
+     },
+     {
+      "team": "Japan",
+      "p": 0.0621
+     }
+    ],
+    "F": [
+     {
+      "team": "Spain",
+      "p": 0.1916
+     },
+     {
+      "team": "France",
+      "p": 0.1862
+     },
+     {
+      "team": "Germany",
+      "p": 0.1076
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0895
+     },
+     {
+      "team": "United States",
+      "p": 0.0634
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0502
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Cape Verde",
+     "p": 0.5577
+    },
+    "R16": {
+     "team": "Belgium",
+     "p": 0.3694
+    },
+    "QF": {
+     "team": "Portugal",
+     "p": 0.2661
+    },
+    "SF": {
+     "team": "England",
+     "p": 0.2141
+    },
+    "F": {
+     "team": "Spain",
+     "p": 0.1916
+    }
+   }
+  },
+  "Austria": {
+   "group": "J",
+   "flag": "🇦🇹",
+   "code": "AUT",
+   "elo": 1790,
+   "form": 5,
+   "rating": 1795,
+   "survival": {
+    "R32": 0.9542,
+    "R16": 0.3146,
+    "QF": 0.1391,
+    "SF": 0.0628,
+    "F": 0.0219,
+    "champion": 0.0074
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.7532,
+    "3": 0.2468,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Spain",
+      "p": 0.6787
+     },
+     {
+      "team": "Uruguay",
+      "p": 0.0933
+     },
+     {
+      "team": "United States",
+      "p": 0.0494
+     },
+     {
+      "team": "Canada",
+      "p": 0.0414
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0371
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0277
+     }
+    ],
+    "R16": [
+     {
+      "team": "Portugal",
+      "p": 0.227
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1955
+     },
+     {
+      "team": "Croatia",
+      "p": 0.1389
+     },
+     {
+      "team": "Ghana",
+      "p": 0.1262
+     },
+     {
+      "team": "United States",
+      "p": 0.0645
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.061
+     }
+    ],
+    "QF": [
+     {
+      "team": "United States",
+      "p": 0.2545
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0999
+     },
+     {
+      "team": "Spain",
+      "p": 0.0834
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0812
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0769
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0755
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.2564
+     },
+     {
+      "team": "Germany",
+      "p": 0.1895
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1545
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0685
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0589
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0462
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.3014
+     },
+     {
+      "team": "England",
+      "p": 0.105
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0913
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0822
+     },
+     {
+      "team": "France",
+      "p": 0.0594
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0365
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Spain",
+     "p": 0.6787
+    },
+    "R16": {
+     "team": "Portugal",
+     "p": 0.227
+    },
+    "QF": {
+     "team": "United States",
+     "p": 0.2545
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.2564
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.3014
+    }
+   }
+  },
+  "Algeria": {
+   "group": "J",
+   "flag": "🇩🇿",
+   "code": "ALG",
+   "elo": 1740,
+   "form": 5,
+   "rating": 1745,
+   "survival": {
+    "R32": 0.8317,
+    "R16": 0.3045,
+    "QF": 0.1267,
+    "SF": 0.0457,
+    "F": 0.0142,
+    "champion": 0.0039
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.2468,
+    "3": 0.7532,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Spain",
+      "p": 0.2561
+     },
+     {
+      "team": "Egypt",
+      "p": 0.1502
+     },
+     {
+      "team": "United States",
+      "p": 0.124
+     },
+     {
+      "team": "England",
+      "p": 0.1109
+     },
+     {
+      "team": "Canada",
+      "p": 0.0979
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0943
+     }
+    ],
+    "R16": [
+     {
+      "team": "United States",
+      "p": 0.2263
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1389
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1005
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0686
+     },
+     {
+      "team": "Bosnia and Herzegovina",
+      "p": 0.0621
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0594
+     }
+    ],
+    "QF": [
+     {
+      "team": "Spain",
+      "p": 0.221
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1255
+     },
+     {
+      "team": "Austria",
+      "p": 0.0845
+     },
+     {
+      "team": "United States",
+      "p": 0.0647
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0616
+     },
+     {
+      "team": "Belgium",
+      "p": 0.06
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1707
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1379
+     },
+     {
+      "team": "Germany",
+      "p": 0.1291
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0832
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0635
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0525
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.2746
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0704
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0634
+     },
+     {
+      "team": "England",
+      "p": 0.0563
+     },
+     {
+      "team": "France",
+      "p": 0.0493
+     },
+     {
+      "team": "Japan",
+      "p": 0.0493
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Spain",
+     "p": 0.2561
+    },
+    "R16": {
+     "team": "United States",
+     "p": 0.2263
+    },
+    "QF": {
+     "team": "Spain",
+     "p": 0.221
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1707
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.2746
+    }
+   }
+  },
+  "Jordan": {
+   "group": "J",
+   "flag": "🇯🇴",
+   "code": "JOR",
+   "elo": 1620,
+   "form": -32,
+   "rating": 1588,
+   "survival": {
+    "R32": 0.0,
+    "R16": 0.0,
+    "QF": 0.0,
+    "SF": 0.0,
+    "F": 0.0,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 1.0
+   },
+   "opponents": {},
+   "path": {}
+  },
+  "Portugal": {
+   "group": "K",
+   "flag": "🇵🇹",
+   "code": "POR",
+   "elo": 1985,
+   "form": -3,
+   "rating": 1982,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.6847,
+    "QF": 0.4288,
+    "SF": 0.2331,
+    "F": 0.1276,
+    "champion": 0.0643
+   },
+   "group_finish": {
+    "1": 0.564,
+    "2": 0.3762,
+    "3": 0.0598,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Ghana",
+      "p": 0.4522
+     },
+     {
+      "team": "Croatia",
+      "p": 0.3133
+     },
+     {
+      "team": "England",
+      "p": 0.1066
+     },
+     {
+      "team": "Panama",
+      "p": 0.0525
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.035
+     },
+     {
+      "team": "Australia",
+      "p": 0.0131
+     }
+    ],
+    "R16": [
+     {
+      "team": "Spain",
+      "p": 0.2292
+     },
+     {
+      "team": "Canada",
+      "p": 0.1858
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1316
+     },
+     {
+      "team": "Austria",
+      "p": 0.1043
+     },
+     {
+      "team": "Iran",
+      "p": 0.0736
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0618
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.3944
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1313
+     },
+     {
+      "team": "United States",
+      "p": 0.1196
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0527
+     },
+     {
+      "team": "Australia",
+      "p": 0.0415
+     },
+     {
+      "team": "Cape Verde",
+      "p": 0.0233
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1416
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1205
+     },
+     {
+      "team": "England",
+      "p": 0.1094
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0794
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0789
+     },
+     {
+      "team": "Norway",
+      "p": 0.0755
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1309
+     },
+     {
+      "team": "Spain",
+      "p": 0.1277
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1223
+     },
+     {
+      "team": "Germany",
+      "p": 0.0697
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0603
+     },
+     {
+      "team": "England",
+      "p": 0.0603
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Ghana",
+     "p": 0.4522
+    },
+    "R16": {
+     "team": "Spain",
+     "p": 0.2292
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.3944
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1416
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1309
+    }
+   }
+  },
+  "Colombia": {
+   "group": "K",
+   "flag": "🇨🇴",
+   "code": "COL",
+   "elo": 1855,
+   "form": 26,
+   "rating": 1881,
+   "survival": {
+    "R32": 0.988,
+    "R16": 0.5636,
+    "QF": 0.2913,
+    "SF": 0.1326,
+    "F": 0.0578,
+    "champion": 0.0228
+   },
+   "group_finish": {
+    "1": 0.3947,
+    "2": 0.4265,
+    "3": 0.1788,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Ghana",
+      "p": 0.3977
+     },
+     {
+      "team": "Croatia",
+      "p": 0.3084
+     },
+     {
+      "team": "England",
+      "p": 0.2009
+     },
+     {
+      "team": "Panama",
+      "p": 0.0415
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.0244
+     },
+     {
+      "team": "Australia",
+      "p": 0.0087
+     }
+    ],
+    "R16": [
+     {
+      "team": "Spain",
+      "p": 0.2748
+     },
+     {
+      "team": "Canada",
+      "p": 0.1377
+     },
+     {
+      "team": "Austria",
+      "p": 0.1091
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1034
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0745
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0543
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.3158
+     },
+     {
+      "team": "United States",
+      "p": 0.1346
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1061
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0604
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0364
+     },
+     {
+      "team": "Australia",
+      "p": 0.0316
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1599
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0973
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0973
+     },
+     {
+      "team": "England",
+      "p": 0.0897
+     },
+     {
+      "team": "Germany",
+      "p": 0.0867
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0573
+     }
+    ],
+    "F": [
+     {
+      "team": "Portugal",
+      "p": 0.1298
+     },
+     {
+      "team": "Spain",
+      "p": 0.1298
+     },
+     {
+      "team": "France",
+      "p": 0.1246
+     },
+     {
+      "team": "Argentina",
+      "p": 0.1194
+     },
+     {
+      "team": "England",
+      "p": 0.0623
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0502
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Ghana",
+     "p": 0.3977
+    },
+    "R16": {
+     "team": "Spain",
+     "p": 0.2748
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.3158
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1599
+    },
+    "F": {
+     "team": "Portugal",
+     "p": 0.1298
+    }
+   }
+  },
+  "DR Congo": {
+   "group": "K",
+   "flag": "🇨🇩",
+   "code": "COD",
+   "elo": 1700,
+   "form": 29,
+   "rating": 1729,
+   "survival": {
+    "R32": 0.655,
+    "R16": 0.2307,
+    "QF": 0.0818,
+    "SF": 0.0269,
+    "F": 0.0076,
+    "champion": 0.0022
+   },
+   "group_finish": {
+    "1": 0.0413,
+    "2": 0.1973,
+    "3": 0.5523,
+    "4": 0.2091
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "England",
+      "p": 0.5911
+     },
+     {
+      "team": "Ghana",
+      "p": 0.2012
+     },
+     {
+      "team": "Croatia",
+      "p": 0.1831
+     },
+     {
+      "team": "Panama",
+      "p": 0.0148
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.004
+     },
+     {
+      "team": "Australia",
+      "p": 0.0018
+     }
+    ],
+    "R16": [
+     {
+      "team": "Mexico",
+      "p": 0.3095
+     },
+     {
+      "team": "Spain",
+      "p": 0.2536
+     },
+     {
+      "team": "Austria",
+      "p": 0.0832
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0533
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0524
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0459
+     }
+    ],
+    "QF": [
+     {
+      "team": "Brazil",
+      "p": 0.1626
+     },
+     {
+      "team": "Norway",
+      "p": 0.143
+     },
+     {
+      "team": "United States",
+      "p": 0.1137
+     },
+     {
+      "team": "Japan",
+      "p": 0.066
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0648
+     },
+     {
+      "team": "France",
+      "p": 0.0599
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.2379
+     },
+     {
+      "team": "France",
+      "p": 0.1227
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0892
+     },
+     {
+      "team": "Germany",
+      "p": 0.0818
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0558
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0483
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.1316
+     },
+     {
+      "team": "Spain",
+      "p": 0.1053
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0921
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0921
+     },
+     {
+      "team": "Germany",
+      "p": 0.0789
+     },
+     {
+      "team": "United States",
+      "p": 0.0658
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "England",
+     "p": 0.5911
+    },
+    "R16": {
+     "team": "Mexico",
+     "p": 0.3095
+    },
+    "QF": {
+     "team": "Brazil",
+     "p": 0.1626
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.2379
+    },
+    "F": {
+     "team": "France",
+     "p": 0.1316
+    }
+   }
+  },
+  "Uzbekistan": {
+   "group": "K",
+   "flag": "🇺🇿",
+   "code": "UZB",
+   "elo": 1620,
+   "form": -24,
+   "rating": 1596,
+   "survival": {
+    "R32": 0.059,
+    "R16": 0.0096,
+    "QF": 0.003,
+    "SF": 0.0004,
+    "F": 0.0001,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.2091,
+    "4": 0.7909
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "England",
+      "p": 0.8729
+     },
+     {
+      "team": "Croatia",
+      "p": 0.0695
+     },
+     {
+      "team": "Ghana",
+      "p": 0.0559
+     },
+     {
+      "team": "Panama",
+      "p": 0.0017
+     }
+    ],
+    "R16": [
+     {
+      "team": "Mexico",
+      "p": 0.5312
+     },
+     {
+      "team": "Scotland",
+      "p": 0.2188
+     },
+     {
+      "team": "Sweden",
+      "p": 0.1562
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0312
+     },
+     {
+      "team": "Japan",
+      "p": 0.0208
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0208
+     }
+    ],
+    "QF": [
+     {
+      "team": "Brazil",
+      "p": 0.3333
+     },
+     {
+      "team": "Norway",
+      "p": 0.2333
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.1667
+     },
+     {
+      "team": "Japan",
+      "p": 0.1333
+     },
+     {
+      "team": "Ecuador",
+      "p": 0.0333
+     },
+     {
+      "team": "Scotland",
+      "p": 0.0333
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.5
+     },
+     {
+      "team": "Paraguay",
+      "p": 0.25
+     },
+     {
+      "team": "Colombia",
+      "p": 0.25
+     }
+    ],
+    "F": [
+     {
+      "team": "Scotland",
+      "p": 1.0
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "England",
+     "p": 0.8729
+    },
+    "R16": {
+     "team": "Mexico",
+     "p": 0.5312
+    },
+    "QF": {
+     "team": "Brazil",
+     "p": 0.3333
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.5
+    },
+    "F": {
+     "team": "Scotland",
+     "p": 1.0
+    }
+   }
+  },
+  "England": {
+   "group": "L",
+   "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+   "code": "ENG",
+   "elo": 1980,
+   "form": 4,
+   "rating": 1984,
+   "survival": {
+    "R32": 1.0,
+    "R16": 0.6761,
+    "QF": 0.4201,
+    "SF": 0.2375,
+    "F": 0.1233,
+    "champion": 0.0619
+   },
+   "group_finish": {
+    "1": 0.863,
+    "2": 0.1234,
+    "3": 0.0136,
+    "4": 0.0
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "DR Congo",
+      "p": 0.3872
+     },
+     {
+      "team": "Colombia",
+      "p": 0.1985
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1066
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0922
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0628
+     },
+     {
+      "team": "Uzbekistan",
+      "p": 0.0515
+     }
+    ],
+    "R16": [
+     {
+      "team": "Mexico",
+      "p": 0.5091
+     },
+     {
+      "team": "Scotland",
+      "p": 0.1102
+     },
+     {
+      "team": "Sweden",
+      "p": 0.0811
+     },
+     {
+      "team": "Spain",
+      "p": 0.0756
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0558
+     },
+     {
+      "team": "Uruguay",
+      "p": 0.0337
+     }
+    ],
+    "QF": [
+     {
+      "team": "Brazil",
+      "p": 0.2392
+     },
+     {
+      "team": "Norway",
+      "p": 0.1971
+     },
+     {
+      "team": "Ivory Coast",
+      "p": 0.1055
+     },
+     {
+      "team": "Japan",
+      "p": 0.1019
+     },
+     {
+      "team": "France",
+      "p": 0.0864
+     },
+     {
+      "team": "Morocco",
+      "p": 0.0743
+     }
+    ],
+    "SF": [
+     {
+      "team": "Argentina",
+      "p": 0.4168
+     },
+     {
+      "team": "Portugal",
+      "p": 0.1074
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0669
+     },
+     {
+      "team": "Colombia",
+      "p": 0.0501
+     },
+     {
+      "team": "Canada",
+      "p": 0.0463
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.0396
+     }
+    ],
+    "F": [
+     {
+      "team": "France",
+      "p": 0.176
+     },
+     {
+      "team": "Spain",
+      "p": 0.1606
+     },
+     {
+      "team": "Germany",
+      "p": 0.0933
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0908
+     },
+     {
+      "team": "United States",
+      "p": 0.0762
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0624
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "DR Congo",
+     "p": 0.3872
+    },
+    "R16": {
+     "team": "Mexico",
+     "p": 0.5091
+    },
+    "QF": {
+     "team": "Brazil",
+     "p": 0.2392
+    },
+    "SF": {
+     "team": "Argentina",
+     "p": 0.4168
+    },
+    "F": {
+     "team": "France",
+     "p": 0.176
+    }
+   }
+  },
+  "Ghana": {
+   "group": "L",
+   "flag": "🇬🇭",
+   "code": "GHA",
+   "elo": 1700,
+   "form": 35,
+   "rating": 1735,
+   "survival": {
+    "R32": 0.9971,
+    "R16": 0.338,
+    "QF": 0.1232,
+    "SF": 0.0411,
+    "F": 0.0132,
+    "champion": 0.0042
+   },
+   "group_finish": {
+    "1": 0.0557,
+    "2": 0.4579,
+    "3": 0.4837,
+    "4": 0.0027
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Portugal",
+      "p": 0.4535
+     },
+     {
+      "team": "Colombia",
+      "p": 0.394
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.1322
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0051
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0047
+     },
+     {
+      "team": "Ecuador",
+      "p": 0.0036
+     }
+    ],
+    "R16": [
+     {
+      "team": "Spain",
+      "p": 0.3012
+     },
+     {
+      "team": "Canada",
+      "p": 0.1438
+     },
+     {
+      "team": "Austria",
+      "p": 0.1175
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1018
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0536
+     },
+     {
+      "team": "Iran",
+      "p": 0.0524
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.3344
+     },
+     {
+      "team": "United States",
+      "p": 0.1526
+     },
+     {
+      "team": "Belgium",
+      "p": 0.1104
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0519
+     },
+     {
+      "team": "Australia",
+      "p": 0.0333
+     },
+     {
+      "team": "Iran",
+      "p": 0.0244
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1752
+     },
+     {
+      "team": "Brazil",
+      "p": 0.1022
+     },
+     {
+      "team": "Germany",
+      "p": 0.0949
+     },
+     {
+      "team": "England",
+      "p": 0.0827
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0657
+     },
+     {
+      "team": "Norway",
+      "p": 0.0633
+     }
+    ],
+    "F": [
+     {
+      "team": "Spain",
+      "p": 0.1288
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0985
+     },
+     {
+      "team": "Portugal",
+      "p": 0.0985
+     },
+     {
+      "team": "Argentina",
+      "p": 0.0985
+     },
+     {
+      "team": "Germany",
+      "p": 0.0606
+     },
+     {
+      "team": "Japan",
+      "p": 0.0606
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Portugal",
+     "p": 0.4535
+    },
+    "R16": {
+     "team": "Spain",
+     "p": 0.3012
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.3344
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1752
+    },
+    "F": {
+     "team": "Spain",
+     "p": 0.1288
+    }
+   }
+  },
+  "Panama": {
+   "group": "L",
+   "flag": "🇵🇦",
+   "code": "PAN",
+   "elo": 1650,
+   "form": -41,
+   "rating": 1609,
+   "survival": {
+    "R32": 0.1062,
+    "R16": 0.0234,
+    "QF": 0.0061,
+    "SF": 0.0009,
+    "F": 0.0001,
+    "champion": 0.0
+   },
+   "group_finish": {
+    "1": 0.0086,
+    "2": 0.0118,
+    "3": 0.1379,
+    "4": 0.8417
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Portugal",
+      "p": 0.4944
+     },
+     {
+      "team": "Colombia",
+      "p": 0.3861
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.0913
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0132
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0066
+     },
+     {
+      "team": "Spain",
+      "p": 0.0028
+     }
+    ],
+    "R16": [
+     {
+      "team": "Canada",
+      "p": 0.2179
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.1453
+     },
+     {
+      "team": "Spain",
+      "p": 0.0983
+     },
+     {
+      "team": "Austria",
+      "p": 0.094
+     },
+     {
+      "team": "Iran",
+      "p": 0.0684
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0684
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.5902
+     },
+     {
+      "team": "United States",
+      "p": 0.082
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0656
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0492
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0328
+     },
+     {
+      "team": "Australia",
+      "p": 0.0328
+     }
+    ],
+    "SF": [
+     {
+      "team": "Brazil",
+      "p": 0.3333
+     },
+     {
+      "team": "England",
+      "p": 0.1111
+     },
+     {
+      "team": "Cape Verde",
+      "p": 0.1111
+     },
+     {
+      "team": "Norway",
+      "p": 0.1111
+     },
+     {
+      "team": "Morocco",
+      "p": 0.1111
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1111
+     }
+    ],
+    "F": [
+     {
+      "team": "Morocco",
+      "p": 1.0
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Portugal",
+     "p": 0.4944
+    },
+    "R16": {
+     "team": "Canada",
+     "p": 0.2179
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.5902
+    },
+    "SF": {
+     "team": "Brazil",
+     "p": 0.3333
+    },
+    "F": {
+     "team": "Morocco",
+     "p": 1.0
+    }
+   }
+  },
+  "Croatia": {
+   "group": "L",
+   "flag": "🇭🇷",
+   "code": "CRO",
+   "elo": 1860,
+   "form": -37,
+   "rating": 1823,
+   "survival": {
+    "R32": 0.764,
+    "R16": 0.3295,
+    "QF": 0.1437,
+    "SF": 0.0622,
+    "F": 0.0225,
+    "champion": 0.0079
+   },
+   "group_finish": {
+    "1": 0.0727,
+    "2": 0.4069,
+    "3": 0.3648,
+    "4": 0.1556
+   },
+   "opponents": {
+    "R32": [
+     {
+      "team": "Portugal",
+      "p": 0.4101
+     },
+     {
+      "team": "Colombia",
+      "p": 0.3988
+     },
+     {
+      "team": "DR Congo",
+      "p": 0.1569
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0096
+     },
+     {
+      "team": "Senegal",
+      "p": 0.0065
+     },
+     {
+      "team": "Ecuador",
+      "p": 0.0064
+     }
+    ],
+    "R16": [
+     {
+      "team": "Spain",
+      "p": 0.3442
+     },
+     {
+      "team": "Austria",
+      "p": 0.1326
+     },
+     {
+      "team": "Canada",
+      "p": 0.1047
+     },
+     {
+      "team": "Switzerland",
+      "p": 0.081
+     },
+     {
+      "team": "Mexico",
+      "p": 0.0665
+     },
+     {
+      "team": "Algeria",
+      "p": 0.0531
+     }
+    ],
+    "QF": [
+     {
+      "team": "Argentina",
+      "p": 0.261
+     },
+     {
+      "team": "United States",
+      "p": 0.1781
+     },
+     {
+      "team": "Belgium",
+      "p": 0.0946
+     },
+     {
+      "team": "Egypt",
+      "p": 0.0605
+     },
+     {
+      "team": "Norway",
+      "p": 0.0383
+     },
+     {
+      "team": "Brazil",
+      "p": 0.0327
+     }
+    ],
+    "SF": [
+     {
+      "team": "France",
+      "p": 0.1672
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.1093
+     },
+     {
+      "team": "Germany",
+      "p": 0.1045
+     },
+     {
+      "team": "England",
+      "p": 0.0772
+     },
+     {
+      "team": "Brazil",
+      "p": 0.074
+     },
+     {
+      "team": "Argentina",
+      "p": 0.074
+     }
+    ],
+    "F": [
+     {
+      "team": "Argentina",
+      "p": 0.1556
+     },
+     {
+      "team": "Spain",
+      "p": 0.1067
+     },
+     {
+      "team": "France",
+      "p": 0.1067
+     },
+     {
+      "team": "Portugal",
+      "p": 0.08
+     },
+     {
+      "team": "England",
+      "p": 0.0622
+     },
+     {
+      "team": "Netherlands",
+      "p": 0.0578
+     }
+    ]
+   },
+   "path": {
+    "R32": {
+     "team": "Portugal",
+     "p": 0.4101
+    },
+    "R16": {
+     "team": "Spain",
+     "p": 0.3442
+    },
+    "QF": {
+     "team": "Argentina",
+     "p": 0.261
+    },
+    "SF": {
+     "team": "France",
+     "p": 0.1672
+    },
+    "F": {
+     "team": "Argentina",
+     "p": 0.1556
+    }
+   }
+  }
+ },
+ "power": [
+  {
+   "team": "Argentina",
+   "flag": "🇦🇷",
+   "code": "ARG",
+   "rating": 2112,
+   "elo": 2090,
+   "form": 22
+  },
+  {
+   "team": "France",
+   "flag": "🇫🇷",
+   "code": "FRA",
+   "rating": 2081,
+   "elo": 2060,
+   "form": 21
+  },
+  {
+   "team": "Spain",
+   "flag": "🇪🇸",
+   "code": "ESP",
+   "rating": 2042,
+   "elo": 2050,
+   "form": -8
+  },
+  {
+   "team": "Brazil",
+   "flag": "🇧🇷",
+   "code": "BRA",
+   "rating": 2009,
+   "elo": 2010,
+   "form": -1
+  },
+  {
+   "team": "England",
+   "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+   "code": "ENG",
+   "rating": 1984,
+   "elo": 1980,
+   "form": 4
+  },
+  {
+   "team": "Portugal",
+   "flag": "🇵🇹",
+   "code": "POR",
+   "rating": 1982,
+   "elo": 1985,
+   "form": -3
+  },
+  {
+   "team": "Netherlands",
+   "flag": "🇳🇱",
+   "code": "NED",
+   "rating": 1979,
+   "elo": 1970,
+   "form": 9
+  },
+  {
+   "team": "Germany",
+   "flag": "🇩🇪",
+   "code": "GER",
+   "rating": 1967,
+   "elo": 1945,
+   "form": 22
+  },
+  {
+   "team": "Belgium",
+   "flag": "🇧🇪",
+   "code": "BEL",
+   "rating": 1891,
+   "elo": 1910,
+   "form": -19
+  },
+  {
+   "team": "Colombia",
+   "flag": "🇨🇴",
+   "code": "COL",
+   "rating": 1881,
+   "elo": 1855,
+   "form": 26
+  },
+  {
+   "team": "Uruguay",
+   "flag": "🇺🇾",
+   "code": "URU",
+   "rating": 1868,
+   "elo": 1895,
+   "form": -27
+  },
+  {
+   "team": "Morocco",
+   "flag": "🇲🇦",
+   "code": "MAR",
+   "rating": 1868,
+   "elo": 1840,
+   "form": 28
+  },
+  {
+   "team": "Norway",
+   "flag": "🇳🇴",
+   "code": "NOR",
+   "rating": 1867,
+   "elo": 1830,
+   "form": 37
+  },
+  {
+   "team": "Japan",
+   "flag": "🇯🇵",
+   "code": "JPN",
+   "rating": 1849,
+   "elo": 1820,
+   "form": 29
+  },
+  {
+   "team": "Mexico",
+   "flag": "🇲🇽",
+   "code": "MEX",
+   "rating": 1844,
+   "elo": 1810,
+   "form": 34
+  },
+  {
+   "team": "United States",
+   "flag": "🇺🇸",
+   "code": "USA",
+   "rating": 1840,
+   "elo": 1800,
+   "form": 40
+  },
+  {
+   "team": "Switzerland",
+   "flag": "🇨🇭",
+   "code": "SUI",
+   "rating": 1824,
+   "elo": 1815,
+   "form": 9
+  },
+  {
+   "team": "Croatia",
+   "flag": "🇭🇷",
+   "code": "CRO",
+   "rating": 1823,
+   "elo": 1860,
+   "form": -37
+  },
+  {
+   "team": "Austria",
+   "flag": "🇦🇹",
+   "code": "AUT",
+   "rating": 1795,
+   "elo": 1790,
+   "form": 5
+  },
+  {
+   "team": "Sweden",
+   "flag": "🇸🇪",
+   "code": "SWE",
+   "rating": 1794,
+   "elo": 1790,
+   "form": 4
+  },
+  {
+   "team": "South Korea",
+   "flag": "🇰🇷",
+   "code": "KOR",
+   "rating": 1778,
+   "elo": 1775,
+   "form": 3
+  },
+  {
+   "team": "Canada",
+   "flag": "🇨🇦",
+   "code": "CAN",
+   "rating": 1771,
+   "elo": 1760,
+   "form": 11
+  },
+  {
+   "team": "Senegal",
+   "flag": "🇸🇳",
+   "code": "SEN",
+   "rating": 1757,
+   "elo": 1790,
+   "form": -33
+  },
+  {
+   "team": "Iran",
+   "flag": "🇮🇷",
+   "code": "IRN",
+   "rating": 1755,
+   "elo": 1760,
+   "form": -5
+  },
+  {
+   "team": "Ivory Coast",
+   "flag": "🇨🇮",
+   "code": "CIV",
+   "rating": 1754,
+   "elo": 1740,
+   "form": 14
+  },
+  {
+   "team": "Scotland",
+   "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+   "code": "SCO",
+   "rating": 1752,
+   "elo": 1760,
+   "form": -8
+  },
+  {
+   "team": "Ecuador",
+   "flag": "🇪🇨",
+   "code": "ECU",
+   "rating": 1750,
+   "elo": 1790,
+   "form": -40
+  },
+  {
+   "team": "Algeria",
+   "flag": "🇩🇿",
+   "code": "ALG",
+   "rating": 1745,
+   "elo": 1740,
+   "form": 5
+  },
+  {
+   "team": "Egypt",
+   "flag": "🇪🇬",
+   "code": "EGY",
+   "rating": 1744,
+   "elo": 1720,
+   "form": 24
+  },
+  {
+   "team": "Turkey",
+   "flag": "🇹🇷",
+   "code": "TUR",
+   "rating": 1742,
+   "elo": 1800,
+   "form": -58
+  },
+  {
+   "team": "Ghana",
+   "flag": "🇬🇭",
+   "code": "GHA",
+   "rating": 1735,
+   "elo": 1700,
+   "form": 35
+  },
+  {
+   "team": "Australia",
+   "flag": "🇦🇺",
+   "code": "AUS",
+   "rating": 1732,
+   "elo": 1720,
+   "form": 12
+  },
+  {
+   "team": "Czech Republic",
+   "flag": "🇨🇿",
+   "code": "CZE",
+   "rating": 1732,
+   "elo": 1760,
+   "form": -28
+  },
+  {
+   "team": "DR Congo",
+   "flag": "🇨🇩",
+   "code": "COD",
+   "rating": 1729,
+   "elo": 1700,
+   "form": 29
+  },
+  {
+   "team": "Paraguay",
+   "flag": "🇵🇾",
+   "code": "PAR",
+   "rating": 1727,
+   "elo": 1720,
+   "form": 7
+  },
+  {
+   "team": "Bosnia and Herzegovina",
+   "flag": "🇧🇦",
+   "code": "BIH",
+   "rating": 1685,
+   "elo": 1700,
+   "form": -15
+  },
+  {
+   "team": "Cape Verde",
+   "flag": "🇨🇻",
+   "code": "CPV",
+   "rating": 1671,
+   "elo": 1640,
+   "form": 31
+  },
+  {
+   "team": "South Africa",
+   "flag": "🇿🇦",
+   "code": "RSA",
+   "rating": 1651,
+   "elo": 1660,
+   "form": -9
+  },
+  {
+   "team": "Tunisia",
+   "flag": "🇹🇳",
+   "code": "TUN",
+   "rating": 1648,
+   "elo": 1690,
+   "form": -42
+  },
+  {
+   "team": "Saudi Arabia",
+   "flag": "🇸🇦",
+   "code": "KSA",
+   "rating": 1643,
+   "elo": 1640,
+   "form": 3
+  },
+  {
+   "team": "Panama",
+   "flag": "🇵🇦",
+   "code": "PAN",
+   "rating": 1609,
+   "elo": 1650,
+   "form": -41
+  },
+  {
+   "team": "Uzbekistan",
+   "flag": "🇺🇿",
+   "code": "UZB",
+   "rating": 1596,
+   "elo": 1620,
+   "form": -24
+  },
+  {
+   "team": "Qatar",
+   "flag": "🇶🇦",
+   "code": "QAT",
+   "rating": 1595,
+   "elo": 1600,
+   "form": -5
+  },
+  {
+   "team": "Iraq",
+   "flag": "🇮🇶",
+   "code": "IRQ",
+   "rating": 1594,
+   "elo": 1620,
+   "form": -26
+  },
+  {
+   "team": "Jordan",
+   "flag": "🇯🇴",
+   "code": "JOR",
+   "rating": 1588,
+   "elo": 1620,
+   "form": -32
+  },
+  {
+   "team": "Curaçao",
+   "flag": "🇨🇼",
+   "code": "CUW",
+   "rating": 1534,
+   "elo": 1530,
+   "form": 4
+  },
+  {
+   "team": "Haiti",
+   "flag": "🇭🇹",
+   "code": "HAI",
+   "rating": 1510,
+   "elo": 1530,
+   "form": -20
+  },
+  {
+   "team": "New Zealand",
+   "flag": "🇳🇿",
+   "code": "NZL",
+   "rating": 1500,
+   "elo": 1500,
+   "form": 0
+  }
+ ],
+ "bracket": {
+  "73": {
+   "round": "R32",
+   "home": "South Korea",
+   "away": "Switzerland",
+   "winner": "Switzerland"
+  },
+  "74": {
+   "round": "R32",
+   "home": "Germany",
+   "away": "Sweden",
+   "winner": "Germany"
+  },
+  "75": {
+   "round": "R32",
+   "home": "Netherlands",
+   "away": "Morocco",
+   "winner": "Netherlands"
+  },
+  "76": {
+   "round": "R32",
+   "home": "Brazil",
+   "away": "Japan",
+   "winner": "Brazil"
+  },
+  "77": {
+   "round": "R32",
+   "home": "France",
+   "away": "Paraguay",
+   "winner": "France"
+  },
+  "78": {
+   "round": "R32",
+   "home": "Ivory Coast",
+   "away": "Norway",
+   "winner": "Norway"
+  },
+  "79": {
+   "round": "R32",
+   "home": "Mexico",
+   "away": "Scotland",
+   "winner": "Mexico"
+  },
+  "80": {
+   "round": "R32",
+   "home": "England",
+   "away": "DR Congo",
+   "winner": "England"
+  },
+  "81": {
+   "round": "R32",
+   "home": "United States",
+   "away": "Bosnia and Herzegovina",
+   "winner": "United States"
+  },
+  "82": {
+   "round": "R32",
+   "home": "Egypt",
+   "away": "Algeria",
+   "winner": "Algeria"
+  },
+  "83": {
+   "round": "R32",
+   "home": "Colombia",
+   "away": "Croatia",
+   "winner": "Colombia"
+  },
+  "84": {
+   "round": "R32",
+   "home": "Spain",
+   "away": "Austria",
+   "winner": "Spain"
+  },
+  "85": {
+   "round": "R32",
+   "home": "Canada",
+   "away": "Iran",
+   "winner": "Canada"
+  },
+  "86": {
+   "round": "R32",
+   "home": "Argentina",
+   "away": "Cape Verde",
+   "winner": "Argentina"
+  },
+  "87": {
+   "round": "R32",
+   "home": "Portugal",
+   "away": "Ghana",
+   "winner": "Portugal"
+  },
+  "88": {
+   "round": "R32",
+   "home": "Australia",
+   "away": "Belgium",
+   "winner": "Belgium"
+  },
+  "89": {
+   "round": "R16",
+   "home": "Germany",
+   "away": "France",
+   "winner": "France"
+  },
+  "90": {
+   "round": "R16",
+   "home": "Switzerland",
+   "away": "Netherlands",
+   "winner": "Netherlands"
+  },
+  "91": {
+   "round": "R16",
+   "home": "Brazil",
+   "away": "Norway",
+   "winner": "Brazil"
+  },
+  "92": {
+   "round": "R16",
+   "home": "Mexico",
+   "away": "England",
+   "winner": "England"
+  },
+  "93": {
+   "round": "R16",
+   "home": "Colombia",
+   "away": "Spain",
+   "winner": "Spain"
+  },
+  "94": {
+   "round": "R16",
+   "home": "United States",
+   "away": "Algeria",
+   "winner": "United States"
+  },
+  "95": {
+   "round": "R16",
+   "home": "Argentina",
+   "away": "Belgium",
+   "winner": "Argentina"
+  },
+  "96": {
+   "round": "R16",
+   "home": "Canada",
+   "away": "Portugal",
+   "winner": "Portugal"
+  },
+  "97": {
+   "round": "QF",
+   "home": "France",
+   "away": "Netherlands",
+   "winner": "France"
+  },
+  "98": {
+   "round": "QF",
+   "home": "Spain",
+   "away": "United States",
+   "winner": "Spain"
+  },
+  "99": {
+   "round": "QF",
+   "home": "Brazil",
+   "away": "England",
+   "winner": "Brazil"
+  },
+  "100": {
+   "round": "QF",
+   "home": "Argentina",
+   "away": "Portugal",
+   "winner": "Argentina"
+  },
+  "101": {
+   "round": "SF",
+   "home": "France",
+   "away": "Spain",
+   "winner": "France"
+  },
+  "102": {
+   "round": "SF",
+   "home": "Brazil",
+   "away": "Argentina",
+   "winner": "Argentina"
+  },
+  "104": {
+   "round": "F",
+   "home": "France",
+   "away": "Argentina",
+   "winner": "Argentina"
+  }
+ },
+ "meta": {
+  "hosts": [
+   "Canada",
+   "Mexico",
+   "United States"
+  ],
+  "source": "ESPN/DraftKings per-match odds + Elo/form power ranking"
+ }
+}

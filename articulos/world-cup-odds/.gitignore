@@ -1,0 +1,3 @@
+# build artifact, re-downloaded by scripts/build.sh
+data/source_wikipedia.html
+.claude/
