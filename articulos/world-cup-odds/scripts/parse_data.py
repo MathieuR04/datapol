@@ -42,6 +42,9 @@ def main():
             txt = clean(tb.get_text())[:140]
             if "Pld" in txt and "Pts" in txt:
                 table = tb; break
+        def num(s):  # strip footnote markers like '4[a]' and +/- signs
+            s = re.sub(r"\[[^\]]*\]", "", s).replace("−", "-").replace("+", "").strip()
+            return int(s)
         order = []
         for tr in table.find_all("tr"):
             c = [clean(x.get_text()) for x in tr.find_all(["td", "th"])]
@@ -49,11 +52,9 @@ def main():
                 continue
             name = strip_name(c[1])
             order.append(name)
-            standings[name] = dict(pos=int(c[0]), pld=int(c[2]), w=int(c[3]),
-                                   d=int(c[4]), l=int(c[5]), gf=int(c[6]),
-                                   ga=int(c[7]),
-                                   gd=int(c[8].replace("−", "-").replace("+", "")),
-                                   pts=int(c[9]))
+            standings[name] = dict(pos=num(c[0]), pld=num(c[2]), w=num(c[3]),
+                                   d=num(c[4]), l=num(c[5]), gf=num(c[6]),
+                                   ga=num(c[7]), gd=num(c[8]), pts=num(c[9]))
         groups[letter] = order
 
     all_teams = sorted(standings.keys())
@@ -62,23 +63,27 @@ def main():
         print("ERROR: teams missing from team_meta.json:", missing, file=sys.stderr)
         sys.exit(1)
 
-    # ---- 2. Matches (played + remaining) ---------------------------------
-    def is_slot(s):
-        return bool(re.search(r"Group|Winner|Runner|place|Match \d", s)) or s in ("", "TBD")
-
-    played, remaining_group = [], []
+    # ---- 2. Matches (played / remaining group / confirmed knockout) ------
+    team_group = {t: g for g, lst in groups.items() for t in lst}
+    played, remaining_group, confirmed_ko = [], [], {}
     for b in soup.find_all("div", class_="footballbox"):
         th, ts, ta = b.find("th", "fhome"), b.find("th", "fscore"), b.find("th", "faway")
         if not (th and ts and ta):
             continue
         home, away, score = clean(th.get_text()), clean(ta.get_text()), clean(ts.get_text())
         home, away = strip_name(home), strip_name(away)
+        if home not in standings or away not in standings:
+            continue                                  # placeholder slot, e.g. "Winner Group A"
         sm = re.match(r"^(\d+)[–\-](\d+)$", score)
-        if sm and home in standings and away in standings:
+        mm = re.match(r"^Match (\d+)$", score)
+        if sm:
             played.append(dict(home=home, away=away,
                                hg=int(sm.group(1)), ag=int(sm.group(2))))
-        elif re.match(r"^Match \d+$", score) and home in standings and away in standings:
-            remaining_group.append(dict(home=home, away=away))
+        elif mm:
+            if team_group[home] == team_group[away]:
+                remaining_group.append(dict(home=home, away=away))
+            else:                                     # cross-group => confirmed knockout tie
+                confirmed_ko[mm.group(1)] = dict(home=home, away=away)
 
     # ---- 3. Bracket structure (official 2026 layout) ---------------------
     # Third-place slots list the 5 groups whose 3rd-placed team can land there.
@@ -132,12 +137,14 @@ def main():
         standings=standings,
         played=played,
         remaining_group=remaining_group,
+        confirmed_ko=confirmed_ko,
         bracket=bracket,
         round_of=round_of,
     )
     json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"teams={len(out['teams'])} played={len(played)} "
-          f"remaining_group={len(remaining_group)} bracket_matches={len(bracket)}")
+          f"remaining_group={len(remaining_group)} confirmed_ko={len(confirmed_ko)} "
+          f"bracket_matches={len(bracket)}")
     print("groups complete:", all(len(v) == 4 for v in groups.values()))
     print("wrote", OUT)
 

@@ -87,10 +87,10 @@ def main():
         if abbr in code2name: return code2name[abbr]
         return None
 
-    # gather ESPN events across the matchday-3 window
+    # gather ESPN events across the remaining group + early knockout window
     events = {}
-    for off in range(0, 8):
-        dt = (date(2026, 6, 23) + timedelta(days=off)).strftime("%Y%m%d")
+    for off in range(0, 16):
+        dt = (date(2026, 6, 24) + timedelta(days=off)).strftime("%Y%m%d")
         try:
             d = json.loads(curl(ESPN.format(dt)))
         except Exception:

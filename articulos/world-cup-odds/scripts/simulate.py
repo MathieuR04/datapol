@@ -61,12 +61,13 @@ def build_ratings(tour):
         h, a, hg, ag = m["home"], m["away"], m["hg"], m["ag"]
         if h not in elo or a not in elo:
             continue
+        # form = result vs. Elo expectation. Beating a strong favourite (low eh)
+        # earns a big boost; an expected win earns little; an upset loss is punished.
         eh = expected(elo[h] + (HOST_BOOST if h in HOSTS else 0)
                       - elo[a] - (HOST_BOOST if a in HOSTS else 0))
         rh = 1.0 if hg > ag else (0.5 if hg == ag else 0.0)
-        gd = max(-3, min(3, hg - ag))
-        perf[h].append((rh - eh) + 0.05 * gd)
-        perf[a].append(((1 - rh) - (1 - eh)) - 0.05 * gd)
+        perf[h].append(rh - eh)
+        perf[a].append((1 - rh) - (1 - eh))
     form = {t: (FORM_GAIN * sum(v) / len(v) if (v := perf.get(t)) else 0.0) for t in elo}
     rating = {t: elo[t] + form[t] for t in elo}
     return elo, form, rating
@@ -100,6 +101,7 @@ class Sim:
         for r in match_odds["matches"]:
             lam["|".join(sorted([r["home"], r["away"]]))] = {r["home"]: r["lam_home"],
                                                              r["away"]: r["lam_away"]}
+        self.pair_lambda = lam          # market goal model for ANY priced match
         self.rem_by_group = {g: [] for g in self.groups}
         for m in tour["remaining_group"]:
             g = self.team_group[m["home"]]
@@ -110,8 +112,13 @@ class Sim:
         return self.rating[t] + (HOST_BOOST if t in HOSTS else 0)
 
     def knockout_winner(self, h, a, rng):
-        # power-ranking Poisson scoreline; draw -> penalties (half the rating edge)
-        lh, la = fallback_lambdas(self.r(h), self.r(a))
+        # confirmed tie already priced by the market -> use its goal model;
+        # otherwise power-ranking Poisson. Draw -> penalties (half the rating edge).
+        mk = self.pair_lambda.get("|".join(sorted([h, a])))
+        if mk:
+            lh, la = mk[h], mk[a]
+        else:
+            lh, la = fallback_lambdas(self.r(h), self.r(a))
         hg, ag = poisson(lh, rng), poisson(la, rng)
         if hg > ag: return h
         if ag > hg: return a
@@ -279,7 +286,7 @@ def main():
         info["path"] = path
         teams_info[t] = info
 
-    proj = build_projected_bracket(tour, slot_occ, rating)
+    proj = build_projected_bracket(tour, slot_occ, rating, n)
     ranking = sorted(teams, key=lambda t: rating[t], reverse=True)
     power = [dict(team=t, flag=tour["teams"][t]["flag"], code=tour["teams"][t]["code"],
                   rating=round(rating[t]), elo=round(elo[t]), form=round(form[t]))
@@ -302,7 +309,7 @@ def main():
               file=sys.stderr)
     print("wrote", OUT, file=sys.stderr)
 
-def build_projected_bracket(tour, slot_occ, rating):
+def build_projected_bracket(tour, slot_occ, rating, n):
     bracket, round_of = tour["bracket"], tour["round_of"]
     # unique greedy assignment: a team can occupy only one R32 slot. Resolve the
     # most-confident slots first, each taking its top still-available team.
@@ -313,6 +320,9 @@ def build_projected_bracket(tour, slot_occ, rating):
         pick = next((t for t, _ in c.most_common() if t not in used), None) \
                or c.most_common(1)[0][0]
         occ[key] = pick; used.add(pick)
+    def confirmed(key):   # this slot is occupied by the same team in every sim
+        c = slot_occ.get(key)
+        return bool(c) and c.most_common(1)[0][1] == n
     win_of, out = {}, {}
     for mid in sorted(bracket, key=int):
         mt = bracket[mid]
@@ -322,7 +332,8 @@ def build_projected_bracket(tour, slot_occ, rating):
         h, a = part("home"), part("away")
         w = h if (h and a and rating.get(h, 0) >= rating.get(a, 0)) else (a or h)
         win_of[mid] = w
-        out[mid] = dict(round=round_of[mid], home=h, away=a, winner=w)
+        out[mid] = dict(round=round_of[mid], home=h, away=a, winner=w,
+                        hc=confirmed((mid, "home")), ac=confirmed((mid, "away")))
     return out
 
 if __name__ == "__main__":

@@ -60,6 +60,8 @@
     .bteam{ display:flex; align-items:center; gap:.4rem; padding:.32rem .5rem; font-size:11.5px; }
     .bteam + .bteam{ border-top:1px solid var(--border); }
     .bteam.win{ background:rgba(196,96,58,.10); font-weight:600; }
+    .bteam.conf{ box-shadow:inset 2px 0 0 var(--good); }
+    .bteam .lock{ margin-left:auto; color:var(--good); font-size:10px; font-weight:700; }
     .bteam .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .champ-col{ justify-content:center; }
     .champ-box{ background:var(--text); color:var(--bg); border-radius:10px; padding:1rem .8rem; text-align:center; }
@@ -204,7 +206,8 @@
       <h3>De cuotas a goles</h3>
       <p>A cada partido le ajustamos un modelo de goles (Poisson independiente por equipo) que <em>reproduce</em> esas cuotas 1X2 y respeta la línea de over/under. Así cada simulación genera un marcador concreto, necesario para los criterios de desempate por diferencia de goles.</p>
       <h3>Cruces de eliminación: el ranking de poder</h3>
-      <p>Un partido hipotético de octavos o cuartos no lo cotiza nadie todavía. Para esos cruces usamos un <strong>ranking de poder</strong> = Elo histórico + forma en el torneo (rendimiento frente a la calidad del rival; empatar con un grande suma más que golear a un chico). Ese ranking define las probabilidades de cada cruce eliminatorio, con los empates resueltos por penales.</p>
+      <p>Un partido hipotético de octavos o cuartos no lo cotiza nadie todavía. Para esos cruces usamos un <strong>ranking de poder</strong> = Elo histórico + forma en el torneo, con los empates resueltos por penales. La <strong>forma</strong> mide el rendimiento frente a la <em>expectativa</em>: empatarle a un favorito como España suma mucho, ganarle a un rival al que ya se esperaba vencer suma poco, y perder contra alguien a quien se debía ganar resta. Por eso Cabo Verde sube y Argentina, que ganaba lo esperado, sube poco.</p>
+      <p>En cuanto un cruce de eliminación queda <strong>confirmado</strong> y la casa publica sus cuotas (por ejemplo Sudáfrica vs Canadá en los dieciseisavos), usamos esas cuotas reales en lugar del ranking. En el bracket, las llaves ya aseguradas aparecen con un borde verde.</p>
       <h3>La simulación</h3>
       <p>Simulamos el torneo <span id="nsims2"></span> veces. En cada una: jugamos los partidos de grupos pendientes, ordenamos cada grupo con los <strong>desempates oficiales 2026</strong> (puntos → enfrentamiento directo → diferencia de goles → goles), elegimos a los <strong>8 mejores terceros</strong>, armamos el cuadro de eliminación con su estructura oficial y lo jugamos hasta la final. Contando todos esos torneos salen las probabilidades de avance, los rivales probables y el camino al título.</p>
       <h3>Límites honestos</h3>
@@ -291,7 +294,7 @@
       html+=`<div class="bcol"><div class="bcol-h">${name}</div>`;
       for(const id of ids){
         const m=B[id]; if(!m) continue;
-        html+=`<div class="bm">${bteam(m.home,m.winner)}${bteam(m.away,m.winner)}</div>`;
+        html+=`<div class="bm">${bteam(m.home,m.winner,m.hc)}${bteam(m.away,m.winner,m.ac)}</div>`;
       }
       html+=`</div>`;
     }
@@ -301,9 +304,11 @@
       <div class="cn">${champ?flag(champ)+" "+esn(champ):"·"}</div></div></div>`;
     document.getElementById("bracket").innerHTML=html;
   }
-  function bteam(n,win){
+  function bteam(n,win,conf){
     if(!n) return `<div class="bteam"><span class="nm" style="color:var(--dim)">·</span></div>`;
-    return `<div class="bteam ${n===win?'win':''}">${flag(n)}<span class="nm">${esn(n)}</span></div>`;
+    const cls=`bteam ${n===win?'win':''} ${conf?'conf':''}`;
+    const tip=conf?' title="Clasificación confirmada">':'>';
+    return `<div class="${cls}"${tip}${flag(n)}<span class="nm">${esn(n)}</span>${conf?'<span class="lock">✓</span>':''}</div>`;
   }
 
   // ---- team explorer ----
@@ -390,7 +395,8 @@
   // ---- match odds ----
   function renderMatches(){
     const byDate={};
-    ODDS.matches.forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m);});
+    const sameGroup=m=>F.teams[m.home]&&F.teams[m.away]&&F.teams[m.home].group===F.teams[m.away].group;
+    ODDS.matches.filter(sameGroup).forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m);});
     const dfmt=d=>{const [y,mo,da]=d.split("-");const M=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
       return `${+da} ${M[+mo-1]}`;};
     let html="";

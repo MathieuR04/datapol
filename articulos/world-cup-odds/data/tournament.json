@@ -7,6 +7,12 @@
    "flag": "🇲🇽",
    "elo": 1810
   },
+  "South Africa": {
+   "group": "A",
+   "code": "RSA",
+   "flag": "🇿🇦",
+   "elo": 1660
+  },
   "South Korea": {
    "group": "A",
    "code": "KOR",
@@ -19,23 +25,17 @@
    "flag": "🇨🇿",
    "elo": 1760
   },
-  "South Africa": {
-   "group": "A",
-   "code": "RSA",
-   "flag": "🇿🇦",
-   "elo": 1660
+  "Switzerland": {
+   "group": "B",
+   "code": "SUI",
+   "flag": "🇨🇭",
+   "elo": 1815
   },
   "Canada": {
    "group": "B",
    "code": "CAN",
    "flag": "🇨🇦",
    "elo": 1760
-  },
-  "Switzerland": {
-   "group": "B",
-   "code": "SUI",
-   "flag": "🇨🇭",
-   "elo": 1815
   },
   "Bosnia and Herzegovina": {
    "group": "B",
@@ -241,17 +241,17 @@
    "flag": "🇯🇴",
    "elo": 1620
   },
-  "Portugal": {
-   "group": "K",
-   "code": "POR",
-   "flag": "🇵🇹",
-   "elo": 1985
-  },
   "Colombia": {
    "group": "K",
    "code": "COL",
    "flag": "🇨🇴",
    "elo": 1855
+  },
+  "Portugal": {
+   "group": "K",
+   "code": "POR",
+   "flag": "🇵🇹",
+   "elo": 1985
   },
   "DR Congo": {
    "group": "K",
@@ -277,29 +277,29 @@
    "flag": "🇬🇭",
    "elo": 1700
   },
-  "Panama": {
-   "group": "L",
-   "code": "PAN",
-   "flag": "🇵🇦",
-   "elo": 1650
-  },
   "Croatia": {
    "group": "L",
    "code": "CRO",
    "flag": "🇭🇷",
    "elo": 1860
+  },
+  "Panama": {
+   "group": "L",
+   "code": "PAN",
+   "flag": "🇵🇦",
+   "elo": 1650
   }
  },
  "groups": {
   "A": [
    "Mexico",
+   "South Africa",
    "South Korea",
-   "Czech Republic",
-   "South Africa"
+   "Czech Republic"
   ],
   "B": [
-   "Canada",
    "Switzerland",
+   "Canada",
    "Bosnia and Herzegovina",
    "Qatar"
   ],
@@ -352,149 +352,149 @@
    "Jordan"
   ],
   "K": [
-   "Portugal",
    "Colombia",
+   "Portugal",
    "DR Congo",
    "Uzbekistan"
   ],
   "L": [
    "England",
    "Ghana",
-   "Panama",
-   "Croatia"
+   "Croatia",
+   "Panama"
   ]
  },
  "standings": {
   "Mexico": {
    "pos": 1,
-   "pld": 2,
-   "w": 2,
+   "pld": 3,
+   "w": 3,
    "d": 0,
    "l": 0,
-   "gf": 3,
+   "gf": 6,
    "ga": 0,
-   "gd": 3,
-   "pts": 6
+   "gd": 6,
+   "pts": 9
   },
-  "South Korea": {
+  "South Africa": {
    "pos": 2,
-   "pld": 2,
+   "pld": 3,
    "w": 1,
-   "d": 0,
-   "l": 1,
-   "gf": 2,
-   "ga": 2,
-   "gd": 0,
-   "pts": 3
-  },
-  "Czech Republic": {
-   "pos": 3,
-   "pld": 2,
-   "w": 0,
    "d": 1,
    "l": 1,
    "gf": 2,
    "ga": 3,
    "gd": -1,
-   "pts": 1
+   "pts": 4
   },
-  "South Africa": {
+  "South Korea": {
+   "pos": 3,
+   "pld": 3,
+   "w": 1,
+   "d": 0,
+   "l": 2,
+   "gf": 2,
+   "ga": 3,
+   "gd": -1,
+   "pts": 3
+  },
+  "Czech Republic": {
    "pos": 4,
-   "pld": 2,
+   "pld": 3,
    "w": 0,
    "d": 1,
-   "l": 1,
-   "gf": 1,
-   "ga": 3,
-   "gd": -2,
+   "l": 2,
+   "gf": 2,
+   "ga": 6,
+   "gd": -4,
    "pts": 1
   },
-  "Canada": {
+  "Switzerland": {
    "pos": 1,
-   "pld": 2,
+   "pld": 3,
+   "w": 2,
+   "d": 1,
+   "l": 0,
+   "gf": 7,
+   "ga": 3,
+   "gd": 4,
+   "pts": 7
+  },
+  "Canada": {
+   "pos": 2,
+   "pld": 3,
    "w": 1,
+   "d": 1,
+   "l": 1,
+   "gf": 8,
+   "ga": 3,
+   "gd": 5,
+   "pts": 4
+  },
+  "Bosnia and Herzegovina": {
+   "pos": 3,
+   "pld": 3,
+   "w": 1,
+   "d": 1,
+   "l": 1,
+   "gf": 5,
+   "ga": 6,
+   "gd": -1,
+   "pts": 4
+  },
+  "Qatar": {
+   "pos": 4,
+   "pld": 3,
+   "w": 0,
+   "d": 1,
+   "l": 2,
+   "gf": 2,
+   "ga": 10,
+   "gd": -8,
+   "pts": 1
+  },
+  "Brazil": {
+   "pos": 1,
+   "pld": 3,
+   "w": 2,
    "d": 1,
    "l": 0,
    "gf": 7,
    "ga": 1,
    "gd": 6,
-   "pts": 4
-  },
-  "Switzerland": {
-   "pos": 2,
-   "pld": 2,
-   "w": 1,
-   "d": 1,
-   "l": 0,
-   "gf": 5,
-   "ga": 2,
-   "gd": 3,
-   "pts": 4
-  },
-  "Bosnia and Herzegovina": {
-   "pos": 3,
-   "pld": 2,
-   "w": 0,
-   "d": 1,
-   "l": 1,
-   "gf": 2,
-   "ga": 5,
-   "gd": -3,
-   "pts": 1
-  },
-  "Qatar": {
-   "pos": 4,
-   "pld": 2,
-   "w": 0,
-   "d": 1,
-   "l": 1,
-   "gf": 1,
-   "ga": 7,
-   "gd": -6,
-   "pts": 1
-  },
-  "Brazil": {
-   "pos": 1,
-   "pld": 2,
-   "w": 1,
-   "d": 1,
-   "l": 0,
-   "gf": 4,
-   "ga": 1,
-   "gd": 3,
-   "pts": 4
+   "pts": 7
   },
   "Morocco": {
    "pos": 2,
-   "pld": 2,
-   "w": 1,
+   "pld": 3,
+   "w": 2,
    "d": 1,
    "l": 0,
-   "gf": 2,
-   "ga": 1,
-   "gd": 1,
-   "pts": 4
+   "gf": 6,
+   "ga": 3,
+   "gd": 3,
+   "pts": 7
   },
   "Scotland": {
    "pos": 3,
-   "pld": 2,
+   "pld": 3,
    "w": 1,
    "d": 0,
-   "l": 1,
+   "l": 2,
    "gf": 1,
-   "ga": 1,
-   "gd": 0,
+   "ga": 4,
+   "gd": -3,
    "pts": 3
   },
   "Haiti": {
    "pos": 4,
-   "pld": 2,
+   "pld": 3,
    "w": 0,
    "d": 0,
-   "l": 2,
-   "gf": 0,
-   "ga": 4,
-   "gd": -4,
+   "l": 3,
+   "gf": 2,
+   "ga": 8,
+   "gd": -6,
    "pts": 0
   },
   "United States": {
@@ -543,46 +543,46 @@
   },
   "Germany": {
    "pos": 1,
-   "pld": 2,
+   "pld": 3,
    "w": 2,
    "d": 0,
-   "l": 0,
-   "gf": 9,
-   "ga": 2,
-   "gd": 7,
+   "l": 1,
+   "gf": 10,
+   "ga": 4,
+   "gd": 6,
    "pts": 6
   },
   "Ivory Coast": {
    "pos": 2,
-   "pld": 2,
-   "w": 1,
+   "pld": 3,
+   "w": 2,
    "d": 0,
+   "l": 1,
+   "gf": 4,
+   "ga": 2,
+   "gd": 2,
+   "pts": 6
+  },
+  "Ecuador": {
+   "pos": 3,
+   "pld": 3,
+   "w": 1,
+   "d": 1,
    "l": 1,
    "gf": 2,
    "ga": 2,
    "gd": 0,
-   "pts": 3
-  },
-  "Ecuador": {
-   "pos": 3,
-   "pld": 2,
-   "w": 0,
-   "d": 1,
-   "l": 1,
-   "gf": 0,
-   "ga": 1,
-   "gd": -1,
-   "pts": 1
+   "pts": 4
   },
   "Curaçao": {
    "pos": 4,
-   "pld": 2,
+   "pld": 3,
    "w": 0,
    "d": 1,
-   "l": 1,
+   "l": 2,
    "gf": 1,
-   "ga": 7,
-   "gd": -6,
+   "ga": 9,
+   "gd": -8,
    "pts": 1
   },
   "Netherlands": {
@@ -805,8 +805,19 @@
    "gd": -3,
    "pts": 0
   },
-  "Portugal": {
+  "Colombia": {
    "pos": 1,
+   "pld": 2,
+   "w": 2,
+   "d": 0,
+   "l": 0,
+   "gf": 4,
+   "ga": 1,
+   "gd": 3,
+   "pts": 6
+  },
+  "Portugal": {
+   "pos": 2,
    "pld": 2,
    "w": 1,
    "d": 1,
@@ -816,26 +827,15 @@
    "gd": 5,
    "pts": 4
   },
-  "Colombia": {
-   "pos": 2,
-   "pld": 1,
-   "w": 1,
-   "d": 0,
-   "l": 0,
-   "gf": 3,
-   "ga": 1,
-   "gd": 2,
-   "pts": 3
-  },
   "DR Congo": {
    "pos": 3,
-   "pld": 1,
+   "pld": 2,
    "w": 0,
    "d": 1,
-   "l": 0,
+   "l": 1,
    "gf": 1,
-   "ga": 1,
-   "gd": 0,
+   "ga": 2,
+   "gd": -1,
    "pts": 1
   },
   "Uzbekistan": {
@@ -871,25 +871,25 @@
    "gd": 1,
    "pts": 4
   },
-  "Panama": {
-   "pos": 3,
-   "pld": 1,
-   "w": 0,
-   "d": 0,
-   "l": 1,
-   "gf": 0,
-   "ga": 1,
-   "gd": -1,
-   "pts": 0
-  },
   "Croatia": {
-   "pos": 4,
-   "pld": 1,
-   "w": 0,
+   "pos": 3,
+   "pld": 2,
+   "w": 1,
    "d": 0,
    "l": 1,
-   "gf": 2,
+   "gf": 3,
    "ga": 4,
+   "gd": -1,
+   "pts": 3
+  },
+  "Panama": {
+   "pos": 4,
+   "pld": 2,
+   "w": 0,
+   "d": 0,
+   "l": 2,
+   "gf": 0,
+   "ga": 2,
    "gd": -2,
    "pts": 0
   }
@@ -920,6 +920,18 @@
    "ag": 0
   },
   {
+   "home": "Czech Republic",
+   "away": "Mexico",
+   "hg": 0,
+   "ag": 3
+  },
+  {
+   "home": "South Africa",
+   "away": "South Korea",
+   "hg": 1,
+   "ag": 0
+  },
+  {
    "home": "Canada",
    "away": "Bosnia and Herzegovina",
    "hg": 1,
@@ -944,6 +956,18 @@
    "ag": 0
   },
   {
+   "home": "Switzerland",
+   "away": "Canada",
+   "hg": 2,
+   "ag": 1
+  },
+  {
+   "home": "Bosnia and Herzegovina",
+   "away": "Qatar",
+   "hg": 3,
+   "ag": 1
+  },
+  {
    "home": "Brazil",
    "away": "Morocco",
    "hg": 1,
@@ -966,6 +990,18 @@
    "away": "Haiti",
    "hg": 3,
    "ag": 0
+  },
+  {
+   "home": "Scotland",
+   "away": "Brazil",
+   "hg": 0,
+   "ag": 3
+  },
+  {
+   "home": "Morocco",
+   "away": "Haiti",
+   "hg": 4,
+   "ag": 2
   },
   {
    "home": "United States",
@@ -1014,6 +1050,18 @@
    "away": "Curaçao",
    "hg": 0,
    "ag": 0
+  },
+  {
+   "home": "Curaçao",
+   "away": "Ivory Coast",
+   "hg": 0,
+   "ag": 2
+  },
+  {
+   "home": "Ecuador",
+   "away": "Germany",
+   "hg": 2,
+   "ag": 1
   },
   {
    "home": "Netherlands",
@@ -1154,6 +1202,12 @@
    "ag": 0
   },
   {
+   "home": "Colombia",
+   "away": "DR Congo",
+   "hg": 1,
+   "ag": 0
+  },
+  {
    "home": "England",
    "away": "Croatia",
    "hg": 4,
@@ -1170,33 +1224,15 @@
    "away": "Ghana",
    "hg": 0,
    "ag": 0
+  },
+  {
+   "home": "Panama",
+   "away": "Croatia",
+   "hg": 0,
+   "ag": 1
   }
  ],
  "remaining_group": [
-  {
-   "home": "Czech Republic",
-   "away": "Mexico"
-  },
-  {
-   "home": "South Africa",
-   "away": "South Korea"
-  },
-  {
-   "home": "Switzerland",
-   "away": "Canada"
-  },
-  {
-   "home": "Bosnia and Herzegovina",
-   "away": "Qatar"
-  },
-  {
-   "home": "Scotland",
-   "away": "Brazil"
-  },
-  {
-   "home": "Morocco",
-   "away": "Haiti"
-  },
   {
    "home": "Turkey",
    "away": "United States"
@@ -1204,14 +1240,6 @@
   {
    "home": "Paraguay",
    "away": "Australia"
-  },
-  {
-   "home": "Curaçao",
-   "away": "Ivory Coast"
-  },
-  {
-   "home": "Ecuador",
-   "away": "Germany"
   },
   {
    "home": "Japan",
@@ -1255,19 +1283,11 @@
   },
   {
    "home": "Colombia",
-   "away": "DR Congo"
-  },
-  {
-   "home": "Colombia",
    "away": "Portugal"
   },
   {
    "home": "DR Congo",
    "away": "Uzbekistan"
-  },
-  {
-   "home": "Panama",
-   "away": "Croatia"
   },
   {
    "home": "Panama",
@@ -1278,6 +1298,12 @@
    "away": "Ghana"
   }
  ],
+ "confirmed_ko": {
+  "73": {
+   "home": "South Africa",
+   "away": "Canada"
+  }
+ },
  "bracket": {
   "73": {
    "home": {
