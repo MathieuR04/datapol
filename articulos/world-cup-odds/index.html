@@ -173,7 +173,7 @@
 
     <div class="lead">
       <p>Tomamos las <strong>cuotas de apuestas de cada partido</strong> que aún falta jugar y, a partir de ahí, simulamos el torneo <span id="nsims">decenas de miles de</span> veces. No partimos de "quién gana la Copa": eso lo <em>deducimos</em>. De cada selección obtenemos su probabilidad de llegar a cada ronda, contra quién jugaría y cuál es su camino más probable al título.</p>
-      <p>Para los partidos de grupos usamos las cuotas reales del mercado. Para los cruces de eliminación (que todavía no existen y nadie cotiza) usamos un <strong>ranking de poder</strong> que combina la fuerza histórica (Elo) con el rendimiento dentro de este Mundial. <a href="#metodologia">Cómo funciona →</a></p>
+      <p>Para los partidos ya confirmados (grupos y los cruces que ya tienen rival) usamos las cuotas reales del mercado. Para los cruces todavía hipotéticos, que nadie cotiza, usamos un <strong>ranking de poder</strong> que combina la fuerza histórica (Elo) con el rendimiento dentro de este Mundial. <a href="#metodologia">Cómo funciona →</a></p>
     </div>
 
     <h2 class="sec">Favoritos al título</h2>
@@ -196,7 +196,7 @@
     <table class="dt" id="power-table"></table>
 
     <h2 class="sec">Las cuotas que alimentan el modelo</h2>
-    <div class="sec-sub">Probabilidades de cada partido de grupos que falta jugar, derivadas de las cuotas de DraftKings (vía ESPN) y sin el margen de la casa. Estas son las únicas cuotas de mercado que entran al modelo.</div>
+    <div class="sec-sub">Probabilidades de cada partido por jugar que el mercado ya cotiza, derivadas de las cuotas de DraftKings (vía ESPN) y sin el margen de la casa. Son las únicas cuotas de mercado que entran al modelo.</div>
     <div id="matches"></div>
 
     <h2 class="sec" id="metodologia">Metodología</h2>
@@ -395,8 +395,9 @@
   // ---- match odds ----
   function renderMatches(){
     const byDate={};
-    const sameGroup=m=>F.teams[m.home]&&F.teams[m.away]&&F.teams[m.home].group===F.teams[m.away].group;
-    ODDS.matches.filter(sameGroup).forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m);});
+    // every upcoming match the market prices (group or already-set knockout tie)
+    const known=m=>F.teams[m.home]&&F.teams[m.away];
+    ODDS.matches.filter(known).forEach(m=>{(byDate[m.date]=byDate[m.date]||[]).push(m);});
     const dfmt=d=>{const [y,mo,da]=d.split("-");const M=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
       return `${+da} ${M[+mo-1]}`;};
     let html="";

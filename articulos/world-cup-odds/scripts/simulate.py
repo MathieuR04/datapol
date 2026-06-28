@@ -102,6 +102,15 @@ class Sim:
             lam["|".join(sorted([r["home"], r["away"]]))] = {r["home"]: r["lam_home"],
                                                              r["away"]: r["lam_away"]}
         self.pair_lambda = lam          # market goal model for ANY priced match
+        # actual results of knockout matches already played (cross-group, decisive)
+        self.played_ko = {}
+        for m in tour["played"]:
+            h, a = m["home"], m["away"]
+            if self.team_group.get(h) != self.team_group.get(a):
+                if m["hg"] > m["ag"]:
+                    self.played_ko["|".join(sorted([h, a]))] = h
+                elif m["ag"] > m["hg"]:
+                    self.played_ko["|".join(sorted([h, a]))] = a
         self.rem_by_group = {g: [] for g in self.groups}
         for m in tour["remaining_group"]:
             g = self.team_group[m["home"]]
@@ -223,7 +232,8 @@ class Sim:
             h, a = part("home"), part("away")
             if track:
                 track(rnd, mid, h, a)
-            w = self.knockout_winner(h, a, rng)
+            pk = self.played_ko.get("|".join(sorted([h, a])))
+            w = pk if pk else self.knockout_winner(h, a, rng)
             win_of[mid] = w
             nxt = NEXT[rnd]
             if RANK[nxt] > RANK[reached[w]]:
@@ -286,7 +296,7 @@ def main():
         info["path"] = path
         teams_info[t] = info
 
-    proj = build_projected_bracket(tour, slot_occ, rating, n)
+    proj = build_projected_bracket(tour, slot_occ, rating, n, sim.played_ko)
     ranking = sorted(teams, key=lambda t: rating[t], reverse=True)
     power = [dict(team=t, flag=tour["teams"][t]["flag"], code=tour["teams"][t]["code"],
                   rating=round(rating[t]), elo=round(elo[t]), form=round(form[t]))
@@ -309,7 +319,8 @@ def main():
               file=sys.stderr)
     print("wrote", OUT, file=sys.stderr)
 
-def build_projected_bracket(tour, slot_occ, rating, n):
+def build_projected_bracket(tour, slot_occ, rating, n, played_ko=None):
+    played_ko = played_ko or {}
     bracket, round_of = tour["bracket"], tour["round_of"]
     # unique greedy assignment: a team can occupy only one R32 slot. Resolve the
     # most-confident slots first, each taking its top still-available team.
@@ -330,9 +341,10 @@ def build_projected_bracket(tour, slot_occ, rating, n):
             s = mt[side]
             return win_of.get(str(s["match"])) if s.get("type") == "M" else occ.get((mid, side))
         h, a = part("home"), part("away")
-        w = h if (h and a and rating.get(h, 0) >= rating.get(a, 0)) else (a or h)
+        pk = played_ko.get("|".join(sorted([h, a]))) if (h and a) else None
+        w = pk or (h if (h and a and rating.get(h, 0) >= rating.get(a, 0)) else (a or h))
         win_of[mid] = w
-        out[mid] = dict(round=round_of[mid], home=h, away=a, winner=w,
+        out[mid] = dict(round=round_of[mid], home=h, away=a, winner=w, played=bool(pk),
                         hc=confirmed((mid, "home")), ac=confirmed((mid, "away")))
     return out
 
