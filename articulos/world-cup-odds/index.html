@@ -51,22 +51,14 @@
     .fav .bar{ height:4px; border-radius:3px; background:var(--sand); margin-top:.5rem; overflow:hidden; }
     .fav .bar > i{ display:block; height:100%; background:var(--terra); }
 
-    /* bracket */
-    .bracket-wrap{ overflow-x:auto; padding-bottom:.6rem; }
-    .bracket{ display:flex; gap:14px; min-width:1060px; align-items:stretch; }
-    .bcol{ display:flex; flex-direction:column; justify-content:space-around; gap:10px; flex:1; min-width:130px; }
-    .bcol-h{ font-size:9px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); text-align:center; margin-bottom:.2rem; font-weight:700; }
-    .bm{ background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
-    .bteam{ display:flex; align-items:center; gap:.4rem; padding:.32rem .5rem; font-size:11.5px; }
-    .bteam + .bteam{ border-top:1px solid var(--border); }
-    .bteam.win{ background:rgba(196,96,58,.10); font-weight:600; }
-    .bteam.conf{ box-shadow:inset 2px 0 0 var(--good); }
-    .bteam .lock{ margin-left:auto; color:var(--good); font-size:10px; font-weight:700; }
-    .bteam .nm{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .champ-col{ justify-content:center; }
-    .champ-box{ background:var(--text); color:var(--bg); border-radius:10px; padding:1rem .8rem; text-align:center; }
-    .champ-box .cl{ font-size:9px; letter-spacing:.14em; text-transform:uppercase; opacity:.7; }
-    .champ-box .cn{ font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:.03em; margin-top:.3rem; line-height:1; }
+    /* radial bracket */
+    .bracket-radial{ display:flex; flex-direction:column; align-items:center; }
+    .bracket-radial svg{ width:100%; max-width:600px; height:auto; display:block; }
+    .bracket-radial .link{ fill:none; stroke:rgba(26,18,9,.45); stroke-width:1.3; stroke-linejoin:round; stroke-linecap:round; }
+    .bracket-radial .link.hot{ stroke:var(--terra); stroke-width:2.6; }
+    .bracket-radial .node{ fill:rgba(26,18,9,.55); }
+    .champ-cap{ margin-top:.8rem; font-size:13px; font-weight:600; display:flex; gap:.45rem; align-items:center; color:var(--text); }
+    .champ-cap .flag{ width:1.5em; height:1.05em; }
 
     /* team explorer */
     .te-controls{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-bottom:1.2rem; }
@@ -181,8 +173,8 @@
     <div class="fav-grid" id="favs"><div class="loading">Cargando datos…</div></div>
 
     <h2 class="sec">El bracket más probable</h2>
-    <div class="sec-sub">El cruce más frecuente en cada llave, de los dieciseisavos a la final. No es una predicción única, sino el escenario modal: cada llave muestra al equipo que más veces la ocupa.</div>
-    <div class="bracket-wrap"><div class="bracket" id="bracket"><div class="loading">Cargando bracket…</div></div></div>
+    <div class="sec-sub">El cruce más frecuente en cada llave, desde los dieciseisavos (anillo exterior) hasta el campeón en el centro. No es una predicción única, sino el escenario modal: cada llave muestra al equipo que más veces la ocupa. El borde verde marca a los ya clasificados; el camino resaltado es la ruta del campeón proyectado.</div>
+    <div class="bracket-radial" id="bracket"><div class="loading">Cargando bracket…</div></div>
 
     <h2 class="sec">Explorador de selecciones</h2>
     <div class="sec-sub">Elige una selección para ver sus probabilidades por ronda, su camino más probable al título y contra quién jugaría en cada instancia.</div>
@@ -267,7 +259,7 @@
     const nf = (F.n_sims||0).toLocaleString("es");
     document.getElementById("nsims").textContent = nf;
     document.getElementById("nsims2").textContent = nf;
-    renderFavs(); renderBracket(); renderTeamSelect(); renderPower(); renderMatches();
+    renderFavs(); renderBracketRadial(); renderTeamSelect(); renderPower(); renderMatches();
   }
 
   // ---- favourites ----
@@ -283,32 +275,74 @@
       </div>`).join("");
   }
 
-  // ---- bracket ----
-  function renderBracket(){
+  // ---- radial bracket ----
+  // child-match topology (fixed 2026 layout); leaves are the R32 matches 73-88
+  const CH={104:[101,102],101:[97,98],102:[99,100],97:[89,90],98:[93,94],99:[91,92],100:[95,96],
+            89:[74,77],90:[73,75],91:[76,78],92:[79,80],93:[83,84],94:[81,82],95:[86,88],96:[85,87]};
+  const RAD={R32:292,R16:233,QF:174,SF:115};      // radius per round (px); leaves 350, champion 0
+  const CX=400, CY=400, RLEAF=350;
+  const polar=(a,r)=>[CX+r*Math.cos(a), CY+r*Math.sin(a)];
+
+  function renderBracketRadial(){
     const B=F.bracket;
-    const cols=[["Dieciseisavos",[74,77,73,75,83,84,81,82,76,78,79,80,86,88,85,87]],
-                ["Octavos",[89,90,93,94,91,92,95,96]],["Cuartos",[97,98,99,100]],
-                ["Semis",[101,102]],["Final",[104]]];
-    let html="";
-    for(const [name,ids] of cols){
-      html+=`<div class="bcol"><div class="bcol-h">${name}</div>`;
-      for(const id of ids){
-        const m=B[id]; if(!m) continue;
-        html+=`<div class="bm">${bteam(m.home,m.winner,m.hc)}${bteam(m.away,m.winner,m.ac)}</div>`;
-      }
-      html+=`</div>`;
-    }
     const champ=B[104]?B[104].winner:null;
-    html+=`<div class="bcol champ-col"><div class="bcol-h">Campeón</div>
-      <div class="champ-box"><div class="cl">Campeón proyectado</div>
-      <div class="cn">${champ?flag(champ)+" "+esn(champ):"·"}</div></div></div>`;
-    document.getElementById("bracket").innerHTML=html;
+    let leafIdx=0; const step=2*Math.PI/32, a0=-Math.PI/2+step/2;
+    function build(mid){
+      const m=B[mid]; const node={mid, round:m.round, win:m.winner, played:m.played};
+      if(CH[mid]){
+        const c1=build(CH[mid][0]), c2=build(CH[mid][1]);
+        node.children=[c1,c2]; node.angle=(c1.angle+c2.angle)/2;
+      }else{ // R32 match -> two team leaves
+        const home={leaf:true,team:m.home,conf:m.hc,angle:a0+(leafIdx++)*step};
+        const away={leaf:true,team:m.away,conf:m.ac,angle:a0+(leafIdx++)*step};
+        node.children=[home,away]; node.angle=(home.angle+away.angle)/2;
+      }
+      node.radius=(mid==104)?0:RAD[node.round];
+      return node;
+    }
+    const root=build(104);
+    const isHot=c=> champ && (c.leaf ? c.team===champ : c.win===champ);
+
+    let links="", nodeFlags="", leafFlags="";
+    (function walk(node){
+      if(node.children){
+        for(const c of node.children){
+          const cr=c.leaf?RLEAF:c.radius, hot=isHot(c)?" hot":"";
+          const [cx,cy]=polar(c.angle,cr);
+          if(node.mid==104){                       // champion centre -> semifinal nodes
+            links+=`<path class="link${hot}" d="M${CX},${CY} L${cx.toFixed(1)},${cy.toFixed(1)}"/>`;
+          }else{
+            const [bx,by]=polar(c.angle,node.radius), [nx,ny]=polar(node.angle,node.radius);
+            links+=`<path class="link${hot}" d="M${cx.toFixed(1)},${cy.toFixed(1)} L${bx.toFixed(1)},${by.toFixed(1)} L${nx.toFixed(1)},${ny.toFixed(1)}"/>`;
+          }
+          walk(c);
+        }
+      }
+      if(node.leaf){                               // outer ring: the 32 R32 teams
+        const [cx,cy]=polar(node.angle,RLEAF);
+        leafFlags+=drawFlag(node.team,cx,cy,16,node.conf?"conf":"normal");
+      }else{                                       // inner node: projected winner of that match
+        const isC=node.mid==104;
+        const [cx,cy]=isC?[CX,CY]:polar(node.angle,node.radius);
+        const ring=node.played?"conf":(isC?"champ":"normal");
+        nodeFlags+=drawFlag(node.win,cx,cy,isC?20:13,ring);
+      }
+    })(root);
+
+    const trophy=`<text x="${CX}" y="${(CY-31)}" font-size="17" text-anchor="middle" dominant-baseline="central">🏆</text>`;
+    const svg=`<svg viewBox="0 0 800 800" role="img" aria-label="Bracket del Mundial 2026">
+      ${links}${nodeFlags}${leafFlags}${trophy}
+    </svg>`;
+    const cap=champ?`<div class="champ-cap">Campeón proyectado: ${flag(champ)} ${esn(champ)}</div>`:"";
+    document.getElementById("bracket").innerHTML=svg+cap;
   }
-  function bteam(n,win,conf){
-    if(!n) return `<div class="bteam"><span class="nm" style="color:var(--dim)">·</span></div>`;
-    const cls=`bteam ${n===win?'win':''} ${conf?'conf':''}`;
-    const tip=conf?' title="Clasificación confirmada">':'>';
-    return `<div class="${cls}"${tip}${flag(n)}<span class="nm">${esn(n)}</span>${conf?'<span class="lock">✓</span>':''}</div>`;
+  function drawFlag(team,cx,cy,r,ring){
+    if(!team) return `<circle class="node" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="2.6"/>`;
+    const url=ISO[team]?`https://flagcdn.com/w80/${ISO[team]}.png`:"";
+    const img=url?`<image href="${url}" x="${(cx-r).toFixed(1)}" y="${(cy-r).toFixed(1)}" width="${2*r}" height="${2*r}" preserveAspectRatio="xMidYMid slice" style="clip-path:circle(${r}px at ${r}px ${r}px)"/>`:"";
+    const col=ring=="conf"?"var(--good)":ring=="champ"?"var(--terra)":"rgba(26,18,9,.35)";
+    const sw=ring=="normal"?1.2:2.6;
+    return `<g><title>${esn(team)||team}${ring=="conf"?" · confirmado":""}</title>${img}<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="none" stroke="${col}" stroke-width="${sw}"/></g>`;
   }
 
   // ---- team explorer ----
