@@ -96,6 +96,11 @@
     table.dt td{ padding:.45rem .5rem; border-bottom:1px solid var(--border); font-variant-numeric:tabular-nums; }
     table.dt td.tm{ font-weight:600; }
     table.dt tr:hover td{ background:rgba(217,201,180,.18); }
+    table.dt tr.elim td{ opacity:.42; }
+    table.dt tr.elim td.tm{ font-weight:500; }
+    table.dt tr.elim:hover td{ opacity:.7; }
+    table.dt tr.elim-head td{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
+      color:var(--muted); padding-top:1rem; border-bottom:1px solid var(--border); }
     .form-pos{ color:var(--good); font-weight:600; } .form-neg{ color:var(--terra); font-weight:600; }
     .pct{ font-variant-numeric:tabular-nums; }
     .odds-cell{ display:inline-block; min-width:34px; text-align:center; }
@@ -415,15 +420,30 @@
   }
 
   // ---- power ranking ----
+  function aliveSet(){
+    // alive = qualified to the knockout (in an R32 tie) and not yet beaten in a played KO
+    const B=F.bracket, qual=new Set(), losers=new Set();
+    for(let mid=73;mid<=88;mid++){const m=B[mid]; if(m){qual.add(m.home);qual.add(m.away);}}
+    Object.values(B).forEach(m=>{ if(m.played&&m.home&&m.away) losers.add(m.winner===m.home?m.away:m.home); });
+    const a={}; Object.keys(F.teams).forEach(t=>{ a[t]=qual.has(t)&&!losers.has(t); });
+    return a;
+  }
   function renderPower(){
-    const rows=F.power.map((p,i)=>{
+    const alive=aliveSet();
+    const prow=(p,i,dim)=>{
       const fc=p.form>0?`<span class="form-pos">+${p.form}</span>`:(p.form<0?`<span class="form-neg">${p.form}</span>`:"0");
       const champ=F.teams[p.team].survival.champion;
-      return `<tr><td>${i+1}</td><td class="tm">${flag(p.team)} ${esn(p.team)}</td>
+      return `<tr class="${dim?'elim':''}"><td>${i+1}</td><td class="tm">${flag(p.team)} ${esn(p.team)}</td>
         <td><strong>${p.rating}</strong></td><td>${p.elo}</td><td>${fc}</td>
-        <td class="pct">${pct1(champ)}</td></tr>`;}).join("");
+        <td class="pct">${dim?'—':pct1(champ)}</td></tr>`;};
+    const live=F.power.filter(p=>alive[p.team]), out=F.power.filter(p=>!alive[p.team]);
+    let body=live.map((p,i)=>prow(p,i,false)).join("");
+    if(out.length){
+      body+=`<tr class="elim-head"><td colspan="6">Eliminadas · ${out.length}</td></tr>`;
+      body+=out.map((p,i)=>prow(p,i,true)).join("");
+    }
     document.getElementById("power-table").innerHTML=
-      `<thead><tr><th>#</th><th>Selección</th><th>Poder</th><th>Elo</th><th>Forma</th><th>Campeón</th></tr></thead><tbody>${rows}</tbody>`;
+      `<thead><tr><th>#</th><th>Selección</th><th>Poder</th><th>Elo</th><th>Forma</th><th>Campeón</th></tr></thead><tbody>${body}</tbody>`;
   }
 
   // ---- match odds ----
