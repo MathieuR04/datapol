@@ -35,6 +35,7 @@ SCRIPT_DIR = Path(__file__).parent
 PROJECT    = SCRIPT_DIR.parent
 CSV_PATH   = PROJECT / "data" / "erm2026_candidatos.csv"
 EG_CSV     = PROJECT / "data" / "eg2026_candidatos.csv"
+ALC_CSV    = PROJECT / "data" / "alcaldes_2022.csv"
 OUT_PATH   = PROJECT / "buscador" / "data" / "candidatos.json"
 
 # Second output: per-party list-count table for the standalone article
@@ -46,10 +47,15 @@ PARTIDOS_PATH = PROJECT.parent / "partidos-erm-2026" / "data" / "partidos.json"
 # articulos/candidatos-eg-erm-2026/. Joins the two CSVs on normalized DNI.
 REPITEN_PATH = PROJECT.parent / "candidatos-eg-erm-2026" / "data" / "repeticiones.json"
 
+# Fourth output: sitting 2022 mayors re-installing themselves as posición-1 regidor
+# (teniente alcalde) in their own circunscripción in ERM2026. Joins the ERM CSV to
+# data/alcaldes_2022.csv on normalized DNI + same circunscripción.
+TENIENTES_PATH = PROJECT.parent / "tenientes-alcalde-erm-2026" / "data" / "tenientes.json"
+
 # Every derived artifact this build (over)writes. The auto-publisher in
 # scrape_erm2026.py stages exactly these (plus the CSVs), so adding an output here
 # is enough to get it committed — nothing is missed by reading data another way.
-OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH]
+OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH]
 
 # Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
 # decided in the frontend — no per-party color map here.
@@ -242,6 +248,96 @@ def build_repeticiones() -> dict:
     }
 
 
+# ── 2022 sitting mayors running for posición-1 regidor (teniente alcalde) ─────
+def _ndni2(s):
+    """DNI normalization safe for leading zeros: never numeric-coerce a string
+    with leading zeros away. Strip whitespace; drop a trailing '.0' float artifact;
+    strip leading zeros to a canonical comparable key."""
+    s = (s or "").strip().split(".")[0]
+    if not s or s in ("nan", "None"):
+        return None
+    return s.lstrip("0") or "0"
+
+
+def _ntxt(s):
+    """Accent/case-insensitive territory key for the circunscripción join."""
+    s = unicodedata.normalize("NFKD", (s or "").strip().upper())
+    return "".join(c for c in s if not unicodedata.combining(c))
+
+
+def build_tenientes() -> dict:
+    """Sitting 2022 mayors who, in ERM2026, take the posición-1 regidor slot (which
+    by law IS the teniente alcalde / first successor) on a list in their OWN
+    circunscripción — instead of running for alcalde. Level-aware join:
+      · REGIDOR DISTRITAL pos 1  → 2022 distrital mayor of that exact (reg,prov,dist)
+      · REGIDOR PROVINCIAL pos 1 → 2022 provincial mayor of that (reg,prov)
+        (provincial mayors carry a blank `distrito` in alcaldes_2022.csv)
+    A 2022 distrital mayor moving up to a provincial council is a DIFFERENT
+    circunscripción and is intentionally excluded."""
+    # 2022 mayors, split by level and keyed by (dni, territory)
+    prov22, dist22 = {}, {}
+    with open(ALC_CSV, newline="", encoding="utf-8-sig") as f:
+        for a in csv.DictReader(f):
+            d = _ndni2(a["dni"])
+            if not d:
+                continue
+            reg, prov, dist = _ntxt(a["region"]), _ntxt(a["provincia"]), _ntxt(a["distrito"])
+            if dist == "":                       # provincial mayor (cercado)
+                prov22[(d, reg, prov)] = a
+            else:                                # distrital mayor
+                dist22[(d, reg, prov, dist)] = a
+
+    casos = []
+    with open(CSV_PATH, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["cargo"] not in ("REGIDOR PROVINCIAL", "REGIDOR DISTRITAL"):
+                continue
+            if str(r["posicion"]).strip() != "1":
+                continue
+            d = _ndni2(r["dni"])
+            if not d:
+                continue
+            reg, prov, dist = _ntxt(r["departamento"]), _ntxt(r["provincia"]), _ntxt(r["distrito"])
+            if r["cargo"] == "REGIDOR DISTRITAL":
+                m = dist22.get((d, reg, prov, dist))
+                nivel = "distrital"
+            else:
+                m = prov22.get((d, reg, prov))
+                nivel = "provincial"
+            if not m:
+                continue
+            org22 = (m.get("organizacion_politica") or "").strip()
+            org26 = (r["organizacion"] or "").strip()
+            casos.append({
+                "dni":       r["dni"],
+                "nombre":    r["candidato"],
+                "nivel":     nivel,
+                "region":    r["departamento"],
+                "provincia": r["provincia"],
+                "distrito":  r["distrito"],
+                "org_2026":  org26,
+                "estado":    r["estado_lista"],
+                "org_2022":  org22,
+                "switch":    bool(org22) and _na(org22) != _na(org26),
+            })
+
+    casos.sort(key=lambda c: (c["region"], c["provincia"], c["distrito"], c["nombre"]))
+    por_region = Counter(c["region"] for c in casos)
+    n_mismo  = sum(1 for c in casos if c["org_2022"] and not c["switch"])
+    n_switch = sum(1 for c in casos if c["org_2022"] and c["switch"])
+    return {
+        "generado":     date.today().isoformat(),
+        "total":        len(casos),
+        "n_provincial": sum(1 for c in casos if c["nivel"] == "provincial"),
+        "n_distrital":  sum(1 for c in casos if c["nivel"] == "distrital"),
+        "n_mismo_partido": n_mismo,
+        "n_cambio_partido": n_switch,
+        "por_region":   [{"region": k, "n": n} for k, n in
+                         sorted(por_region.items(), key=lambda kv: (-kv[1], kv[0]))],
+        "casos":        casos,
+    }
+
+
 def _write_json(path: Path, data: dict):
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".json.tmp")
@@ -270,6 +366,12 @@ def main():
         _write_json(REPITEN_PATH, rep)
         print(f"  build_finder_json: {rep['n_repiten']} candidatos repiten EG↔ERM → "
               f"{REPITEN_PATH.name}")
+
+    if ALC_CSV.exists():
+        ten = build_tenientes()
+        _write_json(TENIENTES_PATH, ten)
+        print(f"  build_finder_json: {ten['total']} alcaldes 2022 → teniente alcalde "
+              f"({ten['n_provincial']} prov / {ten['n_distrital']} dist) → {TENIENTES_PATH.name}")
 
 
 if __name__ == "__main__":

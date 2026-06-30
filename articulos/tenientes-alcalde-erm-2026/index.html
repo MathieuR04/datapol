@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Los alcaldes que se postulan a teniente alcalde de sí mismos — ERM 2026 — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Los alcaldes que se postulan a teniente alcalde de sí mismos — ERM 2026">
+  <meta property="og:description" content="130 alcaldes electos en 2022 no se postulan a la reelección como alcaldes: toman el puesto de regidor número 1 —que por ley es el teniente alcalde, primero en la línea de sucesión— en una lista de su propia jurisdicción para las ERM 2026.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/tenientes-alcalde-erm-2026/">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    .article { max-width: 760px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body p:last-child { margin-bottom: 0; }
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.05em;
+      color: var(--text); margin: 2.2em 0 0.7em; padding-top: 0.2em; border-top: 1.5px solid var(--border);
+    }
+
+    /* Key stats row */
+    .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.8em 0; }
+    .stat-box { background: var(--text); color: var(--sand); padding: 0.9rem 1rem; border-radius: 3px; text-align: center; }
+    .stat-box-num { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 0.04em; line-height: 1; color: #fff; }
+    .stat-box-label { font-size: 10px; line-height: 1.45; opacity: 0.75; margin-top: 0.3rem; }
+
+    /* Inline highlight */
+    .highlight-box {
+      border-left: 3px solid var(--terra); padding: 0.5rem 0 0.5rem 1.1rem; margin: 1.6em 0;
+      background: rgba(196,96,58,0.06); border-radius: 0 3px 3px 0;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: 14px; line-height: 1.7; }
+
+    /* EDA bars */
+    .eda { margin: 1.6em 0; }
+    .eda-row { display: grid; grid-template-columns: 130px 1fr 38px; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; font-size: 12.5px; }
+    .eda-label { color: var(--text); text-align: right; font-weight: 500; }
+    .eda-track { background: var(--sand); border-radius: 2px; height: 16px; overflow: hidden; }
+    .eda-fill { background: var(--terra); height: 100%; border-radius: 2px; }
+    .eda-num { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+    .split-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1.6em 0; }
+    .split-card { border: 1px solid var(--border); border-radius: 4px; padding: 0.9rem 1rem; }
+    .split-card .n { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 30px; color: var(--terra); line-height: 1; }
+    .split-card .l { font-size: 11px; color: var(--muted); margin-top: 0.25rem; line-height: 1.4; }
+
+    /* Browser (centerpiece) */
+    .browser { margin: 1.5em 0 1em; }
+    .browser-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
+    .browser-controls input, .browser-controls select {
+      font-family: inherit; font-size: 13px; color: var(--text); background: #fff;
+      border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 0.7rem;
+    }
+    .browser-controls input { flex: 1 1 200px; }
+    .browser-count { font-size: 11px; color: var(--muted); margin-bottom: 0.6rem; }
+
+    .casos-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .casos-table thead th {
+      position: sticky; top: 0; background: var(--bg); text-align: left;
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); padding: 0.5rem 0.55rem; border-bottom: 2px solid var(--text); white-space: nowrap;
+    }
+    .casos-table tbody td { padding: 0.6rem 0.55rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .casos-table tbody tr:hover { background: rgba(196,96,58,0.05); }
+    .casos-name { font-weight: 600; color: var(--text); }
+    .casos-loc { color: var(--muted); font-size: 11.5px; line-height: 1.4; }
+    .casos-org { color: var(--text); font-size: 11.5px; line-height: 1.4; }
+    .casos-org .org22 { color: var(--muted); }
+    .tablewrap { max-height: 620px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; }
+
+    .badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.12rem 0.4rem; border-radius: 3px; white-space: nowrap; }
+    .badge-prov { background: #e7d9c2; color: #6b4a2e; }
+    .badge-dist { background: var(--sand); color: #5a4a36; }
+    .badge-est { background: #ece3d4; color: var(--muted); font-weight: 600; }
+
+    .footnotes { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.6; color: var(--muted); }
+    .footnotes p { margin-bottom: 0.5em; }
+    .article-footer { margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 11px; color: var(--muted); }
+    .article-footer a { color: var(--muted); text-decoration: none; font-weight: 600; letter-spacing: 0.06em; font-size: 10px; text-transform: uppercase; }
+    .article-footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 32px; }
+      .article-body { font-size: 14px; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .stat-box-num { font-size: 30px; }
+      .eda-row { grid-template-columns: 96px 1fr 34px; }
+      .casos-table { font-size: 11.5px; }
+      .casos-table thead th:nth-child(4) { display: none; }
+      .casos-table tbody td:nth-child(4) { display: none; }
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-26RZM28VBS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-26RZM28VBS');
+  </script>
+</head>
+<body>
+
+  <!-- Nav -->
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · Perú 2026</div>
+    <h1 class="article-title">Los alcaldes que se postulan a teniente alcalde de sí mismos</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span id="byline-date">30 de junio, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>5 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+
+      <p>En el Perú, el <strong>regidor número 1</strong> de una lista municipal no es un regidor cualquiera. La ley lo designa <strong>teniente alcalde</strong>: es quien preside el concejo en ausencia del alcalde y, sobre todo, <strong>el primero en la línea de sucesión</strong>. Si la alcaldía queda vacante o el alcalde es suspendido, el teniente alcalde asume el cargo. Es, en los hechos, el sucesor designado por la propia lista.</p>
+
+      <p>Eso vuelve interesante un patrón que aparece al cruzar los <strong>alcaldes electos en 2022</strong> con las candidaturas de las Elecciones Regionales y Municipales 2026: hay alcaldes en ejercicio que <strong>no se postulan a la reelección como alcaldes</strong>, sino que toman el puesto de regidor número 1 —el de teniente alcalde— en una lista de <strong>su propia jurisdicción</strong>. No es "bajar al concejo": es colocarse como vicealcalde y sucesor en su mismo municipio, en otra fórmula.</p>
+
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-total">130</div>
+          <div class="stat-box-label">alcaldes de 2022 postulan a regidor #1 (teniente alcalde) en su propia jurisdicción</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-dist">109</div>
+          <div class="stat-box-label">a nivel distrital — su mismo distrito</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-prov">21</div>
+          <div class="stat-box-label">a nivel provincial — su misma provincia</div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <p><strong>Cómo leerlo.</strong> Cada caso es una persona que fue elegida alcalde (provincial o distrital) en 2022 y que en 2026 figura en la <strong>posición 1 de regidores</strong> de una lista en la misma circunscripción que gobierna. Solo se cuentan los que repiten en su <em>propio</em> territorio: un alcalde que postula a regidor en otro distrito <em>no</em> entra. El cruce se hace por DNI y por coincidencia exacta de región, provincia y —para el nivel distrital— distrito.</p>
+      </div>
+
+      <h2>Provincial vs. distrital</h2>
+      <p>La gran mayoría de los casos son alcaldes <strong>distritales</strong> que toman la primera regiduría de su propio distrito. A nivel provincial el fenómeno es más raro, pero existe: alcaldes provinciales que se ubican como regidor #1 —teniente alcalde provincial— de su propia provincia.</p>
+
+      <div class="split-strip" id="split-strip"></div>
+
+      <h2>Dónde se concentran</h2>
+      <p>Distribución de los casos por región. La concentración sigue, en buena medida, al número de municipios de cada departamento.</p>
+      <div class="eda" id="region-eda"></div>
+
+      <h2>Todos los casos, uno por uno</h2>
+      <p>La lista completa y consultable. Busca por nombre, distrito o partido; filtra por región y por nivel. Cada fila indica el municipio, la organización con la que postula en 2026 y el estado de la lista ante el JNE.</p>
+
+      <div class="browser">
+        <div class="browser-controls">
+          <input type="text" id="q" placeholder="Buscar nombre, distrito, provincia o partido…" autocomplete="off">
+          <select id="f-region"><option value="">Todas las regiones</option></select>
+          <select id="f-nivel">
+            <option value="">Provincial y distrital</option>
+            <option value="provincial">Solo provincial</option>
+            <option value="distrital">Solo distrital</option>
+          </select>
+        </div>
+        <div class="browser-count" id="count"></div>
+        <div class="tablewrap">
+          <table class="casos-table">
+            <thead>
+              <tr>
+                <th>Alcalde (2022)</th>
+                <th>Circunscripción</th>
+                <th>Nivel</th>
+                <th>Organización</th>
+                <th>Estado lista</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footnotes">
+      <p><strong>Datos:</strong> Jurado Nacional de Elecciones (JNE) — plataforma de candidatos ERM 2026, cruzada con los alcaldes provinciales y distritales electos en las ERM 2022. <strong>Datos al <span id="foot-date">30 de junio de 2026</span>.</strong></p>
+      <p><strong>Nota metodológica.</strong> Se identifican las candidaturas con cargo <em>Regidor Provincial</em> o <em>Regidor Distrital</em> en <strong>posición 1</strong> (que por ley es el teniente alcalde) y se cruzan, por DNI normalizado, con los alcaldes electos en 2022 en la <em>misma</em> circunscripción (región + provincia, y además distrito para el nivel distrital). Un alcalde distrital que postula a regidor provincial corresponde a otra circunscripción y queda excluido. Las listas de las ERM 2026 aún se siguen cargando en la plataforma del JNE, por lo que se trata de una fotografía parcial: el número de casos puede aumentar.</p>
+    </div>
+
+    <footer class="article-footer">
+      <a href="/articulos/">← Todos los artículos</a>
+      <span>© 2026 Datapol · Mathieu Rojas</span>
+    </footer>
+
+  </article>
+
+  <script>
+  const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const titulo = s => (s||"").toLowerCase().replace(/(^|[\s\/\-])([a-záéíóúñ])/g, (m,p,c)=>p+c.toUpperCase());
+
+  fetch('data/tenientes.json').then(r=>r.json()).then(d=>{
+    // Hero + dates
+    document.getElementById('s-total').textContent = d.total;
+    document.getElementById('s-dist').textContent  = d.n_distrital;
+    document.getElementById('s-prov').textContent  = d.n_provincial;
+    if (d.generado) {
+      const [y,m,dd] = d.generado.split('-').map(Number);
+      const txt = `${dd} de ${MESES[m-1]} de ${y}`;
+      document.getElementById('foot-date').textContent = txt;
+      document.getElementById('byline-date').textContent = `${dd} de ${MESES[m-1]}, ${y}`;
+    }
+
+    // Provincial / distrital split
+    document.getElementById('split-strip').innerHTML = `
+      <div class="split-card"><div class="n">${d.n_distrital}</div><div class="l">alcaldes <strong>distritales</strong> → regidor #1 de su distrito</div></div>
+      <div class="split-card"><div class="n">${d.n_provincial}</div><div class="l">alcaldes <strong>provinciales</strong> → regidor #1 de su provincia</div></div>`;
+
+    // Region EDA bars
+    const maxR = Math.max(...d.por_region.map(x=>x.n));
+    document.getElementById('region-eda').innerHTML = d.por_region.map(x=>`
+      <div class="eda-row">
+        <div class="eda-label">${titulo(x.region)}</div>
+        <div class="eda-track"><div class="eda-fill" style="width:${(x.n/maxR*100).toFixed(1)}%"></div></div>
+        <div class="eda-num">${x.n}</div>
+      </div>`).join('');
+
+    // Region filter options
+    const sel = document.getElementById('f-region');
+    [...new Set(d.casos.map(c=>c.region))].sort().forEach(r=>{
+      const o=document.createElement('option'); o.value=r; o.textContent=titulo(r); sel.appendChild(o);
+    });
+
+    // Browsable table
+    const tbody=document.getElementById('tbody'), count=document.getElementById('count');
+    const q=document.getElementById('q'), fR=document.getElementById('f-region'), fN=document.getElementById('f-nivel');
+    const norm = s => (s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+
+    function row(c){
+      const loc = c.nivel==='provincial'
+        ? `${titulo(c.provincia)} · prov.`
+        : `${titulo(c.distrito)} · ${titulo(c.provincia)}`;
+      const nivelBadge = c.nivel==='provincial'
+        ? `<span class="badge badge-prov">Provincial</span>`
+        : `<span class="badge badge-dist">Distrital</span>`;
+      const org = `<div>${titulo(c.org_2026)}</div>`;
+      return `<tr>
+        <td><div class="casos-name">${titulo(c.nombre)}</div></td>
+        <td><div class="casos-loc">${loc}<br>${titulo(c.region)}</div></td>
+        <td>${nivelBadge}</td>
+        <td><div class="casos-org">${org}</div></td>
+        <td><span class="badge badge-est">${titulo(c.estado)}</span></td>
+      </tr>`;
+    }
+
+    function render(){
+      const term=norm(q.value.trim()), reg=fR.value, niv=fN.value;
+      const rows=d.casos.filter(c=>{
+        if(reg && c.region!==reg) return false;
+        if(niv && c.nivel!==niv) return false;
+        if(term){
+          const hay=norm(`${c.nombre} ${c.distrito} ${c.provincia} ${c.region} ${c.org_2026}`);
+          if(!hay.includes(term)) return false;
+        }
+        return true;
+      });
+      tbody.innerHTML = rows.map(row).join('') || `<tr><td colspan="5" style="padding:1.4rem;text-align:center;color:var(--muted)">Sin resultados.</td></tr>`;
+      count.textContent = `${rows.length} de ${d.casos.length} casos`;
+    }
+    q.addEventListener('input',render); fR.addEventListener('change',render); fN.addEventListener('change',render);
+    render();
+  });
+  </script>
+
+</body>
+</html>
