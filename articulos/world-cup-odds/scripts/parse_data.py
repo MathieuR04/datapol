@@ -65,7 +65,9 @@ def main():
 
     # ---- 2. Matches (played / remaining group / confirmed knockout) ------
     team_group = {t: g for g, lst in groups.items() for t in lst}
+    DASH = "[–\\-−]"
     played, remaining_group, confirmed_ko = [], [], {}
+    played_ko_pairs = []          # cross-group results: (home, away, winner_team)
     for b in soup.find_all("div", class_="footballbox"):
         th, ts, ta = b.find("th", "fhome"), b.find("th", "fscore"), b.find("th", "faway")
         if not (th and ts and ta):
@@ -74,11 +76,20 @@ def main():
         home, away = strip_name(home), strip_name(away)
         if home not in standings or away not in standings:
             continue                                  # placeholder slot, e.g. "Winner Group A"
-        sm = re.match(r"^(\d+)[–\-](\d+)$", score)
+        # leading regulation/extra-time score, e.g. "2-1" or "1-1 (a.e.t.)"
+        sm = re.match(r"^(\d+)\s*" + DASH + r"\s*(\d+)", score)
         mm = re.match(r"^Match (\d+)$", score)
         if sm:
-            played.append(dict(home=home, away=away,
-                               hg=int(sm.group(1)), ag=int(sm.group(2))))
+            hg, ag = int(sm.group(1)), int(sm.group(2))
+            winner = home if hg > ag else away if ag > hg else None
+            if winner is None:                        # tie -> penalty shootout winner
+                pm = re.search(r"[Pp]enalt.*?(\d+)\s*" + DASH + r"\s*(\d+)", clean(b.get_text()))
+                if pm:
+                    ph, pa = int(pm.group(1)), int(pm.group(2))
+                    winner = home if ph > pa else away if pa > ph else None
+            played.append(dict(home=home, away=away, hg=hg, ag=ag, winner=winner))
+            if team_group[home] != team_group[away]:
+                played_ko_pairs.append((home, away, winner))
         elif mm:
             if team_group[home] == team_group[away]:
                 remaining_group.append(dict(home=home, away=away))
@@ -122,6 +133,27 @@ def main():
         104: (M(101), M(102)),
     }
     bracket = {str(k): dict(home=v[0], away=v[1]) for k, v in {**r32, **later}.items()}
+
+    # ---- 3b. Pin R32 ties already played (lost from confirmed_ko once scored) -
+    # Map each played cross-group result to its R32 match via the deterministic
+    # winner/runner-up slot (groups are decided), filling in the third-place side.
+    pos1 = {g: next((t for t in lst if standings[t]["pos"] == 1), None) for g, lst in groups.items()}
+    pos2 = {g: next((t for t in lst if standings[t]["pos"] == 2), None) for g, lst in groups.items()}
+    def slot_team(s):
+        return pos1.get(s["group"]) if s["type"] == "W" else pos2.get(s["group"]) if s["type"] == "R" else None
+    for mid, (hs, as_) in r32.items():
+        k = str(mid)
+        if k in confirmed_ko:
+            continue
+        ht, at = slot_team(hs), slot_team(as_)
+        known = {x for x in (ht, at) if x}
+        for h, a, _w in played_ko_pairs:
+            pair = {h, a}
+            if known and known <= pair:
+                confirmed_ko[k] = dict(home=ht or (pair - {at}).pop(),
+                                       away=at or (pair - {ht}).pop())
+                break
+
     round_of = {}
     for n in range(73, 89): round_of[str(n)] = "R32"
     for n in range(89, 97): round_of[str(n)] = "R16"

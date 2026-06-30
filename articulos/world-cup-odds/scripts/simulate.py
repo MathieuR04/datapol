@@ -81,6 +81,8 @@ class Sim:
         self.bracket = tour["bracket"]
         self.round_of = tour["round_of"]
         self.team_group = {t: tour["teams"][t]["group"] for t in tour["teams"]}
+        # actual knockout matchups already set (overrides slot resolution / 3rd-place matching)
+        self.confirmed_ko = tour.get("confirmed_ko", {})
 
         # third-place bracket slots: (match_id, side) -> allowed group letters
         self.tslots = {}
@@ -102,15 +104,16 @@ class Sim:
             lam["|".join(sorted([r["home"], r["away"]]))] = {r["home"]: r["lam_home"],
                                                              r["away"]: r["lam_away"]}
         self.pair_lambda = lam          # market goal model for ANY priced match
-        # actual results of knockout matches already played (cross-group, decisive)
+        # actual results of knockout matches already played (incl. penalty winners)
         self.played_ko = {}
         for m in tour["played"]:
             h, a = m["home"], m["away"]
             if self.team_group.get(h) != self.team_group.get(a):
-                if m["hg"] > m["ag"]:
-                    self.played_ko["|".join(sorted([h, a]))] = h
-                elif m["ag"] > m["hg"]:
-                    self.played_ko["|".join(sorted([h, a]))] = a
+                w = m.get("winner")
+                if not w:
+                    w = h if m["hg"] > m["ag"] else a if m["ag"] > m["hg"] else None
+                if w:
+                    self.played_ko["|".join(sorted([h, a]))] = w
         self.rem_by_group = {g: [] for g in self.groups}
         for m in tour["remaining_group"]:
             g = self.team_group[m["home"]]
@@ -229,7 +232,11 @@ class Sim:
             def part(side):
                 s = mt[side]
                 return win_of[str(s["match"])] if s.get("type") == "M" else resolve(s, (mid, side))
-            h, a = part("home"), part("away")
+            ck = self.confirmed_ko.get(mid)
+            if ck:                                  # actual matchup is known -> use it
+                h, a = ck["home"], ck["away"]
+            else:
+                h, a = part("home"), part("away")
             if track:
                 track(rnd, mid, h, a)
             pk = self.played_ko.get("|".join(sorted([h, a])))
@@ -321,6 +328,7 @@ def main():
 
 def build_projected_bracket(tour, slot_occ, rating, n, played_ko=None):
     played_ko = played_ko or {}
+    confirmed_ko = tour.get("confirmed_ko", {})
     bracket, round_of = tour["bracket"], tour["round_of"]
     # unique greedy assignment: a team can occupy only one R32 slot. Resolve the
     # most-confident slots first, each taking its top still-available team.
@@ -340,7 +348,11 @@ def build_projected_bracket(tour, slot_occ, rating, n, played_ko=None):
         def part(side):
             s = mt[side]
             return win_of.get(str(s["match"])) if s.get("type") == "M" else occ.get((mid, side))
-        h, a = part("home"), part("away")
+        ck = confirmed_ko.get(mid)
+        if ck:
+            h, a = ck["home"], ck["away"]
+        else:
+            h, a = part("home"), part("away")
         pk = played_ko.get("|".join(sorted([h, a]))) if (h and a) else None
         w = pk or (h if (h and a and rating.get(h, 0) >= rating.get(a, 0)) else (a or h))
         win_of[mid] = w
