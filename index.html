@@ -34,7 +34,7 @@
       --terra:   #c4603a;
       --sand:    #d9c9b4;
     }
-    html, body { height: 100%; overflow: hidden; background: var(--bg); }
+    html, body { background: var(--bg); }
     body { display: flex; flex-direction: column; font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: var(--text); }
 
     /* ── Hero ─────────────────────────────────────────────────────────────── */
@@ -88,13 +88,30 @@
       border-color: var(--text);
     }
 
+    /* ── Full-width section strip ────────────────────────────────────────── */
+    .section-strip {
+      margin: 0.75rem 0.75rem 0;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .section-strip .articles-header {
+      background: var(--text);
+      padding: 0.35rem 0.85rem 0.4rem;
+    }
+    .section-strip .articles-inner {
+      display: flex;
+    }
+    .section-strip .article-card {
+      border-bottom: none;
+    }
+
     /* ── Main two-column grid ─────────────────────────────────────────────── */
     .main {
       display: flex;
-      flex: 1;
-      min-height: 0;
       padding: 0.75rem;
       gap: 0.75rem;
+      height: 82vh;
     }
 
     /* Left — featured election (Peru) */
@@ -194,7 +211,7 @@
 
     /* ── Articles block ───────────────────────────────────────────────────── */
     .articles-block {
-      flex: 0 0 34%;
+      flex: 0 0 auto;
       min-height: 0;
       border: 1.5px solid var(--border);
       border-radius: 3px;
@@ -271,9 +288,12 @@
 
     /* ── Mobile ───────────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
-      html, body { overflow: auto; }
+      .section-strip { margin: 0.5rem 0.5rem 0; }
+      .section-strip .articles-inner { flex-direction: column; }
+      .section-strip .article-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .section-strip .article-card:last-child { border-bottom: none; }
       .hero-nav { flex-wrap: wrap; justify-content: center; }
-      .main { flex-direction: column; padding: 0.5rem; gap: 0.5rem; }
+      .main { flex-direction: column; padding: 0.5rem; gap: 0.5rem; height: auto; }
       .col-left { flex: none; }
       .col-right { gap: 0.5rem; }
       .articles-block { flex: none; }
@@ -338,6 +358,39 @@
     </div>
   </div>
 
+  <!-- ERM 2026 strip — full width, top of page -->
+  <div class="section-strip">
+    <div class="articles-header">
+      <div class="articles-label">ELECCIONES REGIONALES Y MUNICIPALES 2026 🇵🇪</div>
+    </div>
+    <div class="articles-inner">
+      <a class="article-card" href="/articulos/erm-2026-candidatos/buscador/">
+        <div class="article-tag">Herramienta</div>
+        <div class="article-title">Buscador de candidatos ERM 2026</div>
+        <div class="article-body">Más de 80 mil candidaturas en un solo lugar. Busca tu circunscripción y revisa cada lista.</div>
+        <div class="article-date">2 jul. 2026</div>
+      </a>
+      <a class="article-card" href="/articulos/tenientes-alcalde-erm-2026/">
+        <div class="article-tag">Análisis</div>
+        <div class="article-title">130 alcaldes que se repostulan como teniente alcalde</div>
+        <div class="article-body">Al igual que López Aliaga, 130 alcaldes electos en 2022 buscan reelegirse en su misma municipalidad.</div>
+        <div class="article-date">28 jun. 2026</div>
+      </a>
+      <a class="article-card" href="/articulos/candidatos-eg-erm-2026/">
+        <div class="article-tag">Análisis</div>
+        <div class="article-title">679 candidatos que saltan de las Generales a las Regionales</div>
+        <div class="article-body">202 postularon a la Presidencia, vicepresidencia o Senado; 18 ahora aspiran a una gobernación.</div>
+        <div class="article-date">26 jun. 2026</div>
+      </a>
+      <a class="article-card" href="/articulos/habemus-alcaldes-erm-2026/">
+        <div class="article-tag">Análisis</div>
+        <div class="article-title">Los alcaldes electos por default: una lista, cero rivales</div>
+        <div class="article-body">Circunscripciones donde solo hay una lista inscrita: su candidato a alcalde gana sin competencia.</div>
+        <div class="article-date">1 jul. 2026</div>
+      </a>
+    </div>
+  </div>
+
   <!-- Main grid -->
   <div class="main">
 
@@ -362,39 +415,6 @@
 
     <!-- Right: Articles + Colombia -->
     <div class="col-right">
-
-      <!-- ERM 2026: 4×1 -->
-      <div class="articles-block">
-        <div class="articles-header">
-          <div class="articles-label">ELECCIONES REGIONALES Y MUNICIPALES 2026 🇵🇪</div>
-        </div>
-        <div class="articles"><div class="articles-inner">
-          <a class="article-card" href="/articulos/erm-2026-candidatos/buscador/">
-            <div class="article-tag">Herramienta</div>
-            <div class="article-title">Buscador de candidatos ERM 2026</div>
-            <div class="article-body">Más de 80 mil candidaturas en un solo lugar. Busca tu circunscripción y revisa cada lista.</div>
-            <div class="article-date">2 jul. 2026</div>
-          </a>
-          <a class="article-card" href="/articulos/tenientes-alcalde-erm-2026/">
-            <div class="article-tag">Análisis</div>
-            <div class="article-title">130 alcaldes que se repostulan como teniente alcalde</div>
-            <div class="article-body">Al igual que López Aliaga, 130 alcaldes electos en 2022 buscan reelegirse en su misma municipalidad.</div>
-            <div class="article-date">28 jun. 2026</div>
-          </a>
-          <a class="article-card" href="/articulos/candidatos-eg-erm-2026/">
-            <div class="article-tag">Análisis</div>
-            <div class="article-title">679 candidatos que saltan de las Generales a las Regionales</div>
-            <div class="article-body">202 postularon a la Presidencia, vicepresidencia o Senado; 18 ahora aspiran a una gobernación.</div>
-            <div class="article-date">26 jun. 2026</div>
-          </a>
-          <a class="article-card" href="/articulos/habemus-alcaldes-erm-2026/">
-            <div class="article-tag">Análisis</div>
-            <div class="article-title">Los alcaldes electos por default: una lista, cero rivales</div>
-            <div class="article-body">Circunscripciones donde solo hay una lista inscrita: su candidato a alcalde gana sin competencia.</div>
-            <div class="article-date">1 jul. 2026</div>
-          </a>
-        </div></div>
-      </div>
 
       <!-- Featured articles -->
       <div class="articles-block">
