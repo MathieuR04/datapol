@@ -71,7 +71,7 @@ TIPOS = [
     {"id": 5, "nombre": "MUNICIPAL PROVINCIAL", "depth": 2},
     {"id": 6, "nombre": "MUNICIPAL DISTRITAL",  "depth": 3},
 ]
-CAND_CAMPOS = ["pos", "nombre", "dni", "cargo", "sexo", "edad", "prov_consejero"]
+CAND_CAMPOS = ["pos", "nombre", "dni", "cargo", "sexo", "edad", "prov_consejero", "estado"]
 HEAD_PREFIX = ("GOBERNADOR", "ALCALDE")   # cabeza de lista by cargo
 
 # Universe of circunscripciones per tipo, for territorial-coverage %:
@@ -108,7 +108,8 @@ def build() -> dict:
         for sl, rows in lists.items():
             rows.sort(key=lambda r: _int(r["posicion"]))
             cands = [[_int(r["posicion"]), r["candidato"], r["dni"], r["cargo"],
-                      r["sexo"], _int(r["edad"]), r["provincia_consejero"]] for r in rows]
+                      r["sexo"], _int(r["edad"]), r["provincia_consejero"],
+                      r["estado_candidato"]] for r in rows]
             head = next((r for r in rows if (r["cargo"] or "").startswith(HEAD_PREFIX)), rows[0])
             f0 = rows[0]
             listas.append({
