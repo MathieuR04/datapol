@@ -52,10 +52,16 @@ REPITEN_PATH = PROJECT.parent / "candidatos-eg-erm-2026" / "data" / "repeticione
 # data/alcaldes_2022.csv on normalized DNI + same circunscripción.
 TENIENTES_PATH = PROJECT.parent / "tenientes-alcalde-erm-2026" / "data" / "tenientes.json"
 
+# Fifth output: competitividad — number of distinct lists per circunscripción (per
+# level), and the "elected by default" set (circunscripciones with a single list, so
+# that list's head candidate wins unopposed barring changes). For the article
+# articulos/habemus-alcaldes-erm-2026/.
+COMPET_PATH = PROJECT.parent / "habemus-alcaldes-erm-2026" / "data" / "competitividad.json"
+
 # Every derived artifact this build (over)writes. The auto-publisher in
 # scrape_erm2026.py stages exactly these (plus the CSVs), so adding an output here
 # is enough to get it committed — nothing is missed by reading data another way.
-OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH]
+OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH, COMPET_PATH]
 
 # Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
 # decided in the frontend — no per-party color map here.
@@ -338,6 +344,101 @@ def build_tenientes() -> dict:
     }
 
 
+# ── Competitividad: lists per circunscripción + "elected by default" set ──────
+NIVEL_META = {
+    "4": ("regional",   "REGIONAL",             "GOBERNADOR REGIONAL", "regiones"),
+    "5": ("provincial", "MUNICIPAL PROVINCIAL", "ALCALDE PROVINCIAL",  "provincias"),
+    "6": ("distrital",  "MUNICIPAL DISTRITAL",  "ALCALDE DISTRITAL",   "distritos"),
+}
+
+
+def build_competitividad() -> dict:
+    """Competitiveness = number of distinct LISTS (idSolicitudLista, not candidate
+    rows) per circunscripción, computed SEPARATELY per election level — regional per
+    departamento, provincial per provincia, distrital per distrito; levels are never
+    pooled. ALL lists count regardless of estado_lista (IMPROCEDENTE/rejected lists
+    are still appealable, so every list present counts; the code is structured so a
+    viable-only filter could be added later). Circunscripciones with exactly ONE list
+    → the head candidate (posición 1 / gobernador·alcalde) is elected by default,
+    unopposed, barring changes."""
+    # circ[(te, ubi)][sl] = [candidate rows];  cmeta[(te, ubi)] = (dep, prov, dist)
+    circ  = defaultdict(lambda: defaultdict(list))
+    cmeta = {}
+    with open(CSV_PATH, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            te = r["tipo_eleccion_id"]
+            if te not in NIVEL_META:
+                continue
+            circ[(te, r["ubigeo"])][r["solicitud_lista_id"]].append(r)
+            cmeta[(te, r["ubigeo"])] = (r["departamento"], r["provincia"], r["distrito"])
+
+    # Per-level distribution + collect single-list ("default") circunscripciones,
+    # and the most competitive circunscripciones.
+    dist_por_nivel = {}                       # nivel → {"1":n,"2":n,...,"5+":n}
+    n_circ_nivel   = {}                       # nivel → total circ with ≥1 list
+    default_casos  = []
+    competitivas   = []
+
+    def lugar(nivel, dep, prov, dist):
+        if nivel == "regional":
+            return dep, ""
+        if nivel == "provincial":
+            return prov, dep
+        return dist, f"{prov}, {dep}"
+
+    for te, (nivel, _tipo, head_cargo, _u) in NIVEL_META.items():
+        buckets = Counter()
+        n = 0
+        for (t, ubi), lists in circ.items():
+            if t != te:
+                continue
+            n += 1
+            k = len(lists)
+            buckets["5+" if k >= 5 else str(k)] += 1
+            dep, prov, dist = cmeta[(t, ubi)]
+            place, sub = lugar(nivel, dep, prov, dist)
+            competitivas.append({"nivel": nivel, "lugar": place, "sub": sub, "n_listas": k})
+            if k == 1:
+                rows = next(iter(lists.values()))
+                head = next((x for x in rows if (x["cargo"] or "").startswith(HEAD_PREFIX)), rows[0])
+                default_casos.append({
+                    "nivel":     nivel,
+                    "region":    dep,
+                    "provincia": prov,
+                    "distrito":  dist,
+                    "lugar":     place,
+                    "sub":       sub,
+                    "cargo":     head["cargo"],
+                    "nombre":    head["candidato"],
+                    "org":       head["organizacion"],
+                    "tipo_org":  head["tipo_organizacion"],
+                    "estado":    head["estado_lista"],
+                })
+        dist_por_nivel[nivel] = {b: buckets.get(b, 0) for b in ("1", "2", "3", "4", "5+")}
+        n_circ_nivel[nivel]   = n
+
+    default_casos.sort(key=lambda c: (c["region"], c["provincia"], c["distrito"], c["nombre"]))
+    competitivas.sort(key=lambda c: (-c["n_listas"], c["nivel"], c["lugar"]))
+
+    niveles = [{"nivel": NIVEL_META[te][0], "tipo": NIVEL_META[te][1],
+                "unidad": NIVEL_META[te][3],
+                "n_circ": n_circ_nivel[NIVEL_META[te][0]],
+                "n_default": sum(1 for c in default_casos if c["nivel"] == NIVEL_META[te][0]),
+                "dist": dist_por_nivel[NIVEL_META[te][0]]}
+               for te in ("4", "5", "6")]
+
+    return {
+        "generado":     date.today().isoformat(),
+        "total":        len(default_casos),
+        "n_regional":   sum(1 for c in default_casos if c["nivel"] == "regional"),
+        "n_provincial": sum(1 for c in default_casos if c["nivel"] == "provincial"),
+        "n_distrital":  sum(1 for c in default_casos if c["nivel"] == "distrital"),
+        "niveles":      niveles,
+        "casos":        default_casos,
+        "competitivas": competitivas[:20],
+    }
+
+
 def _write_json(path: Path, data: dict):
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".json.tmp")
@@ -372,6 +473,12 @@ def main():
         _write_json(TENIENTES_PATH, ten)
         print(f"  build_finder_json: {ten['total']} alcaldes 2022 → teniente alcalde "
               f"({ten['n_provincial']} prov / {ten['n_distrital']} dist) → {TENIENTES_PATH.name}")
+
+    comp = build_competitividad()
+    _write_json(COMPET_PATH, comp)
+    print(f"  build_finder_json: {comp['total']} circunscripciones electas por default "
+          f"({comp['n_regional']} reg / {comp['n_provincial']} prov / {comp['n_distrital']} dist) "
+          f"→ {COMPET_PATH.name}")
 
 
 if __name__ == "__main__":
