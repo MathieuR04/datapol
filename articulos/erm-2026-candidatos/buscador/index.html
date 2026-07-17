@@ -488,7 +488,8 @@
       '<th class="t-pos">N°</th><th>Candidato</th>' +
       (esRegional ? '<th>Provincia</th>' : '') +
       '<th class="th-c">Educación</th><th class="th-c">Sentencias</th>' +
-      '<th class="th-c">Sexo</th><th class="th-c">Edad</th><th class="th-c">Estado</th><th></th></tr></thead>';
+      (esRegional ? '' : '<th class="th-c">Sexo</th><th class="th-c">Edad</th>') +
+      '<th class="th-c">Estado</th><th></th></tr></thead>';
     var cands = esRegional ? l.cands.slice().sort(regCmp) : l.cands;   // regional-only reorder
     var body = cands.map(function (c) {
       var isHead = (c[3] || '').match(/^(GOBERNADOR|ALCALDE)/);
@@ -507,8 +508,8 @@
         (esRegional ? '<td class="t-cargo">' + esc(c[6]) + '</td>' : '') +
         '<td class="td-c">' + eduCell + '</td>' +
         '<td class="td-c">' + sCell + '</td>' +
-        '<td class="td-c t-sexo">' + esc(c[4]) + '</td>' +
-        '<td class="td-c t-edad">' + (c[5] || '') + '</td>' +
+        (esRegional ? '' : '<td class="td-c t-sexo">' + esc(c[4]) + '</td>' +
+                           '<td class="td-c t-edad">' + (c[5] || '') + '</td>') +
         '<td class="td-c t-estado">' + pill + '</td>' +
         '<td class="td-c">' + ver + '</td>' +
       '</tr>';
