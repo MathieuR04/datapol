@@ -145,7 +145,7 @@
     .t-cargo { color: var(--muted); }
 
     /* ── HDV enrichment: logo, educación ladder, sentencias, ficha ─────────── */
-    .card-head { align-items: center; }
+    .card-head { align-items: center; flex-wrap: nowrap; }   /* keep logo beside the text */
     .card-logo {
       width: 54px; height: 54px; border-radius: 9px; flex: 0 0 auto;
       object-fit: contain; background: #fff; padding: 2px; box-shadow: 0 1px 3px rgba(26,18,9,.18);
@@ -473,7 +473,6 @@
             '<span class="card-sub">' +
               '<span class="cabeza"><span class="cargo-lbl">' + esc(l.cabeza.cargo) + ':</span> <b>' +
                 esc(l.cabeza.nombre) + '</b></span>' +
-              '<span>' + total + ' candidato' + (total === 1 ? '' : 's') + '</span>' +
             '</span>' +
           '</div>' +
         '</div>' +
