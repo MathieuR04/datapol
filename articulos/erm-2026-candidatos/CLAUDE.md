@@ -124,6 +124,38 @@ regional fills only departamento, provincial +provincia, distrital all three). `
 is the province a REGIONAL consejero/accesitario competes in (from the candidate's
 `strProvinciaConsejero`); blank for gobernador/vicegobernador and all non-regional cargos.
 
+## HDV scraper — `scripts/scrape_hdv_erm2026.py` (hojas de vida, ERM2026 only)
+
+Second scraping tier: for every ERM2026 candidate's `hoja_vida_id`, pulls the **full
+consolidated hoja de vida** in one call — `GET /HojaVida/GetHVConsolidado?param={idHojaVida}-0-{organizacion_id}-{proceso_id}`
+(all three ids already in `data/erm2026_candidatos.csv`; no discovery walk). Same
+`curl_cffi`/Imperva reliability layer as the list scraper. See `docs/api-notes.md` §8.
+
+The headline payload is **V. Relación de Sentencias** (`lSentenciaPenal` = penales,
+`lSentenciaObliga` = civiles), matching the JNE búsqueda-avanzada CIVILES/PENALES filter;
+the same response also carries educación, patrimonio (bienes/ingresos), and the photo
+filename (`oDatosPersonales.UrlFoto`). Base rate ≈ 3.5% of candidates have ≥1 sentencia.
+
+**Storage — SQLite warehouse `data/hdv/hdv_erm2026.sqlite` (gitignored; "local now, R2
+later").** Heavy (~800 MB full) and re-derivable, so it stays off git. Keeps the **raw**
+JSON (zlib-compressed, `raw` table) as source of truth AND **parsed** tables
+(`sentencia_penal`, `sentencia_obliga`, plus a `meta` summary with `n_penal`/`n_obliga`/
+`edu_max`/`foto`). `--reparse` rebuilds the parsed tables from stored raw with **no
+network**, so widening the parser (bienes, ingresos, …) never needs a re-scrape. The DB
+is its own checkpoint (resumable). Skips the ~6k rows with `hoja_vida_id == "0"` (no HDV).
+
+**Incremental `--update`:** a `sig` (hash of a person's candidacies' estados) is stored per
+HDV; only NEW or sig-changed HDVs are re-fetched (HDVs rarely change, so it's cheap). Run:
+`python3 scripts/scrape_hdv_erm2026.py --update` (`--limit N` smoke; `--workers 8`;
+`--refetch` force-all; `--reparse` offline).
+
+**One-command update workflow.** `scrape_hdv_erm2026.run()` is importable, and
+`scrape_erm2026.py --update --with-hdv --workers 9` runs the whole chain: list update →
+`build_finder_json` → commit/push the list data (HDV is gitignored) → incremental HDV
+refresh. The first HDV backfill is a one-time ~8–9 h run (92.6k candidates); subsequent
+`--update`s are quick. **Not yet wired into the buscador** — that integration (sentencias/
+educación in the dropdown + a per-candidate detail popup) is the next design step.
+
 ## Candidate finder — `buscador/` (Goal 3)
 
 A self-contained article at `buscador/index.html` (vanilla HTML/JS, datapol terracotta/sand,

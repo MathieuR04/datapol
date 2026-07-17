@@ -417,6 +417,10 @@ def main():
                     help="skip the JSON rebuild (commit CSV only, still pushes)")
     ap.add_argument("--no-push", action="store_true",
                     help="dry run: scrape + build but DON'T commit or push (leave git clean)")
+    ap.add_argument("--with-hdv", action="store_true",
+                    help="after the list update, also refresh the HDV warehouse "
+                         "(scrape_hdv_erm2026: sentencias/educación) so one command updates everything")
+    ap.add_argument("--hdv-workers", type=int, default=8, help="workers for the --with-hdv pass (6–9 safe)")
     args = ap.parse_args()
 
     if args.full_refresh:
@@ -506,10 +510,22 @@ def main():
             print(f"  ⚠ JSON rebuild failed ({e}); run scripts/build_finder_json.py manually.")
 
     # Auto-publish: stage the artifacts, commit + push if (and only if) something changed.
+    # (HDV data is gitignored, so we publish the list update FIRST, then run the long HDV
+    #  pass — a routine --update stays a fast push; the HDV backfill runs after.)
     if not args.no_push:
         publish(artifacts)
     else:
         print("  (--no-push: skipping commit + push; working tree left as-is)")
+
+    # Optional HDV warehouse refresh — one command updates lists + hojas de vida.
+    # Incremental (only new/changed HDVs), so it's cheap once the initial backfill exists.
+    if args.with_hdv:
+        print("\n── HDV pass (scrape_hdv_erm2026) ──")
+        try:
+            import scrape_hdv_erm2026
+            scrape_hdv_erm2026.run(workers=args.hdv_workers, update=True)
+        except Exception as e:
+            print(f"  ⚠ HDV pass failed ({e}); run scripts/scrape_hdv_erm2026.py --update manually.")
 
 
 def publish(artifacts):

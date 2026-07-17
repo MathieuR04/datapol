@@ -149,6 +149,10 @@ Key fields for the deliverables: `idSolicitudLista`, `idExpediente` (needed for 
 `strOrganizacionPolitica` + `idOrganizacionPolitica` (dashboard #2), `strEstadoLista` (update logic),
 `strTipoOrganizacion`, `intCandHombres/Mujeres`, `strUbigeo`, `strJuradoElectoral`.
 
+**Party símbolo (logo):** `https://sroppublico.jne.gob.pe/Consulta/Simbolo/GetSimbolo/{idOrganizacionPolitica}`
+— keyed directly by the `organizacion_id` already in the CSV (verified 200 `image/jpg`, ~square,
+100–250 KB, no auth). Hotlinkable brand asset for the buscador list cards.
+
 ---
 
 ## `GetCandidatos` — one row per candidate
@@ -277,6 +281,57 @@ plan-de-gobierno PDF via `strRutaArchivo`.)
 | Circunscripciones by JEE | `/JEE/GetUbigeoporJEE?id={idTipoEleccion}-{idProceso}-{idJuradoElectoral}` |
 | Jurados electorales (POST) | `/Home/GetListaJuradoElectoral` body `{idProcesoElectoral}` |
 
-Not yet explored (CV / plan-de-gobierno detail, likely not needed for the 3 deliverables):
-`/ListaDeCandidatos/DetalleExpediente`, `/ListaDeCandidatos/DetalleHDV`,
+Not yet explored (plan-de-gobierno detail): `/ListaDeCandidatos/DetalleExpediente`,
 `/ListaDeCandidatos/ResumenPlanGobierno` (these are `POST`-via-form redirects to detail pages).
+
+---
+
+## 8. Hoja de vida (HDV) — `GetHVConsolidado` (the full CV in one call)
+
+The DetalleHDV page (`/ListaDeCandidatos/DetalleHDV`) loads `HVResumenCtrl.js`, which fetches
+the **entire** hoja de vida — every section — as a single `data` **object** (not a list):
+
+```
+GET /HojaVida/GetHVConsolidado?param={idHojaVida}-0-{idOrganizacionPolitica}-{idProceso}
+```
+
+- All three ids are already columns in `*_candidatos.csv` (`hoja_vida_id` / `organizacion_id` /
+  `proceso_id`), so there is **no discovery walk** — the work list is just the unique `hoja_vida_id`
+  set. The middle field is a literal `0`.
+- Same host, same Imperva/`curl_cffi` reliability layer as everything above. Plain `curl`/`curl_cffi`
+  returns 200 JSON; plain `urllib` gets Imperva-blocked. Verified 200/200 at 8 workers, 0 challenges.
+- `hoja_vida_id == "0"` (~6k ERM rows) means **no HDV registered** — skip these (a `param=0-…` call
+  returns a junk shell).
+
+```bash
+# Arnoldo Mallma Auqui (gobernador, APP): 1 sentencia penal + 3 civiles
+curl 'https://plataformahistorico.jne.gob.pe/HojaVida/GetHVConsolidado?param=365229-0-1257-126'
+```
+
+**`data` sections** (each with a parallel `…Voto` field that's usually null): `oDatosPersonales`,
+`oRespuesta`, `lExperienciaLaboral`, `oEduBasica` / `oEduNoUniversitaria` / `lEduUniversitaria` /
+`oEduPosgrado` / `lEduPosgrado`, `lCargoPartidario`, `lCargoEleccion`, **`lSentenciaPenal`**,
+**`lSentenciaObliga`**, `oIngresos`, `lBienInmueble`, `lBienMueble`, `oInfoAdicional`,
+`lCargoElecPostula`, `lCargoElecHistorico`, `lAnotacionMarginal`, + `…Param` lookup lists.
+
+### V. Relación de Sentencias (the deliverable)
+
+The búsqueda-avanzada "Sentencias Declaradas" filter (CIVILES / PENALES / AMBOS) maps to two lists:
+
+- **`lSentenciaPenal`** (penales): `strExpedientePenal`, `strFechaSentenciaPenal`, `strOrganoJudiPenal`,
+  `strDelitoPenal` (the crime), `strFalloPenal` (ruling), `strModalidad` (e.g. RESERVA DE FALLO,
+  SUSPENDIDA), `strCumpleFallo` (e.g. PENA CUMPLIDA, EN CUMPLIMIENTO).
+- **`lSentenciaObliga`** (civiles / que obligan a pago): `strMateriaSentencia` (e.g. FAMILIA/ALIMENTARIA),
+  `strExpedienteObliga`, `strOrganoJuridicialObliga`, `strFalloObliga`.
+
+Random-sample base rate (n=200): ~3.0% ≥1 penal, ~1.0% ≥1 civil, ~3.5% either.
+
+### Other useful bits
+- `oDatosPersonales.UrlFoto` — the candidate's **photo filename** (e.g. `aa7e368c-…​.jpg`). Full
+  URL = **`https://mpesije.jne.gob.pe/apidocs/{UrlFoto}`** (verified 200 `image/jpeg`, no auth,
+  ~15–25 KB, ~318×446). Same filename is used by the current platform's DetalleCandidato view.
+- `oEduBasica.strEduPrimaria/strEduSecundaria`, `oEduNoUniversitaria`, `lEduUniversitaria`,
+  `l/oEduPosgrado` → highest grade, matching the "Grado Académico" filter (PRIMARIA…DOCTORADO).
+
+Scraped by **`scripts/scrape_hdv.py`** → `data/hdv/hdv.sqlite` (raw JSON compressed + parsed
+sentencias; gitignored). See that script's header.

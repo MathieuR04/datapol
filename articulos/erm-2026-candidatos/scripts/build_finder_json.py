@@ -26,7 +26,9 @@ Candidate rows are arrays (per cand_campos) to keep the single file compact.
 
 import csv
 import json
+import sqlite3
 import unicodedata
+import zlib
 from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
@@ -37,6 +39,12 @@ CSV_PATH   = PROJECT / "data" / "erm2026_candidatos.csv"
 EG_CSV     = PROJECT / "data" / "eg2026_candidatos.csv"
 ALC_CSV    = PROJECT / "data" / "alcaldes_2022.csv"
 OUT_PATH   = PROJECT / "buscador" / "data" / "candidatos.json"
+
+# HDV warehouse (gitignored, built by scrape_hdv_erm2026.py) → enriches the finder with
+# educación / sentencias badges (light, in candidatos.json) and per-circunscripción ficha
+# detail files (heavy, lazy-loaded by the frontend on "Ver ficha").
+HDV_DB    = PROJECT / "data" / "hdv" / "hdv_erm2026.sqlite"
+FICHA_DIR = PROJECT / "buscador" / "data" / "hdv"
 
 # Second output: per-party list-count table for the standalone article
 # articulos/partidos-erm-2026/ (sibling of this project). Same single source (the CSV),
@@ -61,7 +69,7 @@ COMPET_PATH = PROJECT.parent / "habemus-alcaldes-erm-2026" / "data" / "competiti
 # Every derived artifact this build (over)writes. The auto-publisher in
 # scrape_erm2026.py stages exactly these (plus the CSVs), so adding an output here
 # is enough to get it committed — nothing is missed by reading data another way.
-OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH, COMPET_PATH]
+OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH, COMPET_PATH, FICHA_DIR]
 
 # Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
 # decided in the frontend — no per-party color map here.
@@ -71,7 +79,12 @@ TIPOS = [
     {"id": 5, "nombre": "MUNICIPAL PROVINCIAL", "depth": 2},
     {"id": 6, "nombre": "MUNICIPAL DISTRITAL",  "depth": 3},
 ]
-CAND_CAMPOS = ["pos", "nombre", "dni", "cargo", "sexo", "edad", "prov_consejero", "estado"]
+# `edu` = 5-bit education bitmask (bit0 primaria … bit4 posgrado), or null when the
+# candidate has no HDV (improcedente / not yet scraped). `sent` = total sentencias
+# (penal + civil), or null when no HDV. Both drive the list-view badges; a null `edu`
+# also means "no Ver ficha".
+CAND_CAMPOS = ["pos", "nombre", "dni", "cargo", "sexo", "edad", "prov_consejero", "estado",
+               "edu", "sent"]
 HEAD_PREFIX = ("GOBERNADOR", "ALCALDE")   # cabeza de lista by cargo
 
 # Universe of circunscripciones per tipo, for territorial-coverage %:
@@ -87,7 +100,17 @@ def _int(s):
         return 0
 
 
-def build() -> dict:
+def _cand_edu(light, hv):
+    """(edu_bitmask, n_sentencias) for a candidate's hoja_vida_id, or (None, None)."""
+    if hv and hv.isdigit() and hv != "0":
+        lt = light.get(int(hv))
+        if lt:
+            return lt[0], lt[1] + lt[2]
+    return None, None
+
+
+def build(light=None) -> dict:
+    light = light or {}
     # circ[(te, ubi)][sl] = [candidate rows];  cmeta[(te, ubi)] = (dep, prov, dist)
     circ  = defaultdict(lambda: defaultdict(list))
     cmeta = {}
@@ -107,13 +130,17 @@ def build() -> dict:
         listas = []
         for sl, rows in lists.items():
             rows.sort(key=lambda r: _int(r["posicion"]))
-            cands = [[_int(r["posicion"]), r["candidato"], r["dni"], r["cargo"],
-                      r["sexo"], _int(r["edad"]), r["provincia_consejero"],
-                      r["estado_candidato"]] for r in rows]
+            cands = []
+            for r in rows:
+                edu, sent = _cand_edu(light, r["hoja_vida_id"])
+                cands.append([_int(r["posicion"]), r["candidato"], r["dni"], r["cargo"],
+                              r["sexo"], _int(r["edad"]), r["provincia_consejero"],
+                              r["estado_candidato"], edu, sent])
             head = next((r for r in rows if (r["cargo"] or "").startswith(HEAD_PREFIX)), rows[0])
             f0 = rows[0]
             listas.append({
                 "org":      f0["organizacion"],
+                "org_id":   _int(f0["organizacion_id"]),   # → party símbolo (logo)
                 "tipo_org": f0["tipo_organizacion"],
                 "estado":   f0["estado_lista"],
                 "h":        _int(f0["lista_cand_hombres"]),
@@ -124,7 +151,7 @@ def build() -> dict:
             total_cands += len(cands)
             total_lists += 1
         listas.sort(key=lambda l: l["org"])
-        out_circ[te][ubi] = {"dep": dep, "prov": prov, "dist": dist, "listas": listas}
+        out_circ[te][ubi] = {"ubi": ubi, "dep": dep, "prov": prov, "dist": dist, "listas": listas}
 
     return {
         "generado":         date.today().isoformat(),
@@ -134,6 +161,164 @@ def build() -> dict:
         "tipos":            TIPOS,
         "circ":             out_circ,
     }
+
+
+# ── HDV enrichment: educación/sentencias badges + per-circ ficha detail files ──
+def _s(v):
+    v = v.strip() if isinstance(v, str) else v
+    return v or None
+
+
+def _money(x):
+    try:
+        return "S/ " + f"{float(x):,.2f}"
+    except (TypeError, ValueError):
+        return None
+
+
+def _moneynum(x):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _box(titulo, meta, body=None, com=None, tone="info"):
+    return {"t": titulo, "m": [m for m in meta if m], "b": body, "c": com, "tone": tone}
+
+
+def extract_ficha(d):
+    """From a GetHVConsolidado `data` dict → (edu_bitmask, n_penal, n_obliga, detail).
+    `detail` is the JSON the frontend renders in the ficha modal (raw-derived parts only;
+    name/cargo/party come from the candidate row at render time)."""
+    dp = d.get("oDatosPersonales") or {}
+    basica = d.get("oEduBasica") or {}
+    nou = d.get("oEduNoUniversitaria") or {}
+    univ = d.get("lEduUniversitaria") or []
+    posg = d.get("lEduPosgrado") or ([d["oEduPosgrado"]] if d.get("oEduPosgrado") else [])
+    tecnica = bool(nou) and nou.get("strTengoNoUniversitaria") == "1"
+    bm = ((1 if basica.get("strEduPrimaria") == "1" else 0)
+          | (2 if basica.get("strEduSecundaria") == "1" else 0)
+          | (4 if tecnica else 0)
+          | (8 if univ else 0)
+          | (16 if posg else 0))
+
+    sent = []
+    for s in (d.get("lSentenciaPenal") or []):
+        sent.append(_box("PENAL · " + (_s(s.get("strDelitoPenal")) or "—"),
+            [("Exp. " + _s(s.get("strExpedientePenal"))) if _s(s.get("strExpedientePenal")) else None,
+             _s(s.get("strOrganoJudiPenal")), _s(s.get("strFechaSentenciaPenal")),
+             ("Modalidad: " + _s(s.get("strModalidad"))) if _s(s.get("strModalidad")) else None,
+             ("Cumplimiento: " + _s(s.get("strCumpleFallo"))) if _s(s.get("strCumpleFallo")) else None],
+            body=_s(s.get("strFalloPenal")), com=_s(s.get("strComentario")), tone="penal"))
+    for s in (d.get("lSentenciaObliga") or []):
+        sent.append(_box("CIVIL · " + (_s(s.get("strMateriaSentencia")) or "—"),
+            [("Exp. " + _s(s.get("strExpedienteObliga"))) if _s(s.get("strExpedienteObliga")) else None,
+             _s(s.get("strOrganoJuridicialObliga"))],
+            body=_s(s.get("strFalloObliga")), com=_s(s.get("strComentario")), tone="civil"))
+
+    edu = []
+    if tecnica:
+        edu.append(_box("Técnica — " + (_s(nou.get("strCarreraNoUni")) or ""),
+            [_s(nou.get("strCentroEstudioNoUni")),
+             "Concluida" if nou.get("strConcluidoNoUni") == "1" else "No concluida"]))
+    for u in univ:
+        edu.append(_box("Universitaria — " + (_s(u.get("strCarreraUni")) or ""),
+            [_s(u.get("strUniversidad")),
+             ("Egresado " + _s(u.get("strAnioBachiller"))) if _s(u.get("strAnioBachiller")) else
+             ("Concluida" if u.get("strConcluidoEduUni") == "1" else None)]))
+    for p in posg:
+        grado = "Doctorado" if p.get("strEsDoctor") == "1" else "Maestría" if p.get("strEsMaestro") == "1" else "Posgrado"
+        edu.append(_box(grado + " — " + (_s(p.get("strEspecialidadPosgrado")) or ""),
+            [_s(p.get("strCenEstudioPosgrado")),
+             ("Egresado " + _s(p.get("strAnioPosgrado"))) if _s(p.get("strAnioPosgrado")) else None]))
+
+    exp = []
+    for e in (d.get("lExperienciaLaboral") or []):
+        yrs = (_s(e.get("strAnioTrabajoDesde")) + "–" + (_s(e.get("strAnioTrabajoHasta")) or "")) if _s(e.get("strAnioTrabajoDesde")) else None
+        exp.append(_box(_s(e.get("strOcupacionProfesion")) or "—", [_s(e.get("strCentroTrabajo")), yrs]))
+
+    bienes = []
+    for b in (d.get("lBienInmueble") or []):
+        bienes.append(_box("Inmueble · " + (_s(b.get("strTipoBienInmueble")) or ""),
+            [_s(b.get("strInmuebleDireccion")),
+             ("Partida SUNARP " + _s(b.get("strPartidaSunarp"))) if _s(b.get("strPartidaSunarp")) else None,
+             ("Valor " + _money(b.get("decValor"))) if _moneynum(b.get("decValor")) else
+             (("Autovalúo " + _money(b.get("decAutovaluo"))) if _moneynum(b.get("decAutovaluo")) else None)]))
+    for b in (d.get("lBienMueble") or []):
+        bienes.append(_box("Mueble · " + (_s(b.get("strVehiculo")) or "Bien mueble"),
+            [_s(b.get("strCaracteristica")),
+             ("Placa " + _s(b.get("strPlaca"))) if _s(b.get("strPlaca")) else None,
+             ("Valor " + _money(b.get("decValor"))) if _moneynum(b.get("decValor")) else None]))
+    ing = d.get("oIngresos") or {}
+    renta = sum(_moneynum(ing.get(k)) for k in
+                ["decRemuBrutaPublico","decRemuBrutaPrivado","decRentaIndividualPublico",
+                 "decRentaIndividualPrivado","decOtroIngresoPublico","decOtroIngresoPrivado"])
+    tray = [_box(_s(x.get("strCargoPartidario")) or "—", [_s(x.get("strOrgPolCargoPartidario"))])
+            for x in (d.get("lCargoPartidario") or [])]
+
+    detail = {
+        "foto": _s(dp.get("UrlFoto")),
+        "nac": " / ".join(x for x in [_s(dp.get("strNaciDepartamento")), _s(dp.get("strNaciProvincia")), _s(dp.get("strNaciDistrito"))] if x),
+        "dom": " / ".join(x for x in [_s(dp.get("strDomiDepartamento")), _s(dp.get("strDomiProvincia")), _s(dp.get("strDomiDistrito"))] if x),
+        "sent": sent, "edu": edu, "exp": exp, "bienes": bienes,
+        "ing": _money(renta) if renta else None, "tray": tray,
+    }
+    return bm, len(d.get("lSentenciaPenal") or []), len(d.get("lSentenciaObliga") or []), detail
+
+
+def build_hdv():
+    """Read the HDV warehouse; return a `light` dict {hoja_vida_id → [edu_bitmask,n_penal,
+    n_obliga]} for the list-view badges, and (over)write one ficha-detail file per
+    circunscripción at buscador/data/hdv/<te>-<ubi>.json (keyed by DNI). Only files whose
+    content actually changed are rewritten, so routine rebuilds barely touch git."""
+    if not HDV_DB.exists():
+        print("  build_finder_json: HDV warehouse not found — skipping educación/sentencias/ficha.")
+        return {}
+
+    eg_cargo = {}
+    if EG_CSV.exists():
+        for r in csv.DictReader(open(EG_CSV, newline="", encoding="utf-8")):
+            eg_cargo.setdefault(_ndni(r["dni"]), r["cargo"])
+
+    db = sqlite3.connect(HDV_DB)
+    stored = {hv for (hv,) in db.execute("SELECT hoja_vida_id FROM meta WHERE ok=1")}
+
+    circ = defaultdict(list)          # (te, ubi) → candidate rows
+    with open(CSV_PATH, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["tipo_eleccion_id"] in ("4", "5", "6"):
+                circ[(r["tipo_eleccion_id"], r["ubigeo"])].append(r)
+
+    FICHA_DIR.mkdir(parents=True, exist_ok=True)
+    light = {}
+    n_fichas = files_written = 0
+    for (te, ubi), rows in circ.items():
+        fichas = {}
+        for r in rows:
+            hv = r["hoja_vida_id"]
+            if not hv or not hv.isdigit() or hv == "0" or int(hv) not in stored:
+                continue
+            raw = db.execute("SELECT gz FROM raw WHERE hoja_vida_id=?", (int(hv),)).fetchone()
+            if not raw:
+                continue
+            d = json.loads(zlib.decompress(raw[0])).get("data") or {}
+            bm, npn, nob, detail = extract_ficha(d)
+            light[int(hv)] = [bm, npn, nob]
+            detail["eg"] = eg_cargo.get(_ndni(r["dni"]))   # ex-candidato EG2026 (annotation)
+            fichas[r["dni"]] = detail
+            n_fichas += 1
+        if not fichas:
+            continue
+        path = FICHA_DIR / f"{te}-{ubi}.json"
+        text = json.dumps(fichas, ensure_ascii=False, separators=(",", ":"))
+        if not path.exists() or path.read_text(encoding="utf-8") != text:
+            path.write_text(text, encoding="utf-8")
+            files_written += 1
+    db.close()
+    print(f"  build_finder_json: HDV → {len(light):,} candidatos con ficha; "
+          f"{n_fichas:,} fichas en {len(circ):,} circunscripciones ({files_written} archivos reescritos).")
+    return light
 
 
 def build_partidos() -> dict:
@@ -452,7 +637,8 @@ def main():
     if not CSV_PATH.exists():
         print(f"  build_finder_json: {CSV_PATH.name} not found — skipping.")
         return
-    data = build()
+    light = build_hdv()          # educación/sentencias badges + per-circ ficha files
+    data = build(light)
     _write_json(OUT_PATH, data)
     mb = OUT_PATH.stat().st_size / 1_048_576
     print(f"  build_finder_json: {data['total_candidatos']:,} candidatos / "

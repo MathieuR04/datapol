@@ -144,10 +144,79 @@
     .t-edad { color: var(--muted); width: 2.6rem; text-align: right; font-variant-numeric: tabular-nums; }
     .t-cargo { color: var(--muted); }
 
+    /* ── HDV enrichment: logo, educación ladder, sentencias, ficha ─────────── */
+    .card-head { align-items: center; }
+    .card-logo {
+      width: 54px; height: 54px; border-radius: 9px; flex: 0 0 auto;
+      object-fit: contain; background: #fff; padding: 2px; box-shadow: 0 1px 3px rgba(26,18,9,.18);
+    }
+    .card-head-main { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.8rem; }
+
+    thead th.th-c { text-align: center; }
+    tbody td.td-c { text-align: center; }
+    .t-cargo-sub { color: var(--muted); font-size: 0.76rem; font-weight: 400; }
+    tbody tr.nohdv { opacity: 0.7; }
+
+    .edu { display: inline-flex; gap: 3px; }
+    .edu .lv { width: 21px; height: 21px; border-radius: 6px; display: flex; align-items: center;
+      justify-content: center; font-size: 0.58rem; font-weight: 700; position: relative; }
+    .edu .on { background: #cfe3c4; color: #39591f; }
+    .edu .off { background: #eee6d8; color: #c9bda9; }
+    .edu .on::after { content: "✓"; position: absolute; top: -5px; right: -4px; font-size: 0.48rem;
+      background: #39591f; color: #fff; width: 11px; height: 11px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .sent-yes { background: var(--red-bg, #ecd2cc); color: #8a3320; font-size: 0.6rem; font-weight: 800;
+      letter-spacing: 0.4px; padding: 0.2rem 0.5rem; border-radius: 999px; white-space: nowrap; }
+    .nd { color: var(--dim); font-size: 0.85rem; }
+    .ver { font-family: inherit; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.3px;
+      text-transform: uppercase; color: var(--terra); background: none; border: 1px solid var(--terra);
+      border-radius: 7px; padding: 0.26rem 0.55rem; cursor: pointer; white-space: nowrap; transition: 0.12s; }
+    .ver:hover { background: var(--terra); color: #fff; }
+
+    /* ficha modal */
+    .overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(26,18,9,.6);
+      padding: 1.2rem; overflow-y: auto; }
+    .overlay.show { display: flex; align-items: flex-start; justify-content: center; }
+    .sheet { background: var(--bg); border-radius: 14px; max-width: 660px; width: 100%; margin: auto;
+      box-shadow: 0 12px 48px rgba(0,0,0,.4); overflow: hidden; }
+    .sheet-head { display: flex; gap: 1rem; align-items: flex-start; padding: 1.2rem 1.3rem;
+      background: var(--surface); border-bottom: 1px solid var(--border); }
+    .avatar { width: 82px; height: 104px; border-radius: 8px; background: var(--sand); color: #8a745c;
+      flex: 0 0 auto; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 1px; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .sheet-head .nm { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 2.1rem; line-height: 1; letter-spacing: 0.5px; }
+    .sheet-head .rl { font-size: 0.92rem; color: var(--text); font-weight: 600; margin-top: 0.35rem; }
+    .sheet-head .rl-org { font-size: 0.86rem; color: var(--muted); font-weight: 500; margin-top: 0.1rem; }
+    .sheet-head .hmeta { font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; }
+    .sheet-head .hmeta b { color: var(--text); font-weight: 600; }
+    .sheet-close { margin-left: auto; align-self: flex-start; background: none; border: none;
+      font-size: 1.4rem; color: var(--muted); cursor: pointer; line-height: 1; }
+    .sheet-body { padding: 1.1rem 1.3rem 1.6rem; }
+    .facts { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-size: 0.82rem; color: var(--muted);
+      padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .facts b { color: var(--text); font-weight: 600; }
+    .sec { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+    .sec:last-child { border-bottom: none; }
+    .sec h3 { font-size: 0.66rem; letter-spacing: 0.8px; text-transform: uppercase; color: var(--dim); margin-bottom: 0.55rem; font-weight: 700; }
+    .sec.alert h3 { color: #8a3320; }
+    .bx { border: 1px solid var(--border); background: var(--surface); border-radius: 9px; padding: 0.55rem 0.7rem; margin-bottom: 0.5rem; }
+    .bx .bt { font-weight: 700; font-size: 0.82rem; }
+    .bx .bm { font-size: 0.77rem; color: var(--muted); margin-top: 0.15rem; }
+    .bx .bb { font-size: 0.79rem; color: #4a3d31; margin-top: 0.35rem; line-height: 1.45; }
+    .bx .bc { font-size: 0.74rem; color: var(--muted); margin-top: 0.3rem; font-style: italic; line-height: 1.4; }
+    .bx.penal { background: #ecd2cc; border-color: #dcb8ae; } .bx.penal .bt { color: #8a3320; }
+    .bx.civil { background: #f3e7dd; border-color: #e0c3ab; } .bx.civil .bt { color: #9a4526; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chip { font-size: 0.72rem; padding: 0.25rem 0.6rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+    .chip.on { background: #e7efe0; border-color: #bcd3aa; color: #39591f; font-weight: 600; }
+    .chip.soon { border-style: dashed; color: var(--dim); }
+    .chip.hit { background: #f0e2d8; border-color: #d9b79c; color: #9a4526; font-weight: 600; }
+    .sec-empty { font-size: 0.82rem; color: var(--dim); font-style: italic; }
+
     @media (max-width: 560px) {
       .field { flex: 1 1 100%; }
       .filtros { position: static; }
-      .t-cargo, thead .th-cargo { display: none; }
     }
   </style>
 </head>
@@ -218,6 +287,8 @@
   </section>
 </main>
 
+<div class="overlay" id="ficha-overlay"><div class="sheet" id="ficha-sheet"></div></div>
+
 <script>
 (function () {
   "use strict";
@@ -231,6 +302,15 @@
       out    = document.getElementById('resultados');
 
   var nf = new Intl.NumberFormat('es-PE');
+
+  // Hotlinked JNE brand/photo assets (no storage on our side).
+  var SIMBOLO_BASE = 'https://sroppublico.jne.gob.pe/Consulta/Simbolo/GetSimbolo/';
+  var FOTO_BASE    = 'https://mpesije.jne.gob.pe/apidocs/';
+  var EDU_LV = [[1,'Pri','Primaria'],[2,'Sec','Secundaria'],[4,'Téc','Técnica'],
+               [8,'Uni','Universitaria'],[16,'Pos','Posgrado']];
+  var CUR_TE = '', CUR_UBI = '';          // circunscripción currently rendered
+  var CUR_CANDS = {};                     // dni → {c: cand row, org, org_id} for the ficha
+  var FICHA_CACHE = {};                   // "te-ubi" → {dni: detalle}  (lazy-loaded)
 
   // Party-name color by tipo de organización política — shades in the terracotta
   // tone of the title's candidate count (--terra #c4603a).
@@ -360,9 +440,21 @@
     });
   }
 
+  function eduLadder(bm) {
+    return '<span class="edu">' + EDU_LV.map(function (x) {
+      var on = (bm & x[0]) !== 0;
+      return '<span class="lv ' + (on ? 'on' : 'off') + '" title="' + x[2] + (on ? '' : ' — no declara') + '">' + x[1] + '</span>';
+    }).join('') + '</span>';
+  }
+  function sentCell(n) {
+    if (!n) return '<span class="nd">—</span>';
+    return '<span class="sent-yes">' + n + ' SENTENCIA' + (n > 1 ? 'S' : '') + '</span>';
+  }
+
   function render(circ) {
     if (!circ || !circ.listas.length) { showHint('No hay listas registradas para esta circunscripción todavía.'); return; }
     var te = elTipo.value, esRegional = String(te) === '4';
+    CUR_TE = String(te); CUR_UBI = circ.ubi || ''; CUR_CANDS = {};
     var place = [circ.dep, circ.prov, circ.dist].filter(Boolean).join(' › ');
     var html = '<p class="count-line">' + esc(place) + ' — <b>' + circ.listas.length +
                '</b> lista' + (circ.listas.length === 1 ? '' : 's') + '</p>';
@@ -370,17 +462,20 @@
     circ.listas.forEach(function (l, i) {
       var total = l.cands.length;
       var color = ORG_COLORS[l.tipo_org] || ORG_COLOR_DEFAULT;
-      var orgStyle = ' style="color:' + color + '"';
+      l.cands.forEach(function (c) { CUR_CANDS[c[2]] = { c: c, org: l.org, org_id: l.org_id }; });
       html += '<div class="card" data-i="' + i + '">' +
         '<div class="card-head">' +
-          '<span class="card-org"' + orgStyle + '>' + esc(l.org) + '</span>' +
-          '<span class="badge ' + statusClass(l.estado) + '">' + esc(l.estado) + '</span>' +
-          '<span class="chev">▶</span>' +
-          '<span class="card-sub">' +
-            '<span class="cabeza"><span class="cargo-lbl">' + esc(l.cabeza.cargo) + ':</span> <b>' +
-              esc(l.cabeza.nombre) + '</b></span>' +
-            '<span>' + total + ' candidato' + (total === 1 ? '' : 's') + '</span>' +
-          '</span>' +
+          '<img class="card-logo" src="' + SIMBOLO_BASE + encodeURIComponent(l.org_id) + '" alt="" onerror="this.style.display=\'none\'">' +
+          '<div class="card-head-main">' +
+            '<span class="card-org" style="color:' + color + '">' + esc(l.org) + '</span>' +
+            '<span class="badge ' + statusClass(l.estado) + '">' + esc(l.estado) + '</span>' +
+            '<span class="chev">▶</span>' +
+            '<span class="card-sub">' +
+              '<span class="cabeza"><span class="cargo-lbl">' + esc(l.cabeza.cargo) + ':</span> <b>' +
+                esc(l.cabeza.nombre) + '</b></span>' +
+              '<span>' + total + ' candidato' + (total === 1 ? '' : 's') + '</span>' +
+            '</span>' +
+          '</div>' +
         '</div>' +
         '<div class="card-body">' + tableFor(l, esRegional) + '</div>' +
       '</div>';
@@ -389,35 +484,113 @@
   }
 
   function tableFor(l, esRegional) {
-    // CAMPOS = ["pos","nombre","dni","cargo","sexo","edad","prov_consejero","estado"]
+    // CAMPOS = ["pos","nombre","dni","cargo","sexo","edad","prov_consejero","estado","edu","sent"]
     var head = '<thead><tr>' +
-      '<th class="t-pos">N°</th><th>Candidato</th><th>DNI</th>' +
-      '<th class="th-cargo">Cargo</th>' +
+      '<th class="t-pos">N°</th><th>Candidato</th>' +
       (esRegional ? '<th>Provincia</th>' : '') +
-      '<th>Sexo</th><th>Edad</th><th class="t-estado">Estado</th></tr></thead>';
+      '<th class="th-c">Educación</th><th class="th-c">Sentencias</th>' +
+      '<th class="th-c">Sexo</th><th class="th-c">Edad</th><th class="th-c">Estado</th><th></th></tr></thead>';
     var cands = esRegional ? l.cands.slice().sort(regCmp) : l.cands;   // regional-only reorder
     var body = cands.map(function (c) {
       var isHead = (c[3] || '').match(/^(GOBERNADOR|ALCALDE)/);
+      var hasHDV = c[8] !== null && c[8] !== undefined;
       var estado = c[7] || '';
       var pill = estado
-        ? '<span class="badge badge-cand ' + statusClass(estado) + '" title="' +
-            esc(estado) + '">' + esc(estadoAbbr(estado)) + '</span>'
+        ? '<span class="badge ' + statusClass(estado) + '">' + esc(estado) + '</span>'
         : '';
-      return '<tr' + (isHead ? ' class="head-row"' : '') + '>' +
+      var eduCell = hasHDV ? eduLadder(c[8]) : '<span class="nd">—</span>';
+      var sCell   = hasHDV ? sentCell(c[9]) : '<span class="nd">—</span>';
+      var ver     = hasHDV ? '<button class="ver" data-dni="' + esc(c[2]) + '">Ver ficha</button>'
+                           : '<span class="nd" title="Sin hoja de vida registrada">—</span>';
+      return '<tr class="' + (isHead ? 'head-row ' : '') + (hasHDV ? '' : 'nohdv') + '">' +
         '<td class="t-pos">' + (c[0] || '') + '</td>' +
-        '<td>' + esc(c[1]) + '</td>' +
-        '<td class="t-dni">' + esc(c[2]) + '</td>' +
-        '<td class="t-cargo">' + esc(c[3]) + '</td>' +
+        '<td>' + esc(c[1]) + '<div class="t-cargo-sub">' + esc(c[3]) + '</div></td>' +
         (esRegional ? '<td class="t-cargo">' + esc(c[6]) + '</td>' : '') +
-        '<td class="t-sexo">' + esc(c[4]) + '</td>' +
-        '<td class="t-edad">' + (c[5] || '') + '</td>' +
-        '<td class="t-estado">' + pill + '</td>' +
+        '<td class="td-c">' + eduCell + '</td>' +
+        '<td class="td-c">' + sCell + '</td>' +
+        '<td class="td-c t-sexo">' + esc(c[4]) + '</td>' +
+        '<td class="td-c t-edad">' + (c[5] || '') + '</td>' +
+        '<td class="td-c t-estado">' + pill + '</td>' +
+        '<td class="td-c">' + ver + '</td>' +
       '</tr>';
     }).join('');
     return '<table>' + head + '<tbody>' + body + '</tbody></table>';
   }
 
+  // ── Ficha modal (detail lazy-loaded per circunscripción) ───────────────────
+  var fichaOverlay = document.getElementById('ficha-overlay');
+  function initials(n) { return (n || '').split(/\s+/).slice(0, 2).map(function (w) { return w[0] || ''; }).join('').toUpperCase(); }
+  function sheetMsg(msg) {
+    document.getElementById('ficha-sheet').innerHTML = '<div style="padding:2.5rem;text-align:center;color:var(--muted)">' + msg + '</div>';
+    fichaOverlay.classList.add('show');
+  }
+  function boxHTML(b) {
+    return '<div class="bx ' + (b.tone === 'penal' ? 'penal' : b.tone === 'civil' ? 'civil' : '') + '">' +
+      '<div class="bt">' + esc(b.t) + '</div>' +
+      (b.m && b.m.length ? '<div class="bm">' + b.m.map(esc).join(' · ') + '</div>' : '') +
+      (b.b ? '<div class="bb">' + esc(b.b) + '</div>' : '') +
+      (b.c && b.c !== b.b ? '<div class="bc">' + esc(b.c) + '</div>' : '') + '</div>';
+  }
+  function sectionBoxes(title, arr, empty, alert) {
+    var inner = (arr && arr.length) ? arr.map(boxHTML).join('') : '<div class="sec-empty">' + empty + '</div>';
+    return '<div class="sec' + (alert ? ' alert' : '') + '"><h3>' + title + '</h3>' + inner + '</div>';
+  }
+  function openFicha(dni) {
+    var meta = CUR_CANDS[dni]; if (!meta) return;
+    var key = CUR_TE + '-' + CUR_UBI;
+    if (FICHA_CACHE[key]) { showFicha(meta, FICHA_CACHE[key][dni]); return; }
+    sheetMsg('Cargando ficha…');
+    fetch('./data/hdv/' + key + '.json')
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (f) { FICHA_CACHE[key] = f; showFicha(meta, f[dni]); })
+      .catch(function () { sheetMsg('No se pudo cargar la ficha.'); });
+  }
+  function showFicha(meta, d) {
+    if (!d) { sheetMsg('Ficha no disponible.'); return; }
+    document.getElementById('ficha-sheet').innerHTML = fichaHTML(meta, d);
+    fichaOverlay.classList.add('show');
+  }
+  function closeFicha() { fichaOverlay.classList.remove('show'); }
+
+  function fichaHTML(meta, d) {
+    var c = meta.c, nombre = c[1], cargo = c[3], sexo = c[4], edad = c[5], dni = c[2], bm = c[8] || 0;
+    var av = d.foto
+      ? '<img src="' + FOTO_BASE + encodeURIComponent(d.foto) + '" alt="" onerror="this.parentNode.textContent=\'' + initials(nombre) + '\'">'
+      : initials(nombre);
+    var facts = [['Nacimiento', d.nac || '—'], ['Domicilio', d.dom || '—']]
+      .map(function (x) { return '<span>' + x[0] + ': <b>' + esc(x[1]) + '</b></span>'; }).join('');
+    var hmeta = '<span>DNI: <b>' + esc(dni) + '</b></span><span>Edad: <b>' + esc(edad) + ' años</b></span><span>Sexo: <b>' + esc(sexo) + '</b></span>';
+    var chips = '<div class="chips" style="margin-bottom:.6rem">' + EDU_LV.map(function (x) {
+      var on = (bm & x[0]) !== 0; return '<span class="chip' + (on ? ' on' : '') + '">' + x[2] + (on ? ' ✓' : '') + '</span>';
+    }).join('') + '</div>';
+    var n = (d.sent || []).length;
+    var anot = '<div class="chips">' + (d.eg ? '<span class="chip hit">Candidato en EG 2026 (' + esc(d.eg) + ')</span>' : '') +
+      '<span class="chip soon">Reelección / repostula · próximamente</span><span class="chip soon">Papeletas · próximamente</span></div>';
+    if (!d.eg) anot = '<div class="sec-empty" style="margin-bottom:.5rem">No fue candidato en las EG 2026.</div>' + anot;
+    return '<div class="sheet-head"><div class="avatar">' + av + '</div>' +
+      '<div style="flex:1 1 auto;min-width:0"><div class="nm">' + esc(nombre) + '</div>' +
+        '<div class="rl">' + esc(cargo) + '</div><div class="rl-org">' + esc(meta.org) + '</div>' +
+        '<div class="hmeta">' + hmeta + '</div></div>' +
+      '<button class="sheet-close" aria-label="Cerrar">×</button></div>' +
+      '<div class="sheet-body"><div class="facts">' + facts + '</div>' +
+        (n ? sectionBoxes('⚖ Relación de sentencias (' + n + ')', d.sent, '', true) : '') +
+        '<div class="sec"><h3>Educación</h3>' + chips + (d.edu || []).map(boxHTML).join('') + '</div>' +
+        sectionBoxes('Experiencia laboral', d.exp, 'Sin experiencia declarada.') +
+        '<div class="sec"><h3>Patrimonio e ingresos</h3>' +
+          (d.ing ? '<div class="bm" style="margin-bottom:.5rem;color:var(--text)"><b>Ingresos anuales declarados:</b> ' + esc(d.ing) + '</div>' : '') +
+          ((d.bienes && d.bienes.length) ? d.bienes.map(boxHTML).join('') : '<div class="sec-empty">Sin bienes declarados.</div>') + '</div>' +
+        sectionBoxes('Trayectoria política', d.tray, 'Sin cargos partidarios declarados.') +
+        '<div class="sec"><h3>Anotaciones Datapol</h3>' + anot + '</div></div>';
+  }
+
+  fichaOverlay.addEventListener('click', function (e) {
+    if (e.target === fichaOverlay || e.target.closest('.sheet-close')) closeFicha();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFicha(); });
+
   out.addEventListener('click', function (e) {
+    var ver = e.target.closest('.ver');
+    if (ver) { openFicha(ver.getAttribute('data-dni')); return; }
     var head = e.target.closest('.card-head');
     if (head) head.parentNode.classList.toggle('open');
   });

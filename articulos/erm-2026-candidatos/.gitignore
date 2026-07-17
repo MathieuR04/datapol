@@ -13,3 +13,8 @@ data/.eg2026_checkpoint.json
 data/.erm2026_checkpoint.json
 data/.erm2026_state.json
 data/.erm2026_ubigeo_tree.json
+
+# HDV warehouse: heavy, re-derivable from a re-scrape; kept off git.
+# hdv.sqlite holds raw HDV JSON (compressed) + parsed sentencias/educación.
+# "Local now, R2 later": this dir syncs to object storage in a later step.
+data/hdv/
