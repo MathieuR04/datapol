@@ -1,0 +1,534 @@
+{
+ "definicion_lima_moderna": [
+  "SANTIAGO DE SURCO",
+  "MIRAFLORES",
+  "MAGDALENA DEL MAR",
+  "SAN ISIDRO",
+  "LA MOLINA",
+  "SAN BORJA",
+  "LINCE",
+  "SAN MIGUEL",
+  "BARRANCO",
+  "JESUS MARIA",
+  "PUEBLO LIBRE",
+  "SURQUILLO"
+ ],
+ "padron": {
+  "total": 27325432,
+  "lima_met": 8681523,
+  "lima_moderna": 1556530
+ },
+ "senado": {
+  "total": {
+   "moderna": 20,
+   "lima_met": 10,
+   "pais": 29,
+   "exterior": 1
+  },
+  "por_modalidad": {
+   "callao": {
+    "moderna": 1,
+    "lima_met": 0,
+    "pais": 0,
+    "exterior": 0
+   },
+   "departamental": {
+    "moderna": 1,
+    "lima_met": 2,
+    "pais": 21,
+    "exterior": 0
+   },
+   "lima": {
+    "moderna": 3,
+    "lima_met": 1,
+    "pais": 0,
+    "exterior": 0
+   },
+   "nacional": {
+    "moderna": 15,
+    "lima_met": 7,
+    "pais": 8,
+    "exterior": 0
+   },
+   "pex": {
+    "moderna": 0,
+    "lima_met": 0,
+    "pais": 0,
+    "exterior": 1
+   }
+  },
+  "departamental_en_su_dep": 21,
+  "departamental_n": 24,
+  "por_distrito": [
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "SANTIAGO DE SURCO",
+    "senadores": 6
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "MIRAFLORES",
+    "senadores": 4
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "MAGDALENA DEL MAR",
+    "senadores": 3
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "SAN ISIDRO",
+    "senadores": 3
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "LIMA",
+    "senadores": 2
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "ATE",
+    "senadores": 2
+   },
+   {
+    "domi_dep": "AYACUCHO",
+    "domi_prov": "HUANTA",
+    "domi_dist": "HUANTA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "CAJAMARCA",
+    "domi_prov": "CAJAMARCA",
+    "domi_dist": "CAJAMARCA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "AMERICA",
+    "domi_prov": "ESTADOS UNIDOS DE AMERICA",
+    "domi_dist": "SEATLE",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "ANCASH",
+    "domi_prov": "SANTA",
+    "domi_dist": "CHIMBOTE",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "APURIMAC",
+    "domi_prov": "ABANCAY",
+    "domi_dist": "PICHIRHUA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "AREQUIPA",
+    "domi_prov": "AREQUIPA",
+    "domi_dist": "AREQUIPA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "AREQUIPA",
+    "domi_prov": "AREQUIPA",
+    "domi_dist": "PAUCARPATA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "AYACUCHO",
+    "domi_prov": "HUAMANGA",
+    "domi_dist": "SAN JUAN BAUTISTA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "HUANUCO",
+    "domi_prov": "YAROWILCA",
+    "domi_dist": "APARICIO POMARES",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "HUANCAVELICA",
+    "domi_prov": "HUANCAVELICA",
+    "domi_dist": "HUANCAVELICA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "CUSCO",
+    "domi_prov": "CUSCO",
+    "domi_dist": "WANCHAQ",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "CUSCO",
+    "domi_prov": "CUSCO",
+    "domi_dist": "SANTIAGO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "CALLAO",
+    "domi_prov": "CALLAO",
+    "domi_dist": "LA PUNTA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "CAJAMARCA",
+    "domi_prov": "CHOTA",
+    "domi_dist": "TACABAMBA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LA LIBERTAD",
+    "domi_prov": "TRUJILLO",
+    "domi_dist": "TRUJILLO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "ICA",
+    "domi_prov": "ICA",
+    "domi_dist": "ICA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "CHACLACAYO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "HUAURA",
+    "domi_dist": "VEGUETA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LAMBAYEQUE",
+    "domi_prov": "CHICLAYO",
+    "domi_dist": "CHICLAYO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "CHORRILLOS",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "LA MOLINA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "COMAS",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "JUNIN",
+    "domi_prov": "HUANCAYO",
+    "domi_dist": "HUANCAYO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "JUNIN",
+    "domi_prov": "CHANCHAMAYO",
+    "domi_dist": "CHANCHAMAYO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "LINCE",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "LURIGANCHO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "SAN BORJA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "SAN MIGUEL",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "LIMA",
+    "domi_dist": "VILLA EL SALVADOR",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LIMA",
+    "domi_prov": "YAUYOS",
+    "domi_dist": "YAUYOS",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "LORETO",
+    "domi_prov": "MAYNAS",
+    "domi_dist": "IQUITOS",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "MADRE DE DIOS",
+    "domi_prov": "TAMBOPATA",
+    "domi_dist": "TAMBOPATA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "MOQUEGUA",
+    "domi_prov": "ILO",
+    "domi_dist": "ILO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "PIURA",
+    "domi_prov": "PAITA",
+    "domi_dist": "COLAN",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "PUNO",
+    "domi_prov": "HUANCANE",
+    "domi_dist": "HUANCANE",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "PUNO",
+    "domi_prov": "PUNO",
+    "domi_dist": "PUNO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "SAN MARTIN",
+    "domi_prov": "SAN MARTIN",
+    "domi_dist": "LA BANDA DE SHILCAYO",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "TACNA",
+    "domi_prov": "TACNA",
+    "domi_dist": "TACNA",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "TUMBES",
+    "domi_prov": "CONTRALMIRANTE VILLAR",
+    "domi_dist": "ZORRITOS",
+    "senadores": 1
+   },
+   {
+    "domi_dep": "UCAYALI",
+    "domi_prov": "CORONEL PORTILLO",
+    "domi_dist": "CALLERIA",
+    "senadores": 1
+   }
+  ]
+ },
+ "candidatos_nacional": {
+  "inscritos": 1050,
+  "con_hdv": 953,
+  "sin_hdv": 97,
+  "total": {
+   "moderna": 290,
+   "lima_met": 292,
+   "pais": 368,
+   "exterior": 3
+  },
+  "por_posicion": [
+   {
+    "pos": 1,
+    "n": 34,
+    "lima_met": 29,
+    "moderna": 24
+   },
+   {
+    "pos": 2,
+    "n": 35,
+    "lima_met": 21,
+    "moderna": 15
+   },
+   {
+    "pos": 3,
+    "n": 35,
+    "lima_met": 22,
+    "moderna": 13
+   },
+   {
+    "pos": 4,
+    "n": 32,
+    "lima_met": 21,
+    "moderna": 16
+   },
+   {
+    "pos": 5,
+    "n": 33,
+    "lima_met": 23,
+    "moderna": 19
+   },
+   {
+    "pos": 6,
+    "n": 33,
+    "lima_met": 21,
+    "moderna": 10
+   },
+   {
+    "pos": 7,
+    "n": 32,
+    "lima_met": 21,
+    "moderna": 11
+   },
+   {
+    "pos": 8,
+    "n": 34,
+    "lima_met": 19,
+    "moderna": 9
+   },
+   {
+    "pos": 9,
+    "n": 33,
+    "lima_met": 20,
+    "moderna": 12
+   },
+   {
+    "pos": 10,
+    "n": 34,
+    "lima_met": 28,
+    "moderna": 12
+   },
+   {
+    "pos": 11,
+    "n": 33,
+    "lima_met": 25,
+    "moderna": 13
+   },
+   {
+    "pos": 12,
+    "n": 31,
+    "lima_met": 20,
+    "moderna": 12
+   },
+   {
+    "pos": 13,
+    "n": 32,
+    "lima_met": 19,
+    "moderna": 14
+   },
+   {
+    "pos": 14,
+    "n": 28,
+    "lima_met": 16,
+    "moderna": 7
+   },
+   {
+    "pos": 15,
+    "n": 33,
+    "lima_met": 20,
+    "moderna": 11
+   },
+   {
+    "pos": 16,
+    "n": 34,
+    "lima_met": 22,
+    "moderna": 8
+   },
+   {
+    "pos": 17,
+    "n": 33,
+    "lima_met": 12,
+    "moderna": 5
+   },
+   {
+    "pos": 18,
+    "n": 30,
+    "lima_met": 15,
+    "moderna": 5
+   },
+   {
+    "pos": 19,
+    "n": 29,
+    "lima_met": 19,
+    "moderna": 7
+   },
+   {
+    "pos": 20,
+    "n": 28,
+    "lima_met": 18,
+    "moderna": 8
+   },
+   {
+    "pos": 21,
+    "n": 30,
+    "lima_met": 20,
+    "moderna": 7
+   },
+   {
+    "pos": 22,
+    "n": 32,
+    "lima_met": 18,
+    "moderna": 6
+   },
+   {
+    "pos": 23,
+    "n": 31,
+    "lima_met": 16,
+    "moderna": 7
+   },
+   {
+    "pos": 24,
+    "n": 28,
+    "lima_met": 16,
+    "moderna": 3
+   },
+   {
+    "pos": 25,
+    "n": 33,
+    "lima_met": 22,
+    "moderna": 5
+   },
+   {
+    "pos": 26,
+    "n": 29,
+    "lima_met": 13,
+    "moderna": 6
+   },
+   {
+    "pos": 27,
+    "n": 32,
+    "lima_met": 19,
+    "moderna": 11
+   },
+   {
+    "pos": 28,
+    "n": 31,
+    "lima_met": 20,
+    "moderna": 7
+   },
+   {
+    "pos": 29,
+    "n": 28,
+    "lima_met": 12,
+    "moderna": 4
+   },
+   {
+    "pos": 30,
+    "n": 33,
+    "lima_met": 15,
+    "moderna": 3
+   }
+  ]
+ }
+}

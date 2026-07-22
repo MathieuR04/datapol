@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Senado que vive en Lima | Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="El Senado que vive en Lima">
+  <meta property="og:description" content="El distrito nacional prometía representar a todo el Perú. La mitad del nuevo Senado vive en Lima Metropolitana — y un tercio, en 12 distritos de Lima Moderna.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/senado-limeno/">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@KhamaRamaq">
+  <meta name="twitter:title"       content="El Senado que vive en Lima">
+  <meta name="twitter:description" content="La mitad del nuevo Senado vive en Lima Metropolitana — y un tercio, en 12 distritos de Lima Moderna.">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #f5f0e8;
+      --surface: #ede8df;
+      --border:  #cfc0ab;
+      --text:    #1a1209;
+      --muted:   #7a6858;
+      --dim:     #b0a090;
+      --terra:   #c4603a;
+      --sand:    #d9c9b4;
+      /* categorical palette — domicile classes */
+      --c-moderna:  #c4603a;   /* Lima Moderna  */
+      --c-limamet:  #dda224;   /* resto Lima Metropolitana */
+      --c-pais:     #2e7bad;   /* resto del país */
+      --c-exterior: #6b7d2a;   /* exterior */
+    }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text); background: var(--bg);
+      line-height: 1.55; -webkit-font-smoothing: antialiased;
+    }
+    .article { max-width: 760px; margin: 0 auto; padding: 2.4rem 1.1rem 4rem; }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--terra); margin-bottom: 0.7rem;
+    }
+    .article-title {
+      font-family: 'Bebas Neue', sans-serif; font-weight: 400;
+      font-size: clamp(2.3rem, 7vw, 3.8rem); line-height: 1.0; letter-spacing: 0.5px;
+      margin-bottom: 0.9rem;
+    }
+    .article-title .num { color: var(--terra); }
+    .article-byline {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 0.55rem;
+      font-size: 12.5px; color: var(--muted); margin-bottom: 2.2rem;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--dim); }
+
+    .article-body p { margin-bottom: 1.05rem; font-size: 15.5px; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.5px;
+      font-size: clamp(1.5rem, 4vw, 2rem); margin: 2.4rem 0 0.8rem;
+    }
+    .article-body h2 .knum { color: var(--terra); margin-right: .35rem; }
+    .article-body a { color: var(--terra); }
+
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 1.5rem 0;
+    }
+    @media (max-width: 600px) { .stats-strip { grid-template-columns: 1fr; } }
+    .stat-box {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1rem 1.05rem;
+    }
+    .stat-box-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; line-height: 1;
+      color: var(--terra); margin-bottom: 0.3rem;
+    }
+    .stat-box-label { font-size: 12px; color: var(--muted); line-height: 1.35; }
+
+    .highlight-box {
+      background: var(--surface); border-left: 3px solid var(--terra); border-radius: 0 10px 10px 0;
+      padding: 0.95rem 1.1rem; margin: 1.4rem 0; font-size: 14px;
+    }
+    .highlight-box p { margin: 0; font-size: 14px; }
+    .highlight-box p + p { margin-top: .6rem; }
+
+    /* ── figure scaffold ─────────────────────────────────── */
+    .fig {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.15rem 1.15rem 0.9rem; margin: 1.5rem 0;
+    }
+    .fig-title  { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .fig-sub    { font-size: 12px; color: var(--muted); margin-bottom: 0.9rem; }
+    .fig-note   { font-size: 11px; color: var(--muted); margin-top: 0.7rem; padding-top: .55rem; border-top: 1px solid var(--border); }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.45rem 1.1rem; margin: .2rem 0 .8rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: .42rem; font-size: 12px; color: var(--text); }
+    .legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+
+    /* waffle */
+    .waffle { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 420px; }
+    .waffle-cell {
+      aspect-ratio: 1; border-radius: 4px; cursor: default;
+      transition: transform .08s;
+    }
+    .waffle-cell:hover { transform: scale(1.14); outline: 2px solid var(--bg); }
+
+    /* stacked modality bars */
+    .modrow { display: grid; grid-template-columns: 150px 1fr 44px; gap: 10px; align-items: center; margin-bottom: 7px; }
+    @media (max-width: 540px) { .modrow { grid-template-columns: 105px 1fr 40px; } }
+    .modrow-label { font-size: 12px; font-weight: 600; text-align: right; line-height: 1.2; }
+    .modrow-label small { display: block; font-weight: 400; color: var(--muted); font-size: 10.5px; }
+    .modrow-bar { display: flex; gap: 2px; height: 22px; }
+    .modrow-seg { border-radius: 4px; min-width: 4px; transition: opacity .1s; }
+    .modrow-seg:hover { opacity: .82; }
+    .modrow-pct { font-size: 12px; font-weight: 600; color: var(--muted); }
+
+    /* dumbbells */
+    .db-row { margin-bottom: 1.05rem; }
+    .db-name { font-size: 12.5px; font-weight: 600; margin-bottom: 4px; }
+    .db-track { position: relative; height: 30px; }
+    .db-axis { position: absolute; left: 0; right: 0; top: 14px; height: 2px; background: var(--border); border-radius: 1px; }
+    .db-line { position: absolute; top: 13px; height: 4px; border-radius: 2px; background: var(--sand); }
+    .db-dot {
+      position: absolute; top: 8px; width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid var(--bg); transform: translateX(-50%);
+    }
+    .db-val { position: absolute; top: -8px; transform: translateX(-50%); font-size: 11.5px; font-weight: 700; }
+    .db-cap { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+
+    /* position chart */
+    .poschart { width: 100%; overflow-x: auto; }
+    .poschart svg { display: block; }
+
+    /* map */
+    .mapwrap { position: relative; }
+    .mapwrap svg { display: block; width: 100%; height: auto; }
+    .map-dist { stroke: var(--bg); stroke-width: 0.8; transition: opacity .1s; cursor: default; }
+    .map-dist:hover { opacity: .8; }
+
+    /* table */
+    .senataba { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .senataba th {
+      text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--muted); font-weight: 700; padding: 6px 8px; border-bottom: 2px solid var(--border);
+      cursor: pointer; user-select: none; white-space: nowrap;
+    }
+    .senataba td { padding: 6.5px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .senataba tr:last-child td { border-bottom: none; }
+    .st-name { font-weight: 600; }
+    .st-sub { font-size: 11px; color: var(--muted); }
+    .clase-dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+    .tablescroll { overflow-x: auto; }
+
+    /* tooltip */
+    .tip {
+      position: fixed; z-index: 50; pointer-events: none; display: none;
+      background: var(--text); color: var(--bg); border-radius: 8px;
+      padding: 7px 10px; font-size: 12px; line-height: 1.45; max-width: 240px;
+      box-shadow: 0 4px 14px rgba(26,18,9,.25);
+    }
+    .tip b { color: #fff; }
+
+    .foot {
+      margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--muted);
+    }
+    .foot a { color: var(--terra); }
+  </style>
+</head>
+<body data-palette="#c4603a,#dda224,#2e7bad,#6b7d2a">
+
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · Perú 2026</div>
+    <h1 class="article-title">El Senado que vive en <span class="num">Lima</span></h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>22 de julio, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>7 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+
+      <p>Tras más de tres décadas, el Perú vuelve a tener un Senado. El diseño de la cámara alta
+      prometía <strong>representación territorial</strong>: 24 escaños, uno por cada departamento
+      (más Lima Provincias y el Callao), elegidos por distrito múltiple; <strong>30 escaños por
+      distrito único nacional</strong>, pensados para capturar intereses de alcance nacional;
+      4 escaños para Lima Metropolitana, 1 para el Callao y 1 para los peruanos residentes en el
+      extranjero.</p>
+
+      <p>Cruzamos el domicilio declarado en la <strong>hoja de vida ante el JNE</strong> de los 60
+      senadores electos —y de los 1,050 candidatos de las listas nacionales inscritas— con el
+      padrón electoral de cada distrito. El resultado: la cámara pensada para devolverles voz a los
+      departamentos terminó siendo, en la práctica, una cámara limeña.</p>
+
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-box-num">50%</div>
+          <div class="stat-box-label">de los 60 senadores electos vive en Lima Metropolitana (prov. de Lima + Callao)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">1 de 3</div>
+          <div class="stat-box-label">vive en <strong>Lima Moderna</strong>: 12 distritos que concentran el 5.7% del padrón nacional</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">6</div>
+          <div class="stat-box-label">senadores viven solo en Santiago de Surco — más que los electos por cualquier departamento</div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <p><strong>¿Qué es Lima Moderna?</strong> Usamos la segmentación estándar de APEIM:
+        Barranco, Jesús María, La Molina, Lince, Magdalena del Mar, Miraflores, Pueblo Libre,
+        San Borja, San Isidro, San Miguel, Santiago de Surco y Surquillo — el corredor de
+        distritos de ingresos medios-altos y altos de la capital. Juntos suman
+        <strong>1.56 millones de electores: el 5.7% del padrón nacional</strong>.</p>
+        <p><strong>¿Y Lima Metropolitana?</strong> La provincia de Lima más la provincia
+        constitucional del Callao: 8.68 millones de electores, el <strong>31.8% del padrón</strong>.
+        No incluye al resto del departamento de Lima (Huaral, Cañete, Huaura…), que elige su propio
+        senador como “Lima Provincias”.</p>
+      </div>
+
+      <h2><span class="knum">I.</span> La lista nacional era una lista limeña</h2>
+
+      <p>El distrito único nacional fue el gran argumento del nuevo diseño: 30 senadores elegidos
+      por todos los peruanos, sin anclaje territorial, para representar “intereses nacionales”.
+      Pero la nominación fue de los partidos — y los partidos armaron sus listas en Lima.</p>
+
+      <p>De los 1,050 candidatos en listas nacionales inscritas, el <strong>61% declara domicilio
+      en Lima Metropolitana</strong> y el 30% en Lima Moderna. Y el sesgo se concentra donde más
+      importa: en las cabezas de lista. Entre los primeros cinco puestos de cada lista —los lugares
+      con opción real de entrar— el <strong>69% vive en Lima Metropolitana y la mitad en Lima
+      Moderna</strong> — un área que reúne apenas al 5.7% de los electores del país.</p>
+
+      <div class="fig">
+        <div class="fig-title">Domicilio de los candidatos del distrito nacional, por posición en la lista</div>
+        <div class="fig-sub">Cada barra es una posición (1–30); altura = % de candidatos en esa posición según domicilio · listas inscritas con hoja de vida (953 de 1,050)</div>
+        <div class="legend" id="legend-pos"></div>
+        <div class="poschart" id="poschart"></div>
+        <div class="fig-note">Los primeros puestos —los elegibles— son los más limeños. “Resto del país” incluye a 3 candidatos domiciliados en el extranjero. Fuente: hojas de vida JNE.</div>
+      </div>
+
+      <p>El resultado era previsible: <strong>22 de los 30 senadores del distrito nacional (73%)
+      viven en Lima Metropolitana</strong>, y 15 —la mitad exacta— en Lima Moderna. Dicho de otro
+      modo: Lima Metropolitana, con el 31.8% del padrón, se llevó el 73% de los escaños
+      “nacionales”; Lima Moderna, con el 5.7% del padrón, se llevó la mitad. El distrito
+      diseñado para capturar el interés nacional eligió, en los hechos, a la bancada más limeña
+      de toda la cámara.</p>
+
+      <h2><span class="knum">II.</span> La composición final: una cámara capitalina</h2>
+
+      <p>Sumemos las cinco modalidades. Los 24 escaños departamentales sí funcionaron como se
+      esperaba —21 de 24 senadores viven en el departamento que representan—. Pero el peso del
+      distrito nacional inclina la cámara entera hacia la capital:</p>
+
+      <div class="fig">
+        <div class="fig-title">Los 60 senadores electos, según dónde viven</div>
+        <div class="fig-sub">Cada cuadrado es un senador · pasa el cursor para ver quién es · Lima Moderna: 5.7% del padrón, 33% del Senado</div>
+        <div class="legend" id="legend-waffle"></div>
+        <div class="waffle" id="waffle"></div>
+        <div class="fig-note">Domicilio declarado en la hoja de vida presentada al JNE para las EG 2026.</div>
+      </div>
+
+      <div class="fig">
+        <div class="fig-title">Dónde vive cada bancada territorial</div>
+        <div class="fig-sub">Senadores según domicilio, por modalidad de elección · % = viven en Lima Metropolitana</div>
+        <div class="legend" id="legend-mod"></div>
+        <div id="modchart"></div>
+        <div class="fig-note">El senador del Callao vive en Lima Moderna; una senadora por Lima vive en La Punta, Callao. El senador de los peruanos en el extranjero vive en Seattle, EE.UU.</div>
+      </div>
+
+      <p>La comparación contra el padrón deja el punto en una sola imagen: Lima Metropolitana pesa
+      el 31.8% del electorado y se lleva el 50% del Senado. Lima Moderna pesa el
+      <strong>5.7%</strong> del electorado — y se lleva <strong>un tercio de la cámara</strong>,
+      una sobrerrepresentación de casi <strong>6 veces</strong>.</p>
+
+      <div class="fig">
+        <div class="fig-title">Peso electoral vs. peso en el Senado</div>
+        <div class="fig-sub">% del padrón nacional → % de los 60 senadores que viven ahí</div>
+        <div id="dumbbells"></div>
+      </div>
+
+      <h2><span class="knum">III.</span> El mapa de la cámara alta</h2>
+
+      <p>Este es el mapa de Lima Metropolitana con el domicilio de los 30 senadores que viven en
+      ella. Los distritos de Lima Moderna van en terracota; el número indica cuántos senadores
+      viven en cada distrito.</p>
+
+      <div class="fig">
+        <div class="fig-title">Senadores por distrito de residencia — Lima Metropolitana</div>
+        <div class="fig-sub">Distritos de Lima Moderna en terracota · pasa el cursor por un distrito para ver el detalle</div>
+        <div class="mapwrap" id="map"></div>
+        <div class="fig-note">Los otros 30 senadores viven fuera de Lima Metropolitana: 29 en el resto del país y 1 en el extranjero. Geometrías: ONPE/INEI.</div>
+      </div>
+
+      <p>Los cuatro distritos con más senadores —Santiago de Surco (6), Miraflores (4), Magdalena
+      del Mar (3) y San Isidro (3)— concentran <strong>16 senadores: más de la cuarta parte de la
+      cámara</strong> en cuatro distritos del mismo corredor residencial que, juntos, reúnen el
+      <strong>2.4% del padrón nacional</strong>.</p>
+
+      <p>Incluso la representación departamental tiene sus grietas: tres senadores electos por
+      departamentos viven en Lima Metropolitana — <strong>José Arista</strong> (Amazonas, vive en
+      Magdalena del Mar), <strong>Segundo Tapia</strong> (Cajamarca, vive en Ate) y
+      <strong>Percy Osorio</strong> (Pasco, vive en el Cercado de Lima).</p>
+
+      <h2><span class="knum">IV.</span> Los 60, uno por uno</h2>
+
+      <div class="fig">
+        <div class="fig-title">Todos los senadores electos y su domicilio declarado</div>
+        <div class="fig-sub">Clic en una cabecera para ordenar</div>
+        <div class="tablescroll">
+          <table class="senataba" id="tabla">
+            <thead><tr>
+              <th data-k="name">Senador/a</th>
+              <th data-k="circunscripcion">Electo por</th>
+              <th data-k="partido">Partido</th>
+              <th data-k="domi">Vive en</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <h2>Metodología</h2>
+      <div class="highlight-box">
+        <p><strong>Fuentes.</strong> Domicilios: hoja de vida de cada candidato en la plataforma
+        del <a href="https://plataformaelectoral.jne.gob.pe" target="_blank" rel="noopener">JNE</a>
+        (declaración jurada presentada para las EG 2026). Resultados y senadores electos: ONPE/JNE.
+        Padrón por distrito: padrón electoral EG 2026 (27.3 millones de electores, incluido el
+        exterior).</p>
+        <p><strong>Definiciones.</strong> “Lima Metropolitana” = provincia de Lima + provincia
+        constitucional del Callao. “Lima Moderna” = segmentación APEIM de 12 distritos (listados
+        arriba). El domicilio es el <em>declarado</em> ante el JNE, que es el mejor dato público
+        disponible; no equivale necesariamente a residencia efectiva única.</p>
+        <p><strong>Cobertura.</strong> Los 60 senadores electos tienen hoja de vida con domicilio.
+        De los 1,050 candidatos de listas nacionales inscritas, 97 (9%) no registran hoja de vida
+        en la plataforma; los porcentajes de candidatos se calculan sobre los 953 con dato.</p>
+      </div>
+
+      <div class="foot">
+        Datapol · datos abiertos, código reproducible. El dataset de domicilios de los 60 senadores
+        está disponible en <a href="data/senadores.json">senadores.json</a>.
+      </div>
+
+    </div>
+  </article>
+
+  <div class="tip" id="tip"></div>
+
+  <script>
+  (async function(){
+    const C = { moderna:'#c4603a', lima_met:'#dda224', pais:'#2e7bad', exterior:'#6b7d2a' };
+    const LABEL = { moderna:'Lima Moderna', lima_met:'Resto de Lima Metropolitana',
+                    pais:'Resto del país', exterior:'Exterior' };
+    const [agg, senadores, geo] = await Promise.all([
+      fetch('data/agregados.json').then(r=>r.json()),
+      fetch('data/senadores.json').then(r=>r.json()),
+      fetch('data/lima_met_distritos.geojson').then(r=>r.json()),
+    ]);
+
+    /* ── tooltip ── */
+    const tip = document.getElementById('tip');
+    function showTip(html, ev){
+      tip.innerHTML = html; tip.style.display = 'block';
+      const pad = 14, w = tip.offsetWidth;
+      let x = ev.clientX + pad, y = ev.clientY + pad;
+      if (x + w > innerWidth - 8) x = ev.clientX - w - pad;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    }
+    function hideTip(){ tip.style.display = 'none'; }
+
+    function legend(el, keys, counts){
+      el.innerHTML = keys.map(k =>
+        `<span class="legend-item"><span class="legend-swatch" style="background:${C[k]}"></span>` +
+        `${LABEL[k]}${counts ? ` <b style="margin-left:2px">${counts[k]}</b>` : ''}</span>`).join('');
+    }
+
+    const tt = s => s.toLowerCase().replace(/(^|[\s(.–-])([a-záéíóúñü])/g, (m,a,b)=>a+b.toUpperCase());
+
+    /* ── I. position chart (stacked % bars, pos 1..30) ── */
+    (function(){
+      legend(document.getElementById('legend-pos'), ['moderna','lima_met','pais']);
+      const rows = agg.candidatos_nacional.por_posicion.filter(d=>d.pos<=30);
+      const W=680, H=210, mL=34, mB=22, mT=6, bw=(W-mL-6)/rows.length;
+      let s = `<svg viewBox="0 0 ${W} ${H+mB}" role="img" aria-label="Domicilio de candidatos por posición de lista">`;
+      // gridlines 0/25/50/75/100
+      for (const g of [0,25,50,75,100]){
+        const y = mT + (H-mT)*(1-g/100);
+        s += `<line x1="${mL}" x2="${W}" y1="${y}" y2="${y}" stroke="#cfc0ab" stroke-width="${g===0?1.4:0.6}"/>`;
+        s += `<text x="${mL-5}" y="${y+3.5}" text-anchor="end" font-size="9.5" fill="#7a6858">${g}%</text>`;
+      }
+      rows.forEach((d,i)=>{
+        const x = mL + i*bw + 1.5, w = bw-3;
+        const hMod = (H-mT) * d.moderna/d.n;
+        const hMet = (H-mT) * (d.lima_met - d.moderna)/d.n;
+        const hPais= (H-mT) * (d.n - d.lima_met)/d.n;
+        let y = mT + (H-mT);
+        // baseline-anchored stack with 2px surface gaps, rounded data-end on top segment
+        y -= hMod; s += `<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${Math.max(hMod-1,0)}" fill="${C.moderna}"/>`;
+        y -= hMet; s += `<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${Math.max(hMet-2,0)}" fill="${C.lima_met}"/>`;
+        y -= hPais; s += `<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${Math.max(hPais-2,0)}" rx="3" fill="${C.pais}"/>`;
+        if (d.pos===1 || d.pos%5===0)
+          s += `<text x="${x+w/2}" y="${H+mB-6}" text-anchor="middle" font-size="9.5" fill="#7a6858">${d.pos}</text>`;
+      });
+      s += `<text x="${mL + (W-mL)/2}" y="${H+mB-6+11}" text-anchor="middle" font-size="0" fill="#7a6858"></text></svg>`;
+      const el = document.getElementById('poschart');
+      el.innerHTML = s;
+      el.querySelectorAll('rect').forEach(r=>{
+        r.addEventListener('mousemove', ev=>{
+          const d = rows[+r.dataset.i];
+          showTip(`<b>Posición ${d.pos}</b> · ${d.n} candidatos<br>`+
+            `Lima Moderna: <b>${d.moderna}</b> (${Math.round(100*d.moderna/d.n)}%)<br>`+
+            `Lima Metropolitana: <b>${d.lima_met}</b> (${Math.round(100*d.lima_met/d.n)}%)<br>`+
+            `Resto: <b>${d.n-d.lima_met}</b>`, ev);
+        });
+        r.addEventListener('mouseleave', hideTip);
+      });
+    })();
+
+    /* ── II. waffle: 60 senators ── */
+    (function(){
+      const order = { moderna:0, lima_met:1, pais:2, exterior:3 };
+      const sorted = [...senadores].sort((a,b)=>
+        order[a.clase]-order[b.clase] || (a.domi_dist||'').localeCompare(b.domi_dist||''));
+      legend(document.getElementById('legend-waffle'),
+             ['moderna','lima_met','pais','exterior'], agg.senado.total);
+      const w = document.getElementById('waffle');
+      w.innerHTML = sorted.map((s,i)=>
+        `<div class="waffle-cell" data-i="${i}" style="background:${C[s.clase]}"></div>`).join('');
+      w.querySelectorAll('.waffle-cell').forEach(c=>{
+        c.addEventListener('mousemove', ev=>{
+          const s = sorted[+c.dataset.i];
+          const domi = [s.domi_dist, s.domi_prov===s.domi_dist?null:s.domi_prov, s.domi_dep]
+            .filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).map(tt).join(', ');
+          showTip(`<b>${tt(s.name)}</b><br>${tt(s.partido)} · electo por ${s.circunscripcion}<br>Vive en: ${domi}`, ev);
+        });
+        c.addEventListener('mouseleave', hideTip);
+      });
+    })();
+
+    /* ── II. modality stacked bars ── */
+    (function(){
+      legend(document.getElementById('legend-mod'), ['moderna','lima_met','pais','exterior']);
+      const M = agg.senado.por_modalidad;
+      const rows = [
+        ['nacional',      'Distrito nacional', 30],
+        ['departamental', 'Departamentales',   24],
+        ['lima',          'Lima Metropolitana', 4],
+        ['callao',        'Callao',             1],
+        ['pex',           'Peruanos en el extranjero', 1],
+      ];
+      const el = document.getElementById('modchart');
+      el.innerHTML = rows.map(([k, lab, n])=>{
+        const m = M[k], limamet = m.moderna + m.lima_met;
+        const segs = ['moderna','lima_met','pais','exterior'].filter(c=>m[c]>0)
+          .map(c=>`<div class="modrow-seg" data-mod="${k}" data-c="${c}" style="flex:${m[c]};background:${C[c]}"></div>`).join('');
+        return `<div class="modrow">
+          <div class="modrow-label">${lab}<small>${n} escaño${n>1?'s':''}</small></div>
+          <div class="modrow-bar" style="width:${100*n/30}%">${segs}</div>
+          <div class="modrow-pct">${Math.round(100*limamet/n)}%</div>
+        </div>`;
+      }).join('');
+      el.querySelectorAll('.modrow-seg').forEach(sg=>{
+        sg.addEventListener('mousemove', ev=>{
+          const m = M[sg.dataset.mod], c = sg.dataset.c;
+          showTip(`<b>${LABEL[c]}</b>: ${m[c]} senador${m[c]>1?'es':''}`, ev);
+        });
+        sg.addEventListener('mouseleave', hideTip);
+      });
+    })();
+
+    /* ── II. dumbbells: padrón vs senate ── */
+    (function(){
+      const P = agg.padron, S = agg.senado.total;
+      const senMet = S.moderna + S.lima_met, senMod = S.moderna;
+      const rows = [
+        ['Lima Metropolitana', 100*P.lima_met/P.total,     100*senMet/60, C.lima_met],
+        ['Lima Moderna',       100*P.lima_moderna/P.total, 100*senMod/60, C.moderna],
+      ];
+      document.getElementById('dumbbells').innerHTML = rows.map(([lab, a, b, col])=>`
+        <div class="db-row">
+          <div class="db-name">${lab}</div>
+          <div class="db-track">
+            <div class="db-axis"></div>
+            <div class="db-line" style="left:${a}%;width:${b-a}%;"></div>
+            <div class="db-dot" style="left:${a}%;background:var(--dim)"></div>
+            <div class="db-dot" style="left:${b}%;background:${col}"></div>
+            <div class="db-val" style="left:${a}%;color:var(--muted)">${a.toFixed(1)}%</div>
+            <div class="db-val" style="left:${b}%;color:var(--text)">${b.toFixed(0)}%</div>
+          </div>
+          <div class="db-cap"><span>% del padrón</span><span>% del Senado</span></div>
+        </div>`).join('');
+    })();
+
+    /* ── III. map ── */
+    (function(){
+      // equirectangular projection with latitude correction, fit to bbox
+      let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+      const KX = Math.cos(12.05*Math.PI/180);
+      const walk = (cs, fn) => typeof cs[0]==='number' ? fn(cs) : cs.forEach(c=>walk(c,fn));
+      geo.features.forEach(f=>walk(f.geometry.coordinates, ([x,y])=>{
+        x*=KX; minX=Math.min(minX,x); maxX=Math.max(maxX,x);
+        minY=Math.min(minY,y); maxY=Math.max(maxY,y);
+      }));
+      const W=720, H=W*(maxY-minY)/(maxX-minX), sc=W/(maxX-minX);
+      const px = ([x,y]) => [(x*KX-minX)*sc, (maxY-y)*sc];
+      function ring2path(ring){ return 'M'+ring.map(c=>px(c).map(v=>v.toFixed(1)).join(',')).join('L')+'Z'; }
+      function geom2path(g){
+        const polys = g.type==='Polygon' ? [g.coordinates] : g.coordinates;
+        return polys.map(p=>p.map(ring2path).join('')).join('');
+      }
+      function centroid(g){
+        // representative point: centroid of the largest ring's vertices
+        const polys = g.type==='Polygon' ? [g.coordinates] : g.coordinates;
+        let best=null, bn=-1;
+        polys.forEach(p=>{ if(p[0].length>bn){ bn=p[0].length; best=p[0]; } });
+        let sx=0, sy=0; best.forEach(c=>{ const [x,y]=px(c); sx+=x; sy+=y; });
+        return [sx/best.length, sy/best.length];
+      }
+      let paths='', badges='';
+      const feats = geo.features;
+      feats.forEach((f,i)=>{
+        const p = f.properties;
+        const fill = p.moderna ? C.moderna : (p.senadores>0 ? '#cbb89d' : '#e3dbcd');
+        paths += `<path class="map-dist" data-i="${i}" d="${geom2path(f.geometry)}" fill="${fill}"/>`;
+        if (p.senadores>0){
+          const [cx,cy] = centroid(f.geometry);
+          badges += `<g pointer-events="none"><circle cx="${cx}" cy="${cy}" r="10" fill="#f5f0e8" stroke="${p.moderna?C.moderna:'#7a6858'}" stroke-width="1.6"/>`+
+            `<text x="${cx}" y="${cy+3.6}" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1209">${p.senadores}</text></g>`;
+        }
+      });
+      const el = document.getElementById('map');
+      el.innerHTML = `<svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Mapa de Lima Metropolitana con senadores por distrito">${paths}${badges}</svg>`;
+      el.querySelectorAll('.map-dist').forEach(pt=>{
+        pt.addEventListener('mousemove', ev=>{
+          const p = feats[+pt.dataset.i].properties;
+          showTip(`<b>${tt(p.distrito)}</b> (${tt(p.dep)})<br>`+
+            (p.moderna?'Lima Moderna<br>':'')+
+            `Electores: ${p.electores.toLocaleString('es-PE')}<br>`+
+            `Senadores que viven aquí: <b>${p.senadores}</b>`, ev);
+        });
+        pt.addEventListener('mouseleave', hideTip);
+      });
+    })();
+
+    /* ── IV. sortable table ── */
+    (function(){
+      const tbody = document.querySelector('#tabla tbody');
+      let rows = [...senadores], sortK='circunscripcion', asc=1;
+      const claseTxt = s => LABEL[s.clase];
+      function domiTxt(s){
+        if (s.clase==='exterior') return tt(s.domi_dist)+' ('+tt(s.domi_prov)+')';
+        const parts=[s.domi_dist]; if(s.domi_dep!=='LIMA'&&s.domi_dep!==s.domi_dist) parts.push(s.domi_dep);
+        else if(s.domi_dep==='LIMA'&&s.domi_prov!=='LIMA') parts.push(s.domi_prov);
+        return parts.filter((v,i,a)=>v&&a.indexOf(v)===i).map(tt).join(', ');
+      }
+      function render(){
+        tbody.innerHTML = rows.map(s=>`<tr>
+          <td><div class="st-name">${tt(s.name)}</div></td>
+          <td>${s.circunscripcion}${s.modalidad==='departamental'&&s.en_su_dep===false?' <span title="No vive en su circunscripción">⚠</span>':''}</td>
+          <td><div class="st-sub" style="font-size:12px;color:var(--text)">${tt(s.partido)}</div></td>
+          <td><span class="clase-dot" style="background:${C[s.clase]}"></span>${domiTxt(s)}<div class="st-sub">${claseTxt(s)}</div></td>
+        </tr>`).join('');
+      }
+      document.querySelectorAll('#tabla th').forEach(th=>{
+        th.addEventListener('click', ()=>{
+          const k = th.dataset.k;
+          if (k===sortK) asc=-asc; else { sortK=k; asc=1; }
+          rows.sort((a,b)=>{
+            const va = k==='domi' ? (a.domi_dist||'') : (a[k]||'');
+            const vb = k==='domi' ? (b.domi_dist||'') : (b[k]||'');
+            return asc * String(va).localeCompare(String(vb));
+          });
+          render();
+        });
+      });
+      render();
+    })();
+  })();
+  </script>
+
+</body>
+</html>
