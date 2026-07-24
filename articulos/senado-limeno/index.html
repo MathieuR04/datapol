@@ -35,7 +35,7 @@
       /* categorical palette — domicile classes */
       --c-moderna:  #c4603a;   /* Lima Moderna  */
       --c-limamet:  #dda224;   /* resto Lima Metropolitana */
-      --c-pais:     #2e7bad;   /* resto del país */
+      --c-interior: #2e7bad;   /* interior del país */
       --c-exterior: #6b7d2a;   /* exterior */
     }
     html { background: var(--bg); scroll-behavior: smooth; }
@@ -113,11 +113,35 @@
 
     /* waffle */
     .waffle { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; max-width: 420px; }
+    .waffle-center { margin: 0 auto; }
     .waffle-cell {
       aspect-ratio: 1; border-radius: 4px; cursor: default;
       transition: transform .08s;
     }
     .waffle-cell:hover { transform: scale(1.14); outline: 2px solid var(--bg); }
+
+    /* grouped horizontal bars (candidatos por grupo) */
+    .grow { margin-bottom: 0.95rem; }
+    .grow-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+    .grow-label { font-size: 12.5px; font-weight: 600; }
+    .grow-label small { font-weight: 400; color: var(--muted); }
+    .grow-pct { font-size: 12px; font-weight: 700; color: var(--terra); }
+    .grow-bar { display: flex; gap: 2px; height: 26px; }
+    .grow-seg { min-width: 2px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; transition: opacity .1s; }
+    .grow-seg:hover { opacity: .84; }
+
+    /* dual departmental maps */
+    .dualmap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 560px) { .dualmap { grid-template-columns: 1fr; gap: 20px; } }
+    .dmap-cell { text-align: center; }
+    .dmap-title { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+    .dmap-sub { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .dmap-cell svg { display: block; width: 100%; height: auto; max-width: 320px; margin: 0 auto; }
+    .dmap-unit { stroke: var(--bg); stroke-width: 0.5; transition: opacity .1s; cursor: default; }
+    .dmap-unit:hover { opacity: .78; }
+    .dmap-scale { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 6px; font-size: 10px; color: var(--muted); }
+    .dmap-ramp { width: 84px; height: 9px; border-radius: 5px; }
 
     /* stacked modality bars */
     .modrow { display: grid; grid-template-columns: 150px 1fr 44px; gap: 10px; align-items: center; margin-bottom: 7px; }
@@ -142,12 +166,9 @@
     .db-val { position: absolute; top: -8px; transform: translateX(-50%); font-size: 11.5px; font-weight: 700; }
     .db-cap { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
 
-    /* position chart */
-    .poschart { width: 100%; overflow-x: auto; }
-    .poschart svg { display: block; }
-
     /* map */
     .mapwrap { position: relative; }
+    .mapwrap-sm { max-width: 340px; margin: 0 auto; }
     .mapwrap svg { display: block; width: 100%; height: auto; }
     .map-dist { stroke: var(--bg); stroke-width: 0.8; transition: opacity .1s; cursor: default; }
     .map-dist:hover { opacity: .8; }
@@ -246,28 +267,44 @@
 
       <p>El distrito único nacional fue el gran argumento del nuevo diseño: 30 senadores elegidos
       por todos los peruanos, sin anclaje territorial, para representar “intereses nacionales”.
-      Pero la nominación fue de los partidos — y los partidos armaron sus listas en Lima.</p>
-
-      <p>De los 1,050 candidatos en listas nacionales inscritas, el <strong>61% declara domicilio
-      en Lima Metropolitana</strong> y el 30% en Lima Moderna. Y el sesgo se concentra donde más
-      importa: en las cabezas de lista. Entre los primeros cinco puestos de cada lista —los lugares
-      con opción real de entrar— el <strong>69% vive en Lima Metropolitana y la mitad en Lima
-      Moderna</strong> — un área que reúne apenas al 5.7% de los electores del país.</p>
+      El resultado es la bancada más limeña de toda la cámara: <strong>22 de los 30 (73%) viven
+      en Lima Metropolitana</strong> y 15 —la mitad exacta— en Lima Moderna, un área que reúne
+      apenas al 5.7% de los electores del país.</p>
 
       <div class="fig">
-        <div class="fig-title">Domicilio de los candidatos del distrito nacional, por posición en la lista</div>
-        <div class="fig-sub">Cada barra es una posición (1–30); altura = % de candidatos en esa posición según domicilio · listas inscritas con hoja de vida (953 de 1,050)</div>
-        <div class="legend" id="legend-pos"></div>
-        <div class="poschart" id="poschart"></div>
-        <div class="fig-note">Los primeros puestos —los elegibles— son los más limeños. “Resto del país” incluye a 3 candidatos domiciliados en el extranjero. Fuente: hojas de vida JNE.</div>
+        <div class="fig-title">Los 30 senadores del distrito nacional, según dónde viven</div>
+        <div class="fig-sub">Cada cuadrado es un senador electo por el distrito único nacional · pasa el cursor para ver quién es</div>
+        <div class="legend" id="legend-waffle-nac"></div>
+        <div class="waffle waffle-center" id="waffle-nac"></div>
+        <div class="fig-note">Domicilio declarado en la hoja de vida presentada al JNE para las EG 2026.</div>
       </div>
 
-      <p>El resultado era previsible: <strong>22 de los 30 senadores del distrito nacional (73%)
-      viven en Lima Metropolitana</strong>, y 15 —la mitad exacta— en Lima Moderna. Dicho de otro
-      modo: Lima Metropolitana, con el 31.8% del padrón, se llevó el 73% de los escaños
-      “nacionales”; Lima Moderna, con el 5.7% del padrón, se llevó la mitad. El distrito
-      diseñado para capturar el interés nacional eligió, en los hechos, a la bancada más limeña
-      de toda la cámara.</p>
+      <p>¿Cómo se llegó ahí? La nominación fue de los partidos — y los partidos armaron sus listas
+      en Lima. De los 953 candidatos con hoja de vida en listas nacionales inscritas, el
+      <strong>61% declara domicilio en Lima Metropolitana</strong>. Pero el sesgo se agudiza donde
+      más importa: cuanto más arriba en la lista —más cerca de un escaño—, más limeño el candidato.
+      Las <strong>cabezas de lista viven en Lima Metropolitana en un 85%</strong>, y 7 de cada 10
+      en Lima Moderna.</p>
+
+      <div class="fig">
+        <div class="fig-title">Domicilio de los candidatos del distrito nacional</div>
+        <div class="fig-sub">Según su posición en la lista · % de candidatos con hoja de vida por clase de domicilio</div>
+        <div class="legend" id="legend-grupos"></div>
+        <div id="grupos-chart"></div>
+        <div class="fig-note">“Interior” = resto del país fuera de Lima Metropolitana. Cuanto más electivo el puesto, más limeño el candidato. Fuente: hojas de vida JNE.</div>
+      </div>
+
+      <p>El mapa lo resume: los partidos <em>nominaron</em> desde Lima y el electorado <em>eligió</em>
+      a limeños. A la izquierda, de dónde son los candidatos del distrito nacional; a la derecha,
+      de dónde son los 30 que resultaron electos. En ambos, Lima Metropolitana —tratada aquí como
+      un departamento propio— domina el mapa.</p>
+
+      <div class="fig">
+        <div class="fig-title">El distrito “nacional”, en el mapa</div>
+        <div class="fig-sub">Domicilio de candidatos y electos, por departamento · Lima Metropolitana como unidad propia · sombra = número de personas</div>
+        <div class="dualmap" id="dualmap"></div>
+        <div class="fig-note">Escala de color independiente en cada mapa (los totales difieren). Los candidatos y electos domiciliados en el extranjero no se muestran. Geometrías: ONPE/INEI.</div>
+      </div>
 
       <h2><span class="knum">II.</span> La composición final: una cámara capitalina</h2>
 
@@ -279,7 +316,7 @@
         <div class="fig-title">Los 60 senadores electos, según dónde viven</div>
         <div class="fig-sub">Cada cuadrado es un senador · pasa el cursor para ver quién es · Lima Moderna: 5.7% del padrón, 33% del Senado</div>
         <div class="legend" id="legend-waffle"></div>
-        <div class="waffle" id="waffle"></div>
+        <div class="waffle waffle-center" id="waffle"></div>
         <div class="fig-note">Domicilio declarado en la hoja de vida presentada al JNE para las EG 2026.</div>
       </div>
 
@@ -311,8 +348,8 @@
       <div class="fig">
         <div class="fig-title">Senadores por distrito de residencia — Lima Metropolitana</div>
         <div class="fig-sub">Distritos de Lima Moderna en terracota · pasa el cursor por un distrito para ver el detalle</div>
-        <div class="mapwrap" id="map"></div>
-        <div class="fig-note">Los otros 30 senadores viven fuera de Lima Metropolitana: 29 en el resto del país y 1 en el extranjero. Geometrías: ONPE/INEI.</div>
+        <div class="mapwrap mapwrap-sm" id="map"></div>
+        <div class="fig-note">Los otros 30 senadores viven fuera de Lima Metropolitana: 29 en el interior del país y 1 en el extranjero. Geometrías: ONPE/INEI.</div>
       </div>
 
       <p>Los cuatro distritos con más senadores —Santiago de Surco (6), Miraflores (4), Magdalena
@@ -371,13 +408,15 @@
 
   <script>
   (async function(){
-    const C = { moderna:'#c4603a', lima_met:'#dda224', pais:'#2e7bad', exterior:'#6b7d2a' };
+    const C = { moderna:'#c4603a', lima_met:'#dda224', interior:'#2e7bad', exterior:'#6b7d2a' };
     const LABEL = { moderna:'Lima Moderna', lima_met:'Resto de Lima Metropolitana',
-                    pais:'Resto del país', exterior:'Exterior' };
-    const [agg, senadores, geo] = await Promise.all([
+                    interior:'Interior', exterior:'Exterior' };
+    const CLASES = ['moderna','lima_met','interior','exterior'];
+    const [agg, senadores, geo, deptGeo] = await Promise.all([
       fetch('data/agregados.json').then(r=>r.json()),
       fetch('data/senadores.json').then(r=>r.json()),
       fetch('data/lima_met_distritos.geojson').then(r=>r.json()),
+      fetch('data/dept_units.geojson').then(r=>r.json()),
     ]);
 
     /* ── tooltip ── */
@@ -399,54 +438,12 @@
 
     const tt = s => s.toLowerCase().replace(/(^|[\s(.–-])([a-záéíóúñü])/g, (m,a,b)=>a+b.toUpperCase());
 
-    /* ── I. position chart (stacked % bars, pos 1..30) ── */
-    (function(){
-      legend(document.getElementById('legend-pos'), ['moderna','lima_met','pais']);
-      const rows = agg.candidatos_nacional.por_posicion.filter(d=>d.pos<=30);
-      const W=680, H=210, mL=34, mB=22, mT=6, bw=(W-mL-6)/rows.length;
-      let s = `<svg viewBox="0 0 ${W} ${H+mB}" role="img" aria-label="Domicilio de candidatos por posición de lista">`;
-      // gridlines 0/25/50/75/100
-      for (const g of [0,25,50,75,100]){
-        const y = mT + (H-mT)*(1-g/100);
-        s += `<line x1="${mL}" x2="${W}" y1="${y}" y2="${y}" stroke="#cfc0ab" stroke-width="${g===0?1.4:0.6}"/>`;
-        s += `<text x="${mL-5}" y="${y+3.5}" text-anchor="end" font-size="9.5" fill="#7a6858">${g}%</text>`;
-      }
-      rows.forEach((d,i)=>{
-        const x = mL + i*bw + 1.5, w = bw-3;
-        const hMod = (H-mT) * d.moderna/d.n;
-        const hMet = (H-mT) * (d.lima_met - d.moderna)/d.n;
-        const hPais= (H-mT) * (d.n - d.lima_met)/d.n;
-        let y = mT + (H-mT);
-        // baseline-anchored stack with 2px surface gaps, rounded data-end on top segment
-        y -= hMod; s += `<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${Math.max(hMod-1,0)}" fill="${C.moderna}"/>`;
-        y -= hMet; s += `<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${Math.max(hMet-2,0)}" fill="${C.lima_met}"/>`;
-        y -= hPais; s += `<rect data-i="${i}" x="${x}" y="${y}" width="${w}" height="${Math.max(hPais-2,0)}" rx="3" fill="${C.pais}"/>`;
-        if (d.pos===1 || d.pos%5===0)
-          s += `<text x="${x+w/2}" y="${H+mB-6}" text-anchor="middle" font-size="9.5" fill="#7a6858">${d.pos}</text>`;
-      });
-      s += `<text x="${mL + (W-mL)/2}" y="${H+mB-6+11}" text-anchor="middle" font-size="0" fill="#7a6858"></text></svg>`;
-      const el = document.getElementById('poschart');
-      el.innerHTML = s;
-      el.querySelectorAll('rect').forEach(r=>{
-        r.addEventListener('mousemove', ev=>{
-          const d = rows[+r.dataset.i];
-          showTip(`<b>Posición ${d.pos}</b> · ${d.n} candidatos<br>`+
-            `Lima Moderna: <b>${d.moderna}</b> (${Math.round(100*d.moderna/d.n)}%)<br>`+
-            `Lima Metropolitana: <b>${d.lima_met}</b> (${Math.round(100*d.lima_met/d.n)}%)<br>`+
-            `Resto: <b>${d.n-d.lima_met}</b>`, ev);
-        });
-        r.addEventListener('mouseleave', hideTip);
-      });
-    })();
-
-    /* ── II. waffle: 60 senators ── */
-    (function(){
-      const order = { moderna:0, lima_met:1, pais:2, exterior:3 };
-      const sorted = [...senadores].sort((a,b)=>
+    /* ── waffle helper (each square = a senator), sorted by domicile class ── */
+    function makeWaffle(elId, list){
+      const order = { moderna:0, lima_met:1, interior:2, exterior:3 };
+      const sorted = [...list].sort((a,b)=>
         order[a.clase]-order[b.clase] || (a.domi_dist||'').localeCompare(b.domi_dist||''));
-      legend(document.getElementById('legend-waffle'),
-             ['moderna','lima_met','pais','exterior'], agg.senado.total);
-      const w = document.getElementById('waffle');
+      const w = document.getElementById(elId);
       w.innerHTML = sorted.map((s,i)=>
         `<div class="waffle-cell" data-i="${i}" style="background:${C[s.clase]}"></div>`).join('');
       w.querySelectorAll('.waffle-cell').forEach(c=>{
@@ -458,11 +455,114 @@
         });
         c.addEventListener('mouseleave', hideTip);
       });
+    }
+
+    /* ── I. waffle: the 30 national-district senators ── */
+    (function(){
+      const nac = senadores.filter(s=>s.modalidad==='nacional');
+      const counts = CLASES.reduce((o,k)=>(o[k]=nac.filter(s=>s.clase===k).length,o),{});
+      legend(document.getElementById('legend-waffle-nac'), CLASES.filter(k=>counts[k]>0), counts);
+      makeWaffle('waffle-nac', nac);
+    })();
+
+    /* ── I. grouped horizontal bars: candidatos por grupo ── */
+    (function(){
+      legend(document.getElementById('legend-grupos'), CLASES);
+      const G = agg.candidatos_nacional.grupos;
+      const rows = [
+        ['cabeza', 'Cabeza de lista', 'puesto #1'],
+        ['top5',   'Primeros 5 puestos', 'los elegibles'],
+        ['todos',  'Toda la lista', 'los 30 puestos'],
+      ];
+      const el = document.getElementById('grupos-chart');
+      el.innerHTML = rows.map(([k, lab, sub])=>{
+        const g = G[k], limamet = Math.round(100*(g.moderna+g.lima_met)/g.n);
+        const segs = CLASES.filter(c=>g[c]>0).map(c=>{
+          const pc = Math.round(100*g[c]/g.n);
+          return `<div class="grow-seg" data-g="${k}" data-c="${c}" style="flex:${g[c]};background:${C[c]}">${pc>=7?pc+'%':''}</div>`;
+        }).join('');
+        return `<div class="grow">
+          <div class="grow-head">
+            <div class="grow-label">${lab} <small>· ${sub} · ${g.n} cand.</small></div>
+            <div class="grow-pct">${limamet}% Lima Metrop.</div>
+          </div>
+          <div class="grow-bar">${segs}</div>
+        </div>`;
+      }).join('');
+      el.querySelectorAll('.grow-seg').forEach(sg=>{
+        sg.addEventListener('mousemove', ev=>{
+          const g = G[sg.dataset.g], c = sg.dataset.c;
+          showTip(`<b>${LABEL[c]}</b>: ${g[c]} candidato${g[c]>1?'s':''} (${Math.round(100*g[c]/g.n)}%)`, ev);
+        });
+        sg.addEventListener('mouseleave', hideTip);
+      });
+    })();
+
+    /* ── I. dual departmental maps (candidatos | electos) ── */
+    (function(){
+      const feats = deptGeo.features;
+      // shared projection over all of Peru so both maps align
+      let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+      const KX = Math.cos(9.5*Math.PI/180);
+      const walk = (cs, fn) => typeof cs[0]==='number' ? fn(cs) : cs.forEach(c=>walk(c,fn));
+      feats.forEach(f=>walk(f.geometry.coordinates, ([x,y])=>{
+        const xx=x*KX; minX=Math.min(minX,xx); maxX=Math.max(maxX,xx);
+        minY=Math.min(minY,y); maxY=Math.max(maxY,y);
+      }));
+      const W=320, H=W*(maxY-minY)/(maxX-minX), sc=W/(maxX-minX);
+      const px = ([x,y]) => [(x*KX-minX)*sc, (maxY-y)*sc];
+      const ring2path = ring => 'M'+ring.map(c=>px(c).map(v=>v.toFixed(1)).join(',')).join('L')+'Z';
+      const geom2path = g => (g.type==='Polygon'?[g.coordinates]:g.coordinates)
+        .map(p=>p.map(ring2path).join('')).join('');
+      const paths = feats.map(f=>geom2path(f.geometry));
+
+      // sequential terra ramp; 0 = empty sand. t in [0,1], eased for skew.
+      function lerp(a,b,t){ return a.map((v,i)=>Math.round(v+(b[i]-v)*t)); }
+      const LO=[240,224,208], HI=[150,58,30];   // #f0e0d0 → #963a1e
+      function shade(v, max){
+        if (!v) return '#e9e2d5';
+        const t = Math.pow(v/max, 0.55);
+        const [r,g,b] = lerp(LO, HI, t);
+        return `rgb(${r},${g},${b})`;
+      }
+
+      function drawMap(key, title, sub){
+        const vals = feats.map(f=>f.properties[key]);
+        const max = Math.max(...vals);
+        let svg = `<svg viewBox="0 0 ${W} ${H.toFixed(0)}" role="img" aria-label="${title}">`;
+        feats.forEach((f,i)=>{
+          svg += `<path class="dmap-unit" data-i="${i}" data-key="${key}" d="${paths[i]}" fill="${shade(f.properties[key], max)}"/>`;
+        });
+        svg += `</svg>`;
+        return `<div class="dmap-cell">
+          <div class="dmap-title">${title}</div>
+          <div class="dmap-sub">${sub}</div>
+          ${svg}
+          <div class="dmap-scale"><span>0</span><div class="dmap-ramp" style="background:linear-gradient(90deg,#e9e2d5,${shade(max*0.35,max)},${shade(max,max)})"></div><span>${max}</span></div>
+        </div>`;
+      }
+      const el = document.getElementById('dualmap');
+      el.innerHTML = drawMap('candidatos','Candidatos','distrito nacional (953 con HDV)')
+                   + drawMap('senadores','Electos','30 senadores nacionales');
+      el.querySelectorAll('.dmap-unit').forEach(pt=>{
+        pt.addEventListener('mousemove', ev=>{
+          const p = feats[+pt.dataset.i].properties, key = pt.dataset.key;
+          const lab = key==='senadores' ? 'Senadores electos' : 'Candidatos';
+          showTip(`<b>${p.unit}</b><br>${lab} que viven aquí: <b>${p[key]}</b>`, ev);
+        });
+        pt.addEventListener('mouseleave', hideTip);
+      });
+    })();
+
+    /* ── II. waffle: 60 senators ── */
+    (function(){
+      legend(document.getElementById('legend-waffle'), CLASES, agg.senado.total);
+      makeWaffle('waffle', senadores);
     })();
 
     /* ── II. modality stacked bars ── */
     (function(){
-      legend(document.getElementById('legend-mod'), ['moderna','lima_met','pais','exterior']);
+      legend(document.getElementById('legend-mod'), CLASES);
       const M = agg.senado.por_modalidad;
       const rows = [
         ['nacional',      'Distrito nacional', 30],
@@ -474,7 +574,7 @@
       const el = document.getElementById('modchart');
       el.innerHTML = rows.map(([k, lab, n])=>{
         const m = M[k], limamet = m.moderna + m.lima_met;
-        const segs = ['moderna','lima_met','pais','exterior'].filter(c=>m[c]>0)
+        const segs = CLASES.filter(c=>m[c]>0)
           .map(c=>`<div class="modrow-seg" data-mod="${k}" data-c="${c}" style="flex:${m[c]};background:${C[c]}"></div>`).join('');
         return `<div class="modrow">
           <div class="modrow-label">${lab}<small>${n} escaño${n>1?'s':''}</small></div>

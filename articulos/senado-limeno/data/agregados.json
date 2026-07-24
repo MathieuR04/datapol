@@ -20,40 +20,46 @@
  },
  "senado": {
   "total": {
+   "n": 60,
    "moderna": 20,
    "lima_met": 10,
-   "pais": 29,
+   "interior": 29,
    "exterior": 1
   },
   "por_modalidad": {
    "callao": {
+    "n": 1,
     "moderna": 1,
     "lima_met": 0,
-    "pais": 0,
+    "interior": 0,
     "exterior": 0
    },
    "departamental": {
+    "n": 24,
     "moderna": 1,
     "lima_met": 2,
-    "pais": 21,
+    "interior": 21,
     "exterior": 0
    },
    "lima": {
+    "n": 4,
     "moderna": 3,
     "lima_met": 1,
-    "pais": 0,
+    "interior": 0,
     "exterior": 0
    },
    "nacional": {
+    "n": 30,
     "moderna": 15,
     "lima_met": 7,
-    "pais": 8,
+    "interior": 8,
     "exterior": 0
    },
    "pex": {
+    "n": 1,
     "moderna": 0,
     "lima_met": 0,
-    "pais": 0,
+    "interior": 0,
     "exterior": 1
    }
   },
@@ -343,192 +349,38 @@
   "con_hdv": 953,
   "sin_hdv": 97,
   "total": {
+   "n": 953,
    "moderna": 290,
    "lima_met": 292,
-   "pais": 368,
+   "interior": 368,
    "exterior": 3
   },
-  "por_posicion": [
-   {
-    "pos": 1,
+  "grupos": {
+   "cabeza": {
     "n": 34,
+    "moderna": 24,
+    "lima_met": 5,
+    "interior": 5,
+    "exterior": 0
+   },
+   "top5": {
+    "n": 169,
+    "moderna": 87,
     "lima_met": 29,
-    "moderna": 24
+    "interior": 52,
+    "exterior": 1
    },
-   {
-    "pos": 2,
-    "n": 35,
-    "lima_met": 21,
-    "moderna": 15
-   },
-   {
-    "pos": 3,
-    "n": 35,
-    "lima_met": 22,
-    "moderna": 13
-   },
-   {
-    "pos": 4,
-    "n": 32,
-    "lima_met": 21,
-    "moderna": 16
-   },
-   {
-    "pos": 5,
-    "n": 33,
-    "lima_met": 23,
-    "moderna": 19
-   },
-   {
-    "pos": 6,
-    "n": 33,
-    "lima_met": 21,
-    "moderna": 10
-   },
-   {
-    "pos": 7,
-    "n": 32,
-    "lima_met": 21,
-    "moderna": 11
-   },
-   {
-    "pos": 8,
-    "n": 34,
-    "lima_met": 19,
-    "moderna": 9
-   },
-   {
-    "pos": 9,
-    "n": 33,
-    "lima_met": 20,
-    "moderna": 12
-   },
-   {
-    "pos": 10,
-    "n": 34,
-    "lima_met": 28,
-    "moderna": 12
-   },
-   {
-    "pos": 11,
-    "n": 33,
-    "lima_met": 25,
-    "moderna": 13
-   },
-   {
-    "pos": 12,
-    "n": 31,
-    "lima_met": 20,
-    "moderna": 12
-   },
-   {
-    "pos": 13,
-    "n": 32,
-    "lima_met": 19,
-    "moderna": 14
-   },
-   {
-    "pos": 14,
-    "n": 28,
-    "lima_met": 16,
-    "moderna": 7
-   },
-   {
-    "pos": 15,
-    "n": 33,
-    "lima_met": 20,
-    "moderna": 11
-   },
-   {
-    "pos": 16,
-    "n": 34,
-    "lima_met": 22,
-    "moderna": 8
-   },
-   {
-    "pos": 17,
-    "n": 33,
-    "lima_met": 12,
-    "moderna": 5
-   },
-   {
-    "pos": 18,
-    "n": 30,
-    "lima_met": 15,
-    "moderna": 5
-   },
-   {
-    "pos": 19,
-    "n": 29,
-    "lima_met": 19,
-    "moderna": 7
-   },
-   {
-    "pos": 20,
-    "n": 28,
-    "lima_met": 18,
-    "moderna": 8
-   },
-   {
-    "pos": 21,
-    "n": 30,
-    "lima_met": 20,
-    "moderna": 7
-   },
-   {
-    "pos": 22,
-    "n": 32,
-    "lima_met": 18,
-    "moderna": 6
-   },
-   {
-    "pos": 23,
-    "n": 31,
-    "lima_met": 16,
-    "moderna": 7
-   },
-   {
-    "pos": 24,
-    "n": 28,
-    "lima_met": 16,
-    "moderna": 3
-   },
-   {
-    "pos": 25,
-    "n": 33,
-    "lima_met": 22,
-    "moderna": 5
-   },
-   {
-    "pos": 26,
-    "n": 29,
-    "lima_met": 13,
-    "moderna": 6
-   },
-   {
-    "pos": 27,
-    "n": 32,
-    "lima_met": 19,
-    "moderna": 11
-   },
-   {
-    "pos": 28,
-    "n": 31,
-    "lima_met": 20,
-    "moderna": 7
-   },
-   {
-    "pos": 29,
-    "n": 28,
-    "lima_met": 12,
-    "moderna": 4
-   },
-   {
-    "pos": 30,
-    "n": 33,
-    "lima_met": 15,
-    "moderna": 3
+   "todos": {
+    "n": 953,
+    "moderna": 290,
+    "lima_met": 292,
+    "interior": 368,
+    "exterior": 3
    }
-  ]
+  }
+ },
+ "mapa_dept_exterior": {
+  "senadores": 0,
+  "candidatos": 3
  }
 }
