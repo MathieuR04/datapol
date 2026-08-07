@@ -16,3 +16,10 @@ colombia/2026/senado/data/processed/resultados_mesas_errors.csv
 
 # Large raw source files (download separately per README)
 colombia/2026/metadata/raw/Divipole_definitiva_*.pdf
+
+# Artículo despublicado temporalmente (2026-08-07): los archivos siguen en disco,
+# fuera del repo para que no salga en datapol.lat. Para republicar: borrar estas
+# dos líneas, `git add articulos/habemus-alcaldes-erm-2026`, descomentar las
+# tarjetas en index.html y articulos/index.html, y devolver COMPET_PATH a OUTPUTS
+# en articulos/erm-2026-candidatos/scripts/build_finder_json.py.
+articulos/habemus-alcaldes-erm-2026/
