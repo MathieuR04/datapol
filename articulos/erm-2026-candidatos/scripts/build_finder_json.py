@@ -322,8 +322,19 @@ def build_hdv():
 
 
 def build_partidos() -> dict:
-    """Per-party list counts by tipo. A list is counted once per (party, tipo) —
-    deduped on idSolicitudLista so multiple candidate rows don't double-count it."""
+    """List counts by tipo, agrupadas por categoría exterior.
+
+    Un partido nacional compite bajo varios organizacion_id cuando arma alianzas
+    regionales (APP + APP-La Cholita + APP-Trabaja Ayacucho son una sola marca).
+    La tabla del artículo muestra el total del grupo y despliega el desglose sólo
+    cuando el grupo tiene más de una organización. La asignación de grupos la
+    calcula build_organizaciones.asignar() — misma función que escribe
+    data/organizaciones_erm2026.csv, para que artículo y CSV no diverjan.
+
+    Una lista se cuenta una vez por (organización, tipo), deduplicada en
+    idSolicitudLista para que varias filas de candidatos no la dupliquen."""
+    import build_organizaciones
+
     seen = set()
     party = {}
     with open(CSV_PATH, newline="", encoding="utf-8") as f:
@@ -335,13 +346,41 @@ def build_partidos() -> dict:
             if sl in seen:
                 continue
             seen.add(sl)
-            org = r["organizacion"]
-            p = party.setdefault(org, {"org": org, "tipo_org": r["tipo_organizacion"],
+            oid = r["organizacion_id"]
+            p = party.setdefault(oid, {"org": r["organizacion"],
+                                       "tipo_org": r["tipo_organizacion"],
                                        "reg": 0, "prov": 0, "dist": 0})
             p[key] += 1
-    partidos = sorted(party.values(),
-                      key=lambda p: (-p["reg"], -p["prov"], -p["dist"], p["org"]))
-    return {"generado": date.today().isoformat(), "totales": TOTALES, "partidos": partidos}
+
+    for oid, p in party.items():
+        p["listas"] = p["reg"] + p["prov"] + p["dist"]
+    g = build_organizaciones.asignar(
+        {oid: {"organizacion": p["org"], "listas": p["listas"]}
+         for oid, p in party.items()})
+
+    grupos = {}
+    for oid, p in party.items():
+        info = g[oid]
+        gr = grupos.setdefault(info["grupo"], {
+            "grupo": info["grupo"], "tipo_org": "", "reg": 0, "prov": 0,
+            "dist": 0, "orgs": []})
+        for k in ("reg", "prov", "dist"):
+            gr[k] += p[k]
+        if info["es_ancla"]:
+            gr["tipo_org"] = p["tipo_org"]
+        gr["orgs"].append({"org": p["org"], "tipo_org": p["tipo_org"],
+                           "reg": p["reg"], "prov": p["prov"], "dist": p["dist"]})
+
+    for gr in grupos.values():
+        # el desglose sólo tiene sentido cuando hay más de una organización
+        gr["orgs"] = sorted(gr["orgs"],
+                            key=lambda o: (-o["reg"], -o["prov"], -o["dist"], o["org"])
+                            ) if len(gr["orgs"]) > 1 else []
+
+    out = sorted(grupos.values(),
+                 key=lambda p: (-p["reg"], -p["prov"], -p["dist"], p["grupo"]))
+    return {"generado": date.today().isoformat(), "totales": TOTALES,
+            "n_orgs": len(party), "grupos": out}
 
 
 # ── EG2026 ↔ ERM2026 repeat-candidate join ───────────────────────────────────
@@ -646,8 +685,15 @@ def main():
 
     partidos = build_partidos()
     _write_json(PARTIDOS_PATH, partidos)
-    print(f"  build_finder_json: {len(partidos['partidos'])} organizaciones → "
-          f"{PARTIDOS_PATH.name}")
+    print(f"  build_finder_json: {partidos['n_orgs']} organizaciones → "
+          f"{len(partidos['grupos'])} grupos → {PARTIDOS_PATH.name}")
+
+    # CSV del mapeo organización → categoría exterior (mismo origen que el JSON)
+    try:
+        import build_organizaciones
+        build_organizaciones.main()
+    except Exception as e:
+        print(f"  ⚠ build_organizaciones falló ({e}); corré el script a mano.")
 
     if EG_CSV.exists():
         rep = build_repeticiones()

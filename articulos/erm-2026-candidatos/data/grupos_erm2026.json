@@ -1,0 +1,661 @@
+{
+ "generado": "2026-08-07",
+ "proceso": "ERM 2026",
+ "nota": "organizacion_id es idOrganizacionPolitica del JNE. Un id ausente significa organización no vista en ERM 2026: tratarla como su propia categoría (ver grupo_de()).",
+ "orgs": {
+  "4": {
+   "organizacion": "ACCION POPULAR",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "ACCION POPULAR",
+   "grupo_id": "4"
+  },
+  "2980": {
+   "organizacion": "AHORA NACION - AN",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "AHORA NACION - AN",
+   "grupo_id": "2980"
+  },
+  "3028": {
+   "organizacion": "ALIANZA ELECTORAL VENCEREMOS",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "ALIANZA ELECTORAL VENCEREMOS",
+   "grupo_id": "3028"
+  },
+  "2809": {
+   "organizacion": "ALIANZA LIBERTAD MADREDIOSENSE",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "ALIANZA LIBERTAD MADREDIOSENSE",
+   "grupo_id": "2809"
+  },
+  "1257": {
+   "organizacion": "ALIANZA PARA EL PROGRESO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "ALIANZA PARA EL PROGRESO + ALIADOS",
+   "grupo_id": "1257"
+  },
+  "3032": {
+   "organizacion": "APP - LA CHOLITA",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "ALIANZA PARA EL PROGRESO + ALIADOS",
+   "grupo_id": "1257"
+  },
+  "3031": {
+   "organizacion": "APP - TRABAJA AYACUCHO",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "ALIANZA PARA EL PROGRESO + ALIADOS",
+   "grupo_id": "1257"
+  },
+  "3036": {
+   "organizacion": "ALIANZA REGIONAL POR EL PERU",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "ALIANZA REGIONAL POR EL PERU + ALIADOS",
+   "grupo_id": "3036"
+  },
+  "2944": {
+   "organizacion": "PARTIDO UNIDAD Y PAZ",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "ALIANZA REGIONAL POR EL PERU + ALIADOS",
+   "grupo_id": "3036"
+  },
+  "142": {
+   "organizacion": "AREQUIPA, TRADICION Y FUTURO",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "AREQUIPA, TRADICION Y FUTURO",
+   "grupo_id": "142"
+  },
+  "2173": {
+   "organizacion": "AVANZA PAIS - PARTIDO DE INTEGRACION SOCIAL",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "AVANZA PAIS - PARTIDO DE INTEGRACION SOCIAL",
+   "grupo_id": "2173"
+  },
+  "2984": {
+   "organizacion": "BATALLA PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "BATALLA PERU",
+   "grupo_id": "2984"
+  },
+  "1464": {
+   "organizacion": "CAJAMARCA SIEMPRE VERDE",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "CAJAMARCA SIEMPRE VERDE",
+   "grupo_id": "1464"
+  },
+  "2982": {
+   "organizacion": "COALICION TRANSFORMADORA TIERRA VERDE",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "COALICION TRANSFORMADORA TIERRA VERDE",
+   "grupo_id": "2982"
+  },
+  "332": {
+   "organizacion": "CONCERTACION PARA EL DESARROLLO REGIONAL - LIMA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "CONCERTACION PARA EL DESARROLLO REGIONAL - LIMA",
+   "grupo_id": "332"
+  },
+  "3046": {
+   "organizacion": "COOPERACION, VERDAD Y HONRADEZ",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "COOPERACION, VERDAD Y HONRADEZ",
+   "grupo_id": "3046"
+  },
+  "2898": {
+   "organizacion": "FE EN EL PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "FE EN EL PERU",
+   "grupo_id": "2898"
+  },
+  "2901": {
+   "organizacion": "FRENTE POPULAR AGRICOLA FIA DEL PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "FRENTE POPULAR AGRICOLA FIA DEL PERU",
+   "grupo_id": "2901"
+  },
+  "2911": {
+   "organizacion": "FRENTE REGIONAL TUPAC",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "FRENTE REGIONAL TUPAC",
+   "grupo_id": "2911"
+  },
+  "1393": {
+   "organizacion": "FUERZA AREQUIPEÑA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "FUERZA AREQUIPEÑA",
+   "grupo_id": "1393"
+  },
+  "3009": {
+   "organizacion": "FUERZA CIUDADANA",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "FUERZA CIUDADANA",
+   "grupo_id": "3009"
+  },
+  "1366": {
+   "organizacion": "FUERZA POPULAR",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "FUERZA POPULAR",
+   "grupo_id": "1366"
+  },
+  "1264": {
+   "organizacion": "JUNTOS POR EL PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "JUNTOS POR EL PERU + ALIADOS",
+   "grupo_id": "1264"
+  },
+  "3038": {
+   "organizacion": "ASI - JUNTOS POR EL PERU",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "JUNTOS POR EL PERU + ALIADOS",
+   "grupo_id": "1264"
+  },
+  "2381": {
+   "organizacion": "KAUSACHUN",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "KAUSACHUN",
+   "grupo_id": "2381"
+  },
+  "2933": {
+   "organizacion": "LIBERTAD POPULAR",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "LIBERTAD POPULAR",
+   "grupo_id": "2933"
+  },
+  "1388": {
+   "organizacion": "MOVIMIENTO INDEPENDIENTE FUERZA REGIONAL",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO INDEPENDIENTE FUERZA REGIONAL",
+   "grupo_id": "1388"
+  },
+  "2432": {
+   "organizacion": "MOVIMIENTO INDEPENDIENTE REGIONAL FUERZA TACNA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO INDEPENDIENTE REGIONAL FUERZA TACNA",
+   "grupo_id": "2432"
+  },
+  "2162": {
+   "organizacion": "MOVIMIENTO INDEPENDIENTE REGIONAL HUANUCO PRIMERO",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO INDEPENDIENTE REGIONAL HUANUCO PRIMERO",
+   "grupo_id": "2162"
+  },
+  "2951": {
+   "organizacion": "MOVIMIENTO POLITICO REGIONAL CAJAMARCA RENACE",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO POLITICO REGIONAL CAJAMARCA RENACE",
+   "grupo_id": "2951"
+  },
+  "2938": {
+   "organizacion": "MOVIMIENTO POLITICO UNIDOS POR EL DESARROLLO DE HUANUCO - UDH",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO POLITICO UNIDOS POR EL DESARROLLO DE HUANUCO - UDH",
+   "grupo_id": "2938"
+  },
+  "40": {
+   "organizacion": "MOVIMIENTO REGIONAL AMAZONENSE UNIDOS AL CAMPO",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO REGIONAL AMAZONENSE UNIDOS AL CAMPO",
+   "grupo_id": "40"
+  },
+  "2307": {
+   "organizacion": "MOVIMIENTO REGIONAL AREQUIPA AVANCEMOS",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO REGIONAL AREQUIPA AVANCEMOS",
+   "grupo_id": "2307"
+  },
+  "2878": {
+   "organizacion": "MOVIMIENTO REGIONAL VICTORIA AMAZONENSE",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "MOVIMIENTO REGIONAL VICTORIA AMAZONENSE",
+   "grupo_id": "2878"
+  },
+  "2351": {
+   "organizacion": "NUEVA ESPERANZA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "NUEVA ESPERANZA",
+   "grupo_id": "2351"
+  },
+  "2930": {
+   "organizacion": "PARTIDO APRISTA PERUANO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO APRISTA PERUANO",
+   "grupo_id": "2930"
+  },
+  "2941": {
+   "organizacion": "PARTIDO CIVICO OBRAS",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO CIVICO OBRAS",
+   "grupo_id": "2941"
+  },
+  "3033": {
+   "organizacion": "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE PERU - COMUNIDAD POLITICA INKA PERU",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE PERU - COMUNIDAD POLITICA INKA PERU",
+   "grupo_id": "3033"
+  },
+  "2961": {
+   "organizacion": "PARTIDO DEL BUEN GOBIERNO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO DEL BUEN GOBIERNO",
+   "grupo_id": "2961"
+  },
+  "2867": {
+   "organizacion": "PARTIDO DEMOCRATA UNIDO PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO DEMOCRATA UNIDO PERU",
+   "grupo_id": "2867"
+  },
+  "2895": {
+   "organizacion": "PARTIDO DEMOCRATA VERDE",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO DEMOCRATA VERDE",
+   "grupo_id": "2895"
+  },
+  "14": {
+   "organizacion": "PARTIDO DEMOCRATICO SOMOS PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO DEMOCRATICO SOMOS PERU + ALIADOS",
+   "grupo_id": "14"
+  },
+  "3045": {
+   "organizacion": "PARTIDO DEMOCRATICO SOMOS PERU",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "PARTIDO DEMOCRATICO SOMOS PERU + ALIADOS",
+   "grupo_id": "14"
+  },
+  "2857": {
+   "organizacion": "PARTIDO FRENTE DE LA ESPERANZA 2021",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO FRENTE DE LA ESPERANZA 2021",
+   "grupo_id": "2857"
+  },
+  "2840": {
+   "organizacion": "PARTIDO MORADO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO MORADO",
+   "grupo_id": "2840"
+  },
+  "2956": {
+   "organizacion": "PARTIDO PAIS PARA TODOS",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO PAIS PARA TODOS",
+   "grupo_id": "2956"
+  },
+  "2869": {
+   "organizacion": "PARTIDO PATRIOTICO DEL PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO PATRIOTICO DEL PERU",
+   "grupo_id": "2869"
+  },
+  "2979": {
+   "organizacion": "PARTIDO POLITICO ADP",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO ADP",
+   "grupo_id": "2979"
+  },
+  "2985": {
+   "organizacion": "PARTIDO POLITICO INTEGRIDAD DEMOCRATICA",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO INTEGRIDAD DEMOCRATICA",
+   "grupo_id": "2985"
+  },
+  "2218": {
+   "organizacion": "PARTIDO POLITICO NACIONAL PERU LIBRE",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO NACIONAL PERU LIBRE",
+   "grupo_id": "2218"
+  },
+  "2932": {
+   "organizacion": "PARTIDO POLITICO PERU ACCION",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO PERU ACCION",
+   "grupo_id": "2932"
+  },
+  "2925": {
+   "organizacion": "PARTIDO POLITICO PERU PRIMERO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO PERU PRIMERO",
+   "grupo_id": "2925"
+  },
+  "2921": {
+   "organizacion": "PARTIDO POLITICO PRIN",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO PRIN",
+   "grupo_id": "2921"
+  },
+  "3001": {
+   "organizacion": "PARTIDO POLITICO PUEBLO CONSCIENTE",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO PUEBLO CONSCIENTE",
+   "grupo_id": "3001"
+  },
+  "3005": {
+   "organizacion": "PARTIDO POLITICO TODO CON EL PUEBLO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POLITICO TODO CON EL PUEBLO",
+   "grupo_id": "3005"
+  },
+  "2943": {
+   "organizacion": "PARTIDO POPULAR CRISTIANO - PPC",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO POPULAR CRISTIANO - PPC",
+   "grupo_id": "2943"
+  },
+  "2935": {
+   "organizacion": "PARTIDO SICREO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PARTIDO SICREO",
+   "grupo_id": "2935"
+  },
+  "2924": {
+   "organizacion": "PERU MODERNO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PERU MODERNO",
+   "grupo_id": "2924"
+  },
+  "2731": {
+   "organizacion": "PODEMOS PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PODEMOS PERU",
+   "grupo_id": "2731"
+  },
+  "2931": {
+   "organizacion": "PRIMERO LA GENTE - COMUNIDAD, ECOLOGIA, LIBERTAD Y PROGRESO",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PRIMERO LA GENTE - COMUNIDAD, ECOLOGIA, LIBERTAD Y PROGRESO",
+   "grupo_id": "2931"
+  },
+  "2967": {
+   "organizacion": "PROGRESEMOS",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "PROGRESEMOS",
+   "grupo_id": "2967"
+  },
+  "3040": {
+   "organizacion": "RENOVACION POPULAR PERU",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "RENOVACION POPULAR + ALIADOS",
+   "grupo_id": "3040"
+  },
+  "3034": {
+   "organizacion": "ALIANZA RENOVACION POPULAR Y TORO",
+   "tipo_organizacion": "ALIANZAS ELECTORALES",
+   "grupo": "RENOVACION POPULAR + ALIADOS",
+   "grupo_id": "3040"
+  },
+  "3007": {
+   "organizacion": "PARTIDO POR EL ENTENDIMIENTO, RECUPERACION Y LA UNIFICACION DEL PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "RENOVACION POPULAR + ALIADOS",
+   "grupo_id": "3040"
+  },
+  "2171": {
+   "organizacion": "RENOVACION TUMBESINA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "RENOVACION TUMBESINA",
+   "grupo_id": "2171"
+  },
+  "2927": {
+   "organizacion": "SALVEMOS AL PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "SALVEMOS AL PERU",
+   "grupo_id": "2927"
+  },
+  "2881": {
+   "organizacion": "SOCIOS POR ANCASH",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "SOCIOS POR ANCASH",
+   "grupo_id": "2881"
+  },
+  "2998": {
+   "organizacion": "UN CAMINO DIFERENTE",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "UN CAMINO DIFERENTE",
+   "grupo_id": "2998"
+  },
+  "2958": {
+   "organizacion": "UNIDOS POR TACNA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "UNIDOS POR TACNA",
+   "grupo_id": "2958"
+  },
+  "2722": {
+   "organizacion": "UNION REGIONAL",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "UNION REGIONAL",
+   "grupo_id": "2722"
+  },
+  "2917": {
+   "organizacion": "VAMOS MOQUEGUA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "VAMOS MOQUEGUA",
+   "grupo_id": "2917"
+  },
+  "2988": {
+   "organizacion": "VISION PERU",
+   "tipo_organizacion": "PARTIDOS POLITICOS",
+   "grupo": "VISION PERU",
+   "grupo_id": "2988"
+  },
+  "2970": {
+   "organizacion": "VIVA PUNO",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "VIVA PUNO",
+   "grupo_id": "2970"
+  },
+  "2744": {
+   "organizacion": "YO AREQUIPA",
+   "tipo_organizacion": "MOVIMIENTOS REGIONALES O DEPARTAMENTALES",
+   "grupo": "YO AREQUIPA",
+   "grupo_id": "2744"
+  }
+ },
+ "grupos": {
+  "ACCION POPULAR": [
+   "4"
+  ],
+  "AHORA NACION - AN": [
+   "2980"
+  ],
+  "ALIANZA ELECTORAL VENCEREMOS": [
+   "3028"
+  ],
+  "ALIANZA LIBERTAD MADREDIOSENSE": [
+   "2809"
+  ],
+  "ALIANZA PARA EL PROGRESO + ALIADOS": [
+   "1257",
+   "3031",
+   "3032"
+  ],
+  "ALIANZA REGIONAL POR EL PERU + ALIADOS": [
+   "2944",
+   "3036"
+  ],
+  "AREQUIPA, TRADICION Y FUTURO": [
+   "142"
+  ],
+  "AVANZA PAIS - PARTIDO DE INTEGRACION SOCIAL": [
+   "2173"
+  ],
+  "BATALLA PERU": [
+   "2984"
+  ],
+  "CAJAMARCA SIEMPRE VERDE": [
+   "1464"
+  ],
+  "COALICION TRANSFORMADORA TIERRA VERDE": [
+   "2982"
+  ],
+  "CONCERTACION PARA EL DESARROLLO REGIONAL - LIMA": [
+   "332"
+  ],
+  "COOPERACION, VERDAD Y HONRADEZ": [
+   "3046"
+  ],
+  "FE EN EL PERU": [
+   "2898"
+  ],
+  "FRENTE POPULAR AGRICOLA FIA DEL PERU": [
+   "2901"
+  ],
+  "FRENTE REGIONAL TUPAC": [
+   "2911"
+  ],
+  "FUERZA AREQUIPEÑA": [
+   "1393"
+  ],
+  "FUERZA CIUDADANA": [
+   "3009"
+  ],
+  "FUERZA POPULAR": [
+   "1366"
+  ],
+  "JUNTOS POR EL PERU + ALIADOS": [
+   "1264",
+   "3038"
+  ],
+  "KAUSACHUN": [
+   "2381"
+  ],
+  "LIBERTAD POPULAR": [
+   "2933"
+  ],
+  "MOVIMIENTO INDEPENDIENTE FUERZA REGIONAL": [
+   "1388"
+  ],
+  "MOVIMIENTO INDEPENDIENTE REGIONAL FUERZA TACNA": [
+   "2432"
+  ],
+  "MOVIMIENTO INDEPENDIENTE REGIONAL HUANUCO PRIMERO": [
+   "2162"
+  ],
+  "MOVIMIENTO POLITICO REGIONAL CAJAMARCA RENACE": [
+   "2951"
+  ],
+  "MOVIMIENTO POLITICO UNIDOS POR EL DESARROLLO DE HUANUCO - UDH": [
+   "2938"
+  ],
+  "MOVIMIENTO REGIONAL AMAZONENSE UNIDOS AL CAMPO": [
+   "40"
+  ],
+  "MOVIMIENTO REGIONAL AREQUIPA AVANCEMOS": [
+   "2307"
+  ],
+  "MOVIMIENTO REGIONAL VICTORIA AMAZONENSE": [
+   "2878"
+  ],
+  "NUEVA ESPERANZA": [
+   "2351"
+  ],
+  "PARTIDO APRISTA PERUANO": [
+   "2930"
+  ],
+  "PARTIDO CIVICO OBRAS": [
+   "2941"
+  ],
+  "PARTIDO DE LOS TRABAJADORES Y EMPRENDEDORES PTE PERU - COMUNIDAD POLITICA INKA PERU": [
+   "3033"
+  ],
+  "PARTIDO DEL BUEN GOBIERNO": [
+   "2961"
+  ],
+  "PARTIDO DEMOCRATA UNIDO PERU": [
+   "2867"
+  ],
+  "PARTIDO DEMOCRATA VERDE": [
+   "2895"
+  ],
+  "PARTIDO DEMOCRATICO SOMOS PERU + ALIADOS": [
+   "14",
+   "3045"
+  ],
+  "PARTIDO FRENTE DE LA ESPERANZA 2021": [
+   "2857"
+  ],
+  "PARTIDO MORADO": [
+   "2840"
+  ],
+  "PARTIDO PAIS PARA TODOS": [
+   "2956"
+  ],
+  "PARTIDO PATRIOTICO DEL PERU": [
+   "2869"
+  ],
+  "PARTIDO POLITICO ADP": [
+   "2979"
+  ],
+  "PARTIDO POLITICO INTEGRIDAD DEMOCRATICA": [
+   "2985"
+  ],
+  "PARTIDO POLITICO NACIONAL PERU LIBRE": [
+   "2218"
+  ],
+  "PARTIDO POLITICO PERU ACCION": [
+   "2932"
+  ],
+  "PARTIDO POLITICO PERU PRIMERO": [
+   "2925"
+  ],
+  "PARTIDO POLITICO PRIN": [
+   "2921"
+  ],
+  "PARTIDO POLITICO PUEBLO CONSCIENTE": [
+   "3001"
+  ],
+  "PARTIDO POLITICO TODO CON EL PUEBLO": [
+   "3005"
+  ],
+  "PARTIDO POPULAR CRISTIANO - PPC": [
+   "2943"
+  ],
+  "PARTIDO SICREO": [
+   "2935"
+  ],
+  "PERU MODERNO": [
+   "2924"
+  ],
+  "PODEMOS PERU": [
+   "2731"
+  ],
+  "PRIMERO LA GENTE - COMUNIDAD, ECOLOGIA, LIBERTAD Y PROGRESO": [
+   "2931"
+  ],
+  "PROGRESEMOS": [
+   "2967"
+  ],
+  "RENOVACION POPULAR + ALIADOS": [
+   "3007",
+   "3034",
+   "3040"
+  ],
+  "RENOVACION TUMBESINA": [
+   "2171"
+  ],
+  "SALVEMOS AL PERU": [
+   "2927"
+  ],
+  "SOCIOS POR ANCASH": [
+   "2881"
+  ],
+  "UN CAMINO DIFERENTE": [
+   "2998"
+  ],
+  "UNIDOS POR TACNA": [
+   "2958"
+  ],
+  "UNION REGIONAL": [
+   "2722"
+  ],
+  "VAMOS MOQUEGUA": [
+   "2917"
+  ],
+  "VISION PERU": [
+   "2988"
+  ],
+  "VIVA PUNO": [
+   "2970"
+  ],
+  "YO AREQUIPA": [
+   "2744"
+  ]
+ }
+}

@@ -189,6 +189,70 @@ per-list ledger `data/.erm2026_state.json` (`{idSolicitudLista → {te, postula,
 cheap on candidate fetches but always re-discovers newly-uploaded lists. Run: `python3 scripts/scrape_erm2026.py`
 (fresh, resumes); `--update`; `--tipos 4`; `--limit N` (cap circunscripciones); `--full-refresh`; `--rebuild-tree`.
 
+## Organización → categoría exterior — `scripts/build_organizaciones.py`
+
+A national party competes under **several `organizacion_id`s** because it forms alliances with
+regional movements, so counting org ids overstates fragmentation and splits a brand's real
+reach. This script maps the **74 organizations with lists → 67 "categorías exteriores"**
+(5 of them multi-org).
+
+**Method: connected components, not name similarity.** Names are unreliable in both directions —
+`ALIANZA REGIONAL POR EL PERU` and `PARTIDO UNIDAD Y PAZ` are the same orbit while looking
+nothing alike, and the Somos Perú *party* and the Somos Perú *alliance* are two different org
+ids with a byte-identical name. So it builds a bipartite graph **organización que compite ↔
+partido/movimiento que la integra** and takes each connected component as a category. Alliance
+composition is registral fact, transcribed in the `ALIANZAS` dict from the JNE note on the 23
+alliances that requested inscription for ERM 2026
+([gob.pe …/noticias/1362445](https://www.gob.pe/institucion/jne/noticias/1362445-23-alianzas-electorales-solicitaron-su-inscripcion-ante-el-jne-para-participar-en-las-erm-2026));
+only the **10 that actually fielded lists** appear in the output.
+
+Editorial rules baked in: a party that is a member of an alliance **always** falls into that
+alliance's category, even when it also fields its own lists (so `PARTIDO POR EL ENTENDIMIENTO`
+sits with Renovación Popular, `PARTIDO UNIDAD Y PAZ` with Alianza Regional por el Perú). The
+group is named after its **ancla** — the member org with the most lists — plus `" + ALIADOS"`
+only when the group has more than one org (`ETIQUETA_GRUPO` overrides the ancla's name for
+Renovación Popular, which has no standalone org id in ERM 2026 and competes only via two
+alliances).
+
+**Group totals are simple sums**: verified that a party and its alliances never contest the same
+circunscripción (the law forbids two lists from one org per race). The one exception found —
+Entendimiento vs. Renovación Popular Perú in a single Lima district — is reported by the script
+as `solapamiento intra-grupo`.
+
+**Built to outlive the article — election night is the real consumer.** Once results start
+arriving keyed by `idOrganizacionPolitica`, summing them by brand must be a lookup, not a
+re-derivation, so the script also emits **`data/grupos_erm2026.json`** (`{orgs: {id → grupo},
+grupos: {grupo → [ids]}}`) and exposes two dependency-light helpers:
+
+```python
+import sys; sys.path.append("scripts")
+from build_organizaciones import cargar_mapa, grupo_de
+mapa = cargar_mapa()                     # no pandas, no 34 MB candidates CSV
+acc[grupo_de(r["idOrganizacionPolitica"], mapa, r["strOrganizacionPolitica"])] += r["votos"]
+```
+
+`grupo_de()` **falls through to the org's own name** when an id isn't in the map, so an
+unrecognised organization shows up on its own line instead of breaking the tally. The ids are
+JNE `idOrganizacionPolitica` — the same namespace as the AutoridadesProclamadas module (§9 of
+`docs/api-notes.md`), so the map works for *autoridades electas* as well as candidates.
+**Maintenance:** a newly-registered alliance needs its composition added to `ALIANZAS` by hand
+(from the JNE note); otherwise it stands as its own category instead of joining its brand.
+
+Outputs `data/organizaciones_erm2026.csv` (one row per org, with its group),
+`data/grupos_erm2026.csv` (one row per group) and `data/grupos_erm2026.json` (the lookup). The
+grouping itself lives in the pure function
+`asignar()`, which **`build_finder_json.build_partidos()` imports** so the CSVs and the article's
+JSON can't diverge; `build_finder_json.main()` also calls `build_organizaciones.main()`, so a
+`scrape_erm2026.py --update` refreshes the mapping too. Standalone:
+`python3 scripts/build_organizaciones.py`.
+
+The consumer is **`articulos/partidos-erm-2026/`** ("Cuántas listas presentó cada organización"),
+whose `data/partidos.json` is now `{generado, totales, n_orgs, grupos[]}` — each grupo carries
+`reg`/`prov`/`dist` plus an `orgs[]` breakdown that is **empty unless the group has >1 org**. The
+table renders group rows with a `+` that expands to the member orgs, each tagged
+partido político / alianza electoral / movimiento regional (needed because two members can share
+a name).
+
 ## Deliverables (all in this folder)
 
 1. **DNI overlap** between the two processes — how many candidates (by DNI) appear in *both*

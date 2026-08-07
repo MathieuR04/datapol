@@ -83,6 +83,34 @@
     /* hide coverage lines when toggled off */
     .ptable.no-cov td.num .cov { display: none; }
 
+    /* Grupo desplegable: partido nacional + sus alianzas regionales */
+    .grp-btn {
+      display: inline-flex; align-items: baseline; gap: 0.45rem; width: 100%;
+      background: none; border: 0; padding: 0; margin: 0; cursor: pointer; text-align: left;
+      font: inherit; color: inherit;
+    }
+    .grp-btn .caret {
+      flex-shrink: 0; width: 1.05em; height: 1.05em; align-self: center;
+      border: 1px solid var(--border); border-radius: 3px; color: var(--terra);
+      font-size: 11px; font-weight: 700; line-height: 1; display: inline-flex;
+      align-items: center; justify-content: center; transition: background .12s, color .12s;
+    }
+    .grp-btn:hover .caret { background: var(--terra); color: var(--bg); border-color: var(--terra); }
+    tr.grp.open .grp-btn .caret::after { content: '−'; }
+    tr.grp .grp-btn .caret::after { content: '+'; }
+    .grp-n { font-size: 10px; font-weight: 600; color: var(--dim); white-space: nowrap; }
+
+    tr.sub { display: none; background: rgba(217,201,180,0.16); }
+    tr.sub.show { display: table-row; }
+    tr.sub td { border-bottom: 1px solid #ede7db; padding-top: 0.34rem; padding-bottom: 0.34rem; }
+    tr.sub td.org { font-weight: 400; font-size: 13px; padding-left: 1.85rem; color: var(--muted); }
+    tr.sub td.num { font-size: 13px; color: var(--muted); }
+    tr.sub .kind {
+      display: block; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--dim); font-weight: 600; margin-top: 1px;
+    }
+    tr.sub td.num .cov { display: none; }
+
     .note { font-size: 11px; line-height: 1.6; color: var(--muted); margin-top: 0.8rem; }
 
     .article-footer { margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
@@ -150,6 +178,17 @@
       registrando, así que los conteos irán aumentando.
     </p>
 
+    <p>
+      Un mismo partido nacional suele competir bajo <strong>varias organizaciones distintas</strong>,
+      porque arma alianzas con movimientos regionales. Alianza para el Progreso se presenta como APP
+      en casi todo el país, pero en Ayacucho va como <em>APP–Trabaja Ayacucho</em> y en Lima como
+      <em>APP–La Cholita</em>. A veces la alianza ni siquiera cambia de nombre: el Partido Democrático
+      Somos Perú compite en 24 departamentos como partido y en Puno como una alianza electoral
+      <strong>llamada igual</strong>. Contarlas por separado parte la marca en pedazos, así que acá
+      cada fila agrupa al partido con sus alianzas regionales. Las filas con
+      <strong>+</strong> se despliegan para ver el desglose.
+    </p>
+
     <label class="opt"><input type="checkbox" id="cov-toggle" checked> Mostrar cobertura territorial (%)</label>
 
     <div class="tbl-wrap">
@@ -171,6 +210,15 @@
       porcentaje de circunscripciones de cada tipo donde la organización tiene lista. Distrital se
       mide sobre 1 696 distritos con elección distrital (1 892 distritos menos 196 cercados de
       capital provincial, que no eligen alcalde distrital).
+    </p>
+    <p class="note">
+      <strong id="n-orgs">74</strong> organizaciones compiten en las ERM 2026 y se agrupan acá en
+      <strong id="n-grupos">67</strong> categorías. La agrupación no se hace por parecido de nombre
+      sino por <strong>composición registral</strong>: se enlaza cada organización con los partidos y
+      movimientos que la integran, según la relación de alianzas electorales inscritas ante el JNE, y
+      cada bloque conectado forma una categoría. Un partido que integra una alianza queda en la
+      categoría de esa alianza, aunque además presente listas propias. Los totales son sumas simples:
+      un partido y sus alianzas nunca compiten entre sí en la misma circunscripción.
     </p>
   </div>
 
@@ -203,17 +251,59 @@
     var pct = Math.round(n / total * 100);
     return '<td class="num">' + nf.format(n) + '<span class="cov">' + pct + '%</span></td>';
   }
+  function subCell(n) {
+    return n ? '<td class="num">' + nf.format(n) + '</td>'
+             : '<td class="num zero">0</td>';
+  }
+  // "PARTIDOS POLITICOS" -> "partido"; sirve para distinguir dos organizaciones
+  // que se llaman igual (Somos Perú compite como partido y como alianza).
+  function kind(t) {
+    if (t === 'ALIANZAS ELECTORALES') return 'alianza electoral';
+    if (t === 'MOVIMIENTOS REGIONALES O DEPARTAMENTALES') return 'movimiento regional';
+    return 'partido político';
+  }
 
   fetch('./data/partidos.json')
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (d) {
       document.getElementById('fecha').textContent = 'datos al ' + fechaLarga(d.generado);
+      document.getElementById('n-orgs').textContent = nf.format(d.n_orgs);
+      document.getElementById('n-grupos').textContent = nf.format(d.grupos.length);
       var T = d.totales;
-      var rows = d.partidos.map(function (p) {
-        return '<tr><td class="org">' + esc(p.org) + '</td>' +
-          cell(p.reg, T.regional) + cell(p.prov, T.provincial) + cell(p.dist, T.distrital) + '</tr>';
+
+      var html = d.grupos.map(function (g, i) {
+        var nums = cell(g.reg, T.regional) + cell(g.prov, T.provincial) + cell(g.dist, T.distrital);
+        if (!g.orgs.length) {
+          return '<tr><td class="org">' + esc(g.grupo) + '</td>' + nums + '</tr>';
+        }
+        // grupo con desglose: fila-botón + una fila hija por organización
+        var head = '<tr class="grp" data-g="' + i + '">' +
+          '<td class="org"><button class="grp-btn" type="button" aria-expanded="false">' +
+            '<span class="caret" aria-hidden="true"></span>' +
+            '<span>' + esc(g.grupo) +
+              ' <span class="grp-n">' + g.orgs.length + ' organizaciones</span></span>' +
+          '</button></td>' + nums + '</tr>';
+        var kids = g.orgs.map(function (o) {
+          return '<tr class="sub" data-of="' + i + '">' +
+            '<td class="org">' + esc(o.org) +
+              '<span class="kind">' + kind(o.tipo_org) + '</span></td>' +
+            subCell(o.reg) + subCell(o.prov) + subCell(o.dist) + '</tr>';
+        }).join('');
+        return head + kids;
       }).join('');
-      document.getElementById('rows').innerHTML = rows;
+
+      var tbody = document.getElementById('rows');
+      tbody.innerHTML = html;
+
+      tbody.addEventListener('click', function (ev) {
+        var btn = ev.target.closest('.grp-btn');
+        if (!btn) return;
+        var tr = btn.closest('tr.grp');
+        var abierto = tr.classList.toggle('open');
+        btn.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+        var kids = tbody.querySelectorAll('tr.sub[data-of="' + tr.dataset.g + '"]');
+        for (var i = 0; i < kids.length; i++) kids[i].classList.toggle('show', abierto);
+      });
     })
     .catch(function (err) {
       document.getElementById('rows').innerHTML =
