@@ -13,7 +13,7 @@
   <meta property="og:type"        content="article">
   <meta property="og:site_name"   content="Datapol">
   <meta property="og:title"       content="Los alcaldes que buscan reelegirse postulando a teniente alcalde — ERM 2026">
-  <meta property="og:description" content="Al igual que Rafael López Aliaga, 130 alcaldes electos en 2022 buscan reelegirse postulando a teniente alcalde de su misma municipalidad en las Elecciones Regionales y Municipales 2026. Todos los casos, uno por uno.">
+  <meta property="og:description" content="Al igual que Rafael López Aliaga, 135 alcaldes electos en 2022 buscan reelegirse postulando a teniente alcalde de su misma municipalidad en las Elecciones Regionales y Municipales 2026. Todos los casos, uno por uno.">
   <meta property="og:url"         content="https://datapol.lat/articulos/tenientes-alcalde-erm-2026/">
 
   <style>
@@ -60,6 +60,7 @@
 
     /* Key stats row */
     .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.8em 0; }
+    .stats-strip.two { grid-template-columns: repeat(2, 1fr); }
     .stat-box { background: var(--text); color: var(--sand); padding: 0.9rem 1rem; border-radius: 3px; text-align: center; }
     .stat-box-num { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 0.04em; line-height: 1; color: #fff; }
     .stat-box-label { font-size: 10px; line-height: 1.45; opacity: 0.75; margin-top: 0.3rem; }
@@ -189,15 +190,15 @@
 
     <div class="article-body">
 
-      <p>Al igual que Rafael López Aliaga, hay <strong>130 casos</strong> de alcaldes electos en 2022 que buscan reelegirse postulando a <strong>teniente alcalde de su misma municipalidad</strong> para las Elecciones Regionales y Municipales 2026. En este informe encontrarás todos los casos, uno por uno.</p>
+      <p>Al igual que Rafael López Aliaga, hay <strong id="s-total3">135 casos</strong> de alcaldes electos en 2022 que buscan reelegirse postulando a <strong>teniente alcalde de su misma municipalidad</strong> para las Elecciones Regionales y Municipales 2026. En este informe encontrarás todos los casos, uno por uno.</p>
 
       <div class="stats-strip">
         <div class="stat-box">
-          <div class="stat-box-num" id="s-total">130</div>
+          <div class="stat-box-num" id="s-total">135</div>
           <div class="stat-box-label">alcaldes de 2022 postulan a teniente alcalde en su propia jurisdicción</div>
         </div>
         <div class="stat-box">
-          <div class="stat-box-num" id="s-dist">109</div>
+          <div class="stat-box-num" id="s-dist">114</div>
           <div class="stat-box-label">a nivel distrital — su mismo distrito</div>
         </div>
         <div class="stat-box">
@@ -210,6 +211,38 @@
         <p><strong>Cómo leerlo.</strong> Cada caso es una persona que fue elegida alcalde (provincial o distrital) en 2022 y que en 2026 postula a <strong>teniente alcalde</strong> de la misma circunscripción que gobierna. Solo se cuentan los que repiten en su <em>propio</em> territorio: un alcalde que postula en otro distrito <em>no</em> entra. El cruce se hace por DNI y por coincidencia exacta de región, provincia y —para el nivel distrital— distrito.</p>
       </div>
 
+      <h2>Confirmados y por confirmar</h2>
+      <p>No todas estas candidaturas están firmes. Solo cuentan como <strong>confirmadas</strong> aquellas en las que la candidatura del propio teniente alcalde ya figura como <strong>inscrita</strong> ante el JNE. El resto sigue en trámite —admitida, publicada para tachas o en apelación— y todavía puede caerse.</p>
+
+      <div class="stats-strip two">
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-conf">—</div>
+          <div class="stat-box-label">candidaturas <strong>confirmadas</strong> — el teniente alcalde ya está inscrito</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-porconf">—</div>
+          <div class="stat-box-label">aún <strong>por confirmar</strong> — en trámite ante el JNE</div>
+        </div>
+      </div>
+
+      <h2>Reelección directa e indirecta</h2>
+      <p>Entre las candidaturas confirmadas hay dos rutas muy distintas de vuelta al poder, y la diferencia está en qué pasó con el candidato a alcalde de la propia lista.</p>
+
+      <div class="stats-strip two">
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-directo">—</div>
+          <div class="stat-box-label"><strong>directa</strong> — el candidato a alcalde de su lista se cayó, así que el alcalde en ejercicio pasa a encabezarla y compite por el sillón municipal</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="s-indirecto">—</div>
+          <div class="stat-box-label"><strong>indirecta</strong> — la cabeza de lista sigue en pie y el alcalde vuelve al concejo como teniente alcalde</div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <p><strong>El detalle que importa.</strong> En <strong id="s-caido">—</strong> de los <span id="s-total2">—</span> casos el candidato a alcalde de la lista se cayó, y el motivo dominante no es la maquinaria del JNE sino la <strong>renuncia</strong> (<span id="s-renuncia">—</span> casos), muy por encima de las declaratorias de improcedencia, las exclusiones y las tachas. Una renuncia es un acto voluntario: alguien encabeza la lista, renuncia, y el alcalde en ejercicio que iba de teniente queda como candidato a la alcaldía.</p>
+      </div>
+
       <h2>Provincial vs. distrital</h2>
       <p>La gran mayoría de los casos son alcaldes <strong>distritales</strong> que postulan a teniente alcalde de su propio distrito. A nivel provincial el fenómeno es más raro, pero existe: alcaldes provinciales que se reubican como teniente alcalde de su propia provincia —el caso de Rafael López Aliaga en Lima.</p>
 
@@ -220,7 +253,7 @@
       <div class="eda" id="region-eda"></div>
 
       <h2>Todos los casos, uno por uno</h2>
-      <p>La lista completa y consultable. Busca por nombre, distrito o partido; filtra por región y por nivel. Cada fila indica el municipio, la organización con la que postula en 2026, la organización con la que fue elegido en 2022 y el estado de la lista ante el JNE.</p>
+      <p>La lista completa y consultable. Busca por nombre, distrito o partido; filtra por región, por nivel y por tipo de candidatura. Cada fila indica el municipio, la organización con la que postula en 2026, la organización con la que fue elegido en 2022, si la candidatura ya está confirmada y qué pasó con la cabeza de lista.</p>
 
       <div class="browser">
         <div class="browser-controls">
@@ -230,6 +263,13 @@
             <option value="">Provincial y distrital</option>
             <option value="provincial">Solo provincial</option>
             <option value="distrital">Solo distrital</option>
+          </select>
+          <select id="f-tipo">
+            <option value="">Todas las candidaturas</option>
+            <option value="conf">Solo confirmadas</option>
+            <option value="conf-directo">Confirmadas · reelección directa</option>
+            <option value="conf-indirecto">Confirmadas · reelección indirecta</option>
+            <option value="porconf">Solo por confirmar</option>
           </select>
         </div>
         <div class="browser-count" id="count"></div>
@@ -241,7 +281,8 @@
                 <th>Circunscripción</th>
                 <th>Nivel</th>
                 <th>Organización</th>
-                <th>Estado lista</th>
+                <th>Candidatura</th>
+                <th>Cabeza de lista</th>
               </tr>
             </thead>
             <tbody id="tbody"></tbody>
@@ -270,8 +311,17 @@
   fetch('data/tenientes.json').then(r=>r.json()).then(d=>{
     // Hero + dates
     document.getElementById('s-total').textContent = d.total;
+    document.getElementById('s-total3').textContent = d.total + ' casos';
     document.getElementById('s-dist').textContent  = d.n_distrital;
     document.getElementById('s-prov').textContent  = d.n_provincial;
+    document.getElementById('s-conf').textContent      = d.n_confirmados;
+    document.getElementById('s-porconf').textContent   = d.n_por_confirmar;
+    document.getElementById('s-directo').textContent   = d.n_directo;
+    document.getElementById('s-indirecto').textContent = d.n_indirecto;
+    document.getElementById('s-caido').textContent     = d.n_alcalde_caido;
+    document.getElementById('s-total2').textContent    = d.total;
+    const ren = (d.motivos_caida||[]).find(m=>m.motivo==='RENUNCIA');
+    document.getElementById('s-renuncia').textContent  = ren ? ren.n : 0;
     if (d.generado) {
       const [y,m,dd] = d.generado.split('-').map(Number);
       const txt = `${dd} de ${MESES[m-1]} de ${y}`;
@@ -301,7 +351,8 @@
 
     // Browsable table
     const tbody=document.getElementById('tbody'), count=document.getElementById('count');
-    const q=document.getElementById('q'), fR=document.getElementById('f-region'), fN=document.getElementById('f-nivel');
+    const q=document.getElementById('q'), fR=document.getElementById('f-region'),
+          fN=document.getElementById('f-nivel'), fT=document.getElementById('f-tipo');
     const norm = s => (s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
 
     function row(c){
@@ -315,20 +366,38 @@
         : `<span class="badge badge-dist">Distrital</span>`;
       let org = `<div class="org-now">${titulo(c.org_2026)}</div>`;
       if (c.org_2022) org += `<div class="org-prev">2022: ${titulo(c.org_2022)}</div>`;
+      // Candidatura: confirmada (inscrita) o en trámite, y si está confirmada,
+      // por qué vía busca la reelección.
+      const estadoBadge = c.confirmado
+        ? `<span class="badge badge-est">Confirmada</span>
+           <div class="casos-sub">Reelección ${c.tipo === 'directo' ? 'directa' : 'indirecta'}</div>`
+        : `<span class="badge badge-est">Por confirmar</span>
+           <div class="casos-sub">${titulo(c.estado_cand || c.estado)}</div>`;
+      // Cabeza de lista: si se cayó, es el dato que explica la reelección directa.
+      const caido = c.tipo === 'directo';
+      const cabeza = c.alcalde
+        ? `<div class="casos-org"><div class="org-now">${titulo(c.alcalde)}</div>
+             <div class="org-prev">${titulo(c.estado_alcalde)}${caido ? ' · se cayó' : ''}</div></div>`
+        : `<div class="casos-sub">Sin candidato a alcalde</div>`;
       return `<tr>
         <td><div class="casos-name">${titulo(c.nombre)}</div></td>
         <td><div class="casos-place">${lugar}</div><div class="casos-sub">${sub}</div></td>
         <td>${nivelBadge}</td>
         <td><div class="casos-org">${org}</div></td>
-        <td><span class="badge badge-est">${titulo(c.estado)}</span></td>
+        <td>${estadoBadge}</td>
+        <td>${cabeza}</td>
       </tr>`;
     }
 
     function render(){
-      const term=norm(q.value.trim()), reg=fR.value, niv=fN.value;
+      const term=norm(q.value.trim()), reg=fR.value, niv=fN.value, tip=fT.value;
       const rows=d.casos.filter(c=>{
         if(reg && c.region!==reg) return false;
         if(niv && c.nivel!==niv) return false;
+        if(tip==='conf'          && !c.confirmado) return false;
+        if(tip==='porconf'       &&  c.confirmado) return false;
+        if(tip==='conf-directo'   && !(c.confirmado && c.tipo==='directo'))   return false;
+        if(tip==='conf-indirecto' && !(c.confirmado && c.tipo==='indirecto')) return false;
         if(term){
           const hay=norm(`${c.nombre} ${c.distrito} ${c.provincia} ${c.region} ${c.org_2026} ${c.org_2022}`);
           if(!hay.includes(term)) return false;
@@ -338,7 +407,7 @@
       tbody.innerHTML = rows.map(row).join('') || `<tr><td colspan="5" style="padding:1.4rem;text-align:center;color:var(--muted)">Sin resultados.</td></tr>`;
       count.textContent = `${rows.length} de ${d.casos.length} casos`;
     }
-    q.addEventListener('input',render); fR.addEventListener('change',render); fN.addEventListener('change',render);
+    q.addEventListener('input',render); fR.addEventListener('change',render); fN.addEventListener('change',render); fT.addEventListener('change',render);
     render();
   });
   </script>

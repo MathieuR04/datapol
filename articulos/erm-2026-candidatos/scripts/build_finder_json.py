@@ -33,6 +33,10 @@ from collections import Counter, defaultdict
 from datetime import date
 from pathlib import Path
 
+# foto_filename() vive en el scraper de HDV para que warehouse y fichas
+# resuelvan la foto con exactamente la misma regla (UrlFoto → strRutaArchivo).
+import scrape_hdv_erm2026
+
 SCRIPT_DIR = Path(__file__).parent
 PROJECT    = SCRIPT_DIR.parent
 CSV_PATH   = PROJECT / "data" / "erm2026_candidatos.csv"
@@ -91,6 +95,10 @@ CAND_CAMPOS = ["pos", "nombre", "dni", "cargo", "sexo", "edad", "prov_consejero"
                "edu", "sent"]
 HEAD_PREFIX = ("GOBERNADOR", "ALCALDE")   # cabeza de lista by cargo
 
+# Estados que sacan a una candidatura de carrera. Se usan para saber si el
+# candidato a alcalde de una lista "se cayó" y el teniente pasó a encabezarla.
+CAIDO = {"IMPROCEDENTE", "EXCLUSION", "RENUNCIA", "RETIRO", "TACHADO", "FALLECIDO"}
+
 # Universe of circunscripciones per tipo, for territorial-coverage %:
 # 25 regiones, 196 provincias, 1 696 distritos con elección distrital (1 892 − 196 cercados).
 TOTALES = {"regional": 25, "provincial": 196, "distrital": 1696}
@@ -120,7 +128,11 @@ def build(light=None) -> dict:
     cmeta = {}
     with open(CSV_PATH, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            te, ubi, sl = r["tipo_eleccion_id"], r["ubigeo"], r["solicitud_lista_id"]
+            # La lista se identifica por (solicitud, expediente): dos
+            # expedientes distintos comparten idSolicitudLista, y agrupar solo
+            # por la solicitud fusiona dos candidaturas en una sola ficha.
+            te, ubi = r["tipo_eleccion_id"], r["ubigeo"]
+            sl = f'{r["solicitud_lista_id"]}:{r["expediente_id"]}'
             circ[(te, ubi)][sl].append(r)
             cmeta[(te, ubi)] = (r["departamento"], r["provincia"], r["distrito"])
 
@@ -262,7 +274,9 @@ def extract_ficha(d):
             for x in (d.get("lCargoPartidario") or [])]
 
     detail = {
-        "foto": _s(dp.get("UrlFoto")),
+        # UrlFoto viene null en ~46% de las HDV; scrape_hdv_erm2026.foto_filename
+        # cae a strRutaArchivo, que trae la misma foto en URL completa.
+        "foto": scrape_hdv_erm2026.foto_filename(d),
         "nac": " / ".join(x for x in [_s(dp.get("strNaciDepartamento")), _s(dp.get("strNaciProvincia")), _s(dp.get("strNaciDistrito"))] if x),
         "dom": " / ".join(x for x in [_s(dp.get("strDomiDepartamento")), _s(dp.get("strDomiProvincia")), _s(dp.get("strDomiDistrito"))] if x),
         "sent": sent, "edu": edu, "exp": exp, "bienes": bienes,
@@ -346,7 +360,7 @@ def build_partidos() -> dict:
             key = TE_KEY.get(r["tipo_eleccion_id"])
             if not key:
                 continue
-            sl = r["solicitud_lista_id"]
+            sl = f'{r["solicitud_lista_id"]}:{r["expediente_id"]}'
             if sl in seen:
                 continue
             seen.add(sl)
@@ -522,6 +536,14 @@ def build_tenientes() -> dict:
             else:                                # distrital mayor
                 dist22[(d, reg, prov, dist)] = a
 
+    # Cabeza de lista por idSolicitudLista: hace falta para saber si el candidato a
+    # alcalde de la lista del teniente sigue en pie o se cayó.
+    alcaldes = {}
+    with open(CSV_PATH, newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if (r["cargo"] or "").startswith("ALCALDE"):
+                alcaldes[r["solicitud_lista_id"]] = r
+
     casos = []
     with open(CSV_PATH, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
@@ -543,6 +565,17 @@ def build_tenientes() -> dict:
                 continue
             org22 = (m.get("organizacion_politica") or "").strip()
             org26 = (r["organizacion"] or "").strip()
+
+            # DIRECTO / INDIRECTO describe la REELECCIÓN DEL ALCALDE EN EJERCICIO,
+            # no su posición en la lista. Si el candidato a alcalde de su lista se
+            # cayó (renunció, fue excluido, tachado o declarado improcedente), el
+            # teniente pasa a encabezarla y el alcalde busca la reelección DIRECTA
+            # al sillón municipal. Si la cabeza sigue en pie, su reelección es
+            # INDIRECTA: vuelve al concejo como teniente alcalde, no como alcalde.
+            alc = alcaldes.get(r["solicitud_lista_id"])
+            est_alc = (alc or {}).get("estado_candidato") or "SIN CANDIDATO"
+            caido = est_alc in CAIDO or est_alc == "SIN CANDIDATO"
+
             casos.append({
                 "dni":       r["dni"],
                 "nombre":    r["candidato"],
@@ -552,14 +585,21 @@ def build_tenientes() -> dict:
                 "distrito":  r["distrito"],
                 "org_2026":  org26,
                 "estado":    r["estado_lista"],
+                "estado_cand": r["estado_candidato"],
                 "org_2022":  org22,
                 "switch":    bool(org22) and _na(org22) != _na(org26),
+                # confirmado = la candidatura del propio teniente ya está INSCRITA
+                "confirmado": r["estado_candidato"] == "INSCRITO",
+                "alcalde":   (alc or {}).get("candidato") or "",
+                "estado_alcalde": est_alc,
+                "tipo":      "directo" if caido else "indirecto",
             })
 
     casos.sort(key=lambda c: (c["region"], c["provincia"], c["distrito"], c["nombre"]))
     por_region = Counter(c["region"] for c in casos)
     n_mismo  = sum(1 for c in casos if c["org_2022"] and not c["switch"])
     n_switch = sum(1 for c in casos if c["org_2022"] and c["switch"])
+    conf = [c for c in casos if c["confirmado"]]
     return {
         "generado":     date.today().isoformat(),
         "total":        len(casos),
@@ -567,6 +607,15 @@ def build_tenientes() -> dict:
         "n_distrital":  sum(1 for c in casos if c["nivel"] == "distrital"),
         "n_mismo_partido": n_mismo,
         "n_cambio_partido": n_switch,
+        # el corte directo/indirecto sólo se afirma sobre candidaturas ya INSCRITAS
+        "n_confirmados": len(conf),
+        "n_por_confirmar": len(casos) - len(conf),
+        "n_directo":    sum(1 for c in conf if c["tipo"] == "directo"),
+        "n_indirecto":  sum(1 for c in conf if c["tipo"] == "indirecto"),
+        "n_alcalde_caido": sum(1 for c in casos if c["tipo"] == "directo"),
+        "motivos_caida": [{"motivo": k, "n": n} for k, n in
+                          Counter(c["estado_alcalde"] for c in casos
+                                  if c["tipo"] == "directo").most_common()],
         "por_region":   [{"region": k, "n": n} for k, n in
                          sorted(por_region.items(), key=lambda kv: (-kv[1], kv[0]))],
         "casos":        casos,
@@ -598,7 +647,7 @@ def build_competitividad() -> dict:
             te = r["tipo_eleccion_id"]
             if te not in NIVEL_META:
                 continue
-            circ[(te, r["ubigeo"])][r["solicitud_lista_id"]].append(r)
+            circ[(te, r["ubigeo"])][f'{r["solicitud_lista_id"]}:{r["expediente_id"]}'].append(r)
             cmeta[(te, r["ubigeo"])] = (r["departamento"], r["provincia"], r["distrito"])
 
     # Per-level distribution + collect single-list ("default") circunscripciones,
