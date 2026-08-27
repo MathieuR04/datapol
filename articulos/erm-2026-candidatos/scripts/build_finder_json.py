@@ -73,11 +73,7 @@ COMPET_PATH = PROJECT.parent / "habemus-alcaldes-erm-2026" / "data" / "competiti
 # Every derived artifact this build (over)writes. The auto-publisher in
 # scrape_erm2026.py stages exactly these (plus the CSVs), so adding an output here
 # is enough to get it committed — nothing is missed by reading data another way.
-# COMPET_PATH sale de la lista MIENTRAS el artículo habemus-alcaldes esté
-# despublicado (su carpeta está en .gitignore, y `git add` de una ruta ignorada
-# devuelve error). El JSON se sigue escribiendo local; al republicar, volver a
-# meterlo acá y sacar la carpeta del .gitignore.
-OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH, FICHA_DIR]
+OUTPUTS = [OUT_PATH, PARTIDOS_PATH, REPITEN_PATH, TENIENTES_PATH, COMPET_PATH, FICHA_DIR]
 
 # Party-name color in the finder is by `tipo_org` (partido / alianza / movimiento),
 # decided in the frontend — no per-party color map here.
