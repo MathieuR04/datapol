@@ -35,12 +35,9 @@
     }
     html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
 
-    /* La tabla es el artículo, así que el contenedor va ancho y la prosa se
-       queda en una medida legible en vez de estirarse con él. */
+    /* Todo el artículo comparte el ancho de la tabla: el texto se alinea con ella
+       en vez de quedar en una columna angosta al costado. */
     .article { max-width: 1220px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
-    .article-back, .article-tag, .article-title, .article-byline,
-    .article-body > p, .article-body > h2.sec, .article-body > .note,
-    .article-body > .filters, .fuente { max-width: 800px; }
 
     .article-back {
       display: inline-flex; align-items: center; gap: 0.4rem;
@@ -50,7 +47,7 @@
     .article-back:hover { color: var(--text); }
 
     .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
-    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 64px; letter-spacing: 0.02em; line-height: 0.98; color: var(--text); margin-bottom: 1rem; }
     .article-byline {
       display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
       padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
@@ -58,8 +55,10 @@
     .article-byline-author { font-weight: 600; color: var(--text); }
     .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
 
-    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
-    .article-body p { margin-bottom: 1.4em; }
+    /* A este ancho la línea es larga, así que sube el cuerpo y el interlineado
+       para que el ojo no pierda el renglón al volver. */
+    .article-body { font-size: 16.5px; line-height: 1.9; color: var(--text); }
+    .article-body p { margin-bottom: 1.35em; }
     .article-body strong { font-weight: 600; }
 
     h2.sec {
@@ -147,9 +146,14 @@
     }
     .fuente a { color: var(--terra); }
 
+    @media (max-width: 1000px) {
+      .article-title { font-size: 52px; }
+      .article-body { font-size: 15.5px; line-height: 1.85; }
+    }
     @media (max-width: 620px) {
       .article { padding: 1.6rem 1.1rem 3.5rem; }
       .article-title { font-size: 34px; }
+      .article-body { font-size: 15px; line-height: 1.8; }
       .ntable { font-size: 13px; }
       td.props { text-align: left; }
     }
