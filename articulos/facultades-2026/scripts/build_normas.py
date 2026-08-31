@@ -47,9 +47,16 @@ NOMBRE_RE = re.compile(
 # el nombre se corta ahí, o se le pega el título de la norma siguiente.
 CORTE_NOMBRE = re.compile(r"\s+(?:y|e)\s+(?:el\s+|la\s+)?(?:Decreto|Ley|Código|Texto)\b|,\s*(?:y\s+)?(?:el|la)\s+(?:Decreto|Ley)\b")
 
-# Sólo estas tienen rango de ley, que es lo único que un decreto legislativo puede
-# modificar. Los decretos supremos aparecen citados como contexto reglamentario y
-# NO forman parte del universo de lo delegable.
+# Sólo estas tienen rango de ley, que es el rango de un decreto legislativo y por
+# tanto el universo que la delegación pone en juego (art. 104 de la Constitución).
+#
+# Los decretos supremos quedan fuera, pero NO porque un decreto legislativo no
+# pueda tocarlos —sí puede, es norma de rango superior—: quedan fuera porque el
+# Ejecutivo ya los modifica cuando quiere por su potestad reglamentaria ordinaria
+# (art. 118 inc. 8), con delegación o sin ella. Contarlos le atribuiría al pedido
+# un poder que el gobierno tiene igual. Se citan como marco reglamentario vigente,
+# y de hecho ninguno aparece en el articulado: los 36 salen de la exposición de
+# motivos.
 RANGO_LEY = {"Ley", "Decreto Legislativo", "Decreto Ley", "Decreto de Urgencia"}
 
 # CITAR NO ES QUERER MODIFICAR. La exposición de motivos nombra normas por dos
