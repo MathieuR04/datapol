@@ -1,0 +1,778 @@
+{
+ "a": {
+  "titulo": "En materia penal, procesal penal, ejecución penal, policial, seguridad ciudadana, orden interno, penitenciaria y migratoria",
+  "n_propuestas": 12,
+  "n_tokens": 21181,
+  "distintivos": [
+   {
+    "termino": "seguridad",
+    "z": 14.8,
+    "n": 249
+   },
+   {
+    "termino": "penal",
+    "z": 14.7,
+    "n": 155
+   },
+   {
+    "termino": "delitos",
+    "z": 11.6,
+    "n": 138
+   },
+   {
+    "termino": "ciudadana",
+    "z": 11.3,
+    "n": 100
+   },
+   {
+    "termino": "orden",
+    "z": 11.0,
+    "n": 88
+   },
+   {
+    "termino": "código",
+    "z": 10.5,
+    "n": 79
+   },
+   {
+    "termino": "interno",
+    "z": 9.5,
+    "n": 64
+   },
+   {
+    "termino": "organizaciones",
+    "z": 9.5,
+    "n": 68
+   },
+   {
+    "termino": "control",
+    "z": 9.4,
+    "n": 92
+   },
+   {
+    "termino": "tratamiento",
+    "z": 9.0,
+    "n": 66
+   },
+   {
+    "termino": "libertad",
+    "z": 9.0,
+    "n": 58
+   },
+   {
+    "termino": "investigación",
+    "z": 8.9,
+    "n": 78
+   },
+   {
+    "termino": "delito",
+    "z": 8.4,
+    "n": 55
+   },
+   {
+    "termino": "establecimientos",
+    "z": 8.3,
+    "n": 49
+   },
+   {
+    "termino": "ilegal",
+    "z": 8.2,
+    "n": 49
+   },
+   {
+    "termino": "personas",
+    "z": 8.1,
+    "n": 82
+   },
+   {
+    "termino": "equipos",
+    "z": 7.8,
+    "n": 44
+   },
+   {
+    "termino": "penitenciario",
+    "z": 7.5,
+    "n": 87
+   }
+  ]
+ },
+ "b": {
+  "titulo": "En materia de micro y pequeñas empresas",
+  "n_propuestas": 3,
+  "n_tokens": 7862,
+  "distintivos": [
+   {
+    "termino": "financiamiento",
+    "z": 14.0,
+    "n": 83
+   },
+   {
+    "termino": "instrumentos",
+    "z": 12.7,
+    "n": 66
+   },
+   {
+    "termino": "innovación",
+    "z": 12.7,
+    "n": 81
+   },
+   {
+    "termino": "mype",
+    "z": 12.0,
+    "n": 50
+   },
+   {
+    "termino": "empresarial",
+    "z": 11.9,
+    "n": 47
+   },
+   {
+    "termino": "programa",
+    "z": 11.8,
+    "n": 44
+   },
+   {
+    "termino": "empresas",
+    "z": 11.8,
+    "n": 74
+   },
+   {
+    "termino": "capital",
+    "z": 11.1,
+    "n": 42
+   },
+   {
+    "termino": "micro",
+    "z": 10.1,
+    "n": 34
+   },
+   {
+    "termino": "crecimiento",
+    "z": 9.8,
+    "n": 34
+   },
+   {
+    "termino": "ecosistema",
+    "z": 9.3,
+    "n": 27
+   },
+   {
+    "termino": "tecnológicos",
+    "z": 9.1,
+    "n": 27
+   },
+   {
+    "termino": "emprendimiento",
+    "z": 8.8,
+    "n": 31
+   },
+   {
+    "termino": "pequeñas",
+    "z": 8.7,
+    "n": 27
+   },
+   {
+    "termino": "tecnológica",
+    "z": 8.7,
+    "n": 30
+   },
+   {
+    "termino": "financieras",
+    "z": 8.6,
+    "n": 29
+   },
+   {
+    "termino": "regiones",
+    "z": 8.1,
+    "n": 23
+   },
+   {
+    "termino": "emprendimientos",
+    "z": 8.0,
+    "n": 47
+   }
+  ]
+ },
+ "c": {
+  "titulo": "En materia laboral y promoción del empleo",
+  "n_propuestas": 6,
+  "n_tokens": 8755,
+  "distintivos": [
+   {
+    "termino": "laboral",
+    "z": 20.1,
+    "n": 154
+   },
+   {
+    "termino": "trabajo",
+    "z": 17.8,
+    "n": 106
+   },
+   {
+    "termino": "trabajadores",
+    "z": 15.8,
+    "n": 91
+   },
+   {
+    "termino": "empleo",
+    "z": 14.9,
+    "n": 82
+   },
+   {
+    "termino": "laborales",
+    "z": 13.8,
+    "n": 66
+   },
+   {
+    "termino": "informalidad",
+    "z": 12.6,
+    "n": 55
+   },
+   {
+    "termino": "inspección",
+    "z": 10.5,
+    "n": 38
+   },
+   {
+    "termino": "jóvenes",
+    "z": 9.8,
+    "n": 37
+   },
+   {
+    "termino": "confianza",
+    "z": 9.1,
+    "n": 31
+   },
+   {
+    "termino": "formal",
+    "z": 8.0,
+    "n": 33
+   },
+   {
+    "termino": "productividad",
+    "z": 7.8,
+    "n": 33
+   },
+   {
+    "termino": "microempresas",
+    "z": 7.8,
+    "n": 22
+   },
+   {
+    "termino": "remuneración",
+    "z": 7.3,
+    "n": 25
+   },
+   {
+    "termino": "juvenil",
+    "z": 7.3,
+    "n": 21
+   },
+   {
+    "termino": "social",
+    "z": 7.0,
+    "n": 39
+   },
+   {
+    "termino": "empresas",
+    "z": 7.0,
+    "n": 53
+   },
+   {
+    "termino": "pequeñas",
+    "z": 6.5,
+    "n": 21
+   },
+   {
+    "termino": "hacia",
+    "z": 6.4,
+    "n": 27
+   }
+  ]
+ },
+ "d": {
+  "titulo": "En materia de simplificación administrativa, eliminación de barreras burocráticas, calidad regulatoria y transformación digital",
+  "n_propuestas": 6,
+  "n_tokens": 6801,
+  "distintivos": [
+   {
+    "termino": "digital",
+    "z": 17.6,
+    "n": 88
+   },
+   {
+    "termino": "procedimientos",
+    "z": 12.2,
+    "n": 66
+   },
+   {
+    "termino": "administrativos",
+    "z": 11.8,
+    "n": 48
+   },
+   {
+    "termino": "tramitación",
+    "z": 11.1,
+    "n": 35
+   },
+   {
+    "termino": "entidades",
+    "z": 11.0,
+    "n": 93
+   },
+   {
+    "termino": "datos",
+    "z": 10.6,
+    "n": 46
+   },
+   {
+    "termino": "administrados",
+    "z": 10.6,
+    "n": 32
+   },
+   {
+    "termino": "barreras",
+    "z": 10.6,
+    "n": 33
+   },
+   {
+    "termino": "exclusividad",
+    "z": 10.1,
+    "n": 30
+   },
+   {
+    "termino": "digitales",
+    "z": 9.4,
+    "n": 27
+   },
+   {
+    "termino": "prestados",
+    "z": 9.4,
+    "n": 27
+   },
+   {
+    "termino": "burocráticas",
+    "z": 8.6,
+    "n": 26
+   },
+   {
+    "termino": "procedimiento",
+    "z": 8.2,
+    "n": 35
+   },
+   {
+    "termino": "personales",
+    "z": 7.9,
+    "n": 20
+   },
+   {
+    "termino": "administrativa",
+    "z": 7.6,
+    "n": 29
+   },
+   {
+    "termino": "actuaciones",
+    "z": 7.5,
+    "n": 23
+   },
+   {
+    "termino": "estandarización",
+    "z": 7.4,
+    "n": 16
+   },
+   {
+    "termino": "metodología",
+    "z": 7.4,
+    "n": 17
+   }
+  ]
+ },
+ "e": {
+  "titulo": "En materia de desarrollo productivo, innovación, agraria y riego, recursos hídricos, infraestructura hidráulica, pesquera, acuícola, minería, turismo, hidrocarburos, electricidad, ambiental, recursos naturales e infraestructura productiva industrial",
+  "n_propuestas": 19,
+  "n_tokens": 36675,
+  "distintivos": [
+   {
+    "termino": "ambiental",
+    "z": 9.3,
+    "n": 123
+   },
+   {
+    "termino": "infraestructura",
+    "z": 8.8,
+    "n": 171
+   },
+   {
+    "termino": "bienes",
+    "z": 8.7,
+    "n": 107
+   },
+   {
+    "termino": "innovación",
+    "z": 8.3,
+    "n": 156
+   },
+   {
+    "termino": "desarrollo",
+    "z": 8.1,
+    "n": 236
+   },
+   {
+    "termino": "pesca",
+    "z": 8.0,
+    "n": 100
+   },
+   {
+    "termino": "agrario",
+    "z": 7.9,
+    "n": 84
+   },
+   {
+    "termino": "producción",
+    "z": 7.8,
+    "n": 81
+   },
+   {
+    "termino": "productos",
+    "z": 7.6,
+    "n": 88
+   },
+   {
+    "termino": "recursos",
+    "z": 7.4,
+    "n": 200
+   },
+   {
+    "termino": "cierre",
+    "z": 7.4,
+    "n": 77
+   },
+   {
+    "termino": "agraria",
+    "z": 7.2,
+    "n": 137
+   },
+   {
+    "termino": "propiedad",
+    "z": 7.2,
+    "n": 77
+   },
+   {
+    "termino": "actividades",
+    "z": 7.2,
+    "n": 143
+   },
+   {
+    "termino": "productores",
+    "z": 7.2,
+    "n": 101
+   },
+   {
+    "termino": "industrial",
+    "z": 7.0,
+    "n": 72
+   },
+   {
+    "termino": "predios",
+    "z": 6.6,
+    "n": 57
+   },
+   {
+    "termino": "agricultura",
+    "z": 6.3,
+    "n": 56
+   }
+  ]
+ },
+ "f": {
+  "titulo": "En materia tributaria, aduanera, de facilitación del comercio e implementación de acuerdos comerciales",
+  "n_propuestas": 5,
+  "n_tokens": 3873,
+  "distintivos": [
+   {
+    "termino": "regímenes",
+    "z": 11.0,
+    "n": 26
+   },
+   {
+    "termino": "mercancías",
+    "z": 10.0,
+    "n": 23
+   },
+   {
+    "termino": "emergencia",
+    "z": 9.1,
+    "n": 19
+   },
+   {
+    "termino": "trabajo",
+    "z": 8.8,
+    "n": 32
+   },
+   {
+    "termino": "daños",
+    "z": 8.4,
+    "n": 18
+   },
+   {
+    "termino": "desastres",
+    "z": 8.2,
+    "n": 14
+   },
+   {
+    "termino": "civil",
+    "z": 8.0,
+    "n": 22
+   },
+   {
+    "termino": "indemnización",
+    "z": 8.0,
+    "n": 13
+   },
+   {
+    "termino": "daño",
+    "z": 8.0,
+    "n": 13
+   },
+   {
+    "termino": "impuestos",
+    "z": 7.6,
+    "n": 12
+   },
+   {
+    "termino": "titular",
+    "z": 7.4,
+    "n": 12
+   },
+   {
+    "termino": "derechos",
+    "z": 6.6,
+    "n": 32
+   },
+   {
+    "termino": "forzoso",
+    "z": 6.5,
+    "n": 27
+   },
+   {
+    "termino": "gobierno",
+    "z": 6.5,
+    "n": 19
+   },
+   {
+    "termino": "derecho",
+    "z": 5.7,
+    "n": 19
+   },
+   {
+    "termino": "atención",
+    "z": 5.2,
+    "n": 17
+   },
+   {
+    "termino": "mecanismo",
+    "z": 5.0,
+    "n": 14
+   },
+   {
+    "termino": "competencia",
+    "z": 5.0,
+    "n": 12
+   }
+  ]
+ },
+ "g": {
+  "titulo": "En materia de reforma estructural, organización y modernización del Estado y del servicio civil",
+  "n_propuestas": 8,
+  "n_tokens": 8505,
+  "distintivos": [
+   {
+    "termino": "integridad",
+    "z": 17.4,
+    "n": 110
+   },
+   {
+    "termino": "modelo",
+    "z": 14.4,
+    "n": 70
+   },
+   {
+    "termino": "gestión",
+    "z": 11.5,
+    "n": 99
+   },
+   {
+    "termino": "ocde",
+    "z": 11.4,
+    "n": 44
+   },
+   {
+    "termino": "responsabilidad",
+    "z": 10.4,
+    "n": 43
+   },
+   {
+    "termino": "entidades",
+    "z": 10.0,
+    "n": 100
+   },
+   {
+    "termino": "servicio",
+    "z": 9.6,
+    "n": 46
+   },
+   {
+    "termino": "civil",
+    "z": 9.3,
+    "n": 38
+   },
+   {
+    "termino": "servidores",
+    "z": 9.1,
+    "n": 29
+   },
+   {
+    "termino": "implementación",
+    "z": 9.0,
+    "n": 62
+   },
+   {
+    "termino": "funcionarios",
+    "z": 8.9,
+    "n": 28
+   },
+   {
+    "termino": "decisiones",
+    "z": 8.5,
+    "n": 35
+   },
+   {
+    "termino": "humanos",
+    "z": 8.4,
+    "n": 24
+   },
+   {
+    "termino": "función",
+    "z": 8.3,
+    "n": 34
+   },
+   {
+    "termino": "corrupción",
+    "z": 8.1,
+    "n": 22
+   },
+   {
+    "termino": "presupuesto",
+    "z": 7.7,
+    "n": 24
+   },
+   {
+    "termino": "institucional",
+    "z": 7.6,
+    "n": 37
+   },
+   {
+    "termino": "estructura",
+    "z": 7.3,
+    "n": 24
+   }
+  ]
+ },
+ "h": {
+  "titulo": "En materia de vivienda y saneamiento",
+  "n_propuestas": 7,
+  "n_tokens": 4591,
+  "distintivos": [
+   {
+    "termino": "agua",
+    "z": 15.8,
+    "n": 56
+   },
+   {
+    "termino": "saneamiento",
+    "z": 14.9,
+    "n": 55
+   },
+   {
+    "termino": "potable",
+    "z": 13.4,
+    "n": 52
+   },
+   {
+    "termino": "vivienda",
+    "z": 11.0,
+    "n": 39
+   },
+   {
+    "termino": "registral",
+    "z": 10.9,
+    "n": 27
+   },
+   {
+    "termino": "proyectos",
+    "z": 9.3,
+    "n": 41
+   },
+   {
+    "termino": "pobreza",
+    "z": 8.3,
+    "n": 20
+   },
+   {
+    "termino": "interés",
+    "z": 8.3,
+    "n": 22
+   },
+   {
+    "termino": "delegación",
+    "z": 8.3,
+    "n": 24
+   },
+   {
+    "termino": "social",
+    "z": 7.9,
+    "n": 30
+   },
+   {
+    "termino": "convencionales",
+    "z": 7.0,
+    "n": 12
+   },
+   {
+    "termino": "delegadas",
+    "z": 7.0,
+    "n": 12
+   },
+   {
+    "termino": "inscripción",
+    "z": 6.9,
+    "n": 13
+   },
+   {
+    "termino": "vigencia",
+    "z": 6.6,
+    "n": 17
+   },
+   {
+    "termino": "condición",
+    "z": 6.0,
+    "n": 13
+   },
+   {
+    "termino": "facultades",
+    "z": 5.8,
+    "n": 19
+   },
+   {
+    "termino": "actos",
+    "z": 5.5,
+    "n": 13
+   },
+   {
+    "termino": "reglamento",
+    "z": 5.3,
+    "n": 16
+   }
+  ]
+ }
+}

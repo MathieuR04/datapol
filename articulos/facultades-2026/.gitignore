@@ -1,0 +1,8 @@
+# PDFs fuente: re-descargables desde gob.pe y el portal del Congreso, y pesados.
+# El de la exposición de motivos son 420 MB (436 páginas escaneadas a 400 dpi).
+# Lo que se versiona es el texto ya transcrito en data/ocr/ y los JSON derivados.
+data/*.pdf
+
+# Borrador de maquetación, superado por index.html
+vista_normas.html
+data/vista_normas.json

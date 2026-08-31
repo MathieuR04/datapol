@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Las 42 normas que el pedido de facultades pone en juego — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Las 42 normas que el pedido de facultades pone en juego">
+  <meta property="og:description" content="El articulado del pedido de facultades legislativas nombra 42 normas con rango de ley. 39 de ellas se citan enteras: la delegación habilitaría reescribirlas por completo.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/facultades-2026/">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@KhamaRamaq">
+  <meta name="twitter:title"       content="Las 42 normas que el pedido de facultades pone en juego">
+  <meta name="twitter:description" content="39 de las 42 normas nombradas se citan enteras, no por artículo.">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    /* La tabla es el artículo, así que el contenedor va ancho y la prosa se
+       queda en una medida legible en vez de estirarse con él. */
+    .article { max-width: 1220px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+    .article-back, .article-tag, .article-title, .article-byline,
+    .article-body > p, .article-body > h2.sec, .article-body > .note,
+    .article-body > .filters, .fuente { max-width: 800px; }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body strong { font-weight: 600; }
+
+    h2.sec {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.04em;
+      line-height: 1.1; margin: 2.6em 0 0.9em; padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Filtros */
+    .filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.6em 0 1em; align-items: center; }
+    .filters-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-right: 0.2rem; }
+    .fbtn {
+      font: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 0.28rem 0.6rem; border-radius: 3px; transition: all .12s; white-space: nowrap;
+    }
+    .fbtn:hover { border-color: var(--terra); color: var(--terra); }
+    .fbtn[aria-pressed="true"] { background: var(--terra); border-color: var(--terra); color: var(--bg); }
+    .fbtn:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+
+    /* Tabla de normas */
+    .tbl-wrap { overflow-x: auto; margin: 0.4em 0 0.6em; }
+    .ntable { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .ntable thead th {
+      text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--muted); padding: 0 0.55rem 0.5rem; border-bottom: 2px solid var(--text);
+      vertical-align: bottom; white-space: nowrap;
+    }
+    .ntable td { padding: 0.62rem 0.55rem; border-bottom: 1px solid #e7e0d2; vertical-align: top; }
+    .ntable tbody tr.norma:hover { background: rgba(196,96,58,0.05); }
+
+    tr.mhead td {
+      background: rgba(217,201,180,0.34); border-bottom: 1px solid var(--border);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--muted); padding: 0.55rem;
+    }
+    tr.mhead td b { color: var(--text); font-weight: 700; }
+
+    td.ref { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    td.ref .t { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--dim); }
+    td.ref .n { font-weight: 600; }
+    td.nom { line-height: 1.42; }
+    td.nom .ext { display: block; font-size: 10.5px; color: var(--dim); margin-top: 2px; font-style: italic; }
+    td.alc { line-height: 1.35; }
+    td.props { white-space: nowrap; text-align: right; }
+    /* La denominación se queda con el espacio; alcance y referencia sólo el suyo. */
+    col.c-ref  { width: 9.5rem; }
+    col.c-nom  { width: auto; }
+    col.c-alc  { width: 9rem; }
+    col.c-prop { width: 6.5rem; }
+
+    .pill {
+      display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+      padding: 0.2rem 0.4rem; border-radius: 3px; border: 1px solid var(--border);
+      color: var(--muted); background: rgba(217,201,180,0.28); white-space: nowrap;
+    }
+    .pill.entera { color: var(--terra); border-color: rgba(196,96,58,0.45); background: rgba(196,96,58,0.09); }
+
+    .pbtn {
+      font: inherit; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer;
+      background: rgba(217,201,180,0.3); border: 1px solid var(--border); color: var(--text);
+      padding: 0.2rem 0.42rem; border-radius: 3px; margin-left: 0.2rem; transition: all .12s;
+      text-transform: uppercase;
+    }
+    .pbtn:hover { background: var(--terra); border-color: var(--terra); color: var(--bg); }
+    .pbtn:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+    .pbtn[aria-expanded="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+
+    tr.detalle td {
+      background: rgba(217,201,180,0.18); font-size: 13.5px; line-height: 1.7;
+      color: var(--muted); padding: 0.8rem 0.9rem;
+    }
+    tr.detalle .dlab {
+      display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--terra); margin-bottom: 0.3rem;
+    }
+
+    .note { font-size: 12.5px; line-height: 1.65; color: var(--muted); margin-top: 1.2em; }
+    .note strong { color: var(--text); font-weight: 600; }
+
+    .fuente {
+      margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border);
+      font-size: 11.5px; line-height: 1.7; color: var(--muted);
+    }
+    .fuente a { color: var(--terra); }
+
+    @media (max-width: 620px) {
+      .article { padding: 1.6rem 1.1rem 3.5rem; }
+      .article-title { font-size: 34px; }
+      .ntable { font-size: 13px; }
+      td.props { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <div class="nav-social">
+    <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+    </a>
+    <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+      <span class="nav-yape-label">YAPE</span>
+    </button>
+    <div class="nav-sep" style="margin:0 0.4rem"></div>
+    <span class="nav-author">MATHIEU ROJAS</span>
+  </div>
+</div>
+
+<div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+    <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+    <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+    <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+  </div>
+</div>
+
+<article class="article">
+
+  <a class="article-back" href="/articulos/">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+    Todos los artículos
+  </a>
+
+  <div class="article-tag">Datos · Facultades legislativas 2026</div>
+  <h1 class="article-title">Las 42 normas que el pedido de facultades pone en juego</h1>
+  <div class="article-byline">
+    <span class="article-byline-author">Mathieu Rojas</span>
+    <span class="article-byline-sep"></span>
+    <span>Proyecto de ley 98/2026-PE</span>
+    <span class="article-byline-sep"></span>
+    <span id="fecha">presentado el 28 de agosto de 2026</span>
+  </div>
+
+  <div class="article-body">
+
+    <p>El 28 de agosto el Ejecutivo pidió al Congreso facultades para legislar por
+    <strong>120 días calendario</strong> en 66 materias. La pregunta práctica es cuál es el
+    cuerpo normativo que quedaría a su disposición: qué leyes y decretos podría reescribir sin
+    pasar por el debate parlamentario.</p>
+
+    <p>El articulado —el texto que los diputados efectivamente votan— nombra
+    <strong id="n-normas">42</strong> normas con rango de ley. Es una cota inferior de lo que se
+    tocaría, no un inventario: sólo <strong id="n-props">17</strong> de las 66 propuestas nombran
+    alguna norma, y las otras 49 piden legislar sobre una materia entera sin identificar ni una.</p>
+
+    <p>Lo que sí delimita el articulado importa por una razón que se pierde al leerlo de corrido:
+    <strong id="n-enteras">39</strong> de esas 42 normas se citan <strong>completas</strong>. La
+    delegación no autorizaría corregir un artículo puntual sino reescribir la norma entera. Sólo
+    <strong id="n-parciales">3</strong> quedan acotadas a un artículo o disposición con nombre
+    propio.</p>
+
+    <h2 class="sec">Las 42, una por una</h2>
+
+    <p>Agrupadas por la materia de la propuesta que las invoca. Toca el código de la propuesta
+    para leer el texto literal del numeral que la nombra.</p>
+
+    <div class="filters" id="filtros">
+      <span class="filters-label">Alcance</span>
+      <button class="fbtn" data-f="todas" aria-pressed="true">Todas</button>
+      <button class="fbtn" data-f="completa" aria-pressed="false">Norma entera</button>
+      <button class="fbtn" data-f="parcial" aria-pressed="false">Artículo específico</button>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="ntable" id="tabla">
+        <colgroup>
+          <col class="c-ref"><col class="c-nom"><col class="c-alc"><col class="c-prop">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Norma</th>
+            <th>Denominación</th>
+            <th>Alcance</th>
+            <th style="text-align:right">Propuesta</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="4" style="color:var(--muted);padding:1.5rem 0">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note"><strong>Cómo se leyó el alcance.</strong> Una norma cuenta como acotada sólo
+    si todas sus menciones en el articulado van precedidas de un artículo o disposición concreta
+    («el artículo 6 de la Ley N.° 28587»). Si al menos una la invoca sin acotar, la norma queda
+    disponible entera y así se reporta. El Decreto Legislativo 1192 es el caso que ilustra la
+    regla: la propuesta e18 lo acota a su Trigésima Sexta Disposición Complementaria Final, pero
+    la e4 lo nombra sin límite.</p>
+
+    <p class="note"><strong>Tres denominaciones vienen de fuera del expediente.</strong> El
+    Decreto Legislativo 1735, el Decreto Legislativo 728 y el Decreto de Urgencia 027-2009 se
+    citan por número, sin nombre, en los dos documentos del pedido. Su denominación se completó
+    con la norma publicada y está marcada en la tabla para que no se confunda con lo transcrito
+    del expediente.</p>
+
+    <p class="note"><strong>Se excluyen los decretos supremos.</strong> Un decreto legislativo no
+    puede modificar un reglamento, así que los decretos supremos que el expediente cita —36 en
+    total— son contexto normativo y no parte de lo delegable.</p>
+
+    <div class="fuente">
+      <strong>Fuente.</strong> Proyecto de ley 98/2026-PE, Oficio N.° 245-2026-PR del 28 de agosto
+      de 2026, presentado ante la Cámara de Diputados y suscrito por la Presidenta de la República
+      y el Presidente del Consejo de Ministros. Articulado de 20 páginas y exposición de motivos de
+      436 páginas, ambos escaneados sin capa de texto y transcritos por reconocimiento óptico para
+      este análisis. El conteo de esta tabla proviene únicamente del articulado.
+      <a href="https://wb2server.congreso.gob.pe/spley-portal/#/diputados/expediente/2026/98" target="_blank" rel="noopener">Expediente en la Cámara de Diputados</a>.
+    </div>
+
+  </div>
+</article>
+
+<script>
+(function () {
+  // Cuando exista el artículo con el texto del articulado, basta con poner acá su
+  // ruta y los códigos de propuesta pasan de desplegable a enlace.
+  var URL_ARTICULADO = null;
+
+  var esc = function (s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+
+  fetch('data/normas_web.json')
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (d) {
+      var r = d.resumen;
+      document.getElementById('n-normas').textContent = r.n_normas;
+      document.getElementById('n-props').textContent = r.n_propuestas_con_norma;
+      document.getElementById('n-enteras').textContent = r.n_completa;
+      document.getElementById('n-parciales').textContent = r.n_parcial;
+
+      var titulos = {};
+      d.materias.forEach(function (m) { titulos[m.letra] = m.titulo; });
+
+      var tbody = document.getElementById('rows');
+
+      function pintar(filtro) {
+        var html = '', materiaActual = null, visibles = 0;
+        d.normas.forEach(function (n, i) {
+          if (filtro !== 'todas' && n.alcance !== filtro) return;
+          var mat = n.propuestas[0].charAt(0);
+          if (mat !== materiaActual) {
+            materiaActual = mat;
+            html += '<tr class="mhead"><td colspan="4"><b>' + esc(mat) + '.</b> '
+                 + esc(titulos[mat] || '') + '</td></tr>';
+          }
+          visibles++;
+
+          var nombre = n.nombre
+            ? esc(n.nombre)
+            : '<span style="color:var(--dim);font-style:italic">citada sin denominación</span>';
+          if (n.nombre_externo) {
+            nombre += '<span class="ext">denominación tomada de la norma publicada, no del expediente</span>';
+          }
+
+          // La columna es angosta: se abrevia el nombre de la parte citada, que en
+          // el original llega a «la primera disposición complementaria final».
+          var alc = n.alcance === 'parcial'
+            ? '<span class="pill">' + esc(n.partes.map(function (p) {
+                return p.replace(/\s*\(propuesta [^)]+\)/, '')
+                        .replace(/^la\s+/i, '')
+                        .replace(/primera\s+disposici[oó]n\s+complementaria\s+final/i,
+                                 '1.ª disp. compl. final')
+                        .replace(/disposici[oó]n\s+complementaria\s+final/i, 'disp. compl. final')
+                        .replace(/art[ií]culos?\s+/i, 'Art. ');
+              }).join('; ')) + '</span>'
+            : '<span class="pill entera">Norma entera</span>';
+
+          var pills = n.propuestas.map(function (pid) {
+            if (URL_ARTICULADO) {
+              return '<a class="pbtn" href="' + URL_ARTICULADO + '#' + encodeURIComponent(pid) + '">'
+                   + esc(pid) + '</a>';
+            }
+            return '<button class="pbtn" type="button" data-p="' + esc(pid)
+                 + '" data-row="' + i + '" aria-expanded="false">' + esc(pid) + '</button>';
+          }).join('');
+
+          html += '<tr class="norma" data-row="' + i + '">'
+               + '<td class="ref"><span class="t">' + esc(n.tipo) + '</span>'
+               + '<span class="n">N.° ' + esc(n.numero) + '</span></td>'
+               + '<td class="nom">' + nombre + '</td>'
+               + '<td class="alc">' + alc + '</td>'
+               + '<td class="props">' + pills + '</td></tr>';
+        });
+
+        if (!visibles) {
+          html = '<tr><td colspan="4" style="color:var(--muted);padding:1.5rem 0">'
+               + 'Ninguna norma con ese alcance.</td></tr>';
+        }
+        tbody.innerHTML = html;
+      }
+
+      pintar('todas');
+
+      document.getElementById('filtros').addEventListener('click', function (ev) {
+        var b = ev.target.closest('.fbtn');
+        if (!b) return;
+        this.querySelectorAll('.fbtn').forEach(function (x) {
+          x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+        });
+        pintar(b.dataset.f);
+      });
+
+      // Desplegar el texto literal del numeral que invoca la norma.
+      tbody.addEventListener('click', function (ev) {
+        var b = ev.target.closest('.pbtn');
+        if (!b || b.tagName === 'A') return;
+        var fila = b.closest('tr.norma');
+        var abierto = b.getAttribute('aria-expanded') === 'true';
+        var sig = fila.nextElementSibling;
+        if (sig && sig.classList.contains('detalle')) sig.remove();
+        fila.parentNode.querySelectorAll('.pbtn[aria-expanded="true"]').forEach(function (x) {
+          x.setAttribute('aria-expanded', 'false');
+        });
+        if (abierto) return;
+        b.setAttribute('aria-expanded', 'true');
+        var p = d.propuestas[b.dataset.p];
+        var tr = document.createElement('tr');
+        tr.className = 'detalle';
+        tr.innerHTML = '<td colspan="4"><span class="dlab">Propuesta ' + esc(b.dataset.p)
+                     + ' — texto del articulado</span>' + esc(p ? p.texto : '') + '</td>';
+        fila.after(tr);
+      });
+    })
+    .catch(function (err) {
+      document.getElementById('rows').innerHTML =
+        '<tr><td colspan="4" style="color:var(--muted);padding:1.5rem 0">'
+        + 'No se pudieron cargar los datos (' + err.message + ').</td></tr>';
+    });
+})();
+</script>
+</body>
+</html>

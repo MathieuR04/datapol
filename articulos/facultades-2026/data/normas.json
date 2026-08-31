@@ -1,0 +1,3551 @@
+{
+ "resumen": {
+  "n_total": 227,
+  "n_en_articulado": 42,
+  "n_solo_motivos": 185,
+  "por_tipo": {
+   "Decreto Legislativo": 81,
+   "Decreto Ley": 5,
+   "Decreto de Urgencia": 4,
+   "Ley": 137
+  }
+ },
+ "materias": {
+  "a": "En materia penal, procesal penal, ejecución penal, policial, seguridad ciudadana, orden interno, penitenciaria y migratoria",
+  "b": "En materia de micro y pequeñas empresas",
+  "c": "En materia laboral y promoción del empleo",
+  "d": "En materia de simplificación administrativa, eliminación de barreras burocráticas, calidad regulatoria y transformación digital",
+  "e": "En materia de desarrollo productivo, innovación, agraria y riego, recursos hídricos, infraestructura hidráulica, pesquera, acuícola, minería, turismo, hidrocarburos, electricidad, ambiental, recursos naturales e infraestructura productiva industrial",
+  "f": "En materia tributaria, aduanera, de facilitación del comercio e implementación de acuerdos comerciales",
+  "g": "En materia de reforma estructural, organización y modernización del Estado y del servicio civil",
+  "h": "En materia de vivienda y saneamiento"
+ },
+ "normas": [
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1023",
+   "nombre": "Decreto Legislativo que crea la autoridad nacional del servicio civil, rectora del sistema admini",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1024",
+   "nombre": "Decreto , Legislativo que crea y regula el cuerpo de gerentes públicos",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1033",
+   "nombre": "Ley de Organización y Funciones del INDECOP!I y, de forma específica, en el Decreto Legislati",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1047",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1053",
+   "nombre": "Ley General de Aduanas",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e",
+    "f"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1059",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1060",
+   "nombre": "Decreto Legislativo que regula el Sistema Nacional de Innovación Agraria, para incorporar la defi",
+   "en_articulado": [
+    "e3"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1062",
+   "nombre": "Decreto Legislativo que aprueba la Ley de Inocuidad de los Alimentos",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1075",
+   "nombre": "Decreto Legislativo que aprueba Disposiciones Complementarias a la Decisión 486 de la Comisión de",
+   "en_articulado": [],
+   "materias_motivos": [
+    "f"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1080",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1082",
+   "nombre": "Decreto Legislativo que crea el Sistema Integrado de Estadística Agraria conformante del Sistema",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1094",
+   "nombre": "Código Penal Militar Policial",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1095",
+   "nombre": "Decreto Legislativo que establece reglas de empleo y uso de la fuerza por parte de las Fuerzas Ar",
+   "en_articulado": [
+    "a10"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1126",
+   "nombre": "Decreto Legislativo que establece medidas de control en los insumos químicos y productos fiscaliz",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1127",
+   "nombre": "Decreto Legislativo que crea la Superintendencia Nacional de Control de Servicios de Seguridad, A",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1130",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1141",
+   "nombre": "Decreto Legislativo de Fortalecimiento y Modernización del Sistema de Inteligencia Nacional - SIN",
+   "en_articulado": [
+    "g6"
+   ],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1182",
+   "nombre": "Decreto Legislativo que regula el uso de los datos derivados de las telecomunicaciones para la id",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1192",
+   "nombre": "Decreto Legislativo que aprueba la Ley Marco de Adquisición y Expropiación de inmuebles, transfer",
+   "en_articulado": [
+    "e18",
+    "e4"
+   ],
+   "materias_motivos": [
+    "e",
+    "h"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": [
+    "la Trigésima Sexta Disposición Complementaria Final (propuesta e18)"
+   ]
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1195",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1199",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1202",
+   "nombre": "Decreto Legislativo que modifica el Decreto Legislativo N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1203",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1221",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1228",
+   "nombre": "Decreto Legislativo que dicta medidas para el fortalecimiento y expansión de los Centros de Innov",
+   "en_articulado": [],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1241",
+   "nombre": "Decreto Legislativo que fortalece la lucha contra el tráfico ilícito de drogas",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1256",
+   "nombre": "Ley de Prevención y Eliminación de Barreras Burocráticas, la misma que se sustenta en la nece",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1267",
+   "nombre": "Ley de la Policía Nacional del Perú, norma que regula la naturaleza, estructura orgánica, org",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1280",
+   "nombre": "Decreto Legislativo que aprueba la Ley del Servicio Universal de Agua Potable y Saneamiento, a fi",
+   "en_articulado": [
+    "h4"
+   ],
+   "materias_motivos": [
+    "f",
+    "g",
+    "h"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1288",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1336",
+   "nombre": "Decreto Legislativo que establece disposiciones para el proceso de formalización minera integral",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1338",
+   "nombre": "Decreto Legislativo que crea el Registro Nacional de Equipos Terminales Móviles para la Seguridad",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1348",
+   "nombre": "Código de Responsabilidad Penal de Adolescente, a fin de adecuarlo al nuevo contexto de infracci",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1350",
+   "nombre": "Decreto Legislativo de Migraciones",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "13568",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "f"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1365",
+   "nombre": "Decreto Legislativo que establece disposiciones para el desarrollo y consolidación del Catastro U",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1387",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1400",
+   "nombre": "Decreto Legislativo que aprueba el Régimen de Garantía Mobiliaria",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1401",
+   "nombre": "Decreto Legislativo que aprueba el régimen especial que regula las modalidades formativas de serv",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1405",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1409",
+   "nombre": "Decreto Legislativo que promociona la formalización y dinamización de la micro, pequeña y mediana",
+   "en_articulado": [
+    "b3"
+   ],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1412",
+   "nombre": "Decreto Legislativo que aprueba la Ley de Gobierno Digital, constituyen normas centradas en las e",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a",
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1419",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1439",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1440",
+   "nombre": "Decreto Legislativo del Sistema lacional de Presupuesto Público, sin demandar recursos adicionale",
+   "en_articulado": [],
+   "materias_motivos": [
+    "b",
+    "e",
+    "g",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1441",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "150",
+   "nombre": "Ley de la Empresa de Servicio Nacional de Abastecimiento de Agua Potable y Alcantarillado",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1559",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1565",
+   "nombre": "Decreto Legislativo que aprueba la Ley General de Mejora de la Calidad Regulatoria, una norma con",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1572",
+   "nombre": "Decreto Legislativo que modifica la Ley N% 29148, Ley que establece la implementación y el funcio",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1620",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1637",
+   "nombre": "Decreto Legislativo que modifica el Decreto de Urgencia N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1673",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1677",
+   "nombre": "Decreto Legislativo para el fortalecimiento y modernización de la gestión y organización del Ins",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1686",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1688",
+   "nombre": "Decreto Legislativo que regula obligaciones y sanciones administrativas para las empresas operado",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1693",
+   "nombre": "Decreto Legislativo que aprueba la Ley Marco de la Gestión y Prestación de los Servicios de Sanea",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1695",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "16952",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1710",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1712",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1726",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1732",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1735",
+   "nombre": "Decreto Legislativo que crea el Subsistema Especializado contra la Extorsión y sus Delitos Conexos (SEEDC) — publicado el 12 de febrero de 2026",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": true,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "1737",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "25902",
+   "nombre": "Ley Orgánica del Ministerio de Agricultura, modificada por la Ley N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "276",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "295",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "635",
+   "nombre": "Código Penal",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "650",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "654",
+   "nombre": "Código de Ejecución Penal",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "688",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "702",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "713",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "728",
+   "nombre": "Ley de Fomento del Empleo — hoy vigente como TUO de la Ley de Formación y Promoción Laboral (DS 002-97-TR) y Ley de Productividad y Competitividad Laboral (DS 003-97-TR)",
+   "en_articulado": [
+    "g2"
+   ],
+   "materias_motivos": [
+    "c",
+    "g"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": true,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "803",
+   "nombre": "Ley de Promoción al Acceso a la Propiedad Formal, a fin de disponer que las municipalidades p",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "822",
+   "nombre": "Ley sobre el Derecho de Autor y el artículo 129 del Decreto Legislativo N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "f"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "854",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "892",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "957",
+   "nombre": "Nuevo Código Procesal Penal",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Legislativo",
+   "numero": "997",
+   "nombre": "Decreto Legislativo en el extremo referido a la creación del INIA",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Ley",
+   "numero": "25844",
+   "nombre": "Ley de Concesiones Eléctricas",
+   "en_articulado": [
+    "e8"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Ley",
+   "numero": "25897",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Ley",
+   "numero": "25902",
+   "nombre": "Ley Orgánica del Ministerio de Agricultura, modificado por el artículo 1 de la Ley N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Ley",
+   "numero": "25977",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto Ley",
+   "numero": "26123",
+   "nombre": "Ley Orgánica del Banco Central de Reserva del Perú",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto de Urgencia",
+   "numero": "006-2020",
+   "nombre": "Decreto de Urgencia N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto de Urgencia",
+   "numero": "007-2020",
+   "nombre": "Decreto de Urgencia que crea el Marco de Confianza Digital, a fin de ampliar su alcance, ya que f",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto de Urgencia",
+   "numero": "013-2020",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Decreto de Urgencia",
+   "numero": "027-2009",
+   "nombre": "Dicta medidas extraordinarias a favor de la actividad agraria y crea el Fondo AGROPERÚ — publicado el 23 de febrero de 2009",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": true,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "23407",
+   "nombre": "Ley General de Industrias, considerando que fue aprobada en el año de 1982, es decir, antes d",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "24656",
+   "nombre": "Ley General de Comunidades Campesinas",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "25129",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "25919",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26221",
+   "nombre": "Ley Orgánica de Hidrocarburos, cuyo Texto Único Ordenado fue aprobado por Decreto Supremo N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26366",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26505",
+   "nombre": "Ley de la inversión privada en el desarrollo de las actividades económicas en las tierras del",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26574",
+   "nombre": "Ley de Nacionalidad",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26644",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26702",
+   "nombre": "Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia",
+   "en_articulado": [
+    "e9"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "parcial",
+   "partes": [
+    "artículo 9 (propuesta e9)"
+   ]
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26790",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c",
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26821",
+   "nombre": "Ley Orgánica para el Aprovechamiento Sostenible de los Recursos Naturales, regula el acceso y",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26834",
+   "nombre": "Ley de Áreas Naturales Protegidas",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "26887",
+   "nombre": "Ley General de Sociedades, publicada el 9 de diciembre de 1997, subsiste la necesidad de opti",
+   "en_articulado": [],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27046",
+   "nombre": "Ley Complementaria de Promoción del Acceso a la Propiedad Formal",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27157",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27240",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27262",
+   "nombre": "Ley General de Semillas, modificada por el Decreto Legislativo N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27269",
+   "nombre": "Ley de firmas y certificados digitales",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27287",
+   "nombre": "Ley de Títulos Valores",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27444",
+   "nombre": "Ley del Procedimiento Administrativo General",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a",
+    "c",
+    "d",
+    "e",
+    "f",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27446",
+   "nombre": "Ley del SEIA, establece que los proyectos de inversión sujetos al SEIA, pueden ser clasificad",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27651",
+   "nombre": "Ley de Formalización y Promoción de la Pequeña Minería y la Minería Artesanal, con la finalid",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27658",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27735",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27783",
+   "nombre": "Ley de s de la Descentralización",
+   "en_articulado": [],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27790",
+   "nombre": "Ley de Organización y Funciones del Ministerio de Comercio Exterior y Turismo, señala que est",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27806",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27829",
+   "nombre": "Ley que crea el Bono Familiar Habitacional",
+   "en_articulado": [
+    "h3"
+   ],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27867",
+   "nombre": "Ley Orgánica de Gobiernos Regionales, y la |",
+   "en_articulado": [],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "27933",
+   "nombre": "Ley del Sistema Nacional de Seguridad Ciudadana, señala que la Seguridad Ciudadana comprende",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28051",
+   "nombre": "Ley de prestaciones alimentarias en beneficio de los trabajadores sujetos al régimen laboral",
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28090",
+   "nombre": "Ley que regula el cierre de minas, a fin de garantizar que la emisión del certificado de cier",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28109",
+   "nombre": "Ley para la Promoción de la Inversión en la Explotación de Recursos y Reservas Marginales de",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28294",
+   "nombre": "Ley que crea el Sistema Nacional Integrado de Catastro y su Vinculación con el Registro de Pr",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28296",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28518",
+   "nombre": "Ley sobre Modalidades Formativas Laborales, y al Decreto Legislativo N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28587",
+   "nombre": "Ley Complementaria a la Ley de Protección al Consumidor en Materia de Servicios Financieros",
+   "en_articulado": [
+    "e9"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "parcial",
+   "partes": [
+    "artículo 6 (propuesta e9)"
+   ]
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28664",
+   "nombre": "Ley del Sistema de Inteligencia Nacional — SINA y de la Dirección Nacional de Inteligencia —",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28687",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28736",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28806",
+   "nombre": "Ley General de Inspección del Trabajo con la finalidad de fortalecer de manera expresa las co",
+   "en_articulado": [
+    "c2"
+   ],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28832",
+   "nombre": "Ley para asegurar el desarrollo eficiente de la Generación Eléctrica, con la finalidad de bri",
+   "en_articulado": [
+    "e8"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28890",
+   "nombre": "Ley que crea Sierra y Selva Exportadora, con sus modificatorias la Ley N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28939",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "28976",
+   "nombre": "Ley Marco de Licencia de Funcionamiento, respecto de la regulación de la vigencia del certifi",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29090",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29148",
+   "nombre": "Ley que establece la implementación y el funcionamiento del Fondo de Garantía para el Campo y",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29151",
+   "nombre": "Ley General del Sistema Nacional de Bienes Estatales",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29158",
+   "nombre": "Ley Orgánica del Poder Ejecutivo",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29230",
+   "nombre": "Ley que impulsa la inversión pública regional y local con participación del sector privado, a",
+   "en_articulado": [
+    "f5"
+   ],
+   "materias_motivos": [
+    "f"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29325",
+   "nombre": "Ley del SINEFA, entre otras, con la finalidad de mejorar la coordinación interinstitucional",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29338",
+   "nombre": "Ley de Recursos Hídricos, comprendiendo conservación, disponibilidad, planificación por cuenc",
+   "en_articulado": [
+    "e4"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29409",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29549",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29618",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29623",
+   "nombre": "Ley que promueve el financiamiento a través de la factura comercial, norma que establece el m",
+   "en_articulado": [],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29664",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "f",
+    "g",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29733",
+   "nombre": "Ley de Protección de Datos Personales",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a",
+    "d",
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29763",
+   "nombre": "Ley Forestal y de Fauna Silvestre, para fortalecer el aprovechamiento sostenible e integral d",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29896",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "29981",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30012",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30057",
+   "nombre": "Ley del Servicio Civil",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30063",
+   "nombre": "Ley de Creación de la Autoridad Nacional de Sanidad e Inocuidad en Pesca y Acuicultura — SANI",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30075",
+   "nombre": "Ley de Fortalecimiento de la Comisión de Promoción del Perú para la Exportación y el Turismo",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30077",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30096",
+   "nombre": "Ley de Delitos Informáticos",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30098",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30222",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30230",
+   "nombre": "Ley que establece medidas tributarias, simplificación de procedimientos y permisos para la pr",
+   "en_articulado": [
+    "e4"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30299",
+   "nombre": "Ley de armas de fuego, municiones, explosivos, productos pirotécnicos y materiales relacionad",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30309",
+   "nombre": "Ley que promueve la Investigación Científica, Desarrollo Tecnológico e Innovación Tecnológica",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30424",
+   "nombre": "Ley que regula la responsabilidad administrativa de las personas jurídicas por el delito de c",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30495",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30556",
+   "nombre": "Ley que aprueba disposiciones de carácter extraordinario para las intervenciones del gobierno",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30711",
+   "nombre": "Ley que establece medidas complementarias para la promoción del acceso a la propiedad formal",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30814",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30852",
+   "nombre": "Ley que aprueba la exoneración de requisitos a familias damnificadas con viviendas colapsadas",
+   "en_articulado": [
+    "h3"
+   ],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "30987",
+   "nombre": "Ley que fortalece la planificación de la producción agraria",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31007",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31056",
+   "nombre": "Ley que amplía los plazos de la titulación de terrenos ocupados por posesiones informales y d",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31071",
+   "nombre": "Ley de compras estatales de alimentos de origen de la agricultura familiar, y, la primera dis",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31075",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e",
+    "f"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31110",
+   "nombre": "Ley del Régimen laboral agrario y de incentivos para el sector agrario y riego, agroexportado",
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31143",
+   "nombre": "Ley que protege de la usura a los consumidores de los servicios financieros",
+   "en_articulado": [
+    "e9"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31145",
+   "nombre": "Ley de saneamiento físico-legal y formalización de predios rurales a cargo de los Gobiernos R",
+   "en_articulado": [
+    "e2",
+    "e4"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31168",
+   "nombre": "Ley que promueve el empoderamiento de las mujeres rurales e indígenas, que reconoce la necesi",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31170",
+   "nombre": "Ley N* 31465",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31224",
+   "nombre": "Ley de Organización y Funciones del Ministerio de Educación, con el fin de actualizar su comp",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31284",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31313",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e",
+    "h"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31324",
+   "nombre": "Ley que fortalece la seguridad ciudadana a través de la entrega voluntaria de armas de fuego",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31335",
+   "nombre": "Ley de perfeccionamiento de la asociatividad de los productores agrarios en cooperativas agra",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31339",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31347",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31368",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31388",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31410",
+   "nombre": "Ley que crea el Servicio Civil de Graduandos para el Sector Agrario",
+   "en_articulado": [
+    "e3"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31419",
+   "nombre": "Ley que establece disposiciones para garantizar la idoneidad en el acceso y ejercicio de la f",
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31465",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31526",
+   "nombre": "Ley que crea el Bono de Arrendamiento de Vivienda para Emergencias, con la finalidad de optim",
+   "en_articulado": [
+    "h3"
+   ],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31538",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "b"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31557",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31560",
+   "nombre": "Ley que otorga funciones compartidas a los gobiernos locales en los procesos de formalización",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31736",
+   "nombre": "Ley que regula la notificación administrativa mediante casilla electrónica",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31755",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31782",
+   "nombre": "Ley que modifica la Ley N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31804",
+   "nombre": "Ley de Promoción de la Gestión Sostenible de los pastos naturales para el Desarrollo de la Ga",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31814",
+   "nombre": "Ley que promueve el uso de la inteligencia artificial en favor del desarrollo económico y so",
+   "en_articulado": [],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31872",
+   "nombre": "Ley que modifica la Ley 28890, Ley que crea Sierra y Selva Exportadora",
+   "en_articulado": [
+    "e2"
+   ],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "parcial",
+   "partes": [
+    "la primera disposición complementaria final (propuesta e2)"
+   ]
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31991",
+   "nombre": "Ley del Cuerpo de Guardaparques del Perú",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "31992",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32065",
+   "nombre": "Ley que establece medidas para asegurar el acceso universal al agua potable, a fin de ampliar",
+   "en_articulado": [
+    "h6"
+   ],
+   "materias_motivos": [
+    "h"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32108",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32123",
+   "nombre": "Ley de Modernización del Sistema Previsional Peruano, que contempla la afiliación universal o",
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32138",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32167",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32213",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32249",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32267",
+   "nombre": "Ley que amplía por última vez los plazos del proceso de formalización de la propiedad informa",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32303",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32309",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32329",
+   "nombre": "Ley que autoriza la fabricación y la comercialización de uniformes de la Policía Nacional del",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32332",
+   "nombre": "Ley que implementa la plataforma Denuncia Digital para el registro de denuncias digitales por",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32348",
+   "nombre": "Ley del Sistema Nacional de Justicia Especializado en Flagrancia Delictiva, reconoce esta li",
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32353",
+   "nombre": "Ley para la Formalización, Desarrollo y Competitividad de la Micro y Pequeña Empresa, incorpo",
+   "en_articulado": [],
+   "materias_motivos": [
+    "b",
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32392",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "e"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32421",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32441",
+   "nombre": "Ley que regula la promoción de la inversión privada mediante Asociaciones Público Privadas y",
+   "en_articulado": [],
+   "materias_motivos": [
+    "e",
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32460",
+   "nombre": "Ley que modificó la Ley N",
+   "en_articulado": [],
+   "materias_motivos": [
+    "f"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32490",
+   "nombre": "Ley que establece medidas extraordinarias contra los delitos de extorsión y sicariato en las",
+   "en_articulado": [
+    "a8"
+   ],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32507",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "g"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32537",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "32645",
+   "nombre": "Ley que crea el Colegio Profesional de Artistas del Perú",
+   "en_articulado": [
+    "d5"
+   ],
+   "materias_motivos": [
+    "d"
+   ],
+   "solo_en_motivos": false,
+   "intencion_modificar": true,
+   "intencion_amplia": true,
+   "nombre_externo": false,
+   "alcance": "completa",
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "5802",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "c"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  },
+  {
+   "tipo": "Ley",
+   "numero": "9024",
+   "nombre": null,
+   "en_articulado": [],
+   "materias_motivos": [
+    "a"
+   ],
+   "solo_en_motivos": true,
+   "intencion_modificar": false,
+   "intencion_amplia": false,
+   "nombre_externo": false,
+   "alcance": null,
+   "partes": []
+  }
+ ]
+}
