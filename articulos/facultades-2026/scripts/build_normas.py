@@ -121,20 +121,67 @@ ALCANCE_RE = re.compile(
     r"(?:[A-Za-zÁÉÍÓÚáéíóú]+\s+){0,3}[Dd]isposici[oó]n\s+[^,.;]{0,60}?)"
     r"\s+de(?:l)?\s+(?:la\s+)?$")
 
-# Tres normas se citan sin denominación en ambos documentos. Los nombres vienen de
-# fuente externa (El Peruano / plataforma normativa), no del pedido, y van marcados
-# como tales para que no se confundan con lo transcrito del documento.
+# DENOMINACIONES DE LAS 42 DEL ARTICULADO — transcritas a mano, no por patrón.
+#
+# Extraerlas con una expresión regular fallaba de dos maneras a la vez y las dos
+# se veían en la tabla publicada: el corte por longitud partía nombres largos a
+# media palabra («…en cooperativas agra»), y como el nombre de la norma y la
+# cláusula de finalidad de la propuesta van seguidos sin puntuación que los
+# separe, el patrón se tragaba la segunda («Ley General de Inspección del Trabajo
+# con la finalidad de fortalecer de manera expresa las competencias…»). No hay
+# regla de puntuación que distinga una de otra, así que son 42 y se revisan a
+# mano; el patrón queda sólo como respaldo para lo que aparezca a futuro.
+DENOMINACIONES: dict[tuple[str, str], str] = {
+    ("Ley", "26702"): "Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia de Banca y Seguros",
+    ("Ley", "27287"): "Ley de Títulos Valores",
+    ("Ley", "27829"): "Ley que crea el Bono Familiar Habitacional (BFH)",
+    ("Ley", "28587"): "Ley Complementaria a la Ley de Protección al Consumidor en Materia de Servicios Financieros",
+    ("Ley", "28806"): "Ley General de Inspección del Trabajo",
+    ("Ley", "28832"): "Ley para asegurar el desarrollo eficiente de la Generación Eléctrica",
+    ("Ley", "29148"): "Ley que establece la implementación y el funcionamiento del Fondo de Garantía para el Campo y del Seguro Agropecuario",
+    ("Ley", "29230"): "Ley que impulsa la inversión pública regional y local con participación del sector privado",
+    ("Ley", "29338"): "Ley de Recursos Hídricos",
+    ("Ley", "30096"): "Ley de Delitos Informáticos",
+    ("Ley", "30230"): "Ley que establece medidas tributarias, simplificación de procedimientos y permisos para la promoción y dinamización de la inversión en el país",
+    ("Ley", "30424"): "Ley que regula la responsabilidad administrativa de las personas jurídicas por el delito de cohecho activo transnacional",
+    ("Ley", "30852"): "Ley que aprueba la exoneración de requisitos a familias damnificadas con viviendas colapsadas o inhabitables con el Bono Familiar Habitacional y con el Bono de Protección de Viviendas Vulnerables a los Riesgos Sísmicos",
+    ("Ley", "31071"): "Ley de compras estatales de alimentos de origen de la agricultura familiar",
+    ("Ley", "31143"): "Ley que protege de la usura a los consumidores de los servicios financieros",
+    ("Ley", "31145"): "Ley de saneamiento físico-legal y formalización de predios rurales a cargo de los Gobiernos Regionales",
+    ("Ley", "31335"): "Ley de perfeccionamiento de la asociatividad de los productores agrarios en cooperativas agrarias",
+    ("Ley", "31410"): "Ley que crea el Servicio Civil de Graduandos para el Sector Agrario (SECIGRA Agrario)",
+    ("Ley", "31526"): "Ley que crea el Bono de Arrendamiento de Vivienda para Emergencias",
+    ("Ley", "31872"): "Ley que modifica la Ley 28890, Ley que crea Sierra y Selva Exportadora",
+    ("Ley", "32065"): "Ley que establece medidas para asegurar el acceso universal al agua potable",
+    ("Ley", "32332"): "Ley que implementa la plataforma Denuncia Digital para el registro de denuncias digitales por delitos contra el patrimonio",
+    ("Ley", "32490"): "Ley que establece medidas extraordinarias contra los delitos de extorsión y sicariato en las empresas de transporte público y transporte de mercancías",
+    ("Ley", "32645"): "Ley que crea el Colegio Profesional de Artistas del Perú (CPAP)",
+    ("Decreto Legislativo", "635"): "Código Penal",
+    ("Decreto Legislativo", "654"): "Código de Ejecución Penal",
+    ("Decreto Legislativo", "728"): "Dictan Ley de Fomento del Empleo",
+    ("Decreto Legislativo", "957"): "Nuevo Código Procesal Penal",
+    ("Decreto Legislativo", "1060"): "Decreto Legislativo que regula el Sistema Nacional de Innovación Agraria",
+    ("Decreto Legislativo", "1094"): "Código Penal Militar Policial",
+    ("Decreto Legislativo", "1095"): "Decreto Legislativo que establece reglas de empleo y uso de la fuerza por parte de las Fuerzas Armadas en el territorio nacional",
+    ("Decreto Legislativo", "1141"): "Decreto Legislativo de Fortalecimiento y Modernización del Sistema de Inteligencia Nacional (SINA) y de la Dirección Nacional de Inteligencia (DINI)",
+    ("Decreto Legislativo", "1182"): "Decreto Legislativo que regula el uso de los datos derivados de las telecomunicaciones para la identificación, localización y geolocalización de equipos de comunicación",
+    ("Decreto Legislativo", "1192"): "Decreto Legislativo que aprueba la Ley Marco de Adquisición y Expropiación de inmuebles, transferencia de inmuebles de propiedad del Estado y liberación de interferencias para la ejecución de obras de infraestructura",
+    ("Decreto Legislativo", "1280"): "Decreto Legislativo que aprueba la Ley del Servicio Universal de Agua Potable y Saneamiento",
+    ("Decreto Legislativo", "1338"): "Decreto Legislativo que crea el Registro Nacional de Equipos Terminales Móviles para la Seguridad",
+    ("Decreto Legislativo", "1400"): "Decreto Legislativo que aprueba el Régimen de Garantía Mobiliaria",
+    ("Decreto Legislativo", "1409"): "Decreto Legislativo que promociona la formalización y dinamización de la micro, pequeña y mediana empresa mediante el régimen societario alternativo denominado Sociedad por Acciones Cerrada Simplificada",
+    ("Decreto Legislativo", "1688"): "Decreto Legislativo que regula obligaciones y sanciones administrativas para las empresas operadoras de servicios públicos de telecomunicaciones en relación con las comunicaciones ilegales en establecimientos penitenciarios y centros juveniles",
+    ("Decreto Ley", "25844"): "Ley de Concesiones Eléctricas",
+    ("Decreto de Urgencia", "027-2009"): "Dictan medidas extraordinarias a favor de las actividades agrarias",
+}
+
+# La única de las 42 que el expediente cita por número y sin denominación en los
+# dos documentos. El nombre viene de la norma publicada, no del pedido, y por eso
+# va marcado aparte en la tabla.
 NOMBRES_EXTERNOS = {
     ("Decreto Legislativo", "1735"):
         "Decreto Legislativo que crea el Subsistema Especializado contra la Extorsión "
-        "y sus Delitos Conexos (SEEDC) — publicado el 12 de febrero de 2026",
-    ("Decreto Legislativo", "728"):
-        "Ley de Fomento del Empleo — hoy vigente como TUO de la Ley de Formación y "
-        "Promoción Laboral (DS 002-97-TR) y Ley de Productividad y Competitividad "
-        "Laboral (DS 003-97-TR)",
-    ("Decreto de Urgencia", "027-2009"):
-        "Dicta medidas extraordinarias a favor de la actividad agraria y crea el "
-        "Fondo AGROPERÚ — publicado el 23 de febrero de 2009",
+        "y sus Delitos Conexos (SEEDC), publicado el 12 de febrero de 2026",
 }
 
 
@@ -204,10 +251,10 @@ def main():
         tipo, num = clave
         if tipo not in RANGO_LEY:
             continue
-        nom = nombres[clave].most_common(1)[0][0] if nombres[clave] else None
-        externo = nom is None and clave in NOMBRES_EXTERNOS
-        if externo:
-            nom = NOMBRES_EXTERNOS[clave]
+        # La lista revisada a mano manda sobre lo que saque el patrón.
+        externo = clave in NOMBRES_EXTERNOS
+        nom = (DENOMINACIONES.get(clave) or NOMBRES_EXTERNOS.get(clave)
+               or (nombres[clave].most_common(1)[0][0] if nombres[clave] else None))
         # acotada sólo si TODAS sus citas del articulado nombran una parte
         pt = partes.get(clave, [])
         alcance = ("parcial" if pt and len(pt) == n_citas_art.get(clave, 0)
@@ -279,6 +326,11 @@ def main():
         "materias": mats,
         "normas": filas,
     }, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    faltan = [f"{f['tipo']} {f['numero']}" for f in en_art if not f["nombre"]]
+    if faltan:
+        print(f"\n  ⚠ sin denominación revisada: {faltan}")
+    else:
+        print(f"\n  denominaciones: {len(en_art)}/{len(en_art)} revisadas a mano")
     print(f"\n→ {OUT}")
 
 

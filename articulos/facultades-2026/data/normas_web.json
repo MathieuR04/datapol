@@ -136,7 +136,7 @@
   {
    "tipo": "Ley",
    "numero": "30424",
-   "nombre": "Ley que regula la responsabilidad administrativa de las personas jurídicas por el delito de c",
+   "nombre": "Ley que regula la responsabilidad administrativa de las personas jurídicas por el delito de cohecho activo transnacional",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -150,7 +150,7 @@
   {
    "tipo": "Ley",
    "numero": "32332",
-   "nombre": "Ley que implementa la plataforma Denuncia Digital para el registro de denuncias digitales por",
+   "nombre": "Ley que implementa la plataforma Denuncia Digital para el registro de denuncias digitales por delitos contra el patrimonio",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -164,7 +164,7 @@
   {
    "tipo": "Ley",
    "numero": "32490",
-   "nombre": "Ley que establece medidas extraordinarias contra los delitos de extorsión y sicariato en las",
+   "nombre": "Ley que establece medidas extraordinarias contra los delitos de extorsión y sicariato en las empresas de transporte público y transporte de mercancías",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -234,7 +234,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1095",
-   "nombre": "Decreto Legislativo que establece reglas de empleo y uso de la fuerza por parte de las Fuerzas Ar",
+   "nombre": "Decreto Legislativo que establece reglas de empleo y uso de la fuerza por parte de las Fuerzas Armadas en el territorio nacional",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -248,7 +248,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1182",
-   "nombre": "Decreto Legislativo que regula el uso de los datos derivados de las telecomunicaciones para la id",
+   "nombre": "Decreto Legislativo que regula el uso de los datos derivados de las telecomunicaciones para la identificación, localización y geolocalización de equipos de comunicación",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -276,7 +276,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1688",
-   "nombre": "Decreto Legislativo que regula obligaciones y sanciones administrativas para las empresas operado",
+   "nombre": "Decreto Legislativo que regula obligaciones y sanciones administrativas para las empresas operadoras de servicios públicos de telecomunicaciones en relación con las comunicaciones ilegales en establecimientos penitenciarios y centros juveniles",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -290,7 +290,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1735",
-   "nombre": "Decreto Legislativo que crea el Subsistema Especializado contra la Extorsión y sus Delitos Conexos (SEEDC) — publicado el 12 de febrero de 2026",
+   "nombre": "Decreto Legislativo que crea el Subsistema Especializado contra la Extorsión y sus Delitos Conexos (SEEDC), publicado el 12 de febrero de 2026",
    "nombre_externo": true,
    "alcance": "completa",
    "partes": [],
@@ -304,7 +304,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1409",
-   "nombre": "Decreto Legislativo que promociona la formalización y dinamización de la micro, pequeña y mediana",
+   "nombre": "Decreto Legislativo que promociona la formalización y dinamización de la micro, pequeña y mediana empresa mediante el régimen societario alternativo denominado Sociedad por Acciones Cerrada Simplificada",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -318,7 +318,7 @@
   {
    "tipo": "Ley",
    "numero": "28806",
-   "nombre": "Ley General de Inspección del Trabajo con la finalidad de fortalecer de manera expresa las co",
+   "nombre": "Ley General de Inspección del Trabajo",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -332,7 +332,7 @@
   {
    "tipo": "Ley",
    "numero": "32645",
-   "nombre": "Ley que crea el Colegio Profesional de Artistas del Perú",
+   "nombre": "Ley que crea el Colegio Profesional de Artistas del Perú (CPAP)",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -346,7 +346,7 @@
   {
    "tipo": "Ley",
    "numero": "26702",
-   "nombre": "Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia",
+   "nombre": "Ley General del Sistema Financiero y del Sistema de Seguros y Orgánica de la Superintendencia de Banca y Seguros",
    "nombre_externo": false,
    "alcance": "parcial",
    "partes": [
@@ -392,7 +392,7 @@
   {
    "tipo": "Ley",
    "numero": "28832",
-   "nombre": "Ley para asegurar el desarrollo eficiente de la Generación Eléctrica, con la finalidad de bri",
+   "nombre": "Ley para asegurar el desarrollo eficiente de la Generación Eléctrica",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -406,7 +406,7 @@
   {
    "tipo": "Ley",
    "numero": "29148",
-   "nombre": "Ley que establece la implementación y el funcionamiento del Fondo de Garantía para el Campo y",
+   "nombre": "Ley que establece la implementación y el funcionamiento del Fondo de Garantía para el Campo y del Seguro Agropecuario",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -420,7 +420,7 @@
   {
    "tipo": "Ley",
    "numero": "29338",
-   "nombre": "Ley de Recursos Hídricos, comprendiendo conservación, disponibilidad, planificación por cuenc",
+   "nombre": "Ley de Recursos Hídricos",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -434,7 +434,7 @@
   {
    "tipo": "Ley",
    "numero": "30230",
-   "nombre": "Ley que establece medidas tributarias, simplificación de procedimientos y permisos para la pr",
+   "nombre": "Ley que establece medidas tributarias, simplificación de procedimientos y permisos para la promoción y dinamización de la inversión en el país",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -448,7 +448,7 @@
   {
    "tipo": "Ley",
    "numero": "31071",
-   "nombre": "Ley de compras estatales de alimentos de origen de la agricultura familiar, y, la primera dis",
+   "nombre": "Ley de compras estatales de alimentos de origen de la agricultura familiar",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -476,7 +476,7 @@
   {
    "tipo": "Ley",
    "numero": "31145",
-   "nombre": "Ley de saneamiento físico-legal y formalización de predios rurales a cargo de los Gobiernos R",
+   "nombre": "Ley de saneamiento físico-legal y formalización de predios rurales a cargo de los Gobiernos Regionales",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -491,7 +491,7 @@
   {
    "tipo": "Ley",
    "numero": "31335",
-   "nombre": "Ley de perfeccionamiento de la asociatividad de los productores agrarios en cooperativas agra",
+   "nombre": "Ley de perfeccionamiento de la asociatividad de los productores agrarios en cooperativas agrarias",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -505,7 +505,7 @@
   {
    "tipo": "Ley",
    "numero": "31410",
-   "nombre": "Ley que crea el Servicio Civil de Graduandos para el Sector Agrario",
+   "nombre": "Ley que crea el Servicio Civil de Graduandos para el Sector Agrario (SECIGRA Agrario)",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -535,7 +535,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1060",
-   "nombre": "Decreto Legislativo que regula el Sistema Nacional de Innovación Agraria, para incorporar la defi",
+   "nombre": "Decreto Legislativo que regula el Sistema Nacional de Innovación Agraria",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -549,7 +549,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1192",
-   "nombre": "Decreto Legislativo que aprueba la Ley Marco de Adquisición y Expropiación de inmuebles, transfer",
+   "nombre": "Decreto Legislativo que aprueba la Ley Marco de Adquisición y Expropiación de inmuebles, transferencia de inmuebles de propiedad del Estado y liberación de interferencias para la ejecución de obras de infraestructura",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [
@@ -594,8 +594,8 @@
   {
    "tipo": "Decreto de Urgencia",
    "numero": "027-2009",
-   "nombre": "Dicta medidas extraordinarias a favor de la actividad agraria y crea el Fondo AGROPERÚ — publicado el 23 de febrero de 2009",
-   "nombre_externo": true,
+   "nombre": "Dictan medidas extraordinarias a favor de las actividades agrarias",
+   "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
    "propuestas": [
@@ -608,7 +608,7 @@
   {
    "tipo": "Ley",
    "numero": "29230",
-   "nombre": "Ley que impulsa la inversión pública regional y local con participación del sector privado, a",
+   "nombre": "Ley que impulsa la inversión pública regional y local con participación del sector privado",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -622,8 +622,8 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "728",
-   "nombre": "Ley de Fomento del Empleo — hoy vigente como TUO de la Ley de Formación y Promoción Laboral (DS 002-97-TR) y Ley de Productividad y Competitividad Laboral (DS 003-97-TR)",
-   "nombre_externo": true,
+   "nombre": "Dictan Ley de Fomento del Empleo",
+   "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
    "propuestas": [
@@ -636,7 +636,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1141",
-   "nombre": "Decreto Legislativo de Fortalecimiento y Modernización del Sistema de Inteligencia Nacional - SIN",
+   "nombre": "Decreto Legislativo de Fortalecimiento y Modernización del Sistema de Inteligencia Nacional (SINA) y de la Dirección Nacional de Inteligencia (DINI)",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -650,7 +650,7 @@
   {
    "tipo": "Ley",
    "numero": "27829",
-   "nombre": "Ley que crea el Bono Familiar Habitacional",
+   "nombre": "Ley que crea el Bono Familiar Habitacional (BFH)",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -664,7 +664,7 @@
   {
    "tipo": "Ley",
    "numero": "30852",
-   "nombre": "Ley que aprueba la exoneración de requisitos a familias damnificadas con viviendas colapsadas",
+   "nombre": "Ley que aprueba la exoneración de requisitos a familias damnificadas con viviendas colapsadas o inhabitables con el Bono Familiar Habitacional y con el Bono de Protección de Viviendas Vulnerables a los Riesgos Sísmicos",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -678,7 +678,7 @@
   {
    "tipo": "Ley",
    "numero": "31526",
-   "nombre": "Ley que crea el Bono de Arrendamiento de Vivienda para Emergencias, con la finalidad de optim",
+   "nombre": "Ley que crea el Bono de Arrendamiento de Vivienda para Emergencias",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -692,7 +692,7 @@
   {
    "tipo": "Ley",
    "numero": "32065",
-   "nombre": "Ley que establece medidas para asegurar el acceso universal al agua potable, a fin de ampliar",
+   "nombre": "Ley que establece medidas para asegurar el acceso universal al agua potable",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
@@ -706,7 +706,7 @@
   {
    "tipo": "Decreto Legislativo",
    "numero": "1280",
-   "nombre": "Decreto Legislativo que aprueba la Ley del Servicio Universal de Agua Potable y Saneamiento, a fi",
+   "nombre": "Decreto Legislativo que aprueba la Ley del Servicio Universal de Agua Potable y Saneamiento",
    "nombre_externo": false,
    "alcance": "completa",
    "partes": [],
