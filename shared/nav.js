@@ -20,6 +20,12 @@
             { code: 'parlamento-andino',  label: 'Parl. Andino',      url: '#',                                      available: false },
           ]
         },
+        {
+          code: '2022erm', label: '2022 ERM', fullLabel: 'Elecciones Regionales y Municipales 2022',
+          elections: [
+            { code: 'resultados', label: 'Resultados', url: '/electoral/peru/2022erm/', available: true },
+          ]
+        },
         /* Future — uncomment and fill URLs when ready:
         { code: '2026erm', label: '2026 ERM', fullLabel: 'Elecciones Regionales y Municipales 2026', elections: [] },
         { code: '2021eg',  label: '2021 EG',  fullLabel: 'Elecciones Generales 2021', elections: [] },

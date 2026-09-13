@@ -1,0 +1,1662 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perú — ERM 2022 | Datapol</title>
+<link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+<link rel="stylesheet" href="/shared/nav.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+/* Paleta categórica validada (referencia dataviz). Un coropleto compara todos
+   los pares a la vez, no solo los adyacentes, y bajo esa regla solo los tres
+   primeros slots pasan los umbrales de CVD en ambos modos. Por eso el mapa
+   pinta TRES organizaciones y pliega el resto en «Otras»: no es una decisión
+   estética, es el límite hasta donde los colores se distinguen. */
+:root{
+  color-scheme:light;
+  /* Los seis primeros son los de datapol.lat, copiados tal cual desde
+     `electoral/peru/2026eg/segunda-vuelta`. El resto los deriva esta página. */
+  --fondo:#f5f0e8; --panel:#ede8df; --tinta:#1a1209; --suave:#7a6858;
+  --tenue:#b0a090; --linea:#cfc0ab; --linea-fuerte:#bfb0a0;
+  --terra:#c4603a; --terra-dk:#8b3c1f; --terra-lt:#f0e4d8; --arena:#d9c9b4;
+  /* Estados. El acento de la casa es la terracota, así que «electo» va en verde
+     oliva y no en el verde frío de antes, que sobre crema chillaba. */
+  --ok:#5c6b2f; --espera:#a8791f; --disputa:#b0a090;
+  --otras:#8a7a68; --vacio:#e3dbcd; --segunda:#9a8a78; --regional:#8a6522;
+  --empate:#5f5348; --anulada:#cbb89d;
+  --s1:#2e6b9e; --s2:#c4603a; --s3:#5c6b2f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);
+  font:15px/1.55 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%}
+/* Bebas para los títulos y las cifras grandes, que es la voz de la casa. El
+   cuerpo se queda en 15 px y no en los 12 de datapol: aquella es una página que
+   se escanea y esta se lee —nombres, hojas de vida, listas de regidores—. */
+.display{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.03em;
+  font-weight:400;line-height:1}
+.env{max-width:1000px;margin:0 auto;padding:16px 16px 80px}
+a{color:inherit}
+/* El nombre de la carrera es la identidad de la página y estaba más chico que
+   el porcentaje de actas. Y los encabezados de sección a 12 px no separaban
+   nada: una página de carrera tiene cinco bloques y hay que verlos. */
+h1{font-family:'Bebas Neue',Impact,sans-serif;font-size:46px;margin:0 0 2px;
+   letter-spacing:.02em;line-height:1;font-weight:400}
+h2{font-family:'Bebas Neue',Impact,sans-serif;font-size:26px;font-weight:400;
+   margin:38px 0 12px;letter-spacing:.03em;line-height:1;text-transform:uppercase;
+   color:var(--tinta);border-left:0;padding:0 0 7px;
+   border-bottom:2px solid var(--tinta)}
+h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
+@media(max-width:560px){h1{font-size:34px}}
+.sub{color:var(--suave);font-size:13px}
+
+/* --- barra superior: estado del cómputo y del sondeo --- */
+/* Barra negra + barra de modos + cabecera densa: la misma estructura que
+   `electoral/peru/2026eg/segunda-vuelta`. El título, el avance del escrutinio y
+   los totales viven aquí, no repartidos entre la cabecera y el cuerpo. */
+/* La barra negra ya no se imita: viene de `/shared/nav.css` y `/shared/nav.js`,
+   que es lo que la hace consistente con el resto de datapol.lat y lo que permite
+   que esta página aparezca en el desplegable sin tocar nada más. */
+.mode-bar{background:var(--fondo);border-bottom:1px solid var(--linea);
+  display:flex;align-items:center;padding:0 1.25rem;height:28px}
+.mode-tab{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--suave);padding:.3rem .75rem;text-decoration:none;
+  border-bottom:2px solid transparent;margin-bottom:-1px}
+.mode-tab[aria-current]{color:var(--terra);border-bottom-color:var(--terra)}
+.mode-tab:hover:not([aria-current]){color:var(--tinta)}
+.cab{background:var(--fondo);border-bottom:2px solid var(--tinta);
+  padding:.55rem 1.25rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
+.cab-id{display:flex;align-items:center;gap:.75rem}
+.cab-tit{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;
+  letter-spacing:.04em;line-height:1;white-space:nowrap}
+.cab-sub{font-size:9px;color:var(--suave);letter-spacing:.05em;text-transform:uppercase;
+  border-left:2px solid var(--terra);padding-left:.6rem;line-height:1.5}
+.cab-avance{flex:1;max-width:300px;min-width:180px}
+.cab-av-lab{display:flex;justify-content:space-between;font-size:9px;
+  color:var(--suave);letter-spacing:.04em;margin-bottom:4px}
+.cab-stats{display:flex;gap:1.25rem;margin-left:auto}
+.hstat{display:flex;flex-direction:column;align-items:flex-end}
+.hstat-lab{font-size:8px;color:var(--suave);text-transform:uppercase;letter-spacing:.05em}
+.hstat-val{font-family:'Bebas Neue',Impact,sans-serif;font-size:22px;line-height:1}
+.hstat-val.hi{color:var(--terra)}
+@media(max-width:700px){.cab-stats{margin-left:0;width:100%}
+  .cab-avance{max-width:none}}
+/* Este bloque redefinía `.nav` —el mismo selector que la barra negra— y era
+   residuo de una barra de modos anterior. Con `/shared/nav.css` en juego habría
+   peleado con la barra del sitio. */
+.vivo{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--suave)}
+/* `display:inline-flex` gana sobre el `[hidden]{display:none}` del navegador,
+   así que ocultarlo con la propiedad `hidden` no bastaba: el punto de sondeo
+   seguía junto al rótulo de reproducción, diciendo dos cosas a la vez. */
+.vivo[hidden]{display:none}
+.pulso{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none}
+@media (prefers-reduced-motion:no-preference){
+  .pulso.on{animation:lat 2.4s ease-in-out infinite}
+  @keyframes lat{0%,100%{opacity:1}50%{opacity:.25}}}
+.pulso.off{background:var(--tenue)}
+/* Esto es un **simulacro**: el cómputo de 2022, ya cerrado, servido por la
+   infraestructura de la noche electoral. Colgado en datapol.lat bajo la barra
+   de verdad, sin decirlo, se leería como resultados en directo. El rótulo no es
+   decorativo: es lo que separa un banco de pruebas de una mentira. */
+.replay{display:inline-flex;align-items:center;gap:6px;font-size:11px;
+  font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--fondo);background:var(--tinta);padding:3px 9px;border-radius:2px}
+
+/* --- marcador de estados --- */
+.marcador{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+/* El avance del escrutinio manda sobre todo lo demás: sin saber cuánto se ha
+   contado, ninguna otra cifra de la página significa nada. */
+.heroe{background:var(--panel);border:1px solid var(--linea-fuerte);border-radius:3px;
+  padding:16px 18px;margin-bottom:10px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.heroe .k{font-family:'Bebas Neue',Impact,sans-serif;font-size:54px;font-weight:400;
+  letter-spacing:.02em;line-height:.9;color:var(--terra)}
+.heroe .e{font-size:13px;color:var(--suave)}
+.heroe .pista{flex:1 1 160px;min-width:140px}
+.riel{height:5px;border-radius:2px;background:var(--arena);overflow:hidden;margin-top:6px}
+.riel i{display:block;height:100%;background:var(--terra);border-radius:2px}
+.nivel{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.nivel .caja{background:var(--panel);border:1px solid var(--linea);border-radius:3px;padding:11px 13px}
+.nivel h3{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--suave);font-weight:600}
+.nivel .l{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}
+.nivel .l span:first-child{display:flex;align-items:center;gap:6px;color:var(--suave)}
+/* La caja ocupa el ancho de la página, como el resto de los paneles; la rejilla
+   va centrada dentro y ajustada a su contenido. Estirar las burbujas a todo el
+   ancho las desperdigaba y el cuerpo dejaba de leerse como uno solo. */
+.hemi-caja{display:flex;justify-content:center;width:100%;
+  padding:30px 16px;background:var(--panel);border:1px solid var(--linea);
+  border-radius:3px;overflow-x:auto}
+.hemi{display:flex;flex-direction:column;gap:5px}
+.hemi-fila{display:flex;justify-content:center;gap:5px}
+.silla{width:40px;height:40px;border-radius:50%;background:var(--vacio);
+  border:1.5px solid var(--linea-fuerte);display:block}
+.b{width:12px;height:12px;border-radius:50%;background:var(--vacio);
+  border:1px solid var(--linea-fuerte);display:inline-block;flex:none}
+@media(max-width:560px){.hemi-caja{padding:20px 10px}
+  .hemi,.hemi-fila{gap:3px}.silla{width:24px;height:24px}}
+.carita{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--vacio);
+  flex:none;display:inline-block}
+.tile{background:var(--panel);border:1px solid var(--linea);border-radius:3px;padding:12px 14px}
+.tile .k{font-family:'Bebas Neue',Impact,sans-serif;font-size:30px;font-weight:400;
+  letter-spacing:.02em;line-height:1}
+.tile .e{font-size:12px;color:var(--suave);display:flex;align-items:center;gap:6px;margin-top:2px}
+.punto{width:9px;height:9px;border-radius:50%;flex:none}
+
+/* --- mapa --- */
+.mapa{background:var(--panel);border:1px solid var(--linea);border-radius:3px;
+  overflow:hidden;position:relative}
+.lienzo{width:100%;height:clamp(320px,58vh,620px);background:var(--panel)}
+.leaflet-container{background:var(--panel);font:inherit}
+/* OSM viene con relieve verde y carreteras ocres que compiten con los datos.
+   A grises y aclarado se convierte en lo que tiene que ser: una referencia de
+   dónde queda cada cosa, por debajo de la única capa que hay que leer. */
+/* Sobre crema el gris puro se ve azulado, así que el fondo se vira a sepia para
+   que no pelee con el papel. */
+.leaflet-tile-pane{filter:grayscale(1) sepia(.35) brightness(1.05) contrast(.7) opacity(.45)}
+.leaflet-tooltip{background:var(--tinta);color:var(--fondo);border:0;border-radius:2px;
+  font-size:12px;padding:9px 12px;box-shadow:none;line-height:1.45}
+.leaflet-tooltip:before{display:none}
+/* Leaflet encoge el tooltip al ancho del contenido más corto. `max-content` deja
+   que crezca hasta el tope, para que un nombre de organización no se parta en
+   tres renglones. */
+.tt-mapa{width:max-content;max-width:420px;min-width:230px;white-space:normal}
+.tt-circ{display:block;font-size:13.5px;letter-spacing:-.01em;margin-bottom:3px}
+.tt-est{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;
+  opacity:.7;margin-bottom:5px}
+.tt-cand{display:block;font-weight:600}
+.tt-org{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+  opacity:.7;margin-bottom:6px}
+.tt-org:last-child{margin-bottom:0}
+.leaflet-control-zoom a{color:var(--tinta);background:var(--panel);
+  border-color:var(--linea-fuerte)}
+.leaflet-bar{border:1px solid var(--linea-fuerte);box-shadow:none}
+.leaflet-control-attribution{background:var(--panel);color:var(--tenue);font-size:10px}
+.leaflet-control-attribution a{color:var(--tenue)}
+/* El selector de nivel vive dentro del mapa, en la esquina. */
+.ctl-nivel{background:var(--panel);border:1px solid var(--linea-fuerte);border-radius:2px;
+  padding:4px;display:flex;flex-direction:column;gap:2px}
+.ctl-nivel button{font:inherit;font-size:12px;padding:4px 9px;border:0;border-radius:5px;
+  background:transparent;color:var(--suave);cursor:pointer;text-align:left;white-space:nowrap}
+.ctl-nivel button[aria-pressed="true"]{background:var(--tinta);color:var(--fondo)}
+.pieza{cursor:pointer}
+/* El navegador dibuja un rectángulo de foco alrededor del <path> al pasar por
+   encima, y en un mapa se lee como si el distrito fuera cuadrado. */
+.leaflet-interactive:focus,.leaflet-interactive:focus-visible{outline:none}
+.pieza.trama{fill:url(#trama)}
+.escanos-mapa div{display:flex;flex-wrap:wrap;gap:2px;width:max-content;max-width:64px;
+  transform:translate(-50%,-50%);background:var(--panel);padding:3px 4px;border-radius:7px;
+  border:1px solid var(--linea-fuerte)}
+.escanos-mapa i{width:9px;height:9px;border-radius:50%;display:block;
+  border:1px solid rgba(0,0,0,.12)}
+.tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.tab{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--linea-fuerte);
+  background:var(--panel);color:var(--suave);border-radius:2px;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--terra);color:#fff;border-color:var(--terra)}
+.leyenda{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;
+  font-size:12px;color:var(--suave);padding:12px;border-top:1px solid var(--linea)}
+.leyenda span.it{display:inline-flex;align-items:center;gap:6px}
+
+/* --- tablas --- */
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+th,td{padding:8px 8px;border-bottom:1px solid var(--linea);text-align:left}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--suave);
+   font-weight:600;white-space:nowrap}
+td.n,th.n{text-align:right}
+.envuelve{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.barra{height:8px;border-radius:4px;display:block;background:var(--s1);min-width:2px}
+.logo{width:20px;height:20px;min-width:20px;object-fit:contain;vertical-align:middle;flex:none}
+.org{display:flex;align-items:center;gap:9px;min-width:0}
+.pill{width:20px;height:20px;border-radius:50%;flex:none;display:inline-block}
+.abrir{font:inherit;font-size:15px;line-height:1;border:1px solid var(--linea-fuerte);
+  background:var(--panel);color:var(--tinta);cursor:pointer;flex:none;
+  width:22px;height:22px;border-radius:2px;display:grid;place-items:center}
+.abrir:hover{border-color:var(--tinta)}
+tr.hijo td{color:var(--suave)}
+tr.hijo[hidden]{display:none}
+.aut .pill{width:22px;height:22px}
+.aut-g .pill{width:30px;height:30px}
+/* Candidato y partido en dos renglones, con pesos distintos: se vota a una
+   persona por un partido, y la fila tiene que dejar leer las dos cosas sin que
+   compitan. */
+.ident{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.cand-nom{font-weight:600;font-size:14px}
+.part-nom{font-size:11.5px;color:var(--suave);text-transform:uppercase;letter-spacing:.03em}
+.por-que{font-size:12.5px;color:var(--tinta);font-weight:500}
+td .carita{width:32px;height:32px;border-radius:50%;object-fit:cover;
+  background:var(--vacio);flex:none}
+.aut{display:flex;align-items:center;gap:11px;padding:9px 2px;
+  border-bottom:1px solid var(--linea)}
+.aut-logo{width:22px;height:22px;min-width:22px;object-fit:contain;flex:none}
+.aut-foto{width:38px;height:38px;border-radius:50%;object-fit:cover;
+  background:var(--vacio);flex:none}
+/* El ejecutivo es el titular de la noticia: su cara va al doble. */
+.aut-g{gap:14px;padding:14px 2px}
+.aut-g .aut-logo{width:30px;height:30px;min-width:30px}
+/* En el callout del electo el logo compite de tú a tú con la cara: es la otra
+   mitad de la noticia, no una viñeta al margen. */
+.desenlace .aut-g .aut-logo{width:64px;height:64px;min-width:64px}
+@media(max-width:560px){.desenlace .aut-g .aut-logo{width:46px;height:46px;min-width:46px}}
+.aut-g .aut-foto{width:76px;height:76px}
+.aut-g .cand-nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:25px;
+  font-weight:400;letter-spacing:.02em;line-height:1.05}
+.aut .m{font-size:12px;color:var(--suave)}
+.desenlace{background:var(--panel);border:1px solid var(--linea-fuerte);
+  border-radius:3px;margin:16px 0 10px;overflow:hidden}
+/* Franja, no chip: el estado de la carrera es el titular de la caja y tiene que
+   decir **qué** se eligió, no un genérico «Electo». */
+.franja{background:var(--tinta);color:var(--fondo);padding:8px 18px;
+  font-size:13px;font-weight:650;text-transform:uppercase;letter-spacing:.09em;
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.franja-sub{font-weight:500;letter-spacing:.04em;opacity:.75;text-transform:none}
+.des-cuerpo{padding:14px 18px 16px}
+.des-par{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.des-card{min-width:0}
+.des-card .cand-nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:27px;
+  font-weight:400;letter-spacing:.02em;line-height:1.05}
+.des-pct{font-size:13px;color:var(--suave);font-variant-numeric:tabular-nums;margin-top:3px}
+.des-hdv{margin-top:8px}
+.avance-caja{background:var(--panel);border:1px solid var(--linea);border-radius:3px;
+  padding:13px 16px;margin-bottom:4px}
+.avance-caja .e{font-size:12px;color:var(--suave);margin-bottom:6px}
+.ver-mas{font:inherit;font-size:10px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;margin-top:10px;padding:8px 14px;cursor:pointer;
+  border:1px solid var(--linea-fuerte);background:var(--panel);color:var(--suave);
+  border-radius:2px;width:100%}
+.ver-mas:hover{border-color:var(--tinta);color:var(--tinta)}
+tr.mas[hidden]{display:none}
+.ver-hdv{font:inherit;font-size:12px;padding:6px 11px;border:1px solid var(--linea-fuerte);
+  background:var(--panel);color:var(--suave);border-radius:2px;cursor:pointer;
+  white-space:nowrap;flex:none}
+.ver-hdv:hover{border-color:var(--tinta);color:var(--tinta)}
+/* Leaflet apila sus paneles y controles hasta z-index 1000, así que con 40 el
+   mapa se quedaba por encima del fondo del modal y la ficha se leía sobre él. */
+#modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto}
+/* `display:flex` pisa al atributo `hidden`, que no lleva !important. Sin esto el
+   modal tapa la página entera desde el primer render. */
+#modal[hidden]{display:none}
+.hoja{background:var(--fondo);border-radius:3px;padding:22px;max-width:520px;width:100%;
+  position:relative;border:1px solid var(--tinta)}
+.hoja .cerrar{position:absolute;top:10px;right:12px;font:inherit;font-size:22px;
+  line-height:1;border:0;background:transparent;color:var(--suave);cursor:pointer}
+.fd{display:flex;justify-content:space-between;gap:14px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid var(--linea);font-size:14px}
+.fd>span:first-child{color:var(--suave);font-size:12px;text-transform:uppercase;
+  letter-spacing:.05em}
+.fd .mal{color:var(--s2)}
+.edu{display:inline-flex;gap:3px}
+.edu .lv{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid var(--linea-fuerte)}
+.edu .lv.on{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
+.edu .lv.off{color:var(--tenue)}
+.hoja{max-height:86vh;overflow:auto}
+.fs{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--suave);
+  font-weight:650;margin:18px 0 6px}
+.fl{display:flex;flex-direction:column;gap:2px}
+.fi{padding:7px 0;border-bottom:1px solid var(--linea);font-size:13.5px;
+  display:flex;flex-direction:column;gap:1px}
+.fi span{font-size:12px;color:var(--suave)}
+.fi.mal-bloque b{color:var(--s2)}
+
+.pordef{color:var(--tenue);font-style:italic}
+.escano{display:inline-block;width:13px;height:13px;border-radius:50%;margin:1px;
+  background:var(--vacio);vertical-align:middle;border:1px solid var(--linea-fuerte)}
+.fila{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--linea);
+  flex-wrap:wrap}
+.fila b{font-weight:600;font-size:13px;flex:1 1 180px;min-width:0}
+.chip{display:inline-block;padding:3px 10px;border-radius:2px;font-size:12px;
+  border:1px solid var(--linea-fuerte);color:var(--suave)}
+.chip.si{background:var(--terra);color:#fff;border-color:var(--terra)}
+.buscar{width:100%;font:inherit;padding:11px 13px;border:1px solid var(--linea-fuerte);
+  border-radius:2px;background:var(--panel);color:var(--tinta)}
+.casc{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.casc label{display:flex;flex-direction:column;gap:5px;font-size:11px;
+  text-transform:uppercase;letter-spacing:.07em;color:var(--suave);font-weight:600}
+.casc select:disabled{opacity:.55}
+.casc select{font:inherit;font-size:14px;text-transform:none;letter-spacing:0;
+  color:var(--tinta);padding:9px 10px;border:1px solid var(--linea-fuerte);
+  border-radius:2px;background:var(--panel);max-width:100%}
+.casc label[hidden]{display:none}
+.ir{display:inline-block;margin-top:14px;font:inherit;font-size:13px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
+  background:var(--terra);color:#fff;padding:10px 18px;border-radius:2px}
+.res{max-height:280px;overflow:auto;border:1px solid var(--linea);border-radius:2px;
+  margin-top:6px;background:var(--panel)}
+.res a{display:block;padding:9px 12px;border-bottom:1px solid var(--linea);
+  text-decoration:none;font-size:14px}
+.res a:hover,.res a:focus{background:var(--vacio);outline:none}
+.volver{font-size:13px;color:var(--suave);text-decoration:none}
+.tt{position:fixed;pointer-events:none;background:var(--tinta);color:var(--fondo);
+  padding:6px 10px;border-radius:2px;font-size:12px;opacity:0;transition:opacity .12s;
+  z-index:20;max-width:260px}
+.aviso{background:var(--panel);border:1px solid var(--linea);border-radius:2px;
+  padding:12px 14px;font-size:13px;color:var(--suave)}
+@media(max-width:560px){h1{font-size:18px}.env{padding:12px 12px 70px}
+  .top{margin:0 -12px 4px;padding:9px 12px}}
+</style></head><body>
+
+<!-- Barra del sitio. Markup idéntico al de `electoral/peru/2026eg/segunda-vuelta`;
+     el contenido del desplegable lo pone `initNav` desde `shared/nav.js`. -->
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <button class="nav-hamburger" id="nav-hbg" onclick="var m=document.getElementById('nav-mob');m.classList.toggle('open')" aria-label="Menú">
+    <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor"><rect width="18" height="2" rx="1"/><rect y="6" width="18" height="2" rx="1"/><rect y="12" width="18" height="2" rx="1"/></svg>
+  </button>
+  <div class="nav-social">
+    <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+    </a>
+    <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <div class="nav-sep" style="margin:0 0.4rem"></div>
+    <span class="nav-author">MATHIEU ROJAS</span>
+  </div>
+</div>
+<div id="nav-mob" class="nav-mobile-menu"></div>
+<script src="/shared/nav.js"></script>
+<script>if(window.initNav) initNav('peru', '2022erm', 'resultados');</script>
+
+<div class="mode-bar">
+  <a class="mode-tab" href="#/" data-r="/">RESUMEN</a>
+  <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
+</div>
+
+<header class="cab">
+  <div class="cab-id">
+    <div class="cab-tit" id="cabTitulo">🇵🇪 ERM 2022 · PERÚ</div>
+    <div class="cab-sub" id="cabSub">Resultados por distrito<br>ONPE</div>
+  </div>
+  <div class="cab-avance">
+    <div class="cab-av-lab"><span>ACTAS CONTABILIZADAS</span><span id="avance">—</span></div>
+    <div class="riel"><i id="avanceBarra" style="width:0%"></i></div>
+  </div>
+  <span class="vivo" id="vivo"><span class="pulso off" id="pulso"></span><span id="sondeo">—</span></span>
+  <span class="replay" id="replay" hidden>Reproducción · cómputo oficial de 2022</span>
+  <div class="cab-stats" id="cabStats"></div>
+</header>
+
+<div class="env">
+  <noscript><div class="aviso"><b>Esta página necesita JavaScript.</b>
+    Los datos están igualmente disponibles como archivos JSON:
+    <code>nacional.json</code> para el resumen y <code>carrera/{race_id}.json</code>
+    para cada una de las carreras.</div></noscript>
+  <div id="vista"><div class="aviso">Cargando…</div></div>
+</div>
+<div class="tt" id="tt" role="status"></div>
+<div id="modal" hidden></div>
+<!-- Leaflet pinta en su propio SVG; el patrón vive aquí y se referencia por id.
+     Trama densa y a 45°: la anterior, a 6 px, se leía como ruido de compresión
+     y no como «aquí no se elige». -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="trama" width="4" height="4" patternUnits="userSpaceOnUse"
+           patternTransform="rotate(45)">
+    <rect width="4" height="4" fill="var(--vacio)"/>
+    <line x1="0" y1="0" x2="0" y2="4" stroke="var(--tenue)" stroke-width="2"/>
+  </pattern>
+</defs></svg>
+
+<script>
+"use strict";
+// ---------------------------------------------------------------- utilidades
+const F=n=>new Intl.NumberFormat('es-PE').format(n??0);
+const P=x=>(100*(x??0)).toFixed(1)+'%';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// En datapol la página y sus datos viven en ramas distintas del árbol —la
+// página en `/electoral/...`, los datos en `/peru/...`—, que es la convención
+// que ya sigue 2026eg. En local, con el servidor apuntando a `data/publico`,
+// están al lado. Se resuelve por la ubicación de la página, para que el mismo
+// archivo sirva en los dos sitios y no haya dos copias que mantener.
+const BASE = location.pathname.includes('/electoral/')
+  ? '../../../peru/2022erm/data/' : '';
+const j=async u=>{const r=await fetch(BASE+u,{cache:'no-store'});
+  if(!r.ok) throw new Error(u+' → '+r.status); return r.json()};
+
+// ERM 2022 es un proceso cerrado: el contrato que sirve esta página es un corte
+// fijo, no un cómputo que avance. Sondearlo sería pedir lo mismo cada 45
+// segundos y, peor, el pulso en verde diría «en directo» sobre una elección de
+// hace cuatro años. Cuando esto se porte a 2026 se pone en false y el sondeo
+// vuelve solo.
+const REPLAY = true;
+
+// Estados del pronóstico. Color reservado + etiqueta: nunca solo color.
+// `t` cuenta carreras en el marcador nacional (plural); `u` califica una sola
+// carrera. «Electas» colgado del chip de una carrera se leía como un error.
+// Todo en mayúsculas, como los nombres de organización, para que no convivan
+// dos convenciones en la misma columna. `t` cuenta autoridades en el marcador
+// nacional; `u` califica una sola elección.
+const EST={
+  electo:        {t:'ELECTOS',           u:'ELECTO',              v:'--ok'},
+  segunda_vuelta:{t:'A SEGUNDA VUELTA',  u:'VA A SEGUNDA VUELTA', v:'--segunda'},
+  empate:        {t:'EN EMPATE',         u:'EMPATE — VA A SORTEO',v:'--espera'},
+  sin_resultado: {t:'ANULADAS',          u:'ELECCIÓN ANULADA',    v:'--disputa'},
+  por_definir:   {t:'EN DISPUTA',        u:'EN DISPUTA',          v:'--disputa'}};
+const etiq=(e,plural=false)=>(EST[e]?.[plural?'t':'u'])||e;
+const NIVEL={'01':'Gobernador regional','02':'Consejo regional',
+             '03':'Alcaldía provincial','04':'Alcaldía distrital'};
+// El marcador nombra **a quien se elige**, en masculino plural, para que
+// «ELECTOS» concuerde. «ALCALDÍA PROVINCIAL · ELECTAS» no se sostenía.
+const NIVEL_PLURAL={'01':'Gobernadores','03':'Alcaldes provinciales',
+                    '04':'Alcaldes distritales'};
+
+let META=null, NAC=null, GEO={}, RUTA_ACTUAL=null, BUSQUEDA='';
+
+// Tres hues categóricos + «Otras». Ver el comentario de la hoja de estilos.
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+// Un color estable por organización, de `colores.json`. No depende del ranking:
+// si dependiera, cada vez que una lista adelantara a otra durante la noche se
+// repintarían las dos y el lector leería un cambio que no ocurrió.
+let COLORES={};
+const colorDe=c=>{
+  const par=COLORES[c];
+  return par ? par[esOscuro()?1:0] : (c ? css('--otras') : css('--vacio'));
+};
+const esNacional=c=>!!(COLORES[c]||[])[2];
+// En el mapa del resumen los movimientos regionales van de un solo ocre. Cada
+// uno tiene su color y se ve en su página y en la tabla de abajo; pero a escala
+// de país son 115 tonos que no se pueden nombrar en ninguna leyenda, y pintados
+// aparte convierten el mapa en ruido. Agrupados dicen algo: dónde gana un
+// partido nacional y dónde no.
+const colorNacional=c=>esNacional(c) ? colorDe(c) : css('--regional');
+// La burbuja que explica el color donde está el nombre. El mapa ya no lleva
+// leyenda de partidos: con 128 organizaciones nadie lee 128 entradas.
+const burbuja=c=>`<span class="pill" style="background:${colorDe(c)}"></span>`;
+
+// ------------------------------------------------------------------- tooltip
+const tt=$('tt');
+function conTooltip(el, texto){
+  const mover=ev=>{const t=ev.touches?ev.touches[0]:ev;
+    tt.textContent=texto; tt.style.opacity=1;
+    const x=Math.min(t.clientX+12, innerWidth-tt.offsetWidth-8);
+    tt.style.left=x+'px'; tt.style.top=Math.max(8,t.clientY-38)+'px'};
+  el.addEventListener('mousemove',mover);
+  el.addEventListener('touchstart',mover,{passive:true});
+  el.addEventListener('mouseleave',()=>tt.style.opacity=0);
+  el.addEventListener('touchend',()=>tt.style.opacity=0);
+}
+
+// ---------------------------------------------------------------------- mapa
+// Leaflet en vez de un SVG propio. Se gana lo que el SVG no daba: zoom con + y −,
+// arrastre, y referencia geográfica para ubicar un distrito de verdad —en el
+// mapa distrital nacional, 1,890 polígonos sueltos son una mancha—.
+//
+// FONDO: OSM DESATURADO POR CSS.
+// CartoDB, que es la opción sobria obvia, hoy exige clave: devuelve las teselas
+// estampadas con «API KEY REQUIRED». OSM es lo único usable sin clave, pero su
+// cartografía es demasiado colorida —el verde y el ocre del relieve compiten con
+// los datos—. La solución barata es un filtro CSS sobre el panel de teselas
+// (`.leaflet-tile-pane`): a escala de grises y aclarado queda un fondo pálido
+// que ubica sin estorbar. Ver la hoja de estilos.
+//
+// **Sigue pendiente para el 4 de octubre**: la política de uso de OSM prohíbe el
+// tráfico masivo, y 20,000 concurrentes es exactamente eso. La salida definitiva
+// es una clave de proveedor o teselas propias. Mientras tanto el mapa no depende
+// del fondo para informar: encima va el contorno de departamentos dibujado con
+// nuestra geometría, así que si OSM falla se pierde la referencia de calles, no
+// la orientación ni los datos.
+const TILES='https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+const ATRIB='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+// datapol.lat no tiene modo oscuro: una página que sí lo tuviera se vería ajena
+// bajo la misma barra de navegación.
+const esOscuro=()=>false;
+
+function creaMapa(cont){
+  cont.innerHTML='';
+  const lienzo=document.createElement('div');
+  lienzo.className='lienzo';
+  cont.appendChild(lienzo);
+  const m=L.map(lienzo,{
+    zoomControl:true, attributionControl:true,
+    // Sin esto la rueda del ratón secuestra el scroll de la página cada vez que
+    // el cursor cruza el mapa. Con + y − y pellizco en móvil, no hace falta.
+    scrollWheelZoom:false,
+    zoomSnap:.25, minZoom:3, maxZoom:14});
+  L.tileLayer(TILES,{attribution:ATRIB, maxZoom:14, crossOrigin:true}).addTo(m);
+  // El mapa se crea mientras la página todavía se está armando, así que Leaflet
+  // mide un contenedor que aún no tiene su tamaño final y el encuadre sale mal.
+  // Se vuelve a medir cuando el contenedor cambia de tamaño, y se reencuadra.
+  // Al hacer zoom o arrastrar, la pieza bajo el cursor cambia sin que Leaflet
+  // dispare `mouseout` sobre la anterior, así que el tooltip se queda pegado.
+  // Se cierra a mano en cada evento que mueve el mapa, y al salir del lienzo.
+  // Dos trampas juntas. `map.closeTooltip()` sin argumento **lanza excepción** en
+  // Leaflet 1.9 —y disparándose en `movestart` durante el `fitBounds` inicial,
+  // reventaba el montaje del mapa y ningún tooltip llegaba a enlazarse—. Y
+  // `map.eachLayer` recorre solo las capas directas, no las de dentro del grupo
+  // de GeoJSON, así que tampoco alcanzaba a las piezas. Se guarda cuál está
+  // abierto y se cierra esa.
+  const cierra=()=>{
+    (m._capas||[]).forEach(c=>c.eachLayer(o=>{ if(o.closeTooltip) o.closeTooltip() }));
+    m._ttAbierto=null;
+  };
+  m.on('zoomstart movestart', cierra);
+  lienzo.addEventListener('mouseleave', cierra);
+  lienzo.addEventListener('touchend', ()=>setTimeout(cierra, 1800));
+
+  if(window.ResizeObserver){
+    // `invalidateSize` puede alterar el contenedor y volver a disparar al
+    // observador: sin el guardia de tamaño real, el mapa entra en un bucle de
+    // reflujo que hace saltar el scroll de toda la página.
+    let w=0,hh=0,pend=0;
+    new ResizeObserver(entradas=>{
+      const c=entradas[0].contentRect;
+      if(Math.abs(c.width-w)<2 && Math.abs(c.height-hh)<2) return;
+      w=c.width; hh=c.height;
+      cancelAnimationFrame(pend);
+      pend=requestAnimationFrame(()=>{
+        m.invalidateSize({animate:false});
+        if(m._encuadre) m.fitBounds(m._encuadre,{padding:[10,10],animate:false});
+      });
+    }).observe(lienzo);
+  }
+  return m;
+}
+
+// Contorno de la unidad superior, por encima de los rellenos. Es lo que permite
+// leer un mapa de 1,890 piezas: sin las fronteras del nivel de arriba, un mapa
+// distrital es una mancha sin referencia. Misma lógica en todos los mapas —lo
+// que cambia es cuál es el nivel de arriba— y por eso va en una sola función.
+const CACHE_GEO={};
+async function contorno(m, url='geo/nacional-01.geojson', peso=1.6){
+  try{
+    if(!CACHE_GEO[url]) CACHE_GEO[url]=await j(url);
+    const capa=L.geoJSON(CACHE_GEO[url],{interactive:false, pane:'markerPane',
+      smoothFactor:0, style:{
+      color:css('--tinta'), weight:peso, opacity:.75, fill:false,
+      lineJoin:'round'}}).addTo(m);
+    return capa;
+  }catch(e){ return null }
+}
+
+// `pinta(ubigeo, props) -> {color, texto, href, trama}`
+// `peso` es el grosor del borde entre piezas. Las capas agregadas —departamento,
+// provincia— llevan borde marcado porque cada pieza es una unidad política que
+// se lee de lejos; la distrital lo lleva fino porque con 1,890 piezas un borde
+// grueso se come el relleno y el mapa se vuelve una retícula.
+// `smoothFactor:0` no es un detalle: es lo único que hace que las capas casen.
+// Por defecto Leaflet vale 1, y eso **simplifica cada trazo a un píxel de
+// pantalla al dibujarlo**, capa por capa y por separado. Alejado, un píxel son
+// kilómetros: Douglas-Peucker se queda con vértices distintos en el contorno
+// largo de un departamento que en el anillo corto de cada distrito, y la misma
+// frontera sale por dos sitios. Acercado, un píxel no es nada y todo calza —que
+// es justo lo que se veía—. La geometría ya viene simplificada desde el
+// pipeline, con topología compartida; simplificarla otra vez aquí, en pantalla
+// y sin topología, solo puede romperla.
+function agregaCapa(m, gj, pinta, {peso=1.1}={}){
+  let capa;
+  capa=L.geoJSON(gj,{
+    smoothFactor:0,
+    style:f=>{
+      const i=pinta(f.properties.ubigeo, f.properties)||{};
+      return {color:css('--tinta'), weight:peso, opacity:.55,
+              fillColor:i.color||css('--vacio'), fillOpacity:i.trama?1:.9,
+              lineJoin:'round',
+              className:'pieza'+(i.trama?' trama':'')};
+    },
+    onEachFeature:(f,l)=>{
+      const i=pinta(f.properties.ubigeo, f.properties)||{};
+      // El tooltip es la única lectura del mapa, así que va en renglones y no en
+      // una línea corrida: circunscripción, estado, y recién después quién.
+      l.bindTooltip(`<b class="tt-circ">${esc(f.properties.nombre)}</b>`+
+        (i.texto||''), {sticky:true, className:'tt-mapa'});
+      l.on('mouseover',()=>{
+        // Al cruzar rápido varias piezas —o al arrastrar el mapa— el `mouseout`
+        // de la anterior no siempre llega, y cada `mouseover` abría un tooltip
+        // más: llegaban a quedar cinco pegados a la vez. Antes de abrir uno se
+        // cierran **todos** los de esta capa; guardar solo el último no bastaba,
+        // porque dos `mouseover` en el mismo tick se pisaban.
+        capa.eachLayer(o=>{ if(o!==l && o.closeTooltip) o.closeTooltip() });
+        l.setStyle({weight:peso+1.6,opacity:1});
+        m._ttAbierto=l;
+      });
+      // Leaflet ya cierra el tooltip en su propio `mouseout`; llamar a
+      // `closeTooltip()` aquí lo cerraba antes de que llegara a verse.
+      l.on('mouseout',()=>{ l.setStyle({weight:peso,opacity:.55});
+        if(m._ttAbierto===l) m._ttAbierto=null; });
+      if(i.href) l.on('click',()=>{location.hash=i.href});
+    }}).addTo(m);
+  (m._capas=m._capas||[]).push(capa);
+  try{
+    m.invalidateSize({animate:false});
+    m._encuadre=capa.getBounds();
+    m.fitBounds(m._encuadre,{padding:[10,10],animate:false});
+  }catch(e){}
+  return capa;
+}
+
+// Selector de nivel, dentro del mapa y en la esquina.
+function controlNiveles(m, niveles, activo, alCambiar){
+  const C=L.Control.extend({
+    onAdd(){
+      const d=L.DomUtil.create('div','ctl-nivel');
+      d.innerHTML=niveles.map(([k,l])=>
+        `<button data-k="${k}" aria-pressed="${k===activo}">${l}</button>`).join('');
+      L.DomEvent.disableClickPropagation(d);
+      d.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+        d.querySelectorAll('button').forEach(x=>
+          x.setAttribute('aria-pressed', String(x===b)));
+        alCambiar(b.dataset.k);
+      });
+      return d;
+    }});
+  return new C({position:'topright'}).addTo(m);
+}
+
+// --------------------------------------------------------- vista: nacional
+// La leyenda del mapa tiene como máximo cuatro entradas: movimientos regionales
+// y los tres estados. **Ningún partido se nombra aquí**: su color se explica donde
+// está su nombre, con la burbuja al costado en las tablas. Nombrarlos devolvía la
+// leyenda al problema de partida —ocho entradas en la provincial, y creciendo—.
+// Y lista solo lo que el mapa dibuja: el de Loreto, donde toda provincia tiene
+// resultado y toda elige gobernador, anunciaba dos categorías ausentes.
+function leyendaEstados(marcas){
+  const it=(color,txt,borde='')=>`<span class="it"><span class="punto"
+    style="background:${color};${borde}"></span>${txt}</span>`;
+  const partes=[];
+  if(marcas.has('segunda')) partes.push(it('var(--segunda)','VA A SEGUNDA VUELTA'));
+  if(marcas.has('empate')) partes.push(it('var(--empate)','EMPATE'));
+  if(marcas.has('anulada')) partes.push(it('var(--anulada)','ANULADA'));
+  if(marcas.has('sin'))
+    partes.push(it('var(--vacio)','EN DISPUTA','border:1px solid var(--linea-fuerte)'));
+  if(marcas.has('sin_actas'))
+    partes.push(it('var(--vacio)','SIN ACTAS','border:1px solid var(--linea-fuerte)'));
+  if(marcas.has('no_participa'))
+    partes.push(it('var(--vacio)','NO ELIGE ESTA AUTORIDAD','border:1px dashed var(--tenue)'));
+  return partes.length?`<div class="leyenda">${partes.join('')}</div>`:'';
+}
+
+async function vistaNacional(){
+  const n=NAC, nombres=n.organizaciones_nombre||{};
+  const est=n.estados||{}, porTipo=n.estados_por_tipo||{};
+  const orden=['electo','segunda_vuelta','empate','por_definir','sin_resultado'];
+  const llamadas=(est.electo||0)+(est.segunda_vuelta||0);
+  cabecera();
+  // El buscador antes que nada: con 2,113 elecciones, lo primero que hace
+  // cualquiera es ir a la suya. El resumen del país se lee después, no antes.
+  let h=bloqueBuscar('Busca una contienda')+`<h2>Estado</h2>`;
+  // El mismo marcador por nivel: 1,694 distritales tapan lo que pasa en las 25
+  // regionales, que son las que de verdad se siguen.
+  // Solo los tres ejecutivos. El total global lo domina lo distrital y no dice
+  // nada, y el consejo regional no es una carrera que se «gane»: es un reparto
+  // proporcional y se lee en la página de cada región.
+  const nivelesM=Object.entries(NIVEL_PLURAL).filter(([t])=>porTipo[t]);
+  if(nivelesM.length) h+=`<div class="nivel">`+
+    nivelesM.map(([t,l])=>{
+      const e=porTipo[t], tot=Object.values(e).reduce((x,y)=>x+y,0);
+      return `<div class="caja"><h3>${l} · ${F(tot)}</h3>`+
+        orden.filter(k=>e[k]).map(k=>`<div class="l">
+          <span><span class="punto" style="background:var(${EST[k].v})"></span>${etiq(k,true)}</span>
+          <b>${F(e[k])}</b></div>`).join('')+`</div>`;
+    }).join('')+`</div>`;
+
+  // --- mapas, uno por nivel
+  h+=`<h2>Mapa</h2>
+    <div class="tabs" role="group" aria-label="Nivel del mapa">`+
+    [['01','Gobernador'],['03','Provincial'],['04','Distrital']].map(([t,l])=>
+      `<button class="tab" data-m="${t}" aria-pressed="false">${l}</button>`).join('')+
+    `</div><div class="mapa" id="mapa"><div class="aviso" style="border:0">Cargando mapa…</div></div>
+    <div id="leyN"></div>`;
+
+  // --- tabla por organización
+  // --- tabla de organizaciones, con agrupación
+  // Los 115 movimientos regionales ocupaban 115 filas para decir, uno por uno,
+  // lo que interesa leer junto: cuánto pesa el conjunto frente a los partidos
+  // nacionales. Van bajo un solo sello —el mismo ocre del mapa— y se despliegan
+  // si alguien quiere el detalle. El mecanismo es general: se agrupa por clave,
+  // y hoy la única clave agrupada es la de movimientos regionales.
+  const GRUPOS={REGIONALES:{nombre:'MOVIMIENTOS REGIONALES', color:'var(--regional)'}};
+  const claveDe=o=>esNacional(o.codigo) ? null : 'REGIONALES';
+  const CAMPOS=['gobernador_1v','gobernador_2v','alcalde_prov','alcalde_dist',
+                'consejero','regidor_prov','regidor_dist'];
+  const suma=(a,b)=>{const r={...a}; for(const k of CAMPOS) r[k]=(r[k]||0)+(b[k]||0); return r};
+  // Orden lexicográfico por la jerarquía del cargo, no por el total: quien ganó
+  // una gobernación va antes que quien ganó cuarenta regidurías distritales.
+  // Sumar todo dejaba arriba a los que acumulan cargos menores.
+  const cmp=(a,b)=>{
+    for(const k of CAMPOS){ const d=(b[k]||0)-(a[k]||0); if(d) return d }
+    return String(a.nombre||'').localeCompare(String(b.nombre||''),'es');
+  };
+
+  const sueltas=[], agrupadas={};
+  for(const o of (n.por_organizacion||[])){
+    const k=claveDe(o);
+    if(!k){ sueltas.push({tipo:'org', o}); continue }
+    (agrupadas[k]=agrupadas[k]||{clave:k, tot:{}, hijos:[]});
+    agrupadas[k].tot=suma(agrupadas[k].tot, o);
+    agrupadas[k].hijos.push(o);
+  }
+  const filas=[...sueltas, ...Object.values(agrupadas).map(g=>({tipo:'grupo', g}))]
+    .sort((a,b)=>cmp(a.tipo==='org'?a.o:{...a.g.tot, nombre:GRUPOS[a.g.clave].nombre},
+                     b.tipo==='org'?b.o:{...b.g.tot, nombre:GRUPOS[b.g.clave].nombre}));
+
+  const celdas=o=>`<td class="n">${o.gobernador_1v||0}<span class="sub">+${
+      o.gobernador_2v||0}</span></td>
+    <td class="n">${F(o.alcalde_prov||0)}</td><td class="n">${F(o.alcalde_dist||0)}</td>
+    <td class="n">${F(o.consejero||0)}</td><td class="n">${F(o.regidor_prov||0)}</td>
+    <td class="n">${F(o.regidor_dist||0)}</td>`;
+
+  h+=`<h2>Organizaciones <span class="sec">${F((n.por_organizacion||[]).length)}</span></h2>
+    <div class="envuelve"><table>
+    <thead><tr><th>Organización</th><th class="n">Gob. 1.ª+2.ª</th>
+    <th class="n">Alc. prov.</th><th class="n">Alc. dist.</th>
+    <th class="n">Consejeros</th><th class="n">Reg. prov.</th>
+    <th class="n">Reg. dist.</th></tr></thead><tbody>`+
+    filas.map(f=>{
+      if(f.tipo==='org') return `<tr>
+        <td><span class="org">${burbuja(f.o.codigo)}<img class="logo"
+          src="${esc(f.o.logo||'')}" alt="" loading="lazy"
+          onerror="this.style.visibility='hidden'">${esc(f.o.nombre)}</span></td>
+        ${celdas(f.o)}</tr>`;
+      const g=f.g, meta=GRUPOS[g.clave];
+      return `<tr class="gr">
+        <td><span class="org">
+          <span class="pill" style="background:${meta.color}"></span>
+          <button class="abrir" aria-expanded="false" data-g="${g.clave}"
+            aria-label="Ver las ${g.hijos.length} organizaciones">+</button>
+          ${esc(meta.nombre)} <span class="sub">· ${g.hijos.length}</span></span></td>
+        ${celdas(g.tot)}</tr>`+
+        g.hijos.sort(cmp).map(o=>`<tr class="hijo g-${g.clave}" hidden>
+          <td><span class="org" style="padding-left:30px"><img class="logo"
+            src="${esc(o.logo||'')}" alt="" loading="lazy"
+            onerror="this.style.visibility='hidden'">${esc(o.nombre)}</span></td>
+          ${celdas(o)}</tr>`).join('');
+    }).join('')+`</tbody></table></div>`;
+
+  $('vista').innerHTML=h;
+
+  const porUbigeo={}; for(const c of n.por_carrera||[]) porUbigeo[c.tipo+c.ubigeo]=c;
+  let mapaN=null, capaN=null;
+  async function pintaMapa(tipo){
+    document.querySelectorAll('.tab').forEach(b=>
+      b.setAttribute('aria-pressed', String(b.dataset.m===tipo)));
+    const cont=$('mapa');
+    try{
+      if(!GEO[tipo]) GEO[tipo]=await j(`geo/nacional-${tipo}.geojson`);
+      if(!mapaN){ mapaN=creaMapa(cont); }
+      if(capaN) mapaN.removeLayer(capaN);
+      const est=t=>`<span class="tt-est">${t}</span>`;
+      const quien=g=>`<span class="tt-cand">${esc(g.candidato||'CANDIDATO POR DEFINIR')}</span>
+        <span class="tt-org">${esc(g.organizacion||'')}</span>`;
+      const marcas=new Set();
+      capaN=agregaCapa(mapaN, GEO[tipo], (u,props)=>{
+        if(props.no_participa){ marcas.add('no_participa');
+          return {color:css('--vacio'), trama:true,
+                  texto:est('NO ELIGE ESTA AUTORIDAD')}; }
+        const c=porUbigeo[tipo+u];
+        // Una elección anulada tampoco tiene ganador, así que la comprobación va
+        // **antes** que la de «sin ganador»: si no, cae ahí y se pinta como si
+        // siguiera en disputa. Es lo que le pasaba a Huamantanga.
+        if(c && c.estado==='sin_resultado'){ marcas.add('anulada');
+          return {color:css('--anulada'), texto:est('ELECCIÓN ANULADA'),
+            href:`#/c/${c.race_id}`}; }
+        // Mientras no haya resultado no se dice quién puntea: nombrar al que va
+        // adelante lo hace parecer ganador, y en una elección abierta eso es
+        // exactamente lo que no hay que insinuar.
+        if(!c||!c.ganador){ marcas.add('sin');
+          return {color:css('--vacio'),
+            texto:est('EN DISPUTA')+(c?`<span class="tt-org">${P(c.pct_actas)} de actas contabilizadas</span>`:''),
+            href:c?`#/c/${c.race_id}`:null}; }
+        const gs=(c.ganadores||[]).length ? c.ganadores
+          : [{organizacion:nombres[c.ganador]||c.ganador, candidato:null}];
+        // Una elección que va a segunda vuelta **no la ganó nadie**: lleva el
+        // color de estado, y el tooltip nombra a los dos que pasan.
+        if(c.estado==='segunda_vuelta'){ marcas.add('segunda');
+          return {color:css('--segunda'),
+            texto:est('VA A SEGUNDA VUELTA')+gs.map(quien).join(''),
+            href:`#/c/${c.race_id}`}; }
+        // Un empate no lo ganó nadie: pintarlo del color de una de las listas
+        // empatadas afirmaba lo contrario en el mapa.
+        if(c.estado==='empate'){ marcas.add('empate');
+          return {color:css('--empate'),
+            texto:est('EMPATE — VA A SORTEO')+gs.map(quien).join(''),
+            href:`#/c/${c.race_id}`}; }
+        marcas.add(esNacional(c.ganador) ? c.ganador : 'regional');
+        return {color:colorNacional(c.ganador),
+          texto:est(etiq(c.estado))+quien(gs[0]),
+          href:`#/c/${c.race_id}`};
+      }, {peso: tipo==='04' ? .35 : 1.3});
+      // Fronteras de referencia sobre los rellenos. En la capa 01 ya están
+      // implícitas en las propias piezas; en la provincial basta el departamento;
+      // en la distrital, 1,890 piezas sin provincias encima son una mancha.
+      (mapaN._bordes||[]).forEach(b=>mapaN.removeLayer(b));
+      mapaN._bordes=[];
+      if(tipo==='04'){
+        const prov=await contorno(mapaN,'geo/nacional-03.geojson',.7);
+        if(prov) mapaN._bordes.push(prov);
+      }
+      if(tipo!=='01'){
+        const dep=await contorno(mapaN);
+        if(dep) mapaN._bordes.push(dep);
+      }
+      const ley=$('leyN'); if(ley) ley.innerHTML=leyendaEstados(marcas);
+    }catch(e){ cont.innerHTML=`<div class="aviso" style="border:0">
+      No se pudo cargar la geografía de este nivel.</div>` }
+  }
+  enchufaBuscar(META.carreras.filter(c=>c.tipo!=='02'), false);
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>pintaMapa(b.dataset.m));
+  pintaMapa('01');
+
+}
+
+// Buscar por nombre es el mismo control en dos sitios —arriba del resumen y en
+// la pestaña del buscador—, así que se declara una vez y se engancha donde haga
+// falta. Devuelve el HTML; `enchufaBuscar` le pone el comportamiento.
+function bloqueBuscar(titulo){
+  return `<h2>${titulo||'Por nombre'}</h2>
+    <input class="buscar" id="q" placeholder="Escribe un distrito, provincia o región…"
+      autocomplete="off" aria-label="Buscar por nombre">
+    <div class="res" id="res" hidden></div>`;
+}
+function enchufaBuscar(carreras, foco){
+  const q=$('q'), res=$('res');
+  if(!q) return;
+  if(BUSQUEDA) q.value=BUSQUEDA;
+  const busca=()=>{
+    BUSQUEDA=q.value;
+    const t=q.value.trim().toLowerCase();
+    if(t.length<2){ res.hidden=true; return }
+    const hits=carreras.filter(c=>c.nombre.toLowerCase().includes(t)).slice(0,60);
+    res.innerHTML=hits.length?hits.map(c=>`<a href="#/c/${c.race_id}">
+      <b>${esc(c.nombre)}</b> <span class="sub">· ${NIVEL[c.tipo]||c.tipo}</span></a>`).join('')
+      :`<a class="sub" style="cursor:default">Nada coincide.</a>`;
+    res.hidden=false;
+  };
+  q.oninput=busca; if(BUSQUEDA) busca();
+  if(foco) q.focus();
+}
+
+// ------------------------------------------------------------ vista: buscador
+// Dos caminos a la misma página, porque la gente busca de dos maneras: quien
+// sabe cómo se llama su distrito lo escribe; quien no, baja por la jerarquía.
+async function vistaBuscador(){
+  const TIPOS=[['01','Gobernador regional'],['03','Alcaldía provincial'],
+               ['04','Alcaldía distrital']];
+  const carreras=META.carreras.filter(c=>c.tipo!=='02');
+  $('vista').innerHTML=`<h1>Buscador</h1>
+    <div class="sub">${F(carreras.length)} elecciones</div>
+
+    ${bloqueBuscar()}
+
+    <h2>Por circunscripción</h2>
+    <div class="casc">
+      <label>Tipo de elección<select id="s-tipo">
+        ${TIPOS.map(([t,l])=>`<option value="${t}">${l}</option>`).join('')}</select></label>
+      <label>Departamento<select id="s-dep"></select></label>
+      <label id="l-prov">Provincia<select id="s-prov"></select></label>
+      <label id="l-dist">Distrito<select id="s-dist"></select></label>
+    </div>
+    <div id="destino"></div>`;
+
+  // --- por nombre
+  enchufaBuscar(carreras, true);
+
+  // --- por circunscripción
+  // Reconstruir un desplegable borra lo que estaba elegido, y `refresca()` corre
+  // en cada cambio: al elegir provincia, el propio refresco la deseleccionaba y
+  // el distrito nunca se habilitaba. Se conserva el valor si sigue existiendo.
+  const opciones=(sel,items,vacio)=>{
+    const antes=sel.value;
+    sel.innerHTML=(vacio?`<option value="">${esc(vacio)}</option>`:'')+
+      items.map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join('');
+    if(antes && items.some(([v])=>v===antes)) sel.value=antes;
+  };
+  const unicos=(arr)=>[...new Map(arr).entries()].sort((a,b)=>a[1].localeCompare(b[1],'es'));
+  const deps=unicos(META.ambitos.departamentos.map(d=>[d.ubigeo,d.nombre]));
+  const sT=$('s-tipo'), sD=$('s-dep'), sP=$('s-prov'), sI=$('s-dist');
+  opciones(sD, deps, '—');
+
+  function refresca(){
+    const t=sT.value, dep=sD.value;
+    $('l-prov').hidden = t==='01';
+    $('l-dist').hidden = t!=='04';
+
+    // Cada nivel se llena **siempre**, aunque su padre esté sin elegir: antes
+    // el de provincia se quedaba sin una sola opción hasta que se escogía
+    // departamento, y un desplegable vacío se lee como que está roto.
+    if(t!=='01'){
+      const provs = dep ? unicos(carreras.filter(c=>c.tipo==='03' &&
+        c.ambitos.departamento===dep).map(c=>[c.ambitos.provincia, c.nombre])) : [];
+      opciones(sP, provs, dep ? 'Elige una provincia' : 'Elige un departamento primero');
+      sP.disabled = !dep;
+    }
+    if(t==='04'){
+      const dists = sP.value ? unicos(carreras.filter(c=>c.tipo==='04' &&
+        c.ambitos.provincia===sP.value).map(c=>[c.ambitos.distrito, c.nombre])) : [];
+      opciones(sI, dists, sP.value ? 'Elige un distrito' : 'Elige una provincia primero');
+      sI.disabled = !sP.value;
+    }
+
+    // La elección queda determinada cuando el último nivel está escogido.
+    const clave = t==='01' ? dep : t==='03' ? sP.value : sI.value;
+    const c = clave ? carreras.find(x=>x.tipo===t &&
+      x.ambitos[t==='01'?'departamento':t==='03'?'provincia':'distrito']===clave) : null;
+    const falta = t==='01' ? 'un departamento'
+                : t==='03' ? (dep?'una provincia':'un departamento')
+                : (!dep?'un departamento':!sP.value?'una provincia':'un distrito');
+    $('destino').innerHTML = c
+      ? `<a class="ir" href="#/c/${c.race_id}">Ir a ${esc(c.nombre)} →</a>`
+      : `<p class="sub">Falta elegir ${falta}.</p>`;
+  }
+  sT.onchange=refresca;
+  sD.onchange=refresca;
+  sP.onchange=refresca;
+  sI.onchange=refresca;
+  refresca();
+}
+
+// Render de un cuerpo colegiado. Los escaños van **por bancada**, no en el orden
+// en que se adjudicaron: primero el bloque más grande, luego los demás, y al
+// final los que siguen en disputa. Así se lee de un vistazo la correlación de
+// fuerzas, que es lo que un hemiciclo comunica y una tira desordenada no.
+function hemiciclo(bancadas, enDisputa, color){
+  const asientos=[];
+  for(const b of [...bancadas].sort((x,y)=>y.escanos-x.escanos))
+    for(let i=0;i<b.escanos;i++) asientos.push(b);
+  for(let i=0;i<enDisputa;i++) asientos.push(null);
+  if(!asientos.length) return '';
+  const silla=b=>`<span class="silla" title="${esc(b?b.nombre:'EN DISPUTA')}"
+      style="${b?`background:${color(b.codigo)};border-color:${color(b.codigo)}`:''}"
+      ></span>`;
+  // Una sola fila solo para cuerpos muy chicos. El umbral estaba en 9 y dejaba
+  // en una tira a casi todos los concejos municipales, que tienen entre 5 y 9
+  // escaños: justo los que tenían que verse como hemiciclo.
+  if(asientos.length<=6)
+    return `<div class="hemi-caja"><div class="hemi">
+      <div class="hemi-fila">${asientos.map(silla).join('')}</div></div></div>`;
+
+  // Dos filas, llenadas **por columna**: el escaño 1 arriba, el 2 justo debajo,
+  // el 3 en la columna siguiente. Con el llenado por fila una bancada quedaba
+  // partida entre el final de arriba y el principio de abajo.
+  const arriba=asientos.filter((_,i)=>i%2===0);
+  const abajo =asientos.filter((_,i)=>i%2===1);
+  // Cada fila se centra por su cuenta. Con un número impar de escaños la de
+  // abajo lleva una burbuja menos, y al centrarse queda desplazada medio ancho:
+  // las burbujas caen justo en los huecos de la de arriba, que es como se dibuja
+  // un hemiciclo y no como una tabla a la que le falta una celda.
+  return `<div class="hemi-caja"><div class="hemi">
+    <div class="hemi-fila">${arriba.map(silla).join('')}</div>
+    <div class="hemi-fila">${abajo.map(silla).join('')}</div></div></div>`;
+}
+
+function leyendaBancadas(bancadas, enDisputa, color){
+  return `<div class="leyenda" style="border:0;padding:8px 2px;justify-content:center">`+
+    [...bancadas].sort((x,y)=>y.escanos-x.escanos).map(b=>
+      `<span class="it"><span class="punto" style="background:${color(b.codigo)}"></span>
+       ${esc(b.nombre)} · <b>${b.escanos}</b></span>`).join('')+
+    (enDisputa>0?`<span class="it"><span class="punto" style="background:var(--vacio);
+      border:1px solid var(--linea-fuerte)"></span>EN DISPUTA · <b>${enDisputa}</b></span>`:'')+
+    `</div>`;
+}
+
+// ------------------------------------------------------------ vista: carrera
+// Ficha de hoja de vida. No se enlaza al JNE: los datos que importan —educación,
+// sentencias, obligaciones, domicilio— ya vienen en el contrato, y depender del
+// portal del JNE una noche electoral es exactamente lo que no hay que hacer.
+// Misma escala de educación que el buscador de candidatos: máscara de bits.
+const EDU=[[1,'Pri','Primaria'],[2,'Sec','Secundaria'],[4,'Téc','Técnica'],
+           [8,'Uni','Universitaria'],[16,'Pos','Posgrado']];
+const FICHAS={};
+function registra(c, org){
+  if(c && c.cand_id) FICHAS[c.cand_id]={c, org};
+  return c && c.cand_id;
+}
+function botonHdv(c){
+  return c && c.hoja_vida_id && c.hoja_vida_id!=='0'
+    ? `<button class="ver-hdv" data-id="${esc(c.cand_id)}">Ver hoja de vida</button>` : '';
+}
+let RACE_ACTUAL=null, FICHAS_RAZA={};
+async function abreFicha(id){
+  const f=FICHAS[id]; if(!f) return;
+  const {c,org}=f;
+  const bm=+(c.educacion||0);
+  $('modal').hidden=false;
+  const pinta=(det)=>{
+    const dato=(k,v)=>v?`<div class="fd"><span>${k}</span><b>${v}</b></div>`:'';
+    const lista=(titulo,arr,fila)=>!arr||!arr.length?'':
+      `<h3 class="fs">${titulo}</h3><div class="fl">${arr.map(fila).join('')}</div>`;
+    const money=v=>v==null?'':'S/ '+F(Math.round(v));
+
+    let x=`<div class="hoja" role="dialog" aria-modal="true"
+        aria-label="Hoja de vida de ${esc(c.nombre)}">
+      <button class="cerrar" aria-label="Cerrar">×</button>
+      <div class="aut aut-g" style="border:0;padding:0 0 6px">
+        <img class="aut-logo" src="${esc(org?.logo||'')}" alt=""
+          onerror="this.style.visibility='hidden'">
+        <img class="aut-foto" src="${esc(c.foto||'')}" alt=""
+          onerror="this.style.visibility='hidden'">
+        <div class="ident"><b class="cand-nom">${esc(c.nombre)}</b>
+          <span class="part-nom">${esc(org?.nombre||'')}</span></div></div>
+      <div class="fd"><span>Educación declarada</span><span class="edu">`+
+        EDU.map(e=>`<span class="lv ${(bm & e[0])?'on':'off'}"
+          title="${e[2]}${(bm & e[0])?'':' — no declara'}">${e[1]}</span>`).join('')+
+      `</span></div>`+
+      dato('DNI', esc(c.dni))+
+      dato('Edad', c.edad?c.edad+' años':'')+
+      dato('Sexo', {M:'Masculino',F:'Femenino'}[c.sexo]||c.sexo)+
+      dato('Domicilio declarado', esc(c.domicilio||''));
+
+    if(det===null){
+      x+=`<p class="sub" style="margin:14px 0 0">No se pudo cargar el detalle de la
+        hoja de vida. Lo de arriba sí está verificado contra el registro.</p>`;
+    }else if(!det){
+      x+=`<p class="sub" style="margin:14px 0 0">Cargando el detalle…</p>`;
+    }else{
+      const e=det.educacion||{};
+      const estudios=[]
+        .concat((e.universitaria||[]).map(u=>({t:'Universitaria', c:u.centro,
+          d:[u.carrera, u.titulo?'título '+u.titulo:(u.bachiller?'bachiller '+u.bachiller:''),
+             u.concluida?'concluida':'no concluida'].filter(Boolean).join(' · ')})))
+        .concat((e.posgrado||[]).map(u=>({t:u.doctor?'Doctorado':(u.maestro?'Maestría':'Posgrado'),
+          c:u.centro, d:[u.especialidad, u.anio, u.concluido?'concluido':'no concluido']
+            .filter(Boolean).join(' · ')})))
+        .concat((e.tecnica||[]).map(u=>({t:'Técnica', c:u.centro,
+          d:[u.carrera, u.concluida?'concluida':'no concluida'].filter(Boolean).join(' · ')})))
+        .concat((e.no_universitaria||[]).map(u=>({t:'No universitaria', c:u.centro,
+          d:[u.carrera, u.concluida?'concluida':'no concluida'].filter(Boolean).join(' · ')})));
+
+      x+=lista('Estudios', estudios, u=>`<div class="fi">
+        <b>${esc(u.c||'—')}</b><span>${esc(u.t)}${u.d?' · '+esc(u.d):''}</span></div>`);
+
+      x+=lista('Experiencia laboral', det.experiencia, u=>`<div class="fi">
+        <b>${esc(u.centro)}</b><span>${esc(u.ocupacion||'')}${
+          u.anios?' · '+esc(u.anios):''}${u.lugar?' · '+esc(u.lugar):''}</span></div>`);
+
+      x+=lista('Cargos de elección popular', det.cargos_eleccion, u=>`<div class="fi">
+        <b>${esc(u.cargo)}</b><span>${esc(u.organizacion||'')}${
+          u.anios?' · '+esc(u.anios):''}</span></div>`);
+
+      x+=lista('Cargos partidarios', det.cargos_partidarios, u=>`<div class="fi">
+        <b>${esc(u.cargo)}</b><span>${esc(u.organizacion||'')}${
+          u.anios?' · '+esc(u.anios):''}</span></div>`);
+
+      x+=lista('Renuncias a organizaciones políticas', det.renuncias, u=>`<div class="fi">
+        <b>${esc(u.organizacion)}</b><span>${esc(u.anio||'')}</span></div>`);
+
+      x+=lista('Sentencias penales', det.sentencias_penales, u=>`<div class="fi mal-bloque">
+        <b>${esc(u.delito||'—')}</b><span>${[u.modalidad,u.cumplimiento,u.fallo,u.organo,
+          u.expediente,u.fecha].filter(Boolean).map(esc).join(' · ')}</span></div>`);
+
+      x+=lista('Sentencias por obligaciones', det.sentencias_obligaciones, u=>`<div class="fi mal-bloque">
+        <b>${esc(u.materia||'—')}</b><span>${[u.fallo,u.organo,u.expediente]
+          .filter(Boolean).map(esc).join(' · ')}</span></div>`);
+
+      if(det.ingresos){
+        const i=det.ingresos;
+        x+=`<h3 class="fs">Ingresos declarados${i.anio?' · '+esc(i.anio):''}</h3>`+
+          dato('Remuneración pública', money(i.remuneracion_publica))+
+          dato('Remuneración privada', money(i.remuneracion_privada))+
+          dato('Renta pública', money(i.renta_publica))+
+          dato('Renta privada', money(i.renta_privada))+
+          dato('Otros ingresos', money((i.otros_publico||0)+(i.otros_privado||0) || null))+
+          dato('Total', money(i.total));
+      }
+
+      x+=lista('Bienes inmuebles', det.inmuebles, u=>`<div class="fi">
+        <b>${esc(u.tipo)}</b><span>${esc(u.lugar||'')}${
+          u.valor?' · S/ '+F(Math.round(u.valor)):''}</span></div>`);
+      x+=lista('Bienes muebles', det.muebles, u=>`<div class="fi">
+        <b>${esc(u.tipo)}</b><span>${esc(u.detalle||'')}${
+          u.valor?' · S/ '+F(Math.round(u.valor)):''}</span></div>`);
+    }
+
+    x+=`<p class="sub" style="margin:14px 0 0">Todo lo anterior es **lo declarado
+      por la persona** en su hoja de vida ante el JNE. No es una verificación.</p>
+      </div>`;
+    $('modal').innerHTML=x.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  };
+
+  pinta(undefined);                       // primero lo que ya está en memoria
+  if(!RACE_ACTUAL) return pinta(null);
+  try{
+    if(!FICHAS_RAZA[RACE_ACTUAL]) FICHAS_RAZA[RACE_ACTUAL]=await j(`hdv/${RACE_ACTUAL}.json`);
+    pinta(FICHAS_RAZA[RACE_ACTUAL][id] || {});
+  }catch(e){ pinta(null) }
+}
+function cierraFicha(){ $('modal').hidden=true; $('modal').innerHTML=''; }
+document.addEventListener('click',e=>{
+  const vm=e.target.closest('.ver-mas');
+  if(vm){
+    const abierto=vm.getAttribute('aria-expanded')==='true';
+    vm.setAttribute('aria-expanded', String(!abierto));
+    const filas=[...document.querySelectorAll('tr.mas')];
+    filas.forEach(tr=>tr.hidden=abierto);
+    vm.textContent = abierto ? `Ver las ${filas.length} restantes` : 'Ver menos';
+    return;
+  }
+  const g=e.target.closest('.abrir');
+  if(g){
+    const abierto=g.getAttribute('aria-expanded')==='true';
+    g.setAttribute('aria-expanded', String(!abierto));
+    g.textContent = abierto ? '+' : '−';
+    document.querySelectorAll('.hijo.g-'+g.dataset.g).forEach(tr=>tr.hidden=abierto);
+    return;
+  }
+  const b=e.target.closest('.ver-hdv'); if(b) return abreFicha(b.dataset.id);
+  if(e.target.closest('.cerrar') || e.target.id==='modal') cierraFicha();
+});
+addEventListener('keydown',e=>{ if(e.key==='Escape') cierraFicha() });
+
+const ej_nombre=el=>el?.ejecutivo?.organizacion_nombre||null;
+const ej_logo=el=>el?.ejecutivo?.organizacion_logo||null;
+
+// El rótulo de la franja. Sale del cargo, no de un texto genérico: en una página
+// de Lima decir «Electo» no dice qué se eligió.
+const ROTULO={'GOBERNADOR REGIONAL':'Gobernador electo',
+              'ALCALDE PROVINCIAL':'Alcalde provincial electo',
+              'ALCALDE DISTRITAL':'Alcalde distrital electo'};
+
+// Qué se sabe ya de la carrera, antes que nada. **Devuelve vacío si todavía no
+// hay llamada**: una caja que dice «en disputa» ocupa el lugar de honor de la
+// página para no decir nada, y en las 1,608 carreras sin resolver sería lo
+// primero que se ve. Mientras no haya llamada, la página arranca por el
+// escrutinio y los votos, que es lo que sí se sabe.
+function desenlace(d, el, pr, porCod, orgEj){
+  const caja=(rotulo, cuerpo, extra='')=>`<div class="desenlace">
+    <div class="franja">${esc(rotulo)}${extra}</div>
+    <div class="des-cuerpo">${cuerpo}</div></div>`;
+
+  const tarjeta=o=>{
+    const c=o?.candidato;
+    registra(c, {nombre:o?.nombre, logo:o?.logo});
+    return `<div class="des-card">
+      <div class="aut aut-g" style="border:0;padding:2px 0">
+        <img class="aut-logo" src="${esc(o?.logo||'')}" alt="" loading="lazy"
+          onerror="this.style.visibility='hidden'">
+        <img class="aut-foto" src="${esc(c?.foto||'')}" alt="" loading="lazy"
+          onerror="this.style.visibility='hidden'">
+        <div class="ident">
+          <b class="cand-nom">${esc(c?.nombre||'—')}</b>
+          <span class="part-nom">${esc(o?.nombre||'')}</span>
+          <span class="des-pct">${P(o.pct_validos)} · ${F(o.votos)} votos</span>
+          <span class="des-hdv">${botonHdv(c)}</span>
+        </div></div></div>`;
+  };
+
+  // Ganador proclamado por la proyección. Solo el titular: el acompañante no es
+  // la noticia y sale igual en «Autoridades electas».
+  if(pr.estado==='electo' && el?.ejecutivo?.titular?.length){
+    const o=porCod[el.ejecutivo.organizacion];
+    if(!o) return '';
+    const c=el.ejecutivo.titular[0];
+    registra(c, orgEj);
+    return caja(ROTULO[el.ejecutivo.cargo] || (el.ejecutivo.cargo+' electo'),
+      `<div class="des-card">
+        <div class="aut aut-g" style="border:0;padding:2px 0">
+          <img class="aut-logo" src="${esc(orgEj.logo||'')}" alt="" loading="lazy"
+            onerror="this.style.visibility='hidden'">
+          <img class="aut-foto" src="${esc(c.foto||'')}" alt="" loading="lazy"
+            onerror="this.style.visibility='hidden'">
+          <div class="ident">
+            <b class="cand-nom">${esc(c.nombre)}</b>
+            <span class="part-nom">${esc(orgEj.nombre||'')}</span>
+            <span class="des-pct">${P(o.pct_validos)} · ${F(o.votos)} votos</span>
+            <span class="des-hdv">${botonHdv(c)}</span>
+          </div></div></div>`);
+  }
+
+  // Segunda vuelta proyectada: los dos que pasan.
+  if(pr.estado==='segunda_vuelta' && (pr.quienes||[]).length){
+    const pasan=pr.quienes.map(c=>porCod[c]).filter(Boolean)
+      .sort((a,b)=>b.pct_validos-a.pct_validos);
+    if(!pasan.length) return '';
+    return caja('Habrá segunda vuelta',
+      `<div class="des-par">`+pasan.map(tarjeta).join('')+`</div>`,
+      `<span class="franja-sub">P(hay segunda vuelta) ${P(pr.p_segunda_vuelta)}</span>`);
+  }
+
+  // Empate: también es una llamada, y una que dispara sorteo.
+  if(pr.estado==='empate' && (pr.quienes||[]).length){
+    const emp=pr.quienes.map(c=>porCod[c]).filter(Boolean);
+    if(!emp.length) return '';
+    return caja('Empate — va a sorteo',
+      `<div class="des-par">`+emp.map(tarjeta).join('')+`</div>`);
+  }
+
+  return '';   // sin llamada, sin caja
+}
+
+// Una autoridad electa es una persona **y** un partido, y las dos cosas se leen
+// en la misma fila: logo, cara, nombre arriba y partido debajo. Antes el partido
+// era un encabezado y las personas colgaban de él, lo que obligaba a mirar hacia
+// arriba para saber por quién entró cada uno.
+// `porQue` es la circunscripción por la que entra, y solo la tienen los cuerpos
+// que se eligen por partes: un consejero regional representa a una provincia y
+// un regidor no representa a nada más chico que su concejo.
+function fichaAutoridad(c, org, grande=false, porQue=null){
+  const vacia = !c;
+  if(c) registra(c, org);
+  const info=!c?'':[c.dni?'DNI '+esc(c.dni):'', c.edad?c.edad+' años':'',
+    c.sentencias_penales?`<b>${c.sentencias_penales} sentencia(s) penal(es)</b>`:'']
+    .filter(Boolean).join(' · ');
+  return `<div class="aut${grande?' aut-g':''}">
+    ${org?.logo?`<img class="aut-logo" src="${esc(org.logo)}" alt="" loading="lazy"
+      onerror="this.style.visibility='hidden'">`:'<span class="aut-logo"></span>'}
+    ${c?`<img class="aut-foto" src="${esc(c.foto||'')}" alt="" loading="lazy"
+      onerror="this.style.visibility='hidden'">`:'<span class="aut-foto"></span>'}
+    <div class="ident">
+      <b class="cand-nom">${vacia?'<span class="pordef">EN DISPUTA</span>':esc(c.nombre)}</b>
+      ${porQue?`<span class="por-que">${esc(porQue)}</span>`:''}
+      <span class="part-nom">${esc(org?.nombre||'—')}</span>
+      ${info?`<span class="m">${info}</span>`:''}
+    </div>
+    <span style="margin-left:auto">${c?botonHdv(c):''}</span></div>`;
+}
+
+async function vistaCarrera(rid){
+  // El consejo regional se elige por circunscripción, pero no es una página:
+  // es una sección de la página de su región. Llegar a `#/c/02-XXXXXX` daba una
+  // página huérfana, sin ejecutivo y sin contexto.
+  if(rid.startsWith('02-')){ location.replace('#/c/01-'+rid.slice(3,5)+'0000'); return }
+  let d; try{ d=await j(`carrera/${rid}.json`) }
+  catch(e){ $('vista').innerHTML=`<div class="aviso">No hay datos para
+    <code>${esc(rid)}</code>. <a href="#/">Volver al resumen</a>.</div>`; return }
+
+  const co=d.computo||{}, pr=d.pronostico||{}, el=d.electos||{};
+  const nombres={}; (d.organizaciones||[]).forEach(o=>nombres[o.codigo]=o.nombre);
+
+  RACE_ACTUAL=rid;
+  const porCod={}; (d.organizaciones||[]).forEach(o=>porCod[o.codigo]=o);
+  const orgEj={nombre:ej_nombre(el), logo:ej_logo(el)};
+
+  cabecera();
+  let h=`<a class="volver" href="#/">← Resumen nacional</a>
+    <h1 style="margin-top:6px">${esc(d.nombre)}</h1>
+    <div class="sub">${NIVEL[d.tipo]||d.tipo}</div>`;
+
+  // --- 0. El desenlace, si ya lo hay. Lo que la gente entra a averiguar va
+  // primero; estaba al pie, debajo del mapa y de la tabla de votos.
+  // Anulada: la caja lo dice y la página sigue mostrando a los candidatos con
+  // cero votos. Una página vacía no distinguiría «todavía no sabemos» de «no hubo
+  // elección que contar», que es justo lo que hay que separar.
+  h+= d.anulada
+    ? `<div class="desenlace"><div class="franja">ELECCIÓN ANULADA</div>
+       <div class="des-cuerpo"><p style="margin:0">Todas las actas fueron
+       anuladas.</p></div></div>`
+    : desenlace(d, el, pr, porCod, orgEj);
+
+  // El avance del escrutinio de **esta** elección va siempre, haya llamada o no:
+  // es lo que le da sentido a todo lo demás de la página. La barra de arriba
+  // lleva el del país entero, que es otra cosa.
+  h+=`<div class="avance-caja">
+    <div class="e">ACTAS CONTABILIZADAS ·
+      <b>${co.actas_esperadas?P(co.pct_actas):'—'}</b>
+      ${co.actas_esperadas?`· ${F(co.actas_contabilizadas)} de ${F(co.actas_esperadas)}`:''}</div>
+    <div class="riel"><i style="width:${(100*(co.pct_actas||0)).toFixed(1)}%"></i></div>
+    </div>`;
+
+  // --- 1. cómputo
+  h+=`<h2>Resultados</h2>
+    <div class="marcador">
+    <div class="tile"><div class="k">${F(co.votos_validos)}</div><div class="e">Válidos</div></div>
+    <div class="tile"><div class="k">${F(co.votos_blancos)}</div><div class="e">Blancos</div></div>
+    <div class="tile"><div class="k">${F(co.votos_nulos)}</div><div class="e">Nulos</div></div>
+    <div class="tile"><div class="k">${F(co.votos_impugnados)}</div><div class="e">Impugnados</div></div>
+    <div class="tile"><div class="k">${F(co.votos_emitidos)}</div><div class="e">Votos emitidos</div></div>
+    <div class="tile"><div class="k">${F(co.electores_habiles)}</div><div class="e">Electores hábiles</div></div>
+    </div>`;
+
+  // --- 2. proyección
+  const orgs=d.organizaciones||[];
+  // Cinco filas y el resto plegado. En ERM 2026 hay circunscripciones con más de
+  // veinte listas, y una tabla de veinte filas entierra todo lo que viene debajo.
+  const VISIBLES=5;
+  const mx=Math.max(...orgs.map(o=>o.pct_validos||0),0.0001);
+  // En gobernador, «quién va primero» no es la pregunta: si la segunda vuelta es
+  // segura, el puntero gana un torneo que no existe. Las preguntas son ganar en
+  // primera (superar el umbral) y clasificar entre los dos. Se muestran aparte,
+  // con P(hay segunda vuelta) encabezando la columna a la que condiciona.
+  const dosVueltas = d.tipo==='01' && pr.p_segunda_vuelta!=null;
+  // En las circunscripciones muy chicas el forecaster no encuentra un nivel con
+  // suficientes mesas contadas y recurre a un prior de respaldo: da
+  // probabilidades, con banda ancha, pero no piso garantizado ni llamada. Hay
+  // que decirlo, o una probabilidad de respaldo se lee como una normal.
+  const respaldo = !!pr.respaldo;
+  const sinProyeccion = orgs.length && orgs.every(o=>!(o.p_gana>0) &&
+    !(o.p_primera>0) && !(o.p_segunda>0));
+  h+=`<h2>Proyección</h2>`;
+  if(!d.anulada && sinProyeccion) h+=`<div class="aviso">Todavía no hay proyección para esta
+    elección. Con ${F(co.actas_contabilizadas)} de ${F(co.actas_esperadas)} actas
+    no hay base suficiente para estimar; los votos de abajo son el cómputo
+    oficial, no un pronóstico.</div>`;
+  else if(respaldo) h+=`<div class="aviso">Proyección preliminar. Con
+    ${F(co.actas_contabilizadas)} de ${F(co.actas_esperadas)} actas no hay
+    suficientes mesas comparables, así que las probabilidades se estiman sobre lo
+    contado aquí mismo y llevan mucha más incertidumbre de lo habitual. Esta
+    elección no se dará por definida con esta base.</div>`;
+  h+=`<div class="envuelve"><table><thead><tr><th>Organización</th>
+      <th class="n">Votos</th><th class="n">%</th><th style="width:26%"></th>`+
+    (sinProyeccion ? ''
+      : dosVueltas
+      ? `<th class="n">P(gana en 1.ª)</th><th class="n">P(pasa a 2.ª)</th>`
+      : `<th class="n">P(gana)</th>`)+
+    `</tr></thead><tbody>`+
+    orgs.map((o,i)=>`<tr${i>=VISIBLES?' class="mas" hidden':''}>
+      <td><span class="org">
+        ${burbuja(o.codigo)}
+        <img class="logo" src="${esc(o.logo||'')}" alt="" loading="lazy"
+          onerror="this.style.visibility='hidden'">
+        <img class="carita" src="${esc(o.candidato?.foto||'')}" alt="" loading="lazy"
+          onerror="this.style.visibility='hidden'">
+        <span class="ident">
+          <b class="cand-nom">${esc(o.candidato?.nombre||'—')}</b>
+          <span class="part-nom">${esc(o.nombre)}</span>
+        </span></span></td>
+      <td class="n">${F(o.votos)}</td><td class="n">${P(o.pct_validos)}</td>
+      <td><span class="barra" style="width:${(100*(o.pct_validos||0)/mx).toFixed(1)}%;
+        background:${colorDe(o.codigo)}"></span></td>`+
+      (sinProyeccion ? ''
+        : dosVueltas
+        ? `<td class="n">${o.p_primera>0?P(o.p_primera):'—'}</td>
+           <td class="n">${o.p_segunda>0?P(o.p_segunda):'—'}</td>`
+        : `<td class="n">${o.p_gana>0?P(o.p_gana):'—'}</td>`)+
+      `</tr>`).join('')+`</tbody></table></div>`+
+    (orgs.length>VISIBLES
+      ? `<button class="ver-mas" aria-expanded="false">Ver las ${
+          orgs.length-VISIBLES} restantes</button>` : '');
+
+  // --- mapa desagregado, con selector de nivel dentro del mapa
+  const niveles=d.desagregado_niveles||{};
+  const ETIQ_NIV={provincia:'Por provincia', distrito:'Por distrito',
+                  local:'Por local'};
+  // Qué archivo de geografía corresponde a cada nivel **depende del tipo de
+  // carrera**, no solo del nombre del nivel: en gobernador el recorte base son
+  // las provincias del departamento y los distritos van en el `-dist`; en una
+  // provincial el recorte base ya son los distritos. Suponer un mapeo único dejó
+  // sin mapa a las 196 provinciales y a las 1,694 distritales.
+  const GEO_NIV = d.tipo==='01'
+    ? {provincia:`geo/${rid}.geojson`, distrito:`geo/${rid}-dist.geojson`}
+    : {distrito:`geo/${rid}.geojson`};
+  // Una carrera distrital se desagrega por local de votación y de los locales no
+  // hay geometría. Se pinta el distrito entero con quien puntea en la carrera:
+  // no es un coropleto —hay una sola pieza— pero ubica de qué distrito se habla,
+  // que es la mitad de para qué sirve el mapa.
+  if(d.tipo==='04' && !niveles.distrito){
+    const tot={};
+    for(const u of niveles.local||[])
+      for(const [c,v] of Object.entries(u.votos||{})) tot[c]=(tot[c]||0)+v;
+    if(Object.keys(tot).length)
+      niveles.distrito=[{ubigeo:d.ubigeo, pct_actas:co.pct_actas, votos:tot}];
+  }
+  const dispo=Object.keys(niveles).filter(k=>GEO_NIV[k] && (niveles[k]||[]).length);
+  if(dispo.length){
+    h+=`<h2>Mapa</h2>
+      <div class="mapa" id="mapaC"></div><div id="leyC"></div>`;
+    setTimeout(async()=>{
+      const cont=$('mapaC'); if(!cont) return;
+      let m=null, capa=null;
+      // Quién gana en cada unidad, a un nivel dado. La carrera se adjudica en la
+      // circunscripción entera; esto es solo dónde va ganando cada quien.
+      const ganadorEn=nivel=>{
+        const g={};
+        for(const u of niveles[nivel]||[]){
+          let mx=-1, q=null;
+          for(const [c,v] of Object.entries(u.votos||{})) if(v>mx){mx=v;q=c}
+          g[u.ubigeo]={q, pct:u.pct_actas};
+        }
+        return g;
+      };
+      // Mismo esqueleto de tooltip que en el mapa nacional: unidad, avance del
+      // escrutinio, y recién después la persona y su organización. El nombre del
+      // partido solo obliga a otro salto para saber a quién se está votando.
+      const fichaOrg={}; (d.organizaciones||[]).forEach(o=>fichaOrg[o.codigo]=o);
+      let borde=null;
+      // Qué nivel dibuja las fronteras de referencia sobre cada vista. En una
+      // regional vista por distrito son las provincias; vista por provincia, la
+      // pieza ya **es** la provincia y no hace falta nada encima.
+      const CONTORNO_DE={distrito: d.tipo==='01' ? `geo/${rid}.geojson` : null};
+      async function pinta(nivel){
+        try{
+          const gj=await j(GEO_NIV[nivel]);
+          const gan=ganadorEn(nivel);
+          if(!m){
+            m=creaMapa(cont);
+            if(dispo.length>1)
+              controlNiveles(m, dispo.map(k=>[k,ETIQ_NIV[k]||k]), nivel, pinta);
+          }
+          if(capa) m.removeLayer(capa);
+          if(borde){ m.removeLayer(borde); borde=null; }
+          const marcas=new Set();
+          capa=agregaCapa(m, gj, u=>{
+            const x=gan[u];
+            if(!x||!x.q){ marcas.add('sin_actas');
+              return {color:css('--vacio'),
+                      texto:`<span class="tt-est">SIN ACTAS</span>`}; }
+            const o=fichaOrg[x.q]||{};
+            return {color:colorDe(x.q),
+              texto:`<span class="tt-est">${P(x.pct)} de actas contabilizadas</span>`+
+                `<span class="tt-cand">${esc(o.candidato?.nombre||'—')}</span>`+
+                `<span class="tt-org">${esc(nombres[x.q]||x.q)}</span>`};
+          }, {peso: nivel==='distrito' && dispo.length>1 ? .55 : 1.3});
+          if(CONTORNO_DE[nivel]) borde=await contorno(m, CONTORNO_DE[nivel], 1.6);
+          const l=$('leyC'); if(l) l.innerHTML=leyendaEstados(marcas);
+        }catch(e){ if(!m){ cont.remove(); const l=$('leyC'); if(l) l.remove(); } }
+      }
+      pinta(dispo.includes('provincia')?'provincia':dispo[0]);
+    },0);
+  }
+
+  // --- 3. autoridades electas. SIEMPRE, desde el corte cero.
+  h+=`<h2>Autoridades electas</h2>`;
+  const ej=el.ejecutivo;
+  // Una autoridad electa es persona **y** partido. Con la cara sola no se sabe
+  // qué ganó la elección, que es la mitad de la noticia.
+  if(ej&&ej.cargo){
+    h+=`<div class="fila"><b>${esc(ej.cargo)}</b>
+      <span class="chip ${ej.estado==='electo'?'si':''}">${etiq(ej.estado)}</span></div>`;
+    const orgEj={nombre:ej.organizacion_nombre, logo:ej.organizacion_logo};
+    h+= (ej.titular&&ej.titular.length)
+      ? ej.titular.map(c=>fichaAutoridad(c, orgEj, true)).join('')
+      : `<div class="aut aut-g"><span class="aut-foto"></span>
+         <span class="pordef">EN DISPUTA</span></div>`;
+    if(ej.cargo_acompanante){
+      h+=`<div class="fila"><b>${esc(ej.cargo_acompanante)}</b></div>`;
+      // Si el ejecutivo ya está electo y no hay acompañante, la carrera no está
+      // «en disputa»: la candidatura se cayó —exclusión, renuncia o tacha— y la
+      // lista ganó sin ella. Pasó en Huánuco y Ucayali en 2022.
+      h+= (ej.acompanante&&ej.acompanante.length)
+        ? ej.acompanante.map(c=>fichaAutoridad(c, orgEj, true)).join('')
+        : `<div class="aut aut-g"><span class="aut-foto"></span>
+           <span class="pordef">${ej.estado==='electo'
+             ? 'SIN CANDIDATO INSCRITO — LA CANDIDATURA NO LLEGÓ A LA ELECCIÓN'
+             : 'EN DISPUTA'}</span></div>`;
+    }
+  }
+  const cu=el.cuerpo;
+  if(cu&&cu.n_escanos){
+    h+=`<div class="fila" style="border-bottom:0;margin-top:10px">
+      <b>${esc(cu.cargo)}</b><span class="sub">${cu.adjudicados} DE ${cu.n_escanos}
+      ADJUDICADOS${cu.en_disputa?` · ${cu.en_disputa} EN DISPUTA`:''}</span></div>`;
+
+    // Un concejo municipal es tan colegiado como un consejo regional: se dibuja
+    // igual, bancadas primero y en disputa al final.
+    const bancadasM=(cu.por_organizacion||[]).map(o=>({
+      codigo:o.codigo, escanos:o.escanos, nombre:o.nombre}));
+    h+=hemiciclo(bancadasM, cu.en_disputa, colorDe)+
+       leyendaBancadas(bancadasM, cu.en_disputa, colorDe);
+    // Los cuerpos proporcionales sí se leen como tabla: una fila por persona,
+    // en el orden del reparto.
+    // Si una organización se lleva más escaños que candidatos tenemos en el
+    // registro, el hueco se declara. Callarlo dejaba un concejo donde el
+    // hemiciclo mostraba cinco escaños llenos y la lista nombraba a cuatro.
+    // Pasó una vez en 2022 —Pucará, Puno: el registro del JNE no traía la lista
+    // de MIRA, que sin embargo sacó un regidor—, y es justo el tipo de hueco
+    // que aparece cuando una lista se inscribe tarde.
+    h+= (cu.por_organizacion||[]).flatMap(o=>{
+      const cs=o.candidatos||[];
+      const filas=cs.map(c=>fichaAutoridad(c, o));
+      for(let i=cs.length;i<(o.escanos||0);i++)
+        filas.push(`<div class="aut"><span class="aut-logo"></span>
+          <span class="aut-foto"></span><div class="ident">
+          <b class="cand-nom"><span class="pordef">CANDIDATO NO DISPONIBLE</span></b>
+          <span class="part-nom">${esc(o.nombre)}</span>
+          <span class="m">El escaño está adjudicado; la lista no figura en el
+            registro de candidaturas.</span></div></div>`);
+      return filas;
+    }).join('');
+    if(cu.en_disputa>0){
+      h+=`<div class="aut"><span class="aut-foto"></span>
+        <span class="pordef">${cu.en_disputa} ESCAÑO(S) EN DISPUTA</span></div>`;
+    }
+  }
+  if(!ej?.cargo && !cu?.n_escanos) h+=`<div class="aviso">Esta carrera no elige
+    autoridades propias.</div>`;
+
+  // --- consejo regional (solo página regional)
+  if(d.consejo){
+    // Primero el cuerpo entero de un vistazo —cuántos escaños y de quién—, y
+    // recién después quién ocupa cada uno. El consejo es un órgano colegiado:
+    // la composición es la noticia; los nombres, el detalle.
+    const todos=[];
+    for(const x of d.consejo.circunscripciones)
+      for(const e of x.escanos) todos.push({...e, provincia:x.nombre});
+    // La paleta del consejo es la del propio consejo, no la de la carrera de
+    // gobernador: son votaciones distintas y los punteros no tienen por qué
+    // coincidir.
+    const cuenta={};
+    for(const e of todos) if(e.organizacion) cuenta[e.organizacion]=(cuenta[e.organizacion]||0)+1;
+    const topC=Object.keys(cuenta).sort((a,b)=>cuenta[b]-cuenta[a]);
+    const colC=colorDe;
+
+    const bancadasC=topC.map(c=>({codigo:c, escanos:cuenta[c],
+      nombre:(todos.find(e=>e.organizacion===c)||{}).nombre||c}));
+    const disputaC=d.consejo.n_escanos-d.consejo.adjudicados;
+    // Orden de lectura: primero la composición del cuerpo, que es la noticia;
+    // después dónde se eligió cada escaño; al final quién lo ocupa.
+    h+=`<h2>Consejo regional — ${d.consejo.adjudicados} de ${d.consejo.n_escanos}</h2>`+
+      hemiciclo(bancadasC, disputaC, colC)+
+      leyendaBancadas(bancadasC, disputaC, colC)+
+      `<div class="mapa" id="mapaK" style="margin-top:10px"></div>`;
+    // El consejo se elige por circunscripción, así que su mapa es otro: quién
+    // puntea en cada provincia, con los escaños que le tocan dibujados encima.
+    setTimeout(async()=>{
+      const cont=$('mapaK'); if(!cont) return;
+      try{
+        const gj=await j(`geo/02-${d.ubigeo.slice(0,2)}0000.geojson`);
+        const porU={};
+        for(const x of d.consejo.circunscripciones) porU[x.ubigeo]=x;
+        const m=creaMapa(cont);
+        agregaCapa(m, gj, u=>{
+          const x=porU[u];
+          if(!x||!x.lider) return {color:css('--vacio'),
+            texto:`<span class="tt-est">SIN ACTAS</span>`};
+          const ganados=(x.escanos||[]).filter(e=>e.organizacion===x.lider).length;
+          return {color:colC(x.lider),
+            texto:`<span class="tt-est">${P(x.pct_actas)} de actas · ${x.n_escanos} ESCAÑO(S)</span>`+
+              `<span class="tt-cand">${ganados} de ${x.n_escanos}</span>`+
+              `<span class="tt-org">${esc(x.lider_nombre||x.lider)}</span>`};
+        }, {peso:1.3});
+        for(const x of d.consejo.circunscripciones){
+          if(!x.centroide) continue;
+          const bolas=x.escanos.map(e=>`<i style="background:${
+            e.organizacion?colC(e.organizacion):css('--vacio')}"></i>`).join('');
+          L.marker([x.centroide[1], x.centroide[0]], {interactive:false,
+            icon:L.divIcon({className:'escanos-mapa', html:`<div>${bolas}</div>`,
+                            iconSize:null})}).addTo(m);
+        }
+      }catch(e){ cont.remove() }
+    },0);
+
+    h+=todos.map(e=>fichaAutoridad(e.consejero, {nombre:e.nombre, logo:e.logo},
+                                    false, e.provincia)).join('');
+  }
+  $('vista').innerHTML=h;
+}
+
+// -------------------------------------------------------------------- rutas
+async function enruta(cambioDeRuta=true){
+  const r=location.hash.replace(/^#/,'')||'/';
+  const mismaRuta = r===RUTA_ACTUAL;
+  RUTA_ACTUAL=r;
+  const m=r.match(/^\/c\/([0-9]{2}-[0-9]{6})$/);
+  document.querySelectorAll('.mode-tab').forEach(a=>{
+    if(a.dataset.r===r) a.setAttribute('aria-current','page');
+    else a.removeAttribute('aria-current');
+  });
+  // Solo se sube al inicio cuando de verdad cambias de página. Un refresco del
+  // sondeo repinta la misma vista, y mandar al tope cada 45 segundos a quien
+  // está leyendo la tabla de regidores hace la página inusable justo la noche
+  // en que más se lee.
+  const y = (cambioDeRuta && !mismaRuta) ? 0 : scrollY;
+  if(m){ await vistaCarrera(m[1]); }
+  else if(r==='/buscador'){ await vistaBuscador(); }
+  else { await vistaNacional(); }
+  scrollTo(0, y);
+}
+
+// --------------------------------------------------- sondeo con jitter
+// Intervalo configurable por querystring (?cada=20) para poder bajarlo en el
+// ensayo. El jitter evita que 20,000 clientes pidan en el mismo segundo: sin
+// él, el patrón de carga son picos sincronizados cada N segundos.
+const PARAMS=new URLSearchParams(location.search);
+const CADA=Math.max(5,+(PARAMS.get('cada')||45))*1000;
+const JITTER=0.35;
+let timer=null;
+
+function proximo(){
+  if(REPLAY){
+    const v=$('vivo'), r=$('replay');
+    if(v) v.hidden=true;
+    if(r) r.hidden=false;
+    return;
+  }
+  const espera=CADA*(1+(Math.random()*2-1)*JITTER);
+  clearTimeout(timer);
+  timer=setTimeout(refresca, espera);
+  $('sondeo').textContent=`actualiza cada ~${Math.round(CADA/1000)} s`;
+  $('pulso').className='pulso on';
+}
+async function refresca(){
+  if(REPLAY) return;
+  if(document.hidden){ proximo(); return }   // pestaña en segundo plano: no pedir
+  try{
+    const nuevo=await j('nacional.json');
+    const cambio=!NAC||nuevo.generado!==NAC.generado;
+    NAC=nuevo; cabecera();
+    if(cambio) await enruta(false);
+  }catch(e){
+    $('pulso').className='pulso off';
+    $('sondeo').textContent='sin conexión — reintentando';
+  }
+  proximo();
+}
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refresca() });
+
+// La barra de arriba **no cambia nunca**: es el marcador de las ERM 2022 enteras
+// —cuántas elecciones hay, cuánto se ha contado del país, cuánta gente votó— y se
+// lee igual en el resumen que dentro de una contienda. Lo de *esta* contienda
+// (su nombre, su avance) vive en su página, que es donde significa algo. Cuando
+// la barra cambiaba al navegar, el mismo sitio mostraba dos magnitudes distintas
+// sin decir cuál, y no se sabía si el 100% era del país o del distrito.
+function cabecera(){
+  const c = {pct_actas:NAC.pct, electores_habiles:NAC.electores_habiles,
+             votos_emitidos:NAC.votos_emitidos};
+  $('avance').textContent = P(c.pct_actas);
+  $('avanceBarra').style.width=(100*(c.pct_actas||0)).toFixed(1)+'%';
+  $('cabSub').innerHTML = `${F(NAC.carreras)} elecciones · ${
+    F((NAC.estados||{}).electo + ((NAC.estados||{}).segunda_vuelta||0))
+    } con resultado<br>ONPE`;
+  // La participación se mide contra el padrón **escrutado**, no contra el del
+  // país: si no, a mitad de noche saldría 39% y se leería como abstención.
+  const part = NAC.participacion!=null ? NAC.participacion : null;
+  const st=(l,v,hi)=>`<div class="hstat"><span class="hstat-lab">${l}</span>
+    <span class="hstat-val${hi?' hi':''}">${v}</span></div>`;
+  $('cabStats').innerHTML =
+    st('Electores', F(c.electores_habiles||0))+
+    st('Votos emitidos', F(c.votos_emitidos||0))+
+    st('Participación', part!=null?P(part):'—', true);
+}
+
+// -------------------------------------------------------------------- inicio
+addEventListener('hashchange',enruta);
+(async()=>{
+  try{
+    [META,NAC,COLORES]=await Promise.all([j('meta.json'), j('nacional.json'),
+      j('colores.json').catch(()=>({}))]);
+    cabecera(); await enruta(); proximo();
+  }catch(e){
+    $('vista').innerHTML=`<div class="aviso">No se pudieron cargar los datos.
+      <code>${esc(e.message)}</code></div>`;
+  }
+})();
+</script></body></html>
