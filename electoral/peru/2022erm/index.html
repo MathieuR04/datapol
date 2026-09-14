@@ -71,8 +71,6 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .cab-id{display:flex;align-items:center;gap:.75rem}
 .cab-tit{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;
   letter-spacing:.04em;line-height:1;white-space:nowrap}
-.cab-sub{font-size:9px;color:var(--suave);letter-spacing:.05em;text-transform:uppercase;
-  border-left:2px solid var(--terra);padding-left:.6rem;line-height:1.5}
 .cab-avance{flex:1;max-width:300px;min-width:180px}
 .cab-av-lab{display:flex;justify-content:space-between;font-size:9px;
   color:var(--suave);letter-spacing:.04em;margin-bottom:4px}
@@ -366,7 +364,6 @@ tr.mas[hidden]{display:none}
 <header class="cab">
   <div class="cab-id">
     <div class="cab-tit" id="cabTitulo">🇵🇪 ERM 2022 · PERÚ</div>
-    <div class="cab-sub" id="cabSub">Resultados por distrito<br>ONPE</div>
   </div>
   <div class="cab-avance">
     <div class="cab-av-lab"><span>ACTAS CONTABILIZADAS</span><span id="avance">—</span></div>
@@ -672,31 +669,36 @@ async function vistaNacional(){
   const orden=['electo','segunda_vuelta','empate','por_definir','sin_resultado'];
   const llamadas=(est.electo||0)+(est.segunda_vuelta||0);
   cabecera();
+  // Orden de la página: buscador, mapa, estado, organizaciones.
+  //
   // El buscador antes que nada: con 2,113 elecciones, lo primero que hace
-  // cualquiera es ir a la suya. El resumen del país se lee después, no antes.
-  let h=bloqueBuscar('Busca una contienda')+`<h2>Estado</h2>`;
-  // El mismo marcador por nivel: 1,694 distritales tapan lo que pasa en las 25
-  // regionales, que son las que de verdad se siguen.
-  // Solo los tres ejecutivos. El total global lo domina lo distrital y no dice
-  // nada, y el consejo regional no es una carrera que se «gane»: es un reparto
+  // cualquiera es ir a la suya. Y el mapa antes del marcador, porque es la
+  // lectura que de verdad se mira —dónde ganó quién— mientras que el conteo por
+  // nivel es el resumen de esa misma información. Se arman por separado y se
+  // ordenan al final, para que cambiar el orden sea mover una línea.
+  const bloqueMapa = `<h2>Mapa</h2>
+    <div class="tabs" role="group" aria-label="Nivel del mapa">`+
+    [['01','Gobernador'],['03','Provincial'],['04','Distrital']].map(([t,l])=>
+      `<button class="tab" data-m="${t}" aria-pressed="false">${l}</button>`).join('')+
+    `</div><div class="mapa" id="mapa"><div class="aviso" style="border:0">Cargando mapa…</div></div>
+    <div id="leyN"></div>`;
+
+  // El marcador por nivel: 1,694 distritales tapan lo que pasa en las 25
+  // regionales, que son las que de verdad se siguen. Solo los tres ejecutivos;
+  // el consejo regional no es una carrera que se «gane», es un reparto
   // proporcional y se lee en la página de cada región.
   const nivelesM=Object.entries(NIVEL_PLURAL).filter(([t])=>porTipo[t]);
-  if(nivelesM.length) h+=`<div class="nivel">`+
+  const bloqueEstado = `<h2>Estado</h2>` + (!nivelesM.length ? '' :
+    `<div class="nivel">`+
     nivelesM.map(([t,l])=>{
       const e=porTipo[t], tot=Object.values(e).reduce((x,y)=>x+y,0);
       return `<div class="caja"><h3>${l} · ${F(tot)}</h3>`+
         orden.filter(k=>e[k]).map(k=>`<div class="l">
           <span><span class="punto" style="background:var(${EST[k].v})"></span>${etiq(k,true)}</span>
           <b>${F(e[k])}</b></div>`).join('')+`</div>`;
-    }).join('')+`</div>`;
+    }).join('')+`</div>`);
 
-  // --- mapas, uno por nivel
-  h+=`<h2>Mapa</h2>
-    <div class="tabs" role="group" aria-label="Nivel del mapa">`+
-    [['01','Gobernador'],['03','Provincial'],['04','Distrital']].map(([t,l])=>
-      `<button class="tab" data-m="${t}" aria-pressed="false">${l}</button>`).join('')+
-    `</div><div class="mapa" id="mapa"><div class="aviso" style="border:0">Cargando mapa…</div></div>
-    <div id="leyN"></div>`;
+  let h = bloqueBuscar('Busca una contienda') + bloqueMapa + bloqueEstado;
 
   // --- tabla por organización
   // --- tabla de organizaciones, con agrupación
@@ -848,6 +850,34 @@ function bloqueBuscar(titulo){
       autocomplete="off" aria-label="Buscar por nombre">
     <div class="res" id="res" hidden></div>`;
 }
+// Dónde queda cada circunscripción. Los nombres de provincia y departamento no
+// están en `meta.json`, pero no hacen falta ahí: las carreras de gobernador dan
+// los 25 departamentos y las provinciales las 196 provincias, y el ubigeo de un
+// distrito lleva dentro los dos prefijos. Se deriva de lo que ya está cargado.
+//
+// Hace falta porque el nombre solo no identifica: hay dos SAN ISIDRO —uno en
+// Huaytará, Huancavelica y otro en Lima— y la lista los mostraba idénticos, así
+// que elegir entre ellos era adivinar.
+let _ambito=null;
+function ambito(){
+  if(_ambito) return _ambito;
+  const dep={}, prov={};
+  for(const c of (META.carreras||[])){
+    if(c.tipo==='01') dep[c.ubigeo.slice(0,2)]=c.nombre;
+    else if(c.tipo==='03') prov[c.ubigeo.slice(0,4)]=c.nombre;
+  }
+  return (_ambito={dep, prov});
+}
+function donde(c){
+  const {dep, prov}=ambito(), u=c.ubigeo||'';
+  // Una provincia no se sitúa dentro de sí misma, ni un departamento dentro de
+  // nada: solo se nombra el ámbito que está por encima.
+  const partes = c.tipo==='04' ? [prov[u.slice(0,4)], dep[u.slice(0,2)]]
+               : c.tipo==='03' ? [dep[u.slice(0,2)]]
+               : [];
+  return partes.filter(x=>x && x!==c.nombre).join(', ');
+}
+
 function enchufaBuscar(carreras, foco){
   const q=$('q'), res=$('res');
   if(!q) return;
@@ -857,8 +887,12 @@ function enchufaBuscar(carreras, foco){
     const t=q.value.trim().toLowerCase();
     if(t.length<2){ res.hidden=true; return }
     const hits=carreras.filter(c=>c.nombre.toLowerCase().includes(t)).slice(0,60);
-    res.innerHTML=hits.length?hits.map(c=>`<a href="#/c/${c.race_id}">
-      <b>${esc(c.nombre)}</b> <span class="sub">· ${NIVEL[c.tipo]||c.tipo}</span></a>`).join('')
+    res.innerHTML=hits.length?hits.map(c=>{
+      const d=donde(c);
+      return `<a href="#/c/${c.race_id}">
+        <b>${esc(c.nombre)}</b> <span class="sub">· ${NIVEL[c.tipo]||c.tipo}${
+          d?` · ${esc(d)}`:''}</span></a>`;
+    }).join('')
       :`<a class="sub" style="cursor:default">Nada coincide.</a>`;
     res.hidden=false;
   };
@@ -1631,11 +1665,13 @@ document.addEventListener('visibilitychange',()=>{ if(!document.hidden) refresca
 function cabecera(){
   const c = {pct_actas:NAC.pct, electores_habiles:NAC.electores_habiles,
              votos_emitidos:NAC.votos_emitidos};
-  $('avance').textContent = P(c.pct_actas);
+  // Porcentaje y recuento, nada más. Antes esta zona llevaba además cuántas
+  // elecciones hay y cuántas tienen resultado, que es otra cosa —el marcador de
+  // la noche, no el avance del escrutinio— y ya se lee entero en «Estado».
+  $('avance').textContent = NAC.actas_esperadas
+    ? `${P(c.pct_actas)} · ${F(NAC.actas_contabilizadas)}/${F(NAC.actas_esperadas)}`
+    : P(c.pct_actas);
   $('avanceBarra').style.width=(100*(c.pct_actas||0)).toFixed(1)+'%';
-  $('cabSub').innerHTML = `${F(NAC.carreras)} elecciones · ${
-    F((NAC.estados||{}).electo + ((NAC.estados||{}).segunda_vuelta||0))
-    } con resultado<br>ONPE`;
   // La participación se mide contra el padrón **escrutado**, no contra el del
   // país: si no, a mitad de noche saldría 39% y se leería como abstención.
   const part = NAC.participacion!=null ? NAC.participacion : null;
