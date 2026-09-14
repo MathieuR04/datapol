@@ -26,8 +26,13 @@
             { code: 'resultados', label: 'Resultados', url: '/electoral/peru/2022erm/', available: true },
           ]
         },
+        {
+          code: '2026erm', label: '2026 ERM', fullLabel: 'Elecciones Regionales y Municipales 2026',
+          elections: [
+            { code: 'resultados', label: 'Resultados', url: '/electoral/peru/2026erm/', available: true },
+          ]
+        },
         /* Future — uncomment and fill URLs when ready:
-        { code: '2026erm', label: '2026 ERM', fullLabel: 'Elecciones Regionales y Municipales 2026', elections: [] },
         { code: '2021eg',  label: '2021 EG',  fullLabel: 'Elecciones Generales 2021', elections: [] },
         */
       ]
