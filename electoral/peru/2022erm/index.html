@@ -99,13 +99,10 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
   .pulso.on{animation:lat 2.4s ease-in-out infinite}
   @keyframes lat{0%,100%{opacity:1}50%{opacity:.25}}}
 .pulso.off{background:var(--tenue)}
-/* Esto es un **simulacro**: el cómputo de 2022, ya cerrado, servido por la
-   infraestructura de la noche electoral. Colgado en datapol.lat bajo la barra
-   de verdad, sin decirlo, se leería como resultados en directo. El rótulo no es
-   decorativo: es lo que separa un banco de pruebas de una mentira. */
-.replay{display:inline-flex;align-items:center;gap:6px;font-size:10px;
-  font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--fondo);background:var(--tinta);padding:3px 9px;border-radius:2px}
+/* Sin rótulo de reproducción: el año ya sale en el título, en la cabecera y en
+   la barra del sitio, y al no sondear no queda ninguna afirmación de «en
+   directo» que desmentir. Lo que sí se esconde es el indicador de sondeo, que
+   sin sondeo no dice nada. */
 
 /* --- marcador de estados --- */
 .marcador{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
@@ -375,7 +372,6 @@ tr.mas[hidden]{display:none}
     <div class="riel"><i id="avanceBarra" style="width:0%"></i></div>
   </div>
   <span class="vivo" id="vivo"><span class="pulso off" id="pulso"></span><span id="sondeo">—</span></span>
-  <span class="replay" id="replay" hidden>Reproducción · cómputo oficial de 2022</span>
   <div class="cab-stats" id="cabStats"></div>
 </header>
 
@@ -1633,12 +1629,7 @@ const JITTER=0.35;
 let timer=null;
 
 function proximo(){
-  if(REPLAY){
-    const v=$('vivo'), r=$('replay');
-    if(v) v.hidden=true;
-    if(r) r.hidden=false;
-    return;
-  }
+  if(REPLAY){ const v=$('vivo'); if(v) v.hidden=true; return }
   const espera=CADA*(1+(Math.random()*2-1)*JITTER);
   clearTimeout(timer);
   timer=setTimeout(refresca, espera);
