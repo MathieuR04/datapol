@@ -30,10 +30,15 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--fondo);color:var(--tinta);
-  font:15px/1.55 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font:13.5px/1.55 'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   -webkit-text-size-adjust:100%}
-/* Bebas para los títulos y las cifras grandes, que es la voz de la casa. El
-   cuerpo se queda en 15 px y no en los 12 de datapol: aquella es una página que
+/* ESCALA TIPOGRÁFICA: todo el cuerpo se redujo un 10% sobre el tamaño original,
+   con suelo de 9 px para que los rótulos pequeños sigan siendo legibles. Si hace
+   falta volver a moverlo, es proporcional sobre TODOS los `font-size` de esta
+   hoja, no ajustar unos cuantos a ojo: tocar solo algunos desordena la jerarquía
+   entre títulos, tablas y rótulos, que es lo que hace que la página se lea.
+   Bebas para los títulos y las cifras grandes, que es la voz de la casa. El
+   cuerpo se queda en 13.5 px y no en los 12 de datapol: aquella es una página que
    se escanea y esta se lee —nombres, hojas de vida, listas de regidores—. */
 .display{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:.03em;
   font-weight:400;line-height:1}
@@ -42,15 +47,15 @@ a{color:inherit}
 /* El nombre de la carrera es la identidad de la página y estaba más chico que
    el porcentaje de actas. Y los encabezados de sección a 12 px no separaban
    nada: una página de carrera tiene cinco bloques y hay que verlos. */
-h1{font-family:'Bebas Neue',Impact,sans-serif;font-size:46px;margin:0 0 2px;
+h1{font-family:'Bebas Neue',Impact,sans-serif;font-size:41.5px;margin:0 0 2px;
    letter-spacing:.02em;line-height:1;font-weight:400}
-h2{font-family:'Bebas Neue',Impact,sans-serif;font-size:26px;font-weight:400;
+h2{font-family:'Bebas Neue',Impact,sans-serif;font-size:23.5px;font-weight:400;
    margin:38px 0 12px;letter-spacing:.03em;line-height:1;text-transform:uppercase;
    color:var(--tinta);border-left:0;padding:0 0 7px;
    border-bottom:2px solid var(--tinta)}
 h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
-@media(max-width:560px){h1{font-size:34px}}
-.sub{color:var(--suave);font-size:13px}
+@media(max-width:560px){h1{font-size:30.5px}}
+.sub{color:var(--suave);font-size:11.5px}
 
 /* --- barra superior: estado del cómputo y del sondeo --- */
 /* Barra negra + barra de modos + cabecera densa: la misma estructura que
@@ -69,7 +74,7 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .cab{background:var(--fondo);border-bottom:2px solid var(--tinta);
   padding:.55rem 1.25rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
 .cab-id{display:flex;align-items:center;gap:.75rem}
-.cab-tit{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;
+.cab-tit{font-family:'Bebas Neue',Impact,sans-serif;font-size:18px;
   letter-spacing:.04em;line-height:1;white-space:nowrap}
 .cab-avance{flex:1;max-width:300px;min-width:180px}
 .cab-av-lab{display:flex;justify-content:space-between;font-size:9px;
@@ -77,14 +82,14 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .cab-stats{display:flex;gap:1.25rem;margin-left:auto}
 .hstat{display:flex;flex-direction:column;align-items:flex-end}
 .hstat-lab{font-size:8px;color:var(--suave);text-transform:uppercase;letter-spacing:.05em}
-.hstat-val{font-family:'Bebas Neue',Impact,sans-serif;font-size:22px;line-height:1}
+.hstat-val{font-family:'Bebas Neue',Impact,sans-serif;font-size:20px;line-height:1}
 .hstat-val.hi{color:var(--terra)}
 @media(max-width:700px){.cab-stats{margin-left:0;width:100%}
   .cab-avance{max-width:none}}
 /* Este bloque redefinía `.nav` —el mismo selector que la barra negra— y era
    residuo de una barra de modos anterior. Con `/shared/nav.css` en juego habría
    peleado con la barra del sitio. */
-.vivo{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--suave)}
+.vivo{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--suave)}
 /* `display:inline-flex` gana sobre el `[hidden]{display:none}` del navegador,
    así que ocultarlo con la propiedad `hidden` no bastaba: el punto de sondeo
    seguía junto al rótulo de reproducción, diciendo dos cosas a la vez. */
@@ -98,7 +103,7 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
    infraestructura de la noche electoral. Colgado en datapol.lat bajo la barra
    de verdad, sin decirlo, se leería como resultados en directo. El rótulo no es
    decorativo: es lo que separa un banco de pruebas de una mentira. */
-.replay{display:inline-flex;align-items:center;gap:6px;font-size:11px;
+.replay{display:inline-flex;align-items:center;gap:6px;font-size:10px;
   font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   color:var(--fondo);background:var(--tinta);padding:3px 9px;border-radius:2px}
 
@@ -108,17 +113,17 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
    contado, ninguna otra cifra de la página significa nada. */
 .heroe{background:var(--panel);border:1px solid var(--linea-fuerte);border-radius:3px;
   padding:16px 18px;margin-bottom:10px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
-.heroe .k{font-family:'Bebas Neue',Impact,sans-serif;font-size:54px;font-weight:400;
+.heroe .k{font-family:'Bebas Neue',Impact,sans-serif;font-size:48.5px;font-weight:400;
   letter-spacing:.02em;line-height:.9;color:var(--terra)}
-.heroe .e{font-size:13px;color:var(--suave)}
+.heroe .e{font-size:11.5px;color:var(--suave)}
 .heroe .pista{flex:1 1 160px;min-width:140px}
 .riel{height:5px;border-radius:2px;background:var(--arena);overflow:hidden;margin-top:6px}
 .riel i{display:block;height:100%;background:var(--terra);border-radius:2px}
 .nivel{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
 .nivel .caja{background:var(--panel);border:1px solid var(--linea);border-radius:3px;padding:11px 13px}
-.nivel h3{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;
+.nivel h3{margin:0 0 7px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;
   color:var(--suave);font-weight:600}
-.nivel .l{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}
+.nivel .l{display:flex;justify-content:space-between;font-size:11.5px;padding:2px 0}
 .nivel .l span:first-child{display:flex;align-items:center;gap:6px;color:var(--suave)}
 /* La caja ocupa el ancho de la página, como el resto de los paneles; la rejilla
    va centrada dentro y ajustada a su contenido. Estirar las burbujas a todo el
@@ -137,9 +142,9 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .carita{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--vacio);
   flex:none;display:inline-block}
 .tile{background:var(--panel);border:1px solid var(--linea);border-radius:3px;padding:12px 14px}
-.tile .k{font-family:'Bebas Neue',Impact,sans-serif;font-size:30px;font-weight:400;
+.tile .k{font-family:'Bebas Neue',Impact,sans-serif;font-size:27px;font-weight:400;
   letter-spacing:.02em;line-height:1}
-.tile .e{font-size:12px;color:var(--suave);display:flex;align-items:center;gap:6px;margin-top:2px}
+.tile .e{font-size:11px;color:var(--suave);display:flex;align-items:center;gap:6px;margin-top:2px}
 .punto{width:9px;height:9px;border-radius:50%;flex:none}
 
 /* --- mapa --- */
@@ -154,28 +159,28 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
    que no pelee con el papel. */
 .leaflet-tile-pane{filter:grayscale(1) sepia(.35) brightness(1.05) contrast(.7) opacity(.45)}
 .leaflet-tooltip{background:var(--tinta);color:var(--fondo);border:0;border-radius:2px;
-  font-size:12px;padding:9px 12px;box-shadow:none;line-height:1.45}
+  font-size:11px;padding:9px 12px;box-shadow:none;line-height:1.45}
 .leaflet-tooltip:before{display:none}
 /* Leaflet encoge el tooltip al ancho del contenido más corto. `max-content` deja
    que crezca hasta el tope, para que un nombre de organización no se parta en
    tres renglones. */
 .tt-mapa{width:max-content;max-width:420px;min-width:230px;white-space:normal}
-.tt-circ{display:block;font-size:13.5px;letter-spacing:-.01em;margin-bottom:3px}
-.tt-est{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;
+.tt-circ{display:block;font-size:12px;letter-spacing:-.01em;margin-bottom:3px}
+.tt-est{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;
   opacity:.7;margin-bottom:5px}
 .tt-cand{display:block;font-weight:600}
-.tt-org{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+.tt-org{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.03em;
   opacity:.7;margin-bottom:6px}
 .tt-org:last-child{margin-bottom:0}
 .leaflet-control-zoom a{color:var(--tinta);background:var(--panel);
   border-color:var(--linea-fuerte)}
 .leaflet-bar{border:1px solid var(--linea-fuerte);box-shadow:none}
-.leaflet-control-attribution{background:var(--panel);color:var(--tenue);font-size:10px}
+.leaflet-control-attribution{background:var(--panel);color:var(--tenue);font-size:9px}
 .leaflet-control-attribution a{color:var(--tenue)}
 /* El selector de nivel vive dentro del mapa, en la esquina. */
 .ctl-nivel{background:var(--panel);border:1px solid var(--linea-fuerte);border-radius:2px;
   padding:4px;display:flex;flex-direction:column;gap:2px}
-.ctl-nivel button{font:inherit;font-size:12px;padding:4px 9px;border:0;border-radius:5px;
+.ctl-nivel button{font:inherit;font-size:11px;padding:4px 9px;border:0;border-radius:5px;
   background:transparent;color:var(--suave);cursor:pointer;text-align:left;white-space:nowrap}
 .ctl-nivel button[aria-pressed="true"]{background:var(--tinta);color:var(--fondo)}
 .pieza{cursor:pointer}
@@ -189,17 +194,17 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .escanos-mapa i{width:9px;height:9px;border-radius:50%;display:block;
   border:1px solid rgba(0,0,0,.12)}
 .tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
-.tab{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--linea-fuerte);
+.tab{font:inherit;font-size:11.5px;padding:6px 12px;border:1px solid var(--linea-fuerte);
   background:var(--panel);color:var(--suave);border-radius:2px;cursor:pointer}
 .tab[aria-pressed="true"]{background:var(--terra);color:#fff;border-color:var(--terra)}
 .leyenda{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;
-  font-size:12px;color:var(--suave);padding:12px;border-top:1px solid var(--linea)}
+  font-size:11px;color:var(--suave);padding:12px;border-top:1px solid var(--linea)}
 .leyenda span.it{display:inline-flex;align-items:center;gap:6px}
 
 /* --- tablas --- */
-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:12.5px}
 th,td{padding:8px 8px;border-bottom:1px solid var(--linea);text-align:left}
-th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--suave);
+th{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--suave);
    font-weight:600;white-space:nowrap}
 td.n,th.n{text-align:right}
 .envuelve{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -207,7 +212,7 @@ td.n,th.n{text-align:right}
 .logo{width:20px;height:20px;min-width:20px;object-fit:contain;vertical-align:middle;flex:none}
 .org{display:flex;align-items:center;gap:9px;min-width:0}
 .pill{width:20px;height:20px;border-radius:50%;flex:none;display:inline-block}
-.abrir{font:inherit;font-size:15px;line-height:1;border:1px solid var(--linea-fuerte);
+.abrir{font:inherit;font-size:13.5px;line-height:1;border:1px solid var(--linea-fuerte);
   background:var(--panel);color:var(--tinta);cursor:pointer;flex:none;
   width:22px;height:22px;border-radius:2px;display:grid;place-items:center}
 .abrir:hover{border-color:var(--tinta)}
@@ -219,9 +224,9 @@ tr.hijo[hidden]{display:none}
    persona por un partido, y la fila tiene que dejar leer las dos cosas sin que
    compitan. */
 .ident{display:flex;flex-direction:column;line-height:1.25;min-width:0}
-.cand-nom{font-weight:600;font-size:14px}
-.part-nom{font-size:11.5px;color:var(--suave);text-transform:uppercase;letter-spacing:.03em}
-.por-que{font-size:12.5px;color:var(--tinta);font-weight:500}
+.cand-nom{font-weight:600;font-size:12.5px}
+.part-nom{font-size:10.5px;color:var(--suave);text-transform:uppercase;letter-spacing:.03em}
+.por-que{font-size:11px;color:var(--tinta);font-weight:500}
 td .carita{width:32px;height:32px;border-radius:50%;object-fit:cover;
   background:var(--vacio);flex:none}
 .aut{display:flex;align-items:center;gap:11px;padding:9px 2px;
@@ -237,34 +242,34 @@ td .carita{width:32px;height:32px;border-radius:50%;object-fit:cover;
 .desenlace .aut-g .aut-logo{width:64px;height:64px;min-width:64px}
 @media(max-width:560px){.desenlace .aut-g .aut-logo{width:46px;height:46px;min-width:46px}}
 .aut-g .aut-foto{width:76px;height:76px}
-.aut-g .cand-nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:25px;
+.aut-g .cand-nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:22.5px;
   font-weight:400;letter-spacing:.02em;line-height:1.05}
-.aut .m{font-size:12px;color:var(--suave)}
+.aut .m{font-size:11px;color:var(--suave)}
 .desenlace{background:var(--panel);border:1px solid var(--linea-fuerte);
   border-radius:3px;margin:16px 0 10px;overflow:hidden}
 /* Franja, no chip: el estado de la carrera es el titular de la caja y tiene que
    decir **qué** se eligió, no un genérico «Electo». */
 .franja{background:var(--tinta);color:var(--fondo);padding:8px 18px;
-  font-size:13px;font-weight:650;text-transform:uppercase;letter-spacing:.09em;
+  font-size:11.5px;font-weight:650;text-transform:uppercase;letter-spacing:.09em;
   display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .franja-sub{font-weight:500;letter-spacing:.04em;opacity:.75;text-transform:none}
 .des-cuerpo{padding:14px 18px 16px}
 .des-par{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
 .des-card{min-width:0}
-.des-card .cand-nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:27px;
+.des-card .cand-nom{font-family:'Bebas Neue',Impact,sans-serif;font-size:24.5px;
   font-weight:400;letter-spacing:.02em;line-height:1.05}
-.des-pct{font-size:13px;color:var(--suave);font-variant-numeric:tabular-nums;margin-top:3px}
+.des-pct{font-size:11.5px;color:var(--suave);font-variant-numeric:tabular-nums;margin-top:3px}
 .des-hdv{margin-top:8px}
 .avance-caja{background:var(--panel);border:1px solid var(--linea);border-radius:3px;
   padding:13px 16px;margin-bottom:4px}
-.avance-caja .e{font-size:12px;color:var(--suave);margin-bottom:6px}
-.ver-mas{font:inherit;font-size:10px;font-weight:700;letter-spacing:.07em;
+.avance-caja .e{font-size:11px;color:var(--suave);margin-bottom:6px}
+.ver-mas{font:inherit;font-size:9px;font-weight:700;letter-spacing:.07em;
   text-transform:uppercase;margin-top:10px;padding:8px 14px;cursor:pointer;
   border:1px solid var(--linea-fuerte);background:var(--panel);color:var(--suave);
   border-radius:2px;width:100%}
 .ver-mas:hover{border-color:var(--tinta);color:var(--tinta)}
 tr.mas[hidden]{display:none}
-.ver-hdv{font:inherit;font-size:12px;padding:6px 11px;border:1px solid var(--linea-fuerte);
+.ver-hdv{font:inherit;font-size:11px;padding:6px 11px;border:1px solid var(--linea-fuerte);
   background:var(--panel);color:var(--suave);border-radius:2px;cursor:pointer;
   white-space:nowrap;flex:none}
 .ver-hdv:hover{border-color:var(--tinta);color:var(--tinta)}
@@ -277,24 +282,24 @@ tr.mas[hidden]{display:none}
 #modal[hidden]{display:none}
 .hoja{background:var(--fondo);border-radius:3px;padding:22px;max-width:520px;width:100%;
   position:relative;border:1px solid var(--tinta)}
-.hoja .cerrar{position:absolute;top:10px;right:12px;font:inherit;font-size:22px;
+.hoja .cerrar{position:absolute;top:10px;right:12px;font:inherit;font-size:20px;
   line-height:1;border:0;background:transparent;color:var(--suave);cursor:pointer}
 .fd{display:flex;justify-content:space-between;gap:14px;align-items:baseline;
-  padding:9px 0;border-bottom:1px solid var(--linea);font-size:14px}
-.fd>span:first-child{color:var(--suave);font-size:12px;text-transform:uppercase;
+  padding:9px 0;border-bottom:1px solid var(--linea);font-size:12.5px}
+.fd>span:first-child{color:var(--suave);font-size:11px;text-transform:uppercase;
   letter-spacing:.05em}
 .fd .mal{color:var(--s2)}
 .edu{display:inline-flex;gap:3px}
-.edu .lv{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid var(--linea-fuerte)}
+.edu .lv{font-size:10px;padding:2px 6px;border-radius:4px;border:1px solid var(--linea-fuerte)}
 .edu .lv.on{background:var(--tinta);color:var(--fondo);border-color:var(--tinta)}
 .edu .lv.off{color:var(--tenue)}
 .hoja{max-height:86vh;overflow:auto}
-.fs{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--suave);
+.fs{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--suave);
   font-weight:650;margin:18px 0 6px}
 .fl{display:flex;flex-direction:column;gap:2px}
-.fi{padding:7px 0;border-bottom:1px solid var(--linea);font-size:13.5px;
+.fi{padding:7px 0;border-bottom:1px solid var(--linea);font-size:12px;
   display:flex;flex-direction:column;gap:1px}
-.fi span{font-size:12px;color:var(--suave)}
+.fi span{font-size:11px;color:var(--suave)}
 .fi.mal-bloque b{color:var(--s2)}
 
 .pordef{color:var(--tenue);font-style:italic}
@@ -302,35 +307,35 @@ tr.mas[hidden]{display:none}
   background:var(--vacio);vertical-align:middle;border:1px solid var(--linea-fuerte)}
 .fila{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--linea);
   flex-wrap:wrap}
-.fila b{font-weight:600;font-size:13px;flex:1 1 180px;min-width:0}
-.chip{display:inline-block;padding:3px 10px;border-radius:2px;font-size:12px;
+.fila b{font-weight:600;font-size:11.5px;flex:1 1 180px;min-width:0}
+.chip{display:inline-block;padding:3px 10px;border-radius:2px;font-size:11px;
   border:1px solid var(--linea-fuerte);color:var(--suave)}
 .chip.si{background:var(--terra);color:#fff;border-color:var(--terra)}
 .buscar{width:100%;font:inherit;padding:11px 13px;border:1px solid var(--linea-fuerte);
   border-radius:2px;background:var(--panel);color:var(--tinta)}
 .casc{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
-.casc label{display:flex;flex-direction:column;gap:5px;font-size:11px;
+.casc label{display:flex;flex-direction:column;gap:5px;font-size:10px;
   text-transform:uppercase;letter-spacing:.07em;color:var(--suave);font-weight:600}
 .casc select:disabled{opacity:.55}
-.casc select{font:inherit;font-size:14px;text-transform:none;letter-spacing:0;
+.casc select{font:inherit;font-size:12.5px;text-transform:none;letter-spacing:0;
   color:var(--tinta);padding:9px 10px;border:1px solid var(--linea-fuerte);
   border-radius:2px;background:var(--panel);max-width:100%}
 .casc label[hidden]{display:none}
-.ir{display:inline-block;margin-top:14px;font:inherit;font-size:13px;font-weight:700;
+.ir{display:inline-block;margin-top:14px;font:inherit;font-size:11.5px;font-weight:700;
   letter-spacing:.06em;text-transform:uppercase;text-decoration:none;
   background:var(--terra);color:#fff;padding:10px 18px;border-radius:2px}
 .res{max-height:280px;overflow:auto;border:1px solid var(--linea);border-radius:2px;
   margin-top:6px;background:var(--panel)}
 .res a{display:block;padding:9px 12px;border-bottom:1px solid var(--linea);
-  text-decoration:none;font-size:14px}
+  text-decoration:none;font-size:12.5px}
 .res a:hover,.res a:focus{background:var(--vacio);outline:none}
-.volver{font-size:13px;color:var(--suave);text-decoration:none}
+.volver{font-size:11.5px;color:var(--suave);text-decoration:none}
 .tt{position:fixed;pointer-events:none;background:var(--tinta);color:var(--fondo);
-  padding:6px 10px;border-radius:2px;font-size:12px;opacity:0;transition:opacity .12s;
+  padding:6px 10px;border-radius:2px;font-size:11px;opacity:0;transition:opacity .12s;
   z-index:20;max-width:260px}
 .aviso{background:var(--panel);border:1px solid var(--linea);border-radius:2px;
-  padding:12px 14px;font-size:13px;color:var(--suave)}
-@media(max-width:560px){h1{font-size:18px}.env{padding:12px 12px 70px}
+  padding:12px 14px;font-size:11.5px;color:var(--suave)}
+@media(max-width:560px){h1{font-size:16px}.env{padding:12px 12px 70px}
   .top{margin:0 -12px 4px;padding:9px 12px}}
 </style></head><body>
 
