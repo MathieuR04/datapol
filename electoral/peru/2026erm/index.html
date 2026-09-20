@@ -372,6 +372,7 @@ if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
 
 <div class="mode-bar">
   <a class="mode-tab" href="#/" data-r="/">RESUMEN</a>
+  <a class="mode-tab" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
   <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
 </div>
 
@@ -872,6 +873,161 @@ async function vistaNacional(){
   document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>pintaMapa(b.dataset.m));
   pintaMapa('01');
 
+}
+
+// ------------------------------------------------- vista: reelección lateral
+// La Ley 30305 prohíbe la reelección inmediata de alcaldes. La vía que queda es
+// encabezar la **lista de regidores** de la propia organización, que por ley es
+// el puesto de teniente alcalde. Ciento treinta y cinco alcaldes electos en 2022
+// lo hicieron en su propio municipio; 131 quedaron inscritos.
+//
+// El tablero existe porque esa jugada solo se puede juzgar el día que se cuenta:
+// hasta entonces es una lista de intenciones. Aquí se ve cuál de las dos vías
+// funcionó y para quién.
+//
+// El JSON lo arma `publica_tenientes.py`. El navegador no decide quién ganó: lee
+// el campo `resultado`, que viene resuelto contra el contrato de cada carrera.
+const RES_TEN={
+  electo_alcalde: {t:'ALCALDE',          v:'--ok',      d:'Ganó la alcaldía'},
+  electo_teniente:{t:'TENIENTE ALCALDE', v:'--ok',      d:'Su lista ganó y él entra al concejo'},
+  electo_regidor: {t:'REGIDOR',          v:'--espera',  d:'Entró al concejo, pero su lista no ganó'},
+  fuera:          {t:'FUERA',            v:'--disputa', d:'La carrera está resuelta y no está entre los electos'},
+  en_disputa:     {t:'EN DISPUTA',       v:'--vacio',   d:'Todavía sin llamada'},
+  sin_cruce:      {t:'NO APARECE',       v:'--vacio',   d:'Su lista no figura en el cómputo de esta carrera'}};
+const ORDEN_RES=['electo_alcalde','electo_teniente','electo_regidor','fuera',
+                 'en_disputa','sin_cruce'];
+let TEN=null, FILTRO_TEN={q:'',region:'',nivel:'',via:'',res:''};
+
+async function vistaTenientes(){
+  cabecera();
+  try{ TEN=await j('tenientes.json'); }
+  catch(e){
+    $('vista').innerHTML=`<div class="aviso">Todavía no hay tablero de reelección
+      para este proceso.</div>`; return;
+  }
+  const casos=TEN.casos||[], marc=TEN.marcador||{}, vias=TEN.por_via||{};
+  const electos=(marc.electo_alcalde||0)+(marc.electo_teniente||0)+(marc.electo_regidor||0);
+
+  // Los cinco números que resumen la noche para este grupo. «Alcalde» va primero
+  // y aparte de «teniente alcalde» a propósito: son el mismo movimiento con dos
+  // desenlaces muy distintos, y mezclarlos borra justo lo que hay que mirar.
+  const tile=(k,e,color)=>`<div class="tile"><div class="k">${F(k)}</div>
+    <div class="e"><span class="punto" style="background:var(${color})"></span>${e}</div></div>`;
+
+  let h=`<h1>Reelección por la puerta de al lado</h1>
+    <div class="sub">${F(TEN.inscritos)} alcaldes en ejercicio encabezan la lista de
+      regidores de su propio municipio${
+      TEN.casos_en_registro>TEN.inscritos
+        ? ` · ${TEN.casos_en_registro-TEN.inscritos} candidaturas más siguen en trámite y no se siguen aquí`
+        : ''}</div>
+
+    <div class="aviso">La reelección inmediata de alcaldes está prohibida desde la
+      Ley 30305. La posición 1 de la lista de regidores es, por ley, el teniente
+      alcalde: entrar por ahí es la manera de volver al municipio sin reelegirse.
+      Solo se cuentan los que lo hacen en <b>su propia</b> circunscripción.</div>
+
+    <h2>Marcador</h2>
+    <div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">
+      ${tile(marc.electo_alcalde||0,'Alcaldes','--ok')}
+      ${tile(marc.electo_teniente||0,'Tenientes alcalde','--ok')}
+      ${tile(marc.electo_regidor||0,'Regidores','--espera')}
+      ${tile(marc.fuera||0,'Fuera','--disputa')}
+      ${tile(marc.en_disputa||0,'En disputa','--vacio')}
+    </div>
+
+    <h2>Las dos vías</h2>
+    <div class="nivel">
+      <div class="caja"><h3>Directa · ${F(vias.directo||0)}</h3>
+        <div class="sub">El candidato a alcalde de su lista se cayó —casi siempre
+        por renuncia—, así que el alcalde en ejercicio pasó a encabezarla y
+        compite por el sillón. La prohibición queda en nada sin que nadie la haya
+        derogado.</div></div>
+      <div class="caja"><h3>Indirecta · ${F(vias.indirecto||0)}</h3>
+        <div class="sub">La cabeza de lista sigue en pie. Si su lista gana, él
+        vuelve al concejo como teniente alcalde: gobierna otro y él se sienta al
+        lado.</div></div>
+    </div>
+
+    <h2>Caso por caso <span class="sec">${F(casos.length)}</span></h2>
+    <input class="buscar" id="tq" placeholder="Nombre, distrito, provincia u organización…"
+      autocomplete="off" aria-label="Buscar un caso">
+    <div class="casc" style="margin-top:10px">
+      <label>Región<select id="t-reg"></select></label>
+      <label>Nivel<select id="t-niv">
+        <option value="">Provincial y distrital</option>
+        <option value="provincial">Solo provincial</option>
+        <option value="distrital">Solo distrital</option></select></label>
+      <label>Vía<select id="t-via">
+        <option value="">Las dos vías</option>
+        <option value="directo">Directa</option>
+        <option value="indirecto">Indirecta</option></select></label>
+      <label>Resultado<select id="t-res">
+        <option value="">Cualquiera</option>
+        ${ORDEN_RES.filter(k=>marc[k]).map(k=>
+          `<option value="${k}">${RES_TEN[k].t}</option>`).join('')}</select></label>
+    </div>
+    <div class="sub" id="t-cuenta" style="margin:10px 0 4px"></div>
+    <div class="envuelve"><table>
+      <thead><tr><th>Alcalde en ejercicio</th><th>Municipio</th>
+        <th>Organización</th><th>Vía</th><th>Resultado</th></tr></thead>
+      <tbody id="t-filas"></tbody></table></div>`;
+
+  $('vista').innerHTML=h;
+
+  const regiones=[...new Set(casos.map(c=>c.region))].sort((a,b)=>a.localeCompare(b,'es'));
+  $('t-reg').innerHTML=`<option value="">Todas las regiones</option>`+
+    regiones.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
+
+  const plano=s=>String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+
+  function fila(c){
+    const r=RES_TEN[c.resultado]||RES_TEN.sin_cruce;
+    // En disputa se muestra la probabilidad de que su lista gane la alcaldía, que
+    // es la misma pregunta en las dos vías: si gana, el directo es alcalde y el
+    // indirecto es teniente alcalde. Sin probabilidad todavía, una raya: no se
+    // inventa un número para llenar la celda.
+    const derecha = c.resultado==='en_disputa'
+      ? `<span class="chip">${c.p_gana!=null?`P(su lista gana) ${P(c.p_gana)}`:'—'}</span>
+         <div class="sub">${P(c.pct_actas)} de actas</div>`
+      : `<span class="chip si" style="background:var(${r.v});border-color:var(${r.v})${
+           r.v==='--vacio'?';color:var(--tinta)':''}">${r.t}</span>`;
+    const lugar = c.nivel==='provincial' ? c.provincia : c.distrito;
+    const bajo  = c.nivel==='provincial' ? c.region : `${c.provincia}, ${c.region}`;
+    return `<tr>
+      <td><b>${esc(c.nombre)}</b><div class="sub">${esc(c.cargo_actual)}</div></td>
+      <td><a href="#/c/${c.race_id}">${esc(lugar)}</a><div class="sub">${esc(bajo)}</div></td>
+      <td>${esc(c.organizacion_2026)}${
+        c.cambio_de_organizacion
+          ? `<div class="sub">2022: ${esc(c.organizacion_2022)}</div>`
+          : ''}</td>
+      <td>${c.via==='directo'?'Directa':'Indirecta'}
+        <div class="sub">${c.via==='directo'
+          ? `cabeza caída · ${esc(c.estado_alcalde)}`
+          : esc(c.alcalde_de_la_lista||'')}</div></td>
+      <td>${derecha}</td></tr>`;
+  }
+
+  function pinta(){
+    const f=FILTRO_TEN, t=plano(f.q.trim());
+    const vis=casos.filter(c=>
+      (!f.region || c.region===f.region) &&
+      (!f.nivel  || c.nivel===f.nivel)   &&
+      (!f.via    || c.via===f.via)       &&
+      (!f.res    || c.resultado===f.res) &&
+      (!t || plano(`${c.nombre} ${c.distrito} ${c.provincia} ${c.region} ${c.organizacion_2026} ${c.organizacion_2022}`).includes(t)));
+    $('t-filas').innerHTML = vis.length ? vis.map(fila).join('')
+      : `<tr><td colspan="5" class="sub" style="padding:16px;text-align:center">Nada coincide.</td></tr>`;
+    $('t-cuenta').textContent=`${F(vis.length)} de ${F(casos.length)} casos`;
+  }
+
+  // El estado de los filtros sobrevive al repintado del sondeo: cada 45 segundos
+  // la vista se vuelve a armar, y perder lo que el lector había filtrado hace la
+  // página inservible justo la noche en que más se usa.
+  const liga=(id,campo)=>{ const el=$(id); el.value=FILTRO_TEN[campo];
+    el.oninput=el.onchange=()=>{ FILTRO_TEN[campo]=el.value; pinta(); }; };
+  liga('tq','q'); liga('t-reg','region'); liga('t-niv','nivel');
+  liga('t-via','via'); liga('t-res','res');
+  pinta();
 }
 
 // Buscar por nombre es el mismo control en dos sitios —arriba del resumen y en
@@ -1646,6 +1802,7 @@ async function enruta(cambioDeRuta=true){
   // en que más se lee.
   const y = (cambioDeRuta && !mismaRuta) ? 0 : scrollY;
   if(m){ await vistaCarrera(m[1]); }
+  else if(r==='/reeleccion'){ await vistaTenientes(); }
   else if(r==='/buscador'){ await vistaBuscador(); }
   else { await vistaNacional(); }
   scrollTo(0, y);
@@ -1718,6 +1875,13 @@ addEventListener('hashchange',enruta);
     [META,NAC,COLORES]=await Promise.all([j('meta.json'), j('nacional.json'),
       j('colores.json').catch(()=>({}))]);
     REPLAY = META.proceso === 'ERM2022';
+    // El tablero de reelección es un producto de ERM 2026: los 135 casos salen
+    // de su registro de candidaturas. En 2022 la pestaña abriría un aviso de
+    // «todavía no hay», que es peor que no ofrecerla.
+    if(META.proceso !== 'ERM2026'){
+      const t=document.querySelector('.mode-tab[data-r="/reeleccion"]');
+      if(t) t.remove();
+    }
     const anio = String(META.proceso||'').replace(/\D/g,'') || '';
     if(anio){
       document.title = `Perú — ERM ${anio} | Datapol`;
