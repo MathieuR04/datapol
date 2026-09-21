@@ -372,6 +372,7 @@ if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
 
 <div class="mode-bar">
   <a class="mode-tab" href="#/" data-r="/">RESUMEN</a>
+  <a class="mode-tab" href="#/lima" data-r="/lima">LIMA</a>
   <a class="mode-tab" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
   <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
 </div>
@@ -1028,6 +1029,175 @@ async function vistaTenientes(){
   liga('tq','q'); liga('t-reg','region'); liga('t-niv','nivel');
   liga('t-via','via'); liga('t-res','res');
   pinta();
+}
+
+// ------------------------------------------------------------- vista: Lima
+// Lima Metropolitana concentra cerca de un tercio del padrón del país y se sigue
+// como si fuera una elección aparte. En el resumen nacional sus 43 contiendas
+// quedan diluidas entre 2,118; aquí se leen juntas y a su escala.
+//
+// Dos rarezas que esta vista tiene que respetar, y que no son casos borde:
+//
+//   · El Cercado no elige alcalde distrital. Es la capital de la provincia y su
+//     gobierno municipal ES la alcaldía de Lima, así que son 42 distritales y no
+//     43. En el mapa va rayado, no vacío: vacío se lee como «aún sin dato».
+//   · Lima Metropolitana no pertenece a ningún gobierno regional, así que no hay
+//     gobernador ni consejo regional. Esta vista no lleva el bloque `02` que sí
+//     llevan las otras regiones del país.
+//
+// No necesita ningún dato nuevo: sale entera del contrato que ya se publica.
+const LIMA={pref:'1401', race:'03-140100', geo:'geo/03-140100.geojson'};
+let mapaL=null, capaL=null;
+
+async function vistaLima(){
+  cabecera();
+  const dentro=(NAC.por_carrera||[]).filter(c=>(c.ubigeo||'').startsWith(LIMA.pref));
+  if(!dentro.length){
+    $('vista').innerHTML=`<div class="aviso">No hay datos de Lima en este proceso.</div>`;
+    return;
+  }
+  const prov=dentro.find(c=>c.tipo==='03');
+  const dists=dentro.filter(c=>c.tipo==='04');
+  const nombres=NAC.organizaciones_nombre||{};
+  const nomCarrera={}; for(const c of (META.carreras||[])) nomCarrera[c.race_id]=c.nombre;
+
+  // La ficha de la alcaldía de Lima pide su propio documento: es la única
+  // contienda de esta vista que merece votos y barras, no un color en un mapa.
+  let doc=null;
+  try{ doc=await j(`carrera/${LIMA.race}.json`); }catch(e){}
+
+  // Marcador de las 42 distritales. Es un recuento de presentación —cuántas hay
+  // en cada estado—, no una decisión sobre ninguna: el estado lo trae el
+  // contrato ya resuelto y aquí solo se agrupa.
+  const orden=['electo','segunda_vuelta','empate','por_definir','sin_resultado'];
+  const porEstado={};
+  for(const c of dists) porEstado[c.estado]=(porEstado[c.estado]||0)+1;
+
+  const chip=c=>`<span class="chip${c.estado==='electo'?' si':''}"
+    style="${c.estado==='electo'?'':`background:var(${EST[c.estado]?.v||'--vacio'});border-color:var(${EST[c.estado]?.v||'--vacio'})`}"
+    >${etiq(c.estado)}</span>`;
+
+  let h=`<h1>Lima</h1>
+    <div class="sub">${F(dentro.length)} elecciones · la alcaldía provincial y
+      ${F(dists.length)} distritales</div>
+    <div class="aviso">El <b>Cercado de Lima</b> no elige alcalde distrital: es la
+      capital de la provincia y su municipio es la propia alcaldía de Lima. Por eso
+      son ${F(dists.length)} distritales y no ${F(dists.length+1)}. Lima
+      Metropolitana tampoco elige gobernador ni consejo regional.</div>`;
+
+  // --- la alcaldía provincial
+  h+=`<h2>La alcaldía de Lima</h2>`;
+  if(prov && doc){
+    const co=doc.computo||{};
+    const orgs=(doc.organizaciones||[]).slice()
+      .sort((a,b)=>(b.pct_validos||0)-(a.pct_validos||0));
+    const mx=Math.max(...orgs.map(o=>o.pct_validos||0),0.0001);
+    const top=orgs.slice(0,8);
+    h+=`<div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">
+      <div class="tile"><div class="k">${P(co.pct_actas)}</div><div class="e">Actas contabilizadas</div></div>
+      <div class="tile"><div class="k">${F(co.votos_validos)}</div><div class="e">Válidos</div></div>
+      <div class="tile"><div class="k">${F(co.votos_blancos)}</div><div class="e">Blancos</div></div>
+      <div class="tile"><div class="k">${F(co.votos_nulos)}</div><div class="e">Nulos</div></div>
+      <div class="tile"><div class="k">${F(orgs.length)}</div><div class="e">Listas en competencia</div></div>
+    </div>
+    <div style="margin:10px 0 4px">${chip(prov)}
+      <span class="sub">· ${F(doc.electos?.cuerpo?.n_escanos||0)} regidores en juego</span></div>
+    <div class="envuelve"><table>
+      <thead><tr><th>Organización</th><th class="n">Votos</th><th class="n">%</th>
+        <th style="width:34%"></th></tr></thead><tbody>`+
+      top.map(o=>`<tr>
+        <td><span class="org">${burbuja(o.codigo)}${esc(o.nombre)}</span>${
+          o.candidato?`<div class="sub">${esc(o.candidato.nombre)}</div>`:''}</td>
+        <td class="n">${F(o.votos)}</td><td class="n">${P(o.pct_validos)}</td>
+        <td><span class="barra" style="width:${(100*(o.pct_validos||0)/mx).toFixed(1)}%;
+          background:${colorDe(o.codigo)}"></span></td></tr>`).join('')+
+      `</tbody></table></div>`+
+      (orgs.length>top.length
+        ? `<div class="sub" style="margin-top:6px">Se muestran las ${top.length}
+             primeras de ${F(orgs.length)}. <a href="#/c/${LIMA.race}">Ver la
+             contienda completa →</a></div>`
+        : `<div class="sub" style="margin-top:6px"><a href="#/c/${LIMA.race}">Ver la
+             contienda completa →</a></div>`);
+  } else {
+    h+=`<div class="aviso">No se pudo cargar la contienda provincial.</div>`;
+  }
+
+  // --- mapa y marcador de las distritales
+  h+=`<h2>Las ${F(dists.length)} alcaldías distritales</h2>
+    <div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">`+
+    orden.filter(k=>porEstado[k]).map(k=>`<div class="tile">
+      <div class="k">${F(porEstado[k])}</div>
+      <div class="e"><span class="punto" style="background:var(${EST[k].v})"></span>${
+        etiq(k,true)}</div></div>`).join('')+
+    `</div>
+    <div class="mapa" id="mapaL" style="margin-top:10px"></div><div id="leyL"></div>`;
+
+  // --- tabla distrito por distrito
+  h+=`<h2>Distrito por distrito</h2>
+    <div class="envuelve"><table>
+      <thead><tr><th>Distrito</th><th>Estado</th><th>Quién va primero</th>
+        <th class="n">Actas</th></tr></thead><tbody>`+
+    dists.slice().sort((a,b)=>String(nomCarrera[a.race_id]||'')
+        .localeCompare(String(nomCarrera[b.race_id]||''),'es'))
+      .map(c=>{
+        const g=(c.ganadores||[])[0];
+        return `<tr>
+          <td><a href="#/c/${c.race_id}">${esc(nomCarrera[c.race_id]||c.ubigeo)}</a></td>
+          <td>${chip(c)}</td>
+          <td>${g?`<span class="org">${burbuja(c.ganador)}${esc(g.organizacion||'')}</span>${
+              g.candidato?`<div class="sub">${esc(g.candidato)}</div>`:''}`
+            :`<span class="sub">—</span>`}</td>
+          <td class="n">${P(c.pct_actas)}</td></tr>`;
+      }).join('')+`</tbody></table></div>`;
+
+  $('vista').innerHTML=h;
+
+  // --- el mapa, después de que el contenedor exista
+  const porUbigeo={}; for(const c of dists) porUbigeo[c.ubigeo]=c;
+  // Un distrito sin carrera no es un distrito sin datos. La diferencia se
+  // resuelve contra el registro, que es quien sabe qué se elige dónde, y no por
+  // ausencia en el cómputo —que a media noche significa otra cosa—.
+  const hayCarrera=new Set((META.carreras||[])
+    .filter(c=>c.tipo==='04' && (c.ubigeo||'').startsWith(LIMA.pref))
+    .map(c=>c.ubigeo));
+  try{
+    if(!GEO.lima) GEO.lima=await j(LIMA.geo);
+    const cont=$('mapaL');
+    if(cont){
+      mapaL=creaMapa(cont);
+      const est=t=>`<span class="tt-est">${t}</span>`;
+      const marcas=new Set();
+      capaL=agregaCapa(mapaL, GEO.lima, (u,props)=>{
+        const circ=`<span class="tt-circ">${esc(props.nombre||'')}</span>`;
+        if(!hayCarrera.has(u)){ marcas.add('no_participa');
+          return {color:css('--vacio'), trama:true,
+                  texto:circ+est('NO ELIGE ALCALDE DISTRITAL')}; }
+        const c=porUbigeo[u];
+        if(c && c.estado==='sin_resultado'){ marcas.add('anulada');
+          return {color:css('--anulada'), texto:circ+est('ELECCIÓN ANULADA'),
+                  href:`#/c/${c.race_id}`}; }
+        if(!c||!c.ganador){ marcas.add('sin');
+          return {color:css('--vacio'), texto:circ+est('EN DISPUTA')+
+            (c?`<span class="tt-org">${P(c.pct_actas)} de actas contabilizadas</span>`:''),
+            href:c?`#/c/${c.race_id}`:null}; }
+        const g=(c.ganadores||[])[0]||{};
+        if(c.estado==='empate'){ marcas.add('empate');
+          return {color:css('--empate'), texto:circ+est('EMPATE — VA A SORTEO'),
+                  href:`#/c/${c.race_id}`}; }
+        marcas.add(esNacional(c.ganador)?c.ganador:'regional');
+        return {color:colorNacional(c.ganador),
+          texto:circ+est(etiq(c.estado))+
+            `<span class="tt-cand">${esc(g.candidato||'CANDIDATO POR DEFINIR')}</span>
+             <span class="tt-org">${esc(g.organizacion||'')}</span>`,
+          href:`#/c/${c.race_id}`};
+      }, {peso:.8});
+      const ley=$('leyL'); if(ley) ley.innerHTML=leyendaEstados(marcas);
+    }
+  }catch(e){
+    const cont=$('mapaL');
+    if(cont) cont.innerHTML=`<div class="aviso" style="border:0">
+      No se pudo cargar la geografía de Lima.</div>`;
+  }
 }
 
 // Buscar por nombre es el mismo control en dos sitios —arriba del resumen y en
@@ -1802,6 +1972,7 @@ async function enruta(cambioDeRuta=true){
   // en que más se lee.
   const y = (cambioDeRuta && !mismaRuta) ? 0 : scrollY;
   if(m){ await vistaCarrera(m[1]); }
+  else if(r==='/lima'){ await vistaLima(); }
   else if(r==='/reeleccion'){ await vistaTenientes(); }
   else if(r==='/buscador'){ await vistaBuscador(); }
   else { await vistaNacional(); }
