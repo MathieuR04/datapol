@@ -398,6 +398,7 @@ if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
   <a class="mode-tab" href="#/lima" data-r="/lima">LIMA</a>
   <a class="mode-tab" href="#/electos" data-r="/electos">ELECTOS</a>
   <a class="mode-tab" href="#/candidatos" data-r="/candidatos">CANDIDATOS</a>
+  <a class="mode-tab" href="#/comparacion" data-r="/comparacion">VS 2022</a>
   <a class="mode-tab" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
   <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
 </div>
@@ -1054,6 +1055,84 @@ async function vistaTenientes(){
   liga('tq','q'); liga('t-reg','region'); liga('t-niv','nivel');
   liga('t-via','via'); liga('t-res','res');
   pinta();
+}
+
+// ------------------------------------------------------- vista: comparación
+// Qué cambió respecto de 2022 para los tres actores que se preguntan esa noche:
+// los movimientos regionales en bloque, Alianza para el Progreso y Somos Perú.
+//
+// Las **listas presentadas** van arriba y destacadas por una razón práctica: son
+// lo único que tiene algo que decir a las ocho de la noche, cuando no hay un
+// voto contado. Y por una razón de fondo: ganar 100 alcaldías de 2,000 listas no
+// es lo mismo que ganar 100 de 300, y sin el denominador la comparación miente.
+const CMP_ETIQ={
+  listas:        ['Listas presentadas', true],
+  gobernador_1v: ['Gobernaciones', false],
+  gobernador_2v: ['Pasan a segunda vuelta', false],
+  alcalde_prov:  ['Alcaldías provinciales', false],
+  alcalde_dist:  ['Alcaldías distritales', false],
+  consejero:     ['Consejeros regionales', false],
+  regidor_prov:  ['Regidores provinciales', false],
+  regidor_dist:  ['Regidores distritales', false]};
+let CMP=null;
+
+async function vistaComparacion(){
+  cabecera();
+  try{ CMP=await j('comparacion.json'); }
+  catch(e){
+    $('vista').innerHTML=`<div class="aviso">Este proceso no publica la
+      comparación con la elección anterior.</div>`; return;
+  }
+  const campos=CMP.campos||[], eA=CMP.etiqueta_antes, eB=CMP.etiqueta_ahora;
+
+  // Comparar un escrutinio a medias contra un resultado final es comparar dos
+  // cosas distintas. A las ocho de la noche 2026 va en cero y la resta diría
+  // «−982 (−100%)» en alcaldías distritales, que se lee como un derrumbe cuando
+  // lo único que pasa es que no se ha contado nada. Así que la diferencia de las
+  // carreras ganadas se calla hasta que el escrutinio cierra, y mientras tanto
+  // la columna dice cuánto se lleva contado.
+  //
+  // `listas` es la excepción y por eso se compara siempre: se conoce desde antes
+  // de que abran las urnas y no depende del cómputo.
+  const CERRADO = (NAC.pct||0) >= 0.999;
+  const delta=(a,b,final)=>{
+    if(!final && !CERRADO)
+      return `<span class="nd">escrutado ${P(NAC.pct)}</span>`;
+    if(!a && !b) return '<span class="nd">—</span>';
+    const d=b-a;
+    if(!d) return '<span class="nd">igual</span>';
+    const pct = a ? ` (${d>0?'+':''}${Math.round(100*d/a)}%)` : '';
+    return `<b style="color:var(${d>0?'--ok':'--disputa'})">${d>0?'+':''}${F(d)}${pct}</b>`;
+  };
+
+  let h=`<h1>${esc(eB)} frente a ${esc(eA)}</h1>
+    <div class="sub">Tres bloques, con las listas presentadas como denominador</div>
+    <div class="aviso">Las carreras ganadas empiezan en cero y se llenan durante la
+      noche. Las <b>listas presentadas</b> se conocen desde antes de que abran las
+      urnas: es la fila que ya se puede leer.</div>`;
+
+  for(const b of (CMP.bloques||[])){
+    const A=b.antes||{}, B=b.ahora||{};
+    h+=`<h2>${esc(b.nombre)}</h2>`;
+    if(b.nota) h+=`<div class="sub" style="margin:-4px 0 8px">${esc(b.nota)}</div>`;
+    if((B.miembros||[]).length>1)
+      h+=`<div class="sub" style="margin:-2px 0 8px">En ${esc(eB)}:
+          ${B.miembros.map(esc).join(' · ')}</div>`;
+    if(b.clave==='regionales')
+      h+=`<div class="sub" style="margin:-2px 0 8px">${F(A.n)} organizaciones en
+          ${esc(eA)} · ${F(B.n)} en ${esc(eB)}</div>`;
+    h+=`<div class="envuelve"><table>
+      <thead><tr><th></th><th class="n">${esc(eA)}</th><th class="n">${esc(eB)}</th>
+        <th class="n">Diferencia</th></tr></thead><tbody>`+
+      campos.filter(k=>CMP_ETIQ[k] && (A[k]||B[k])).map(k=>{
+        const [lab,fuerte]=CMP_ETIQ[k];
+        return `<tr${fuerte?' style="font-weight:600"':''}>
+          <td>${lab}</td><td class="n">${F(A[k]||0)}</td>
+          <td class="n">${fuerte||CERRADO?F(B[k]||0):'<span class="nd">—</span>'}</td>
+          <td class="n">${delta(A[k]||0, B[k]||0, fuerte)}</td></tr>`;
+      }).join('')+`</tbody></table></div>`;
+  }
+  $('vista').innerHTML=h;
 }
 
 // ------------------------------------------------ vista: buscador de candidatos
@@ -2289,6 +2368,7 @@ async function enruta(cambioDeRuta=true){
   else if(r==='/lima'){ await vistaLima(); }
   else if(r==='/electos'){ await vistaElectos(); }
   else if(r==='/candidatos'){ await vistaCandidatos(); }
+  else if(r==='/comparacion'){ await vistaComparacion(); }
   else if(r==='/reeleccion'){ await vistaTenientes(); }
   else if(r==='/buscador'){ await vistaBuscador(); }
   else { await vistaNacional(); }
