@@ -373,6 +373,7 @@ if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
 <div class="mode-bar">
   <a class="mode-tab" href="#/" data-r="/">RESUMEN</a>
   <a class="mode-tab" href="#/lima" data-r="/lima">LIMA</a>
+  <a class="mode-tab" href="#/electos" data-r="/electos">ELECTOS</a>
   <a class="mode-tab" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
   <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
 </div>
@@ -1028,6 +1029,123 @@ async function vistaTenientes(){
     el.oninput=el.onchange=()=>{ FILTRO_TEN[campo]=el.value; pinta(); }; };
   liga('tq','q'); liga('t-reg','region'); liga('t-niv','nivel');
   liga('t-via','via'); liga('t-res','res');
+  pinta();
+}
+
+// -------------------------------------------- vista: autoridades electas
+// «Quién es el regidor de mi distrito» no tiene hoy ninguna página que la
+// responda: hay que saber primero en qué carrera buscar. Este es el índice de
+// las ~13,000 autoridades de la noche, buscable por nombre.
+//
+// Se llena solo con quien ya está electo, así que a las ocho de la noche está
+// vacío y crece con el escrutinio. Eso es el dato, no un defecto: un escaño en
+// `por_definir` no tiene titular y aquí no se inventa uno.
+//
+// El archivo viene en forma columnar —filas posicionales y tablas de índice para
+// lo que se repite— porque en crudo son 0.98 MB y así viaja en 0.26 MB. Se pide
+// una sola vez, al abrir la pestaña, y no entra en el sondeo salvo que el
+// cómputo haya avanzado.
+let ELE=null, ELE_SELLO=null, TOPE_ELE=150;
+let FILTRO_ELE={q:'',cargo:'',dep:''};
+const FOTO_HDV=id=>`https://declara.jne.gob.pe/Assets/Fotos-HojaVida/${id}.jpg`;
+
+async function vistaElectos(){
+  cabecera();
+  // El directorio solo cambia cuando cambia el cómputo. Repetir 0.26 MB cada 45
+  // segundos sin que haya nuevas autoridades es gasto puro.
+  if(!ELE || ELE_SELLO!==NAC.generado){
+    try{ ELE=await j('electos.json'); ELE_SELLO=NAC.generado; }
+    catch(e){
+      $('vista').innerHTML=`<div class="aviso">Todavía no hay directorio de
+        autoridades electas para este proceso.</div>`; return;
+    }
+  }
+  const filas=ELE.filas||[], cargos=ELE.cargos||[], orgsN=ELE.organizaciones||{};
+  const carreras=ELE.carreras||{};
+  const I=Object.fromEntries((ELE.campos||[]).map((c,i)=>[c,i]));
+
+  const deps=(META.ambitos?.departamentos)||[];
+  const nomDep={}; for(const d of deps) nomDep[String(d.ubigeo).slice(0,2)]=d.nombre;
+  const depDe=rid=>String(rid||'').slice(3,5);
+
+  const escanos=(META.totales?.escanos)||0;
+
+  let h=`<h1>Autoridades electas</h1>
+    <div class="sub">${F(filas.length)} con resultado${
+      escanos?` · ${F(escanos)} escaños del cuerpo proporcional en juego`:''}</div>`;
+
+  if(!filas.length){
+    h+=`<div class="aviso">Todavía no hay ninguna autoridad electa. Esta tabla se
+      llena sola conforme avanza el escrutinio: cada vez que una carrera se
+      resuelve, sus electos aparecen aquí.</div>`;
+    $('vista').innerHTML=h; return;
+  }
+
+  const usados=[...new Set(filas.map(f=>f[I.cargo]))]
+    .sort((a,b)=>cargos[a].localeCompare(cargos[b],'es'));
+  const depsUsados=[...new Set(filas.map(f=>depDe(f[I.race])))]
+    .filter(d=>nomDep[d]).sort((a,b)=>nomDep[a].localeCompare(nomDep[b],'es'));
+
+  h+=`<input class="buscar" id="eq" placeholder="Nombre, distrito, provincia u organización…"
+      autocomplete="off" aria-label="Buscar una autoridad">
+    <div class="casc" style="margin-top:10px">
+      <label>Cargo<select id="e-cargo">
+        <option value="">Todos los cargos</option>
+        ${usados.map(i=>`<option value="${i}">${esc(cargos[i])}</option>`).join('')}
+      </select></label>
+      <label>Departamento<select id="e-dep">
+        <option value="">Todo el país</option>
+        ${depsUsados.map(d=>`<option value="${d}">${esc(nomDep[d])}</option>`).join('')}
+      </select></label>
+    </div>
+    <div class="sub" id="e-cuenta" style="margin:10px 0 4px"></div>
+    <div class="envuelve"><table>
+      <thead><tr><th></th><th>Nombre</th><th>Cargo</th><th>Circunscripción</th>
+        <th>Organización</th></tr></thead><tbody id="e-filas"></tbody></table></div>
+    <div id="e-mas" style="margin-top:10px"></div>`;
+
+  $('vista').innerHTML=h;
+
+  const plano=s=>String(s||'').normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase();
+
+  function pinta(){
+    const f=FILTRO_ELE, t=plano(f.q.trim());
+    const vis=filas.filter(r=>
+      (!f.cargo || String(r[I.cargo])===f.cargo) &&
+      (!f.dep   || depDe(r[I.race])===f.dep) &&
+      (!t || plano(`${r[I.nombre]} ${(carreras[r[I.race]]||[''])[0]} ${orgsN[r[I.org]]||''}`).includes(t)));
+    // Trece mil filas en el DOM cuelgan un móvil. Se pinta un tramo y se amplía
+    // a petición, que además es como se lee un directorio: se busca, no se
+    // recorre entero.
+    const tramo=vis.slice(0,TOPE_ELE);
+    $('e-filas').innerHTML = tramo.length ? tramo.map(r=>{
+      const rid=r[I.race], lug=(carreras[rid]||[rid,''])[0], hdv=r[I.hdv];
+      return `<tr>
+        <td>${hdv&&hdv!=='0'
+          ? `<img class="aut-foto" style="width:30px;height:30px;min-width:30px"
+               src="${esc(FOTO_HDV(hdv))}" alt="" loading="lazy"
+               onerror="this.style.visibility='hidden'">` : ''}</td>
+        <td><b>${esc(r[I.nombre])}</b>${
+          r[I.edad]?`<div class="sub">${esc(r[I.sexo]||'')} · ${F(r[I.edad])} años</div>`:''}</td>
+        <td>${esc(cargos[r[I.cargo]]||'')}</td>
+        <td><a href="#/c/${esc(rid)}">${esc(lug)}</a></td>
+        <td><span class="org">${burbuja(r[I.org])}${esc(orgsN[r[I.org]]||'')}</span></td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="5" class="sub"
+        style="padding:16px;text-align:center">Nada coincide.</td></tr>`;
+    $('e-cuenta').textContent = vis.length>tramo.length
+      ? `${F(tramo.length)} de ${F(vis.length)} que coinciden · ${F(filas.length)} en total`
+      : `${F(vis.length)} de ${F(filas.length)}`;
+    $('e-mas').innerHTML = vis.length>tramo.length
+      ? `<button class="ver-mas" id="e-btn">Ver ${F(Math.min(250,vis.length-tramo.length))} más</button>`
+      : '';
+    const b=$('e-btn');
+    if(b) b.onclick=()=>{ TOPE_ELE+=250; pinta(); };
+  }
+
+  const liga=(id,campo)=>{ const el=$(id); el.value=FILTRO_ELE[campo];
+    el.oninput=el.onchange=()=>{ FILTRO_ELE[campo]=el.value; TOPE_ELE=150; pinta(); }; };
+  liga('eq','q'); liga('e-cargo','cargo'); liga('e-dep','dep');
   pinta();
 }
 
@@ -1973,6 +2091,7 @@ async function enruta(cambioDeRuta=true){
   const y = (cambioDeRuta && !mismaRuta) ? 0 : scrollY;
   if(m){ await vistaCarrera(m[1]); }
   else if(r==='/lima'){ await vistaLima(); }
+  else if(r==='/electos'){ await vistaElectos(); }
   else if(r==='/reeleccion'){ await vistaTenientes(); }
   else if(r==='/buscador'){ await vistaBuscador(); }
   else { await vistaNacional(); }
