@@ -1,0 +1,9 @@
+# Insumos pesados y re-derivables: se regeneran con `python3 update.py`.
+data/pdfs/
+data/parsed/
+tessdata/
+__pycache__/
+# Diagnóstico interno (notas de actas, avisos del OCR, lista para rehacer a mano):
+# se usa localmente, no se publica.
+data/paginas.csv
+data/revisar.csv

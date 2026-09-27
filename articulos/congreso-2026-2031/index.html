@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cómo vota el Congreso 2026-2031 — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Cómo vota el Congreso 2026-2031">
+  <meta property="og:description" content="Todas las votaciones nominales del Senado y la Cámara de Diputados: posiciones de cada parlamentario, bancadas, la línea entre oficialismo y oposición y quiénes están más cerca de cruzarla.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/congreso-2026-2031/">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@KhamaRamaq">
+  <meta name="twitter:title"       content="Cómo vota el Congreso 2026-2031">
+  <meta name="twitter:description" content="Votaciones nominales del Senado y Diputados, posiciones y bisagras.">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --card:   #fbf8f2;
+      --border: #cfc0ab;
+      --grid:   #e4d9c9;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;   /* acento datapol */
+      --gold:   #dda224;   /* avisos */
+      --olive:  #6b7d2a;   /* voto sí */
+      --red:    #a8322a;   /* voto no: rojo oscuro, se separa del sí también por luminosidad */
+      /* bancadas: los colores de partido de congresoperu2026.com */
+      --p-FP:   #F97316;
+      --p-RP:   #38BDF8;
+      --p-JP:   #38c93e;
+      --p-PBG:  #F59E0B;
+      --p-PCO:  #139167;
+      --p-AN:   #EF4444;
+      --neutral:#9c8f80;   /* abstención */
+      --absent: #ddd2c2;   /* ausente / licencia */
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+    body { overflow-x: hidden; }
+
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+    .article-back { display: inline-flex; gap: .4rem; font-size: 10px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted); text-decoration: none; margin-bottom: 2rem; }
+    .article-back:hover { color: var(--text); }
+    .tag { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--terra); margin-bottom: .6rem; }
+    h1 { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 52px; letter-spacing: .03em; line-height: 1; margin-bottom: 1rem; }
+    .byline { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.2rem; border-bottom: 2px solid var(--text); margin-bottom: 1.6rem; }
+    .byline b { color: var(--text); font-weight: 600; }
+    .lede { font-size: 15px; line-height: 1.75; max-width: 720px; margin-bottom: 1.6rem; }
+    h2 { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 30px; letter-spacing: .03em; margin: 2.8rem 0 .4rem; }
+    .sub { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 760px; margin-bottom: 1rem; }
+
+    /* selector de cámara */
+    .camaras { display: inline-flex; border: 1.5px solid var(--text); border-radius: 999px; overflow: hidden; margin-bottom: 1.4rem; }
+    .camaras button { font: 600 12px 'Inter'; letter-spacing: .06em; text-transform: uppercase; padding: .55rem 1.2rem;
+      background: transparent; border: 0; cursor: pointer; color: var(--text); }
+    .camaras button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+
+    /* cifras */
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .75rem; margin-bottom: .6rem; }
+    .kpi { background: var(--card); border: 1px solid var(--grid); border-radius: 10px; padding: .8rem 1rem; }
+    .kpi .v { font-family: 'Bebas Neue'; font-size: 34px; line-height: 1; }
+    .kpi .l { font-size: 11px; color: var(--muted); line-height: 1.4; margin-top: .25rem; }
+    .aviso { font-size: 12px; color: var(--muted); background: var(--card); border-left: 3px solid var(--gold);
+      padding: .6rem .8rem; border-radius: 0 6px 6px 0; margin: .8rem 0 0; line-height: 1.55; max-width: 760px; }
+
+    /* mapas */
+    .mapas { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1rem; }
+    @media (max-width: 860px) { .mapas { grid-template-columns: 1fr; } }
+    .panel { background: var(--card); border: 1px solid var(--grid); border-radius: 12px; padding: .9rem; min-width: 0; }
+    .panel h3 { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .5rem; }
+    .panel svg { width: 100%; height: auto; display: block; }
+    .legend { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font-size: 11px; color: var(--muted); margin: .2rem 0 .6rem; align-items: center; }
+    .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; }
+    .legend .ln { width: 18px; height: 0; border-top: 2px dashed var(--text); border-radius: 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .6rem; }
+    .chip { font: 600 11px 'Inter'; padding: .3rem .65rem; border-radius: 999px; border: 1px solid var(--border);
+      background: transparent; color: var(--text); cursor: pointer; }
+    .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .axis-label { font-size: 10px; fill: var(--muted); }
+    .quad { font-size: 10px; fill: var(--dim); font-style: italic; }
+
+    /* tooltip */
+    #tip { position: fixed; pointer-events: none; z-index: 50; background: #fff; border: 1px solid var(--border);
+      border-radius: 10px; padding: .55rem .65rem; font-size: 12px; box-shadow: 0 6px 20px rgba(26,18,9,.12);
+      display: none; max-width: 260px; }
+    #tip .row { display: flex; gap: .55rem; align-items: center; }
+    #tip img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--sand); }
+    #tip .n { font-weight: 600; line-height: 1.25; }
+    #tip .m { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    #tip .st { margin-top: .35rem; font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+    /* bisagras */
+    .bis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media (max-width: 860px) { .bis { grid-template-columns: 1fr; } }
+    .bis h3 { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .6rem; display: flex; gap: .4rem; align-items: center; }
+    .person { display: flex; gap: .6rem; align-items: center; padding: .45rem .3rem; border-radius: 8px; cursor: pointer; border: 0; background: none; width: 100%; text-align: left; font: inherit; color: inherit; }
+    .person:hover { background: #f1eadf; }
+    .person img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--sand); flex-shrink: 0; }
+    .person .n { font-size: 13px; font-weight: 600; line-height: 1.2; }
+    .person .m { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .person .d { margin-left: auto; font-size: 11px; color: var(--muted); text-align: right; white-space: nowrap; }
+    .empty { font-size: 12px; color: var(--muted); font-style: italic; padding: .4rem .3rem; }
+
+    /* votaciones */
+    .vtools { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; margin-bottom: .7rem; }
+    .vtools input[type=search] { flex: 1 1 220px; font: 13px 'Inter'; padding: .5rem .7rem; border: 1px solid var(--border);
+      border-radius: 8px; background: #fff; color: var(--text); min-width: 0; }
+    .vtools label { font-size: 12px; color: var(--muted); display: flex; gap: .35rem; align-items: center; }
+    .vlist { border-top: 1px solid var(--grid); }
+    .vrow { border-bottom: 1px solid var(--grid); transition: background .6s; }
+    .vrow.flash { background: #f1e2cf; }
+    .vhead { display: grid; grid-template-columns: 92px 1fr 170px; gap: .8rem; align-items: center; padding: .65rem .3rem;
+      cursor: pointer; background: none; border: 0; width: 100%; text-align: left; font: inherit; color: inherit; }
+    .vhead:hover { background: #f1eadf; }
+    @media (max-width: 640px) { .vhead { grid-template-columns: 1fr; gap: .35rem; } }
+    .vdate { font-size: 11px; color: var(--muted); line-height: 1.35; }
+    .vasunto { font-size: 13px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .vtags { display: flex; gap: .3rem; margin-top: .25rem; flex-wrap: wrap; }
+    .t { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: .12rem .4rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted); }
+    .t.hot { border-color: var(--terra); color: var(--terra); }
+    .bar { display: flex; height: 10px; border-radius: 3px; overflow: hidden; gap: 2px; background: transparent; }
+    .bar span { display: block; height: 100%; }
+    .bar span:first-child { border-radius: 3px 0 0 3px; } .bar span:last-child { border-radius: 0 3px 3px 0; }
+    .barlbl { font-size: 11px; color: var(--muted); margin-top: .25rem; }
+    .vdet { padding: .4rem .3rem 1.3rem; display: none; }
+    .vrow.open .vdet { display: block; }
+    .vdet .full { font-size: 13px; line-height: 1.55; margin-bottom: .8rem; }
+    .gtable { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 1rem; }
+    .gtable td, .gtable th { padding: .3rem .4rem; text-align: left; border-bottom: 1px solid var(--grid); }
+    .gtable th { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    .gtable td.num { text-align: right; font-variant-numeric: tabular-nums; width: 42px; }
+    .gtable td.b { width: 40%; }
+    .seats { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-bottom: .8rem; }
+    .seatgrp { min-width: 0; }
+    .seatgrp .g { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 3px; letter-spacing: .05em; }
+    .seatgrp .cells { display: grid; grid-template-columns: repeat(10, 12px); gap: 2px; }
+    .seat { width: 12px; height: 12px; border-radius: 3px; cursor: pointer; border: 0; padding: 0; }
+    .vnote { font-size: 12px; color: var(--muted); line-height: 1.55; margin-top: .5rem; }
+    .vnote a { color: var(--terra); }
+
+    /* ficha */
+    #ficha { position: fixed; inset: 0; background: rgba(26,18,9,.35); display: none; z-index: 60; align-items: center; justify-content: center; padding: 1rem; }
+    #ficha .box { background: var(--bg); border-radius: 14px; max-width: 560px; width: 100%; max-height: 88vh; overflow: auto; padding: 1.2rem 1.3rem 1.4rem; position: relative; }
+    #ficha .x { position: absolute; top: .6rem; right: .7rem; border: 0; background: none; font-size: 22px; cursor: pointer; color: var(--muted); }
+    #ficha .top { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+    #ficha .top img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--sand); }
+    #ficha .top .n { font-family: 'Bebas Neue'; font-size: 26px; line-height: 1.05; }
+    #ficha .top .m { font-size: 12px; color: var(--muted); margin-top: .2rem; }
+    #ficha .kpis .kpi .v { font-size: 26px; }
+    #ficha h4 { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin: 1rem 0 .4rem; }
+    .fv:hover { background: #f1eadf; cursor: pointer; }
+    .fv { display: grid; grid-template-columns: 70px 1fr 64px; gap: .5rem; font-size: 12px; padding: .35rem 0; border-bottom: 1px solid var(--grid); align-items: center; }
+    .fv .a { line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pill { font-size: 10px; font-weight: 700; padding: .15rem .4rem; border-radius: 4px; text-align: center; color: #fff; }
+    .fv .dis { font-size: 10px; color: var(--terra); font-weight: 600; }
+
+    /* tabla */
+    .tscroll { overflow-x: auto; }
+    table.mt { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 620px; }
+    table.mt th { text-align: left; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+      font-weight: 600; padding: .45rem .4rem; border-bottom: 1.5px solid var(--text); cursor: pointer; white-space: nowrap; }
+    table.mt td { padding: .4rem; border-bottom: 1px solid var(--grid); }
+    table.mt td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.mt tr:hover td { background: #f1eadf; cursor: pointer; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: .4rem; }
+
+    .method { font-size: 13px; line-height: 1.7; color: var(--text); max-width: 760px; }
+    .method p { margin-bottom: .9em; }
+    .method code { font-size: 12px; background: var(--card); padding: 0 .25rem; border-radius: 3px; }
+    .foot { font-size: 11px; color: var(--muted); margin-top: 2rem; }
+  </style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <div class="nav-social">
+    <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+    </a>
+    <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+      <span class="nav-yape-label">YAPE</span>
+    </button>
+    <div class="nav-sep" style="margin:0 0.4rem"></div>
+    <span class="nav-author">MATHIEU ROJAS</span>
+  </div>
+</div>
+
+<div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+    <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+    <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+    <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <a class="article-back" href="/articulos/">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+    Todos los artículos
+  </a>
+  <div class="tag">Congreso 2026-2031 · Votaciones</div>
+  <h1>Cómo vota el Congreso</h1>
+  <div class="byline"><b>Mathieu Rojas</b><span>·</span><span id="upd">—</span></div>
+
+  <p class="lede">
+    Cada votación nominal del Pleno del Senado y de la Cámara de Diputados, leída de las actas
+    oficiales de asistencia y votación. Con ellas se ubica a cada parlamentario en un mapa según
+    con quién vota, se traza la línea que separa al oficialismo (Fuerza Popular y Renovación
+    Popular) de la oposición, y se identifica a quiénes están más cerca de cruzarla.
+  </p>
+
+  <div class="camaras" role="group" aria-label="Cámara">
+    <button type="button" data-c="diputados" aria-pressed="true">Diputados</button>
+    <button type="button" data-c="senado" aria-pressed="false">Senado</button>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+  <div id="avisos"></div>
+
+  <h2>El mapa</h2>
+  <p class="sub">
+    Cada punto es un parlamentario; dos puntos están cerca cuando votan igual. El eje horizontal es
+    la división principal de la cámara, orientada para que el oficialismo quede a la derecha; el
+    vertical, la segunda. La línea punteada es la frontera que mejor separa a los dos bloques
+    (vertical mientras la segunda dimensión no aporte). Los puntos que coinciden se separan un poco
+    para que se vean todos; las distancias a la línea se miden sobre la posición exacta.
+  </p>
+  <div class="chips" id="chips"></div>
+  <div class="mapas">
+    <div class="panel">
+      <h3>Por parlamentario</h3>
+      <div class="legend" id="legM"></div>
+      <svg id="mapM" viewBox="0 0 600 470" role="img" aria-label="Mapa de posiciones por parlamentario"></svg>
+    </div>
+    <div class="panel">
+      <h3>Por bancada</h3>
+      <div class="legend"><span>Mediana de la bancada · la elipse abarca a la mayoría de sus miembros</span></div>
+      <svg id="mapP" viewBox="0 0 440 470" role="img" aria-label="Mapa de posiciones por bancada"></svg>
+    </div>
+  </div>
+
+  <h2>Las bisagras</h2>
+  <p class="sub">
+    Los parlamentarios más cercanos a la línea: los oficialistas que más votan con la oposición y
+    los opositores que más votan con el oficialismo. «Cruzados» son los que, por cómo votan, ya
+    quedan del otro lado.
+  </p>
+  <div class="bis" id="bis"></div>
+
+  <h2>Las votaciones</h2>
+  <p class="sub">
+    Todas las votaciones registradas, de la más reciente a la más antigua. «Disputada» marca las que
+    entran al mapa: las que no fueron casi unánimes. Toca una para ver cómo votó cada bancada y cada
+    escaño.
+  </p>
+  <div class="vtools">
+    <input type="search" id="q" placeholder="Buscar por asunto: moción, proyecto, emergencia…">
+    <label><input type="checkbox" id="soloDisp"> Sólo disputadas</label>
+  </div>
+  <div class="legend" id="vlegend"></div>
+  <div class="vlist" id="vlist"></div>
+
+  <h2>Todos los parlamentarios</h2>
+  <p class="sub">Toca un encabezado para ordenar y una fila para abrir la ficha.</p>
+  <div class="vtools"><input type="search" id="qm" placeholder="Buscar parlamentario…"></div>
+  <div class="tscroll"><table class="mt" id="mt"></table></div>
+
+  <h2>Cómo se hizo</h2>
+  <div class="method" id="method">
+    <p>
+      Las votaciones salen de los PDF de «Votaciones y Asistencias» que cada cámara publica por
+      sesión (<a href="https://diputados.congreso.gob.pe/sesiones-del-pleno/">Diputados</a>,
+      <a href="https://senado.congreso.gob.pe/sesiones_del_pleno/">Senado</a>). Son escaneos: se leen
+      con OCR y cada página se contrasta con el cuadro impreso de votos por bancada; si no cuadra,
+      se marca. Las constancias de voto al pie de cada acta se aplican sobre lo registrado. El
+      padrón, las bancadas y las fotos oficiales vienen de los sitios de cada cámara.
+    </p>
+    <p>
+      Las posiciones se calculan con un embedding espectral de la matriz de acuerdo entre
+      parlamentarios (cuántas veces votan igual), siguiendo a Golub y Jackson, sobre las votaciones
+      disputadas. El índice de polarización λ₂ va de 0 (la cámara converge rápido a consensos) a 1
+      (dos bloques que casi no votan juntos). La orientación de los ejes es una convención: derecha
+      no significa «más conservador», sólo «más cerca del oficialismo».
+    </p>
+    <p id="methodNums"></p>
+  </div>
+  <p class="foot">Datos: Congreso de la República del Perú. Código y datos en el repositorio de datapol.</p>
+</div>
+
+<div id="tip" role="tooltip"></div>
+<div id="ficha" role="dialog" aria-modal="true"><div class="box" id="fbox"></div></div>
+
+<script>
+const VOTO = {
+  S: { l: 'Sí',          c: 'var(--olive)' },
+  N: { l: 'No',          c: 'var(--red)' },
+  A: { l: 'Abstención',  c: 'var(--neutral)' },
+  a: { l: 'Ausente',     c: 'var(--absent)' },
+  L: { l: 'Licencia',    c: 'var(--absent)' },
+  R: { l: 'Sin respuesta', c: 'var(--absent)' },
+  P: { l: 'Preside',     c: 'var(--text)' },
+  '·': { l: 'Sin dato',  c: 'transparent' },
+};
+const colorGrupo = g => g ? `var(--p-${g}, var(--dim))` : 'var(--dim)';
+const BLOQUE_L = { oficialismo: 'Oficialismo', oposicion: 'Oposición', otro: 'Otro' };
+const cache = {};
+let D = null, filtroGrupo = null, orden = { k: 'x', asc: false };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pct = v => v == null ? '—' : Math.round(v * 100) + '%';
+const foto = m => m.foto ? 'data/' + m.foto : '';
+const fmtFecha = f => { if (!f) return ''; const [y, mo, d] = f.split('-'); return `${+d}/${+mo}/${y}`; };
+const nombreCorto = n => { const [ap, no] = n.split(','); return (no ? no.trim().split(' ')[0] + ' ' : '') + ap.trim(); };
+
+async function cargar(c) {
+  if (!cache[c]) cache[c] = await (await fetch(`web/${c}.json`, { cache: 'no-cache' })).json();
+  D = cache[c];
+  D.byId = Object.fromEntries(D.miembros.map((m, i) => [m.id, { ...m, i }]));
+  filtroGrupo = null;
+  render();
+}
+
+function render() {
+  const M = D.meta;
+  $('#upd').textContent = `Actualizado ${M.generado} · votaciones del ${fmtFecha(M.desde)} al ${fmtFecha(M.hasta)}`;
+  kpis(); avisos(); chips(); mapaMiembros(); mapaPartidos(); bisagras(); votaciones(); tabla(); metodo();
+}
+
+function kpis() {
+  const M = D.meta, ms = D.miembros.filter(m => m.asistencia != null);
+  const asis = ms.reduce((s, m) => s + m.asistencia, 0) / Math.max(1, ms.length);
+  const k = [
+    [M.n_votaciones ?? D.votaciones.length, 'votaciones nominales registradas'],
+    [M.n_disputadas ?? '—', 'disputadas (entran al mapa)'],
+    [M.lambda2 != null ? M.lambda2.toFixed(2) : '—', 'índice de polarización λ₂ (0 a 1)'],
+    [M.clasif_1d != null ? pct(M.clasif_1d) : '—', 'de los votos que predice una sola dimensión'],
+    [pct(asis), 'asistencia promedio a las votaciones'],
+  ];
+  $('#kpis').innerHTML = k.map(([v, l]) => `<div class="kpi"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+}
+
+function avisos() {
+  const M = D.meta, out = [];
+  if ((M.n_disputadas ?? 0) < 30)
+    out.push(`Todavía hay pocas votaciones disputadas (${M.n_disputadas ?? 0}). Las posiciones son preliminares y se irán asentando con cada sesión.`);
+  if (M.ganancia_dim2 != null && M.ganancia_dim2 < 0.02)
+    out.push(`La segunda dimensión (eje vertical) casi no mejora la predicción de los votos (+${(M.ganancia_dim2 * 100).toFixed(1)} puntos): léase sobre todo el eje horizontal.`);
+  const noval = D.votaciones.filter(v => v.validacion !== 'ok').length;
+  if (noval) out.push(`${noval} de ${D.votaciones.length} votaciones no pudieron contrastarse del todo con el cuadro impreso; están marcadas en la lista.`);
+  $('#avisos').innerHTML = out.map(t => `<p class="aviso">${esc(t)}</p>`).join('');
+}
+
+function chips() {
+  const gs = [...new Set(D.miembros.map(m => m.grupo).filter(Boolean))]
+    .sort((a, b) => (D.meta.oficialismo.includes(b) - D.meta.oficialismo.includes(a)) || a.localeCompare(b));
+  $('#chips').innerHTML = `<button class="chip" aria-pressed="${!filtroGrupo}" data-g="">Todas</button>` +
+    gs.map(g => `<button class="chip" aria-pressed="${filtroGrupo === g}" data-g="${g}"><span class="dot" style="background:${colorGrupo(g)};margin-right:.3rem"></span>${g}</button>`).join('');
+  $('#legM').innerHTML = gs.map(g => `<span><i style="background:${colorGrupo(g)}"></i>${g}</span>`).join('') +
+    `<span><i class="ln"></i>Línea oficialismo (${D.meta.oficialismo.join(', ')}) / oposición</span>`;
+  $('#chips').onclick = e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    filtroGrupo = b.dataset.g || null; chips(); mapaMiembros(); mapaPartidos();
+  };
+}
+
+// ── escalas compartidas por los dos mapas ──
+function dominio() {
+  const pts = D.miembros.filter(m => m.x != null);
+  const ext = v => Math.max(1.2, ...pts.map(m => Math.abs(m[v]))) * 1.3;   // margen para los cúmulos
+  return { X: ext('x'), Y: ext('y') };
+}
+function escala(W, H, pad) {
+  const d = dominio();
+  return { sx: x => pad + (x + d.X) / (2 * d.X) * (W - 2 * pad), sy: y => H - pad - (y + d.Y) / (2 * d.Y) * (H - 2 * pad),
+    ix: px => (px - pad) / (W - 2 * pad) * 2 * d.X - d.X, iy: py => (H - pad - py) / (H - 2 * pad) * 2 * d.Y - d.Y,
+    kx: (W - 2 * pad) / (2 * d.X), ky: (H - 2 * pad) / (2 * d.Y), d };
+}
+function ejes(W, H, pad, s) {
+  return `
+    <rect x="${pad}" y="${pad}" width="${W - 2 * pad}" height="${H - 2 * pad}" fill="none" stroke="var(--grid)"/>
+    <line x1="${s.sx(0)}" x2="${s.sx(0)}" y1="${pad}" y2="${H - pad}" stroke="var(--border)"/>
+    <line y1="${s.sy(0)}" y2="${s.sy(0)}" x1="${pad}" x2="${W - pad}" stroke="var(--border)"/>
+    <text class="axis-label" x="${pad}" y="${H - pad + 16}">← más cerca de la oposición</text>
+    <text class="axis-label" x="${W - pad}" y="${H - pad + 16}" text-anchor="end">más cerca del oficialismo →</text>
+    <text class="axis-label" transform="translate(${pad - 8},${H / 2}) rotate(-90)" text-anchor="middle">2.ª dimensión</text>`;
+}
+function linea(W, H, pad, s) {
+  const L = D.meta.linea; if (!L) return '';
+  // puntos de la recta nx·x + ny·y = c, prolongada y recortada al marco
+  const bx = L.c * L.nx, by = L.c * L.ny, dx = -L.ny, dy = L.nx, T = 50;
+  return `<clipPath id="clip${W}"><rect x="${pad}" y="${pad}" width="${W - 2 * pad}" height="${H - 2 * pad}"/></clipPath>
+    <line clip-path="url(#clip${W})" x1="${s.sx(bx - dx * T)}" y1="${s.sy(by - dy * T)}" x2="${s.sx(bx + dx * T)}" y2="${s.sy(by + dy * T)}"
+      stroke="var(--text)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+}
+
+// Puntos que coinciden (mismos votos → misma posición) se abren en espiral
+// alrededor de su posición real, para que cada parlamentario se vea y se pueda
+// tocar. Sólo desplaza lo necesario para no solaparse.
+function esquivar(pts, r, lado) {
+  // `lado(x, y)` da el lado de la línea en píxeles: un punto nunca se mueve al
+  // otro lado, para no insinuar un cruce que no existe.
+  const puestos = [], GA = Math.PI * (3 - Math.sqrt(5));
+  for (const p of pts) {
+    let k = 0, x = p.px, y = p.py;
+    const L0 = lado ? lado(p.px, p.py) : 0;
+    const choca = (x, y) => puestos.some(q => (q.x - x) ** 2 + (q.y - y) ** 2 < (2 * r) ** 2)
+      || (lado && lado(x, y) !== L0);
+    while (choca(x, y) && k < 1500) {
+      k++; const rad = r * 1.05 * Math.sqrt(k) * 1.4, a = k * GA;
+      x = p.px + rad * Math.cos(a); y = p.py + rad * Math.sin(a);
+    }
+    puestos.push({ x, y }); p.dx = x; p.dy = y;
+  }
+  return pts;
+}
+
+function mapaMiembros() {
+  const W = 600, H = 470, pad = 30, s = escala(W, H, pad);
+  const pts = D.miembros.filter(m => m.x != null);
+  if (!pts.length) { $('#mapM').innerHTML = `<text x="${W / 2}" y="${H / 2}" text-anchor="middle" class="axis-label">Aún no hay suficientes votaciones disputadas.</text>`; return; }
+  const on = m => !filtroGrupo || m.grupo === filtroGrupo;
+  const P = esquivar(pts.map(m => ({ m, px: s.sx(m.x), py: s.sy(m.y) }))
+    .sort((a, b) => a.m.grupo < b.m.grupo ? -1 : 1), 5.2,
+    D.meta.linea ? (x, y) => Math.sign(D.meta.linea.nx * s.ix(x) + D.meta.linea.ny * s.iy(y) - D.meta.linea.c) : null);
+  const orden = [...P].sort((a, b) => on(a.m) - on(b.m));
+  $('#mapM').innerHTML = ejes(W, H, pad, s) + linea(W, H, pad, s) + orden.map(({ m, dx, dy }) => `
+    <g class="pt" data-id="${m.id}" style="cursor:pointer">
+      <circle cx="${dx}" cy="${dy}" r="${on(m) ? 4.6 : 3.6}" fill="${colorGrupo(m.grupo)}" fill-opacity="${on(m) ? .9 : .15}"
+        stroke="${m.cruzado ? 'var(--text)' : 'var(--card)'}" stroke-width="${m.cruzado ? 1.6 : 1}"/>
+      <circle cx="${dx}" cy="${dy}" r="7" fill="transparent"/>
+    </g>`).join('');
+  hover('#mapM', id => tipMiembro(D.byId[id]), id => ficha(id));
+}
+
+function mapaPartidos() {
+  const W = 440, H = 470, pad = 30, s = escala(W, H, pad);
+  const ps = D.partidos;
+  if (!ps.length) { $('#mapP').innerHTML = ''; return; }
+  const maxN = Math.max(...ps.map(p => p.n));
+  // Bancadas que caen en el mismo sitio comparten una sola etiqueta («FP · RP»).
+  const pos = ps.map(p => ({ p, cx: s.sx(p.x), cy: s.sy(p.y), r: 5 + 9 * Math.sqrt(p.n / maxN) }));
+  const etiquetas = [];
+  pos.forEach(q => {
+    const e = etiquetas.find(e => Math.hypot(e.cx - q.cx, e.cy - q.cy) < 16);
+    if (e) { e.txt.push(q.p.grupo); e.r = Math.max(e.r, q.r); } else etiquetas.push({ cx: q.cx, cy: q.cy, r: q.r, txt: [q.p.grupo] });
+  });
+  $('#mapP').innerHTML = ejes(W, H, pad, s) + linea(W, H, pad, s) + pos.map(({ p, cx, cy, r }) => {
+    const on = !filtroGrupo || p.grupo === filtroGrupo, c = colorGrupo(p.grupo);
+    return `<g class="pt" data-id="${p.grupo}" opacity="${on ? 1 : .25}" style="cursor:pointer">
+      <ellipse cx="${cx}" cy="${cy}" rx="${Math.max(4, p.sx * s.kx)}" ry="${Math.max(4, p.sy * s.ky)}" fill="${c}" fill-opacity=".10" stroke="${c}" stroke-opacity=".5"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" fill-opacity=".85" stroke="var(--card)" stroke-width="2"/>
+      <circle cx="${cx}" cy="${cy}" r="${r + 8}" fill="transparent"/>
+    </g>`;
+  }).join('') + etiquetas.map(e => {
+    const der = e.cx < W - 90;
+    return `<text x="${der ? e.cx + e.r + 5 : e.cx - e.r - 5}" y="${e.cy + 4}" text-anchor="${der ? 'start' : 'end'}"
+      font-size="12" font-weight="700" fill="var(--text)" pointer-events="none">${e.txt.join(' · ')}</text>`;
+  }).join('');
+  hover('#mapP', g => {
+    const p = D.partidos.find(x => x.grupo === g);
+    return `<div class="n">${esc(p.nombre)}</div><div class="m">${BLOQUE_L[p.bloque]} · ${p.n} en el mapa</div>
+      <div class="st">Votan con la mayoría de su bancada: ${pct(p.lealtad)}</div>`;
+  }, g => { filtroGrupo = filtroGrupo === g ? null : g; chips(); mapaMiembros(); mapaPartidos(); });
+}
+
+function hover(sel, html, click) {
+  const svg = $(sel), tip = $('#tip');
+  svg.onmousemove = e => {
+    const g = e.target.closest('.pt'); if (!g) { tip.style.display = 'none'; return; }
+    tip.innerHTML = html(g.dataset.id); tip.style.display = 'block';
+    const x = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8), y = Math.min(e.clientY + 14, innerHeight - tip.offsetHeight - 8);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  };
+  svg.onmouseleave = () => tip.style.display = 'none';
+  svg.onclick = e => { const g = e.target.closest('.pt'); if (g) { tip.style.display = 'none'; click(g.dataset.id); } };
+}
+
+function tipMiembro(m) {
+  return `<div class="row">${m.foto ? `<img src="${foto(m)}" alt="">` : ''}<div>
+    <div class="n">${esc(nombreCorto(m.nombre))}</div><div class="m">${m.grupo ?? ''} · ${BLOQUE_L[m.bloque]}${m.cruzado ? ' · <b>cruzado</b>' : ''}</div></div></div>
+    <div class="st">Vota con el oficialismo: ${pct(m.con_oficialismo)}<br>Vota con su bancada: ${pct(m.lealtad)}<br>Asistencia: ${pct(m.asistencia)}</div>`;
+}
+
+function persona(m, extra) {
+  return `<button class="person" data-id="${m.id}">${m.foto ? `<img src="${foto(m)}" alt="" loading="lazy">` : ''}
+    <div><div class="n">${esc(nombreCorto(m.nombre))}</div><div class="m">${m.grupo ?? ''}</div></div>
+    <div class="d">${extra}</div></button>`;
+}
+
+function bisagras() {
+  const ms = D.miembros.filter(m => m.dist_linea != null);
+  const todos = b => ms.filter(m => m.bloque === b && !m.cruzado).sort((a, c) => Math.abs(a.dist_linea) - Math.abs(c.dist_linea));
+  const cerca = b => todos(b).slice(0, 6);
+  // Con pocas votaciones muchos votan idéntico y empatan en distancia: los 6
+  // mostrados serían un corte arbitrario, así que se dice cuántos más empatan.
+  const empate = b => {
+    const t = todos(b); if (t.length <= 6) return 0;
+    const d6 = Math.abs(t[5].dist_linea).toFixed(3);
+    return t.slice(6).filter(m => Math.abs(m.dist_linea).toFixed(3) === d6).length;
+  };
+  const cruz = ms.filter(m => m.cruzado).sort((a, c) => Math.abs(c.dist_linea) - Math.abs(a.dist_linea));
+  const col = (t, c, arr, vacio, emp = 0) => `<div class="panel"><h3>${t}</h3>
+    ${arr.length ? arr.map(m => persona(m, `con el oficialismo<br><b>${pct(m.con_oficialismo)}</b>`)).join('') : `<div class="empty">${vacio}</div>`}
+    ${emp ? `<div class="empty">y ${emp} más a la misma distancia: por ahora votan exactamente igual.</div>` : ''}</div>`;
+  $('#bis').innerHTML = ms.length ? [
+    col('Oficialistas más cerca de la línea', '', cerca('oficialismo'), '—', empate('oficialismo')),
+    col('Opositores más cerca de la línea', '', cerca('oposicion'), '—', empate('oposicion')),
+    col('Cruzados', 'var(--text)', cruz, 'Nadie vota, por ahora, del lado del otro bloque.'),
+  ].join('') : `<div class="empty">Aún no hay suficientes votaciones disputadas.</div>`;
+  $('#bis').onclick = e => { const b = e.target.closest('.person'); if (b) ficha(b.dataset.id); };
+}
+
+// ── votaciones ──
+function barra(t, n) {
+  const seg = [['S', t.SI], ['N', t.NO], ['A', t.ABS], ['a', (t.AUS || 0) + (t.LIC || 0) + (t.SUS || 0) + (t.SINRES || 0)]];
+  return `<div class="bar">${seg.filter(s => s[1]).map(([k, v]) => `<span style="width:${v / n * 100}%;background:${VOTO[k].c}" title="${VOTO[k].l}: ${v}"></span>`).join('')}</div>`;
+}
+function votaciones() {
+  $('#vlegend').innerHTML = ['S', 'N', 'A', 'a'].map(k => `<span><i style="background:${VOTO[k].c};border-radius:3px"></i>${k === 'a' ? 'Ausente / licencia' : VOTO[k].l}</span>`).join('');
+  const q = $('#q').value.trim().toLowerCase(), solo = $('#soloDisp').checked;
+  const vs = [...D.votaciones].reverse().filter(v => (!solo || v.disputada) && (!q || v.asunto.toLowerCase().includes(q)));
+  $('#vlist').innerHTML = vs.map(v => {
+    const t = v.total, n = Object.values(t).reduce((a, b) => a + b, 0) || 1;
+    return `<div class="vrow" data-id="${v.id}">
+      <button class="vhead" aria-expanded="false">
+        <div class="vdate">${fmtFecha(v.fecha)}<br>${esc(v.hora)}</div>
+        <div><div class="vasunto">${esc(v.asunto)}</div>
+          <div class="vtags">${v.disputada ? '<span class="t hot">Disputada</span>' : ''}${v.validacion !== 'ok' ? '<span class="t">Sin validar del todo</span>' : ''}</div></div>
+        <div>${barra(t, n)}<div class="barlbl">Sí ${t.SI || 0} · No ${t.NO || 0} · Abst. ${t.ABS || 0}</div></div>
+      </button><div class="vdet"></div></div>`;
+  }).join('') || `<div class="empty">Ninguna votación coincide.</div>`;
+  $('#vlist').onclick = e => {
+    const seat = e.target.closest('.seat'); if (seat) { ficha(seat.dataset.id); return; }
+    const fl = e.target.closest('[data-ficha]'); if (fl) { e.preventDefault(); ficha(fl.dataset.ficha); return; }
+    const h = e.target.closest('.vhead'); if (!h) return;
+    const row = h.parentElement, open = row.classList.toggle('open');
+    h.setAttribute('aria-expanded', open);
+    if (open) detalle(row);
+  };
+  $('#vlist').onmousemove = e => {
+    const s = e.target.closest('.seat'), tip = $('#tip');
+    if (!s) { tip.style.display = 'none'; return; }
+    const m = D.byId[s.dataset.id];
+    tip.innerHTML = `<div class="row">${m.foto ? `<img src="${foto(m)}" alt="">` : ''}<div><div class="n">${esc(nombreCorto(m.nombre))}</div><div class="m">${m.grupo ?? ''} · ${VOTO[s.dataset.v].l}</div></div></div>`;
+    tip.style.display = 'block'; tip.style.left = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+  };
+  $('#vlist').onmouseleave = () => $('#tip').style.display = 'none';
+}
+function detalle(row) {
+  const v = D.votaciones.find(x => x.id === row.dataset.id);
+  const grupos = {};
+  D.miembros.forEach((m, i) => { const g = m.grupo || '—'; (grupos[g] ??= []).push([m, v.v[i]]); });
+  const orden = Object.keys(grupos).sort((a, b) => (D.meta.oficialismo.includes(b) - D.meta.oficialismo.includes(a)) || a.localeCompare(b));
+  const cnt = arr => arr.reduce((c, [, x]) => (c[x] = (c[x] || 0) + 1, c), {});
+  const filas = orden.map(g => {
+    const c = cnt(grupos[g]), n = grupos[g].length, aus = (c.a || 0) + (c.L || 0) + (c.R || 0);
+    const seg = [['S', c.S], ['N', c.N], ['A', c.A], ['a', aus]].filter(s => s[1]);
+    return `<tr><td><b>${g}</b></td><td class="b"><div class="bar">${seg.map(([k, x]) => `<span style="width:${x / n * 100}%;background:${VOTO[k].c}"></span>`).join('')}</div></td>
+      <td class="num">${c.S || 0}</td><td class="num">${c.N || 0}</td><td class="num">${c.A || 0}</td><td class="num">${aus}</td></tr>`;
+  }).join('');
+  const seats = orden.map(g => `<div class="seatgrp"><div class="g">${g}</div><div class="cells">${grupos[g].map(([m, x]) =>
+    `<button class="seat" data-id="${m.id}" data-v="${x}" aria-label="${esc(m.nombre)}: ${VOTO[x].l}" style="background:${VOTO[x].c};${x === '·' ? 'outline:1px dashed var(--border)' : ''}"></button>`).join('')}</div></div>`).join('');
+  row.querySelector('.vdet').innerHTML = `
+    <p class="full">${esc(v.asunto)}</p>
+    <table class="gtable"><tr><th>Bancada</th><th></th><th>Sí</th><th>No</th><th>Abst.</th><th>Aus./Lic.</th></tr>${filas}</table>
+    <div class="seats">${seats}</div>
+    ${constanciasHtml(v)}
+    <p class="vnote"><a href="${esc(v.pdf)}" target="_blank" rel="noopener">Ver el acta en PDF →</a>${v.validacion !== 'ok' ? ' · La lectura de esta página no cuadró del todo con el cuadro impreso: revísese contra el PDF.' : ''}</p>`;
+}
+
+// «Constancias de voto: Sí — A, B · No — C»: sólo el voto dejado en constancia,
+// agrupado por sentido, con los nombres enlazados a la ficha.
+function constanciasHtml(v) {
+  const cs = v.constancias || []; if (!cs.length) return '';
+  const por = {}; cs.forEach(c => (por[c.voto] ??= []).push(c.id));
+  return `<p class="vnote"><b>Constancias de voto:</b> ${Object.entries(por).map(([k, ids]) =>
+    `${VOTO[k].l} — ${ids.map(id => `<a href="#" data-ficha="${id}">${esc(nombreCorto(D.byId[id].nombre))}</a>`).join(', ')}`).join(' · ')}</p>`;
+}
+
+// ── ficha ──
+function ficha(id) {
+  const m = D.byId[id]; if (!m) return;
+  const vs = D.votaciones.filter(v => v.v[m.i] !== '·').reverse();
+  const mayoriaBancada = v => {
+    const c = {}; D.miembros.forEach((x, i) => { if (x.grupo === m.grupo && 'SNA'.includes(v.v[i])) c[v.v[i]] = (c[v.v[i]] || 0) + 1; });
+    return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0];
+  };
+  $('#fbox').innerHTML = `<button class="x" aria-label="Cerrar">×</button>
+    <div class="top">${m.foto ? `<img src="${foto(m)}" alt="">` : ''}<div>
+      <div class="n">${esc(nombreCorto(m.nombre))}</div>
+      <div class="m">${esc(m.nombre)}<br>${m.grupo ?? ''} · ${BLOQUE_L[m.bloque]}${m.distrito ? ' · ' + esc(m.distrito.replace(/-/g, ' ')) : ''}</div>
+      ${m.perfil ? `<div class="m"><a href="${esc(m.perfil)}" target="_blank" rel="noopener" style="color:var(--terra)">Perfil oficial →</a></div>` : ''}</div></div>
+    <div class="kpis">
+      <div class="kpi"><div class="v">${pct(m.asistencia)}</div><div class="l">asistencia</div></div>
+      <div class="kpi"><div class="v">${pct(m.lealtad)}</div><div class="l">vota con su bancada</div></div>
+      <div class="kpi"><div class="v">${pct(m.con_oficialismo)}</div><div class="l">vota con el oficialismo</div></div>
+    </div>
+    ${m.cruzado ? `<p class="aviso">Por cómo vota, queda del lado del ${m.bloque === 'oficialismo' ? 'la oposición' : 'oficialismo'} en el mapa.</p>` : ''}
+    <h4>Sus votos (${vs.length})</h4>
+    ${vs.map(v => { const x = v.v[m.i], may = mayoriaBancada(v), dis = 'SNA'.includes(x) && may && x !== may;
+      return `<div class="fv" data-vid="${v.id}" role="button" tabindex="0" title="Ver cómo votó la cámara"><div class="vdate">${fmtFecha(v.fecha)}</div><div><div class="a">${esc(v.asunto)}</div>${dis ? '<div class="dis">Votó distinto que su bancada</div>' : ''}</div>
+        <div class="pill" style="background:${VOTO[x].c};color:${'aLR'.includes(x) ? 'var(--text)' : '#fff'}">${VOTO[x].l}</div></div>`; }).join('')}`;
+  $('#ficha').style.display = 'flex';
+  $('#fbox .x').onclick = cerrar;
+  $('#fbox').onclick = e => { const f = e.target.closest('.fv'); if (f) irAVotacion(f.dataset.vid); };
+  $('#fbox').onkeydown = e => { const f = e.target.closest('.fv'); if (f && e.key === 'Enter') irAVotacion(f.dataset.vid); };
+}
+function cerrar() { $('#ficha').style.display = 'none'; }
+
+// Desde la ficha: cierra, asegura que la votación esté en la lista (limpia
+// búsqueda y filtro si la ocultan), la abre y la trae a la vista.
+function irAVotacion(vid) {
+  cerrar();
+  let row = document.querySelector(`.vrow[data-id="${CSS.escape(vid)}"]`);
+  if (!row) { $('#q').value = ''; $('#soloDisp').checked = false; votaciones(); row = document.querySelector(`.vrow[data-id="${CSS.escape(vid)}"]`); }
+  if (!row) return;
+  if (!row.classList.contains('open')) row.querySelector('.vhead').click();
+  row.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  row.classList.add('flash'); setTimeout(() => row.classList.remove('flash'), 1400);
+}
+$('#ficha').onclick = e => { if (e.target.id === 'ficha') cerrar(); };
+addEventListener('keydown', e => { if (e.key === 'Escape') cerrar(); });
+
+// ── tabla ──
+function tabla() {
+  const cols = [['nombre', 'Parlamentario'], ['grupo', 'Bancada'], ['x', 'Posición'], ['con_oficialismo', 'Con oficialismo'],
+    ['lealtad', 'Con su bancada'], ['asistencia', 'Asistencia'], ['n_emitidos', 'Votos emitidos']];
+  const q = $('#qm').value.trim().toLowerCase();
+  const rows = D.miembros.filter(m => !q || m.nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(q.normalize('NFD').replace(/[̀-ͯ]/g, '')))
+    .sort((a, b) => { const A = a[orden.k], B = b[orden.k]; if (A == null) return 1; if (B == null) return -1;
+      return (typeof A === 'string' ? A.localeCompare(B) : A - B) * (orden.asc ? 1 : -1); });
+  $('#mt').innerHTML = `<thead><tr>${cols.map(([k, l]) => `<th data-k="${k}">${l}${orden.k === k ? (orden.asc ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(m => `<tr data-id="${m.id}"><td><span class="dot" style="background:${colorGrupo(m.grupo)}"></span>${esc(m.nombre)}${m.cruzado ? ' <span class="t">cruzado</span>' : ''}</td>
+      <td>${m.grupo ?? ''}</td><td class="num">${m.x == null ? '—' : m.x.toFixed(2)}</td><td class="num">${pct(m.con_oficialismo)}</td>
+      <td class="num">${pct(m.lealtad)}</td><td class="num">${pct(m.asistencia)}</td><td class="num">${m.n_emitidos ?? 0}</td></tr>`).join('')}</tbody>`;
+  $('#mt').onclick = e => {
+    const th = e.target.closest('th'); if (th) { orden = { k: th.dataset.k, asc: orden.k === th.dataset.k ? !orden.asc : th.dataset.k === 'nombre' }; tabla(); return; }
+    const tr = e.target.closest('tr[data-id]'); if (tr) ficha(tr.dataset.id);
+  };
+}
+
+function metodo() {
+  const M = D.meta, f = v => v == null ? '—' : v.toFixed(2);
+  $('#methodNums').innerHTML = M.lambda2 == null ? '' :
+    `En esta cámara: ${M.n_disputadas} votaciones disputadas de ${M.n_votaciones}; ${M.n_miembros_modelo} parlamentarios con al menos ${M.min_votos_miembro} votos emitidos entran al mapa. λ₂ = ${f(M.lambda2)}. Una sola dimensión clasifica bien el ${pct(M.clasif_1d)} de los votos; la segunda suma ${M.ganancia_dim2 != null ? (M.ganancia_dim2 * 100).toFixed(1) : '—'} puntos. Robustez del eje principal (correlación de rangos): ${f(M.robustez_mds)} contra MDS clásico y ${f(M.robustez_pca)} contra PCA del voto.${M.linea ? ` La línea deja ${M.linea.errores} parlamentarios del lado del otro bloque.` : ''}`;
+}
+
+document.querySelectorAll('.camaras button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.camaras button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  cargar(b.dataset.c);
+});
+$('#q').oninput = votaciones; $('#soloDisp').onchange = votaciones; $('#qm').oninput = tabla;
+cargar('diputados');
+</script>
+</body>
+</html>
