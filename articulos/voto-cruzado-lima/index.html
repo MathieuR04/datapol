@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Un voto para Lima, otro para el distrito — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Un voto para Lima, otro para el distrito">
+  <meta property="og:description" content="En 2022, al menos uno de cada cuatro limeños votó por una organización para alcalde de Lima y por otra para alcalde de su distrito. En Surco, dos de cada tres votantes de López Aliaga eligieron a Carlos Bruce. Mesa por mesa, el voto cruzado en Lima Metropolitana.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/voto-cruzado-lima/">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    .article { max-width: 760px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+    .wide { width: min(1080px, calc(100vw - 2rem)); position: relative; left: 50%; transform: translateX(-50%); }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.05em;
+      color: var(--text); margin: 2.2em 0 0.7em; padding-top: 0.2em; border-top: 1.5px solid var(--border);
+    }
+    .article-body h3 { font-size: 15px; font-weight: 700; margin: 1.8em 0 0.5em; }
+
+    .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.8em 0; }
+    .stat-box { background: var(--text); color: var(--sand); padding: 0.9rem 1rem; border-radius: 3px; text-align: center; }
+    .stat-box-num { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 0.04em; line-height: 1; color: #fff; }
+    .stat-box-label { font-size: 10px; line-height: 1.45; opacity: 0.75; margin-top: 0.3rem; }
+
+    .highlight-box {
+      border-left: 3px solid var(--terra); padding: 0.5rem 0 0.5rem 1.1rem; margin: 1.6em 0;
+      background: rgba(196,96,58,0.06); border-radius: 0 3px 3px 0;
+    }
+    .highlight-box p { margin-bottom: 0; font-size: 14px; line-height: 1.7; }
+
+    figure { margin: 1.8em 0 2em; }
+    .fig-title { font-size: 13px; font-weight: 700; margin-bottom: 0.2rem; }
+    .fig-sub { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-bottom: 0.8rem; }
+    figcaption { font-size: 10.5px; color: var(--muted); line-height: 1.5; margin-top: 0.6rem; }
+    figure svg, .caso svg { display: block; width: 100%; height: auto; overflow: visible; }
+    figure svg text { font-family: 'Inter', -apple-system, sans-serif; }
+
+    .map-wrap { display: grid; grid-template-columns: 1.25fr 1fr; gap: 1.5rem; align-items: start; }
+    .rank h4 { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0.4rem 0 0.4rem; }
+    .eda-row { display: grid; grid-template-columns: 150px 1fr 40px; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; font-size: 12px; }
+    .eda-label { text-align: right; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .eda-track { background: var(--sand); border-radius: 2px; height: 13px; overflow: hidden; }
+    .eda-fill { background: var(--terra); height: 100%; border-radius: 2px; }
+    .eda-num { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+    .scatter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .panel-title { font-size: 14px; font-weight: 700; }
+    .panel-sub { font-size: 11px; color: var(--muted); margin: 0.1rem 0 0.3rem; line-height: 1.45; }
+
+    .gana-row { display: grid; grid-template-columns: 160px 1fr 70px; gap: 0.6rem; align-items: center; font-size: 12px; margin-bottom: 0.35rem; }
+    .gana-row .nm { text-align: right; font-weight: 500; }
+    .gana-bar { display: flex; height: 16px; border-radius: 2px; overflow: hidden; background: var(--sand); }
+    .gana-bar div { height: 100%; }
+    .gana-row .n { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 600; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.9rem; font-size: 11px; color: var(--muted); margin-bottom: 0.6rem; }
+    .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.35rem; vertical-align: -1px; }
+
+    .casos { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .caso { border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.1rem 1.1rem; background: rgba(255,255,255,0.25); }
+    .caso-kicker { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--terra); }
+    .caso h4 { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.04em; line-height: 1.05; margin: 0.15rem 0 0.2rem; }
+    .caso .who { font-size: 12px; color: var(--muted); line-height: 1.45; margin-bottom: 0.7rem; }
+    .caso .nums { display: flex; gap: 1.2rem; margin-bottom: 0.8rem; }
+    .caso .nums div { font-size: 10.5px; color: var(--muted); line-height: 1.3; }
+    .caso .nums b { display: block; font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; color: var(--text); font-weight: 400; letter-spacing: 0.03em; }
+    .caso .bl { font-size: 11px; font-weight: 600; margin: 0.6rem 0 0.3rem; line-height: 1.35; }
+    .stack { display: flex; height: 22px; border-radius: 2px; overflow: hidden; }
+    .stack div { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; border-right: 1.5px solid var(--bg); }
+    .stack div:last-child { border-right: none; }
+    .stack-lab { display: flex; flex-wrap: wrap; gap: 0.2rem 0.7rem; font-size: 10.5px; color: var(--muted); margin-top: 0.3rem; }
+    .stack-lab i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 0.3rem; }
+
+    #tip { position: fixed; pointer-events: none; background: var(--text); color: #fff; font-size: 11.5px; line-height: 1.45;
+           padding: 0.45rem 0.6rem; border-radius: 3px; max-width: 240px; z-index: 50; }
+    #tip b { font-weight: 600; }
+
+    .footnotes { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.6; color: var(--muted); }
+    .footnotes p { margin-bottom: 0.6em; }
+    .footnotes h4 { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); margin: 1.2em 0 0.4em; }
+    .article-footer { margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 11px; color: var(--muted); }
+    .article-footer a { color: var(--muted); text-decoration: none; font-weight: 600; letter-spacing: 0.06em; font-size: 10px; text-transform: uppercase; }
+    .article-footer a:hover { color: var(--text); }
+
+    @media (max-width: 760px) {
+      .map-wrap, .casos { grid-template-columns: 1fr; }
+      .scatter-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+    }
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 32px; }
+      .article-body { font-size: 14px; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .gana-row { grid-template-columns: 110px 1fr 60px; }
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-26RZM28VBS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-26RZM28VBS');
+  </script>
+</head>
+<body>
+
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.850 3.370-1.850 3.601 0 4.267 2.370 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · Perú 2026</div>
+    <h1 class="article-title">Un voto para Lima, otro para el distrito</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>27 de setiembre, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>8 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+
+      <p>En las municipales de 2022, cada limeño recibió dos cédulas en la misma mesa: una para elegir al alcalde de Lima y otra para el alcalde de su distrito. Mesa por mesa, los resultados muestran que <strong>al menos <span data-v="lima.piso" data-f="pct"></span> de los electores votó por una opción distinta en cada una</strong>. Es un piso: la cifra real es mayor. En Santiago de Surco, según nuestra estimación, <span data-v="casos.0.destino_rp.0.media" data-f="pct0"></span> de los votantes de Rafael López Aliaga (Renovación Popular) eligieron en su distrito a Carlos Bruce (Avanza País).</p>
+
+      <p>El dato tiene ahora una segunda lectura. Bruce y Francis Allison, que en 2022 ganaron Surco y Magdalena en buena parte con votantes de López Aliaga, compiten entre sí el 4 de octubre por la alcaldía de Lima.</p>
+
+      <div class="stats-strip">
+        <div class="stat-box">
+          <div class="stat-box-num"><span data-v="lima.piso" data-f="pct"></span></div>
+          <div class="stat-box-label">como mínimo, votó distinto para Lima y para su distrito</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num"><span data-v="casos.0.cruzado.0" data-f="pct0"></span></div>
+          <div class="stat-box-label">voto cruzado estimado en Surco, el distrito que más cruzó</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num"><span data-v="casos.0.origen_clave.0.media" data-f="pct0"></span></div>
+          <div class="stat-box-label">de los votantes de Bruce en Surco votó por López Aliaga para Lima</div>
+        </div>
+      </div>
+
+      <h2>Cómo se mide un voto que nadie ve</h2>
+
+      <p>El voto es secreto, así que nadie sabe qué marcó cada elector en sus dos cédulas. Lo que sí se sabe es cuántos votos sacó cada candidato en cada una de las <strong><span data-v="lima.mesas" data-f="int"></span> mesas</strong> de Lima Metropolitana, y en cada mesa votan las mismas personas en las dos elecciones.</p>
+
+      <p>Eso basta para poner un piso. Si en una mesa López Aliaga sacó 80 votos para Lima y el candidato distrital de Renovación Popular sacó 50, a lo sumo 50 de esos electores votaron por Renovación en las dos cédulas; los otros 30, como mínimo, cruzaron. Se suma ese máximo de votos "rectos" para cada organización, y para el blanco o nulo, que se cuenta como una sola opción. Lo que falta hasta el total de votantes de la mesa es voto cruzado seguro.</p>
+
+      <p>El piso dice cuánto se cruzó como mínimo, pero no quién cruzó hacia dónde. Para eso hay que estimar: con los resultados de cientos de mesas por distrito, un modelo estadístico infiere qué fracción de los votantes de cada candidato a Lima votó por cada candidato distrital (el método está al final). Lo hicimos en cuatro distritos donde el cruce es alto o tiene una explicación visible.</p>
+
+      <h2>Cuatro distritos, dos razones para cruzar</h2>
+
+      <p>Los cuatro cuentan dos historias distintas. En <strong>Surco y Magdalena</strong> la gente cruzó <em>por el candidato</em>: Bruce y Allison, figuras conocidas de partidos sin peso en la elección de Lima, atrajeron votantes de todas las tiendas. En <strong>San Isidro y San Borja</strong> cruzó <em>por la oferta</em>: Fuerza Popular tuvo candidatos distritales competitivos —César Combina y Cecilia Chacón— pero no presentó candidato a Lima, y su electorado votó en Lima por el más cercano, López Aliaga.</p>
+
+      <div class="casos wide" id="casos"></div>
+
+      <p>En Surco, <span data-v="casos.0.destino_rp.0.media" data-f="pct0"></span> de quienes votaron por López Aliaga para Lima votaron por Bruce en su distrito, y solo <span data-v="casos.0.rp_retiene" data-f="pct0"></span> por Juan Manuel Del Mar, el candidato de Renovación Popular. Visto desde el otro lado, <strong><span data-v="casos.0.origen_clave.0.media" data-f="pct0"></span> de los votantes de Bruce votó por López Aliaga para Lima</strong>. El voto de Allison en Magdalena fue más transversal: <span data-v="casos.1.origen_rp" data-f="pct0"></span> de sus votantes eligió a López Aliaga para Lima, y el resto se reparte entre los de George Forsyth, Daniel Urresti y los demás, en proporciones parecidas a su peso en el distrito.</p>
+
+      <p>En San Isidro y San Borja, los votantes de Combina y de Chacón fueron, casi todos, votantes de López Aliaga para Lima: <span data-v="casos.2.origen_clave.0.media" data-f="pct0"></span> y <span data-v="casos.3.origen_clave.0.media" data-f="pct0"></span>. No hubo nada que "arrastrar": sin candidato fujimorista en la cédula de Lima, ese voto fue a Renovación Popular.</p>
+
+      <div class="highlight-box">
+        <p>El piso es conservador a propósito: supone que, dentro de cada mesa, todos los que pudieron votar recto lo hicieron. Por eso es un mínimo garantizado y no una estimación. En los cuatro distritos, la estimación supera al piso por <span data-v="brecha_min" data-f="int0"></span> a <span data-v="brecha_max" data-f="int0"></span> puntos.</p>
+      </div>
+
+      <h2>Dónde se cruza</h2>
+
+      <p>El piso sí se puede calcular en toda Lima. El voto cruzado se concentra en la Lima central y el sur: en Magdalena, Surco y San Isidro, más de un tercio de los electores votó distinto como mínimo. En Lima Norte y en el centro popular —San Martín de Porres, Rímac, La Victoria— el piso ronda el 16–18%. Calculado con los distritos agregados en lugar de mesa por mesa, el piso de toda Lima cae de <span data-v="lima.piso" data-f="pct"></span> a <span data-v="lima.piso_distrital" data-f="pct"></span>.</p>
+
+      <figure>
+        <div class="fig-title">Piso de voto cruzado por distrito</div>
+        <div class="fig-sub">Porcentaje de votantes que, como mínimo, votó por opciones distintas para alcalde de Lima y alcalde distrital. Pasa el cursor por un distrito.</div>
+        <div class="map-wrap">
+          <div id="mapa"></div>
+          <div class="rank" id="ranking"></div>
+        </div>
+        <figcaption>Gris: el Cercado de Lima, que no elige alcalde distrital. Santa María del Mar (5 mesas) no entra en la escala ni en el ranking: allí solo Acción Popular presentó lista distrital, y no tuvo candidato a Lima. Fuente: ONPE, resultados por mesa, ERM 2022.</figcaption>
+      </figure>
+
+      <h2>El voto por Lima no baja al distrito</h2>
+
+      <p>Los tres candidatos más votados para Lima arrastraron de forma muy distinta a sus candidatos distritales. López Aliaga sacó <span data-v="partidos.0.lima" data-f="pct"></span>; los candidatos distritales de Renovación Popular, <span data-v="partidos.0.distritos" data-f="pct"></span>. Casi todos los puntos quedan bajo la diagonal, y la brecha crece justo donde López Aliaga fue más fuerte: en San Isidro sacó 62% y su candidata distrital, Nancy Vizurraga, 34%; en Surco, 46% frente a 17% de Del Mar.</p>
+
+      <p>Somos Perú es el caso opuesto: de los tres, es el que tiene más distritos sobre la diagonal, donde su candidato distrital sacó más que Forsyth.</p>
+
+      <figure class="wide">
+        <div class="fig-title">Voto para Lima y voto para el distrito, por partido</div>
+        <div class="fig-sub">Cada punto es un distrito: porcentaje de votos válidos del partido en cada cédula. Tamaño: votos válidos del distrito. Solo distritos donde el partido presentó lista distrital.</div>
+        <div class="scatter-grid" id="scatter"></div>
+        <figcaption>"Retiene al menos": parte de los votantes de su candidato a Lima que, mesa por mesa, necesariamente también votó por el partido en el distrito. Fuente: ONPE, resultados por mesa, ERM 2022. Excluye el Cercado.</figcaption>
+      </figure>
+
+      <p>Contado de otro modo: en cuántos distritos el candidato distrital de cada organización le ganó, en porcentaje, a su propio candidato a Lima.</p>
+
+      <figure>
+        <div class="fig-title">¿Quién sacó más: el candidato a Lima o el distrital?</div>
+        <div class="fig-sub">Distritos donde la organización presentó ambas listas.</div>
+        <div class="legend"><span><i style="background:var(--terra)"></i>el distrital superó al de Lima</span><span><i style="background:var(--sand)"></i>el de Lima superó al distrital</span></div>
+        <div id="gana"></div>
+      </figure>
+
+      <p>Hay tres perfiles. Alianza para el Progreso (Omar Chehade) y Perú Libre (Yuri Castro) llevaron candidatos marginales a Lima, y Avanza País ni siquiera tuvo uno: su candidato fue declarado improcedente y la lista siguió en la cédula sin él. Sus candidatos distritales les ganaron casi en todas partes; los de APP, en los 41 distritos donde compitieron. Renovación Popular es el extremo opuesto: López Aliaga superó a su propio candidato distrital en <span data-v="rp_pierde" data-f="int"></span> de <span data-v="partidos.0.n_lista_dist" data-f="int"></span> distritos. Somos Perú está en el medio.</p>
+
+      <h2>Los votantes que Bruce y Allison compartieron con López Aliaga</h2>
+
+      <p>Ninguno de los dos se quedó en su partido de 2022. Bruce, que ganó Surco por Avanza País, postula a Lima por <strong>Somos Perú</strong>. Allison, que ganó Magdalena por Alianza para el Progreso, postula a Lima por <strong>Avanza País</strong>, el partido de Bruce en 2022. Los dos están inscritos como candidatos a alcalde de Lima.</p>
+
+      <p>En 2022 no competían entre sí: cada uno ganó su distrito con una parte grande del mismo electorado que, en la otra cédula, eligió a López Aliaga para Lima. El 4 de octubre ese electorado tiene que escoger entre ellos en la misma cédula. El voto cruzado de 2022 sugiere que, al menos en Surco y Magdalena, la lealtad era con el candidato y no con la organización.</p>
+
+      <div class="footnotes">
+        <h4>Método</h4>
+        <p><strong>Datos.</strong> Resultados por mesa de la ONPE para las elecciones municipales provinciales y distritales de 2022 en la provincia de Lima. Se emparejan las actas provincial y distrital de la misma mesa; en todas las mesas emparejadas el número de votantes coincide exactamente entre las dos cédulas. Quedan <span data-v="lima.mesas" data-f="int"></span> mesas y <span data-v="lima.emitidos" data-f="int"></span> votos emitidos. Se excluyen el Cercado de Lima, que no elige alcalde distrital, y las actas anuladas.</p>
+        <p><strong>Piso.</strong> Para cada mesa, el máximo de votos rectos es la suma, sobre las organizaciones y sobre la categoría blanco-o-nulo, del mínimo entre sus votos en la cédula provincial y en la distrital. El piso es uno menos ese máximo dividido entre los votos emitidos. Es la cota inferior del método de cotas de Duncan y Davis (1953). La cota superior correspondiente no informa nada: con el voto tan fragmentado, en casi ninguna mesa una opción pasa del 50% en ambas cédulas, así que la aritmética admite que hasta el <span data-v="lima.techo" data-f="pct"></span> haya cruzado.</p>
+        <p><strong>Estimación en los cuatro distritos.</strong> Inferencia ecológica R×C con el modelo multinomial-Dirichlet jerárquico de Rosen, Jiang, King y Tanner (2001), en su implementación del paquete <em>eiPack</em> de R, con las mesas de cada distrito como unidades. Es la familia de métodos con la que Burden y Kimball (1998) estudiaron el voto cruzado en Estados Unidos. Filas: partidos con al menos 4% en la cédula de Lima, "otros" y blanco-o-nulo; columnas, lo mismo en la distrital. Los intervalos son del 90%. <span id="nota-ei"></span></p>
+        <p>La inferencia ecológica tiene límites conocidos (Cho y Gaines, 2004): supone que el comportamiento de cada grupo no cambia de forma sistemática entre mesas de un mismo distrito. Las cifras de los cuatro casos son estimaciones, no conteos; el piso sí es un conteo.</p>
+        <h4>Referencias</h4>
+        <p>Burden, B. y Kimball, D. (1998). A new approach to the study of ticket splitting. <em>American Political Science Review</em>. · Cho, W. y Gaines, B. (2004). The limits of ecological inference: the case of split-ticket voting. <em>American Journal of Political Science</em>. · Duncan, O. D. y Davis, B. (1953). An alternative to ecological correlation. <em>American Sociological Review</em>. · King, G. (1997). <em>A Solution to the Ecological Inference Problem</em>. Princeton University Press. · Rosen, O., Jiang, W., King, G. y Tanner, M. (2001). Bayesian and frequentist inference for ecological inference: the R×C case. <em>Statistica Neerlandica</em>.</p>
+      </div>
+
+      <div class="article-footer">
+        <span>Datapol · datapol.lat</span>
+        <a href="/articulos/">← Todos los artículos</a>
+      </div>
+
+    </div>
+  </article>
+
+  <div id="tip" hidden></div>
+
+  <script>
+  (async function () {
+    const D = await fetch('data/voto_cruzado.json').then(r => r.json());
+
+    // Cifras derivadas que el texto cita.
+    const rp = D.partidos.find(p => p.k === 'RP');
+    D.rp_pierde = rp.n_lista_dist - rp.n_gana_dist;
+    D.casos.forEach(c => {
+      c.rp_retiene = (c.destino_rp.find(d => d.k === 'RP') || {media: 0}).media;
+      c.origen_rp = (c.origen_clave.find(d => d.k === 'RP') || {media: 0}).media;
+    });
+
+    const brechas = D.casos.map(c => c.cruzado[0] - c.piso);
+    D.brecha_min = Math.min(...brechas); D.brecha_max = Math.max(...brechas);
+    const fmt = {
+      pct: v => v.toLocaleString('es-PE', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + '%',
+      pct0: v => Math.round(v) + '%',
+      int: v => v.toLocaleString('es-PE'),
+      int0: v => String(Math.round(v)),
+    };
+    const get = (o, path) => path.split('.').reduce((a, k) => a == null ? a : a[k], o);
+    document.querySelectorAll('[data-v]').forEach(el => {
+      const v = get(D, el.dataset.v);
+      if (v == null) { el.textContent = '—'; return; }
+      el.textContent = fmt[el.dataset.f || 'pct'](v);
+    });
+
+    const COL = { RP: '#1f8fc4', SomosPeru: '#2a6fd4', Podemos: '#12877d', FE2021: '#d9a21a', AvanzaPais: '#d4267e',
+                  APP: '#1b3c73', FuerzaPop: '#e8761a', Morado: '#6a3fa0', JP: '#8c4a3a', PeruLibre: '#a5121a',
+                  AccionPop: '#d8322b', Otros: '#b0a090', BlancoNulo: '#d9c9b4' };
+    const NOM = Object.fromEntries(D.distritos.map(d => [d.ubi, d.nom]));
+    const CORTO = { 'San Juan de Lurigancho': 'SJL', 'San Juan de Miraflores': 'SJM', 'San Martín de Porres': 'SMP',
+                    'Villa El Salvador': 'VES', 'Villa María del Triunfo': 'VMT',
+                    'Santiago de Surco': 'Surco', 'Magdalena del Mar': 'Magdalena' };
+    const corto = n => CORTO[n] || n;
+
+    // --- tooltip
+    const tip = document.getElementById('tip');
+    const showTip = (e, html) => { tip.innerHTML = html; tip.hidden = false; moveTip(e); };
+    const moveTip = e => {
+      const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+      tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+    };
+    const hideTip = () => { tip.hidden = true; };
+
+    // --- mapa
+    (function mapa() {
+      const piso = Object.fromEntries(D.distritos.map(d => [d.ubi, d]));
+      const k = Math.cos(12.05 * Math.PI / 180);
+      let xs = [], ys = [];
+      const rings = f => (f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : [f.geometry.coordinates]);
+      D.geo.features.forEach(f => rings(f).forEach(p => p[0].forEach(([x, y]) => { xs.push(x * k); ys.push(-y); })));
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      const W = 460, H = W * (y1 - y0) / (x1 - x0);
+      const sx = x => (x * k - x0) / (x1 - x0) * W, sy = y => (-y - y0) / (y1 - y0) * H;
+      const lo = 15, hi = 45;
+      const ramp = t => {  // arena → terracota oscuro
+        const a = [240, 228, 212], b = [138, 50, 20];
+        t = Math.max(0, Math.min(1, t));
+        return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`;
+      };
+      let paths = '';
+      D.geo.features.forEach(f => {
+        const u = f.properties.ubi, d = piso[u];
+        const fill = (!d || u === '140128') ? '#e3dccf' : ramp((d.piso - lo) / (hi - lo));
+        const dd = rings(f).map(p => p.map(r => 'M' + r.map(([x, y]) => sx(x).toFixed(1) + ',' + sy(y).toFixed(1)).join('L') + 'Z').join('')).join('');
+        paths += `<path d="${dd}" fill="${fill}" stroke="#f5f0e8" stroke-width="0.8" data-u="${u}"/>`;
+      });
+      const lg = [15, 25, 35, 45].map((v, i) => `<rect x="${W - 170 + i * 40}" y="${H - 28}" width="40" height="8" fill="${ramp((v - lo) / (hi - lo))}"/>
+        <text x="${W - 170 + i * 40}" y="${H - 8}" font-size="12" fill="#7a6858">${v}%</text>`).join('');
+      const el = document.getElementById('mapa');
+      el.innerHTML = `<svg viewBox="0 0 ${W} ${H.toFixed(0)}" role="img" aria-label="Mapa del piso de voto cruzado por distrito de Lima">${paths}
+        <text x="${W - 170}" y="${H - 34}" font-size="12" fill="#7a6858">piso de voto cruzado</text>${lg}</svg>`;
+      el.querySelectorAll('path').forEach(p => {
+        const d = piso[p.dataset.u];
+        p.addEventListener('mousemove', e => showTip(e, d
+          ? `<b>${d.nom}</b><br>piso: ${fmt.pct(d.piso)}<br>${fmt.int(d.mesas)} mesas`
+          : '<b>Cercado de Lima</b><br>sin elección distrital'));
+        p.addEventListener('mouseleave', hideTip);
+      });
+      const top = D.distritos.filter(d => d.mesas >= 20).slice(0, 8), bot = D.distritos.slice(-8).reverse();
+      const row = d => `<div class="eda-row"><div class="eda-label">${d.nom}</div>
+        <div class="eda-track"><div class="eda-fill" style="width:${(d.piso / 50 * 100).toFixed(1)}%"></div></div>
+        <div class="eda-num">${fmt.pct0(d.piso)}</div></div>`;
+      document.getElementById('ranking').innerHTML =
+        `<h4>Más voto cruzado</h4>${top.map(row).join('')}<h4 style="margin-top:1rem">Menos voto cruzado</h4>${bot.map(row).join('')}`;
+    })();
+
+    // --- scatter, tres paneles
+    (function scatter() {
+      const ETQ = {
+        RP: { '140124': 'r', '140130': 'r', '140115': 'r', '140140': 'r', '140110': 'r', '140114': 'r', '140113': 'l' },
+        Podemos: { '140126': 'l', '140137': 'r', '140141': 'r', '140139': 'r', '140113': 'r', '140115': 'b' },
+        SomosPeru: { '140134': 'r', '140119': 'l', '140137': 'l', '140114': 'r', '140141': 'l' },
+      };
+      const S = 300, m = { l: 48, r: 14, t: 8, b: 34 }, max = 65;
+      const sc = v => m.l + v / max * (S - m.l - m.r), sy = v => S - m.b - v / max * (S - m.t - m.b);
+      const el = document.getElementById('scatter');
+      ['RP', 'Podemos', 'SomosPeru'].forEach(k => {
+        const p = D.partidos.find(q => q.k === k), c = COL[k];
+        let g = '';
+        for (let v = 0; v <= 60; v += 20) {
+          g += `<line x1="${sc(0)}" x2="${sc(max)}" y1="${sy(v)}" y2="${sy(v)}" stroke="#e3d8c6" stroke-width="0.6"/>
+                <line y1="${sy(0)}" y2="${sy(max)}" x1="${sc(v)}" x2="${sc(v)}" stroke="#e3d8c6" stroke-width="0.6"/>
+                <text x="${sc(v)}" y="${S - m.b + 14}" font-size="9.5" fill="#7a6858" text-anchor="middle">${v}%</text>
+                <text x="${m.l - 6}" y="${sy(v) + 3}" font-size="9.5" fill="#7a6858" text-anchor="end">${v}%</text>`;
+        }
+        g += `<line x1="${sc(0)}" x2="${sc(max)}" y1="${sy(0)}" y2="${sy(0)}" stroke="#7a6858" stroke-width="0.8"/>
+              <line x1="${sc(0)}" x2="${sc(0)}" y1="${sy(0)}" y2="${sy(max)}" stroke="#7a6858" stroke-width="0.8"/>
+              <line x1="${sc(0)}" y1="${sy(0)}" x2="${sc(max)}" y2="${sy(max)}" stroke="#7a6858" stroke-width="0.8" stroke-dasharray="4 3"/>
+              <text transform="translate(${sc(56)},${sy(58)}) rotate(-45)" font-size="9" fill="#7a6858" text-anchor="end">mismo voto</text>
+              <text x="${(sc(0) + sc(max)) / 2}" y="${S - 4}" font-size="10" fill="#7a6858" text-anchor="middle">Voto para alcalde de Lima</text>
+              <text transform="translate(10,${(sy(0) + sy(max)) / 2}) rotate(-90)" font-size="10" fill="#7a6858" text-anchor="middle">Voto para alcalde distrital</text>`;
+        const pts = [...p.puntos].sort((a, b) => b[3] - a[3]);
+        const r = vp => Math.sqrt(10 + vp / 2600);
+        pts.forEach(([u, x, y, vp]) => {
+          g += `<circle cx="${sc(x).toFixed(1)}" cy="${sy(y).toFixed(1)}" r="${r(vp).toFixed(1)}" fill="${c}" fill-opacity="0.82" stroke="#f5f0e8" stroke-width="1" data-t="${u}|${x}|${y}"/>`;
+        });
+        pts.filter(([u]) => ETQ[k][u]).forEach(([u, x, y, vp]) => {
+          const s = ETQ[k][u], rr = r(vp) + 3;
+          const [dx, dy, a] = { r: [rr, 3.5, 'start'], l: [-rr, 3.5, 'end'], b: [0, rr + 9, 'middle'], t: [0, -rr - 2, 'middle'] }[s];
+          g += `<text x="${(sc(x) + dx).toFixed(1)}" y="${(sy(y) + dy).toFixed(1)}" font-size="10" fill="#1a1209" text-anchor="${a}" pointer-events="none">${corto(NOM[u])}</text>`;
+        });
+        const div = document.createElement('div');
+        div.innerHTML = `<div class="panel-title" style="color:${c}">${p.nombre} <span style="color:#7a6858;font-weight:500">· ${p.etq_lima.replace(/ \(.*\)$/, '')}</span></div>
+          <div class="panel-sub">Lima ${fmt.pct(p.lima)} · distritos ${fmt.pct(p.distritos)} · retiene al menos ${fmt.pct0(p.retiene)}</div>
+          <svg viewBox="0 0 ${S} ${S}" role="img" aria-label="${p.nombre}: voto para Lima frente a voto distrital">${g}</svg>`;
+        el.appendChild(div);
+        div.querySelectorAll('circle').forEach(ci => {
+          const [u, x, y] = ci.dataset.t.split('|');
+          ci.addEventListener('mousemove', e => showTip(e, `<b>${NOM[u]}</b><br>${p.nombre}<br>Lima: ${fmt.pct(+x)} · distrito: ${fmt.pct(+y)}`));
+          ci.addEventListener('mouseleave', hideTip);
+        });
+      });
+    })();
+
+    // --- quién sacó más
+    (function gana() {
+      const ps = [...D.partidos].sort((a, b) => b.n_gana_dist / b.n_lista_dist - a.n_gana_dist / a.n_lista_dist);
+      document.getElementById('gana').innerHTML = ps.map(p => {
+        const g = p.n_gana_dist, n = p.n_lista_dist;
+        return `<div class="gana-row"><div class="nm">${p.nombre}</div>
+          <div class="gana-bar"><div style="width:${(g / n * 100).toFixed(1)}%;background:var(--terra)"></div></div>
+          <div class="n">${g} de ${n}</div></div>`;
+      }).join('');
+    })();
+
+    // --- los cuatro casos
+    (function casos() {
+      const KICK = { AvanzaPais: 'Cruce por candidato', APP: 'Cruce por candidato', FuerzaPop: 'Cruce por oferta' };
+      const CORTO_D = { 'Santiago de Surco': 'Surco', 'Magdalena del Mar': 'Magdalena' };
+      const stack = (arr, lab) => {
+        const xs = arr.filter(d => d.media >= 0.5);
+        const bar = xs.map(d => `<div style="width:${d.media}%;background:${COL[d.k] || '#b0a090'}" title="${d.etq}: ${fmt.pct0(d.media)}">${d.media >= 9 ? fmt.pct0(d.media) : ''}</div>`).join('');
+        const leg = xs.filter(d => d.media >= 4).map(d => `<span><i style="background:${COL[d.k] || '#b0a090'}"></i>${d.etq} ${fmt.pct0(d.media)}</span>`).join('');
+        return `<div class="bl">${lab}</div><div class="stack">${bar}</div><div class="stack-lab">${leg}</div>`;
+      };
+      document.getElementById('casos').innerHTML = D.casos.map(c => {
+        const d = CORTO_D[c.nom] || c.nom;
+        const gano = c.ganador_org === c.clave_nombre ? ' y ganó la alcaldía' : `; ganó ${c.ganador_etq} con ${fmt.pct(c.ganador_pct)}`;
+        const pl = D.partidos.find(p => p.k === c.clave);
+        const partido = !pl ? `Su partido no tuvo lista a Lima.`
+          : pl.etq_lima.includes('sin candidato') ? `Para Lima, su partido no tuvo candidato (la lista, sin él, sacó ${fmt.pct(c.clave_lima)} en ${d}).`
+          : `Para Lima, ${pl.etq_lima} sacó ${fmt.pct(c.clave_lima)} en ${d}.`;
+        return `
+        <div class="caso">
+          <div class="caso-kicker">${KICK[c.clave]}</div>
+          <h4>${c.nom}</h4>
+          <div class="who"><b style="color:var(--text)">${c.clave_etq}</b> sacó ${fmt.pct(c.clave_dist)}${gano}. ${partido}</div>
+          <div class="nums">
+            <div><b>${fmt.pct0(c.piso)}</b>piso de voto cruzado</div>
+            <div><b>${fmt.pct0(c.cruzado[0])}</b>voto cruzado estimado<br>(${fmt.pct0(c.cruzado[1])}–${fmt.pct0(c.cruzado[2])})</div>
+          </div>
+          ${stack(c.destino_rp, `Los votantes de ${c.rla_etq} votaron así para alcalde de ${d}:`)}
+          ${stack(c.origen_clave, `Los votantes de ${c.clave_etq} votaron así para alcalde de Lima:`)}
+        </div>`;
+      }).join('');
+    })();
+
+    // --- nota de convergencia, desde los datos
+    const peor = D.casos.reduce((a, c) => Math.max(a, c.ei.rhat_max), 0);
+    document.getElementById('nota-ei').textContent =
+      `Cada distrito se estimó con ${D.casos[0].ei.seeds.length} cadenas independientes (${fmt.int(D.casos[0].ei.draws)} muestras en total); ` +
+      `el mayor R̂ entre celdas es ${peor.toFixed(2)}.`;
+  })();
+  </script>
+</body>
+</html>
