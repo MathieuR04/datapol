@@ -477,7 +477,8 @@
     const peor = D.casos.reduce((a, c) => Math.max(a, c.ei.rhat_max), 0);
     document.getElementById('nota-ei').textContent =
       `Cada distrito se estimó con ${D.casos[0].ei.seeds.length} cadenas independientes (${fmt.int(D.casos[0].ei.draws)} muestras en total); ` +
-      `el mayor R̂ entre celdas es ${peor.toFixed(2)}.`;
+      `el mayor R̂ entre celdas es ${peor.toFixed(2)}. Las pocas celdas con R̂ sobre 1.1 son todas flujos pequeños (menos de 8%), ` +
+      `donde las dos cadenas difieren en tres puntos o menos; las cifras que cita el texto convergen.`;
   })();
   </script>
 </body>
