@@ -195,6 +195,11 @@ def main(argv: list[str] | None = None) -> int:
             totales.append(t)
             part.extend(filas)
     crudo.vuelca()
+    if cli.bloqueado:
+        print("\nDETENIDO: la ONPE responde con el desafío anti-bot de AWS WAF "
+              "(x-amzn-waf-action: challenge). No se marcó ninguna mesa como hecha; "
+              "no tiene sentido insistir desde esta conexión.")
+        return 3
     if a.probar:
         return 0
 

@@ -62,10 +62,15 @@ run_once() {
   # --update: las nuevas y las pendientes. Las resueltas nunca se repiden.
   # shellcheck disable=SC2086
   (cd "$ERM_DIR" && uv run python scripts/02b_scrape_mesas.py \
-      --host "$HOST" --workers "$WORKERS" --update $LIMITE) || {
+      --host "$HOST" --workers "$WORKERS" --update $LIMITE)
+  rc=$?
+  if [[ $rc -eq 3 ]]; then
+    warn "La ONPE responde con el desafío anti-bot (WAF). Se detiene el pipeline: no se insiste."
+    exit 3
+  elif [[ $rc -ne 0 ]]; then
     warn "scrape_mesas falló — abortando ciclo"
     return
-  }
+  fi
 
   step "Consolida — último estado de cada acta"
   (cd "$ERM_DIR" && uv run python scripts/03_consolida_mesas.py)

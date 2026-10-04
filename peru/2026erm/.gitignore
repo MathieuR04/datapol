@@ -2,7 +2,10 @@
 # (carrera/, geo/, candidatos/, hdv/ y los json sueltos) y sí se versiona.
 data/raw/
 data/interim/
-data/processed/
+data/processed/*
+# El maestro de mesas (750 KB) sí viaja: sin él no corren 02b, 03 ni 04, y el
+# operador en Lima parte de un clon limpio.
+!data/processed/mesas.parquet
 data/reference/geo/*.geojson
 .venv/
 .pytest_cache/

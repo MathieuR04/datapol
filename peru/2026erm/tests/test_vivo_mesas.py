@@ -91,6 +91,8 @@ def servidor():
             mesa = parse_qs(u.query)["codigoMesa"][0]
             st, cuerpo = estado.responde(mesa)
             self.send_response(st)
+            if st == 202:   # desafío de AWS WAF: 202 vacío con este encabezado
+                self.send_header("x-amzn-waf-action", "challenge")
             self.end_headers()
             if cuerpo is not None:
                 self.wfile.write(cuerpo.encode())
@@ -292,3 +294,17 @@ def test_ever_observada_es_monotona():
 
 def test_respuesta_sin_data_es_lista_vacia():
     assert onpe.actas_de(json.dumps({"success": True, "data": None})) == []
+
+
+def test_desafio_waf_detiene_sin_marcar(servidor, data, monkeypatch):
+    """Ante el desafío anti-bot no se reintenta, no se marca nada y se sale con 3."""
+    onpe_, host = servidor
+    monkeypatch.setattr(scrape_mesas, "universo",
+                        lambda d, r: [str(i).zfill(6) for i in range(1, 201)])
+    for i in range(1, 201):
+        onpe_.fija(str(i).zfill(6), (202, None))
+    assert corre(data, host) == 3
+    assert not (data / "interim/mesas/estado.json").exists() or \
+        json.loads((data / "interim/mesas/estado.json").read_text()) == {}
+    # 10 seguidos bastan para cortar; con 3 workers en vuelo, unos pocos más.
+    assert sum(onpe_.pedidas.values()) <= 15

@@ -204,6 +204,11 @@ def main(argv: list[str] | None = None) -> int:
             if i % PAUSA_CADA == 0:
                 time.sleep(PAUSA_S)
     vol.vuelca()
+    if cli.bloqueado:
+        print("\nDETENIDO: la ONPE responde con el desafío anti-bot de AWS WAF "
+              "(x-amzn-waf-action: challenge). No se marcó ninguna mesa como hecha; "
+              "no tiene sentido insistir desde esta conexión.")
+        return 3
 
     dt = time.time() - t0
     print(f"\nlisto en {dt:,.0f} s · {dict(marcas)} · fallidas {len(fallidas)} · "

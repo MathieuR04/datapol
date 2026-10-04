@@ -77,6 +77,13 @@ class Cliente:
         "403": 0, "vacio": 0, "error": 0})
     _local: threading.local = field(default_factory=threading.local)
     _lock: threading.Lock = field(default_factory=threading.Lock)
+    # Desafío anti-bot de AWS WAF (`x-amzn-waf-action: challenge`, 202 vacío).
+    # No se reintenta ni se intenta resolver: tras `tope_waf` seguidos el
+    # cliente se declara bloqueado y deja de pedir. Insistir contra un control
+    # que dice que no es justo lo que no hay que hacer.
+    tope_waf: int = 10
+    bloqueado: bool = False
+    _waf_seguidos: int = 0
 
     def _sesion(self):
         s = getattr(self._local, "s", None)
@@ -104,6 +111,8 @@ class Cliente:
         que se agotaron los reintentos. **Las dos son distintas**: lo primero se
         puede dar por resuelto, lo segundo nunca."""
         url = self.host + "/presentacion-backend/" + ruta.lstrip("/")
+        if self.bloqueado:
+            return None, None
         for intento in range(self.reintentos):
             time.sleep(random.uniform(*self.delay))
             self._cuenta("peticiones")
@@ -114,6 +123,15 @@ class Cliente:
                 time.sleep(self.espera["base"] * 2 ** intento)
                 continue
             st = r.status_code
+            if (r.headers.get("x-amzn-waf-action") or "").lower() == "challenge":
+                with self._lock:
+                    self.contadores["waf"] = self.contadores.get("waf", 0) + 1
+                    self._waf_seguidos += 1
+                    if self._waf_seguidos >= self.tope_waf:
+                        self.bloqueado = True
+                return None, None
+            with self._lock:
+                self._waf_seguidos = 0
             if st == 204:
                 self._cuenta("204")
                 return 204, None

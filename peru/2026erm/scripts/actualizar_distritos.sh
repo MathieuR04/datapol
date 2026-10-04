@@ -58,10 +58,15 @@ run_once() {
 
   step "Flujo A — totales por carrera"
   (cd "$ERM_DIR" && uv run python scripts/02a_scrape_distritos.py \
-      --host "$HOST" --recurso "$RECURSO" --workers "$WORKERS") || {
+      --host "$HOST" --recurso "$RECURSO" --workers "$WORKERS")
+  rc=$?
+  if [[ $rc -eq 3 ]]; then
+    warn "La ONPE responde con el desafío anti-bot (WAF). Se detiene el pipeline: no se insiste."
+    exit 3
+  elif [[ $rc -ne 0 ]]; then
     warn "scrape_agregado falló — abortando ciclo"
     return
-  }
+  fi
 
   publica "distritos"
 }
