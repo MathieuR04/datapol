@@ -111,6 +111,11 @@
       border-bottom: none;
     }
 
+    /* ── ERM 2026 en grande, arriba ───────────────────────────────────────── */
+    .embed-block.erm-hero { flex: 0 0 auto; margin: 0.75rem 0.75rem 0; height: 78vh; min-height: 520px; display: flex; flex-direction: column; }
+    .embed-wrap.erm-wrap iframe { width: 125%; height: 125%; transform: scale(0.8); }
+    @media (max-width: 760px) { .embed-block.erm-hero { height: 110vw; min-height: 420px; } }
+
     /* ── Main two-column grid ─────────────────────────────────────────────── */
     .main {
       display: flex;
@@ -358,8 +363,40 @@
     <div class="hero-title">DATAPOL</div>
     <div class="hero-byline">MATHIEU ROJAS</div>
     <div class="hero-nav">
-      <a class="hero-nav-btn" href="/electoral/peru/2026eg/segunda-vuelta/">RESULTADOS ELECTORALES</a>
+      <a class="hero-nav-btn" href="/electoral/peru/2026erm/">RESULTADOS ELECTORALES</a>
       <a class="hero-nav-btn" href="/articulos/">ARTÍCULOS</a>
+    </div>
+  </div>
+
+  <!-- ERM 2026 — resultados en vivo, a todo el ancho, lo primero de la página -->
+  <div class="embed-block erm-hero">
+    <div class="embed-block-header">
+      <div class="embed-block-label">RESULTADOS EN VIVO · 4 DE OCTUBRE</div>
+      <div class="embed-block-title">🇵🇪 Elecciones Regionales y Municipales 2026</div>
+    </div>
+    <div class="embed-wrap erm-wrap">
+      <iframe src="/electoral/peru/2026erm/"
+              title="Perú — ERM 2026, resultados"
+              loading="eager"
+              sandbox="allow-scripts allow-same-origin"></iframe>
+      <a class="embed-link" href="/electoral/peru/2026erm/">
+        <span class="embed-chip">Ver resultados &nbsp;→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Análisis parlamentario -->
+  <div class="section-strip">
+    <div class="articles-header">
+      <div class="articles-label">CONGRESO 2026–2031</div>
+    </div>
+    <div class="articles-inner">
+      <a class="article-card" href="/articulos/congreso-2026-2031/">
+        <div class="article-tag">Datos · Congreso</div>
+        <div class="article-title">Cómo vota el Congreso 2026–2031</div>
+        <div class="article-body">Las votaciones del pleno, partido por partido y congresista por congresista.</div>
+        <div class="article-date">2026</div>
+      </a>
     </div>
   </div>
 

@@ -33,7 +33,7 @@ Solo se vuelven a correr si cambia un insumo.
 | `02a_scrape_distritos.py` | **Flujo A.** Totales por carrera (`totales` + participantes) | `actualizar_distritos.sh` |
 | `02b_scrape_mesas.py` | **Flujo B.** Todas las actas de cada mesa | `actualizar_mesas.sh` |
 | `03_consolida_mesas.py` | Último estado de cada acta → `computo_mesa` y `resultados_mesa` | `actualizar_mesas.sh` |
-| `04_publica_resultados.py` | **Pendiente.** Tablas → `carrera/*.json`, `nacional.json` | `_publica.sh` |
+| `04_publica_resultados.py` | Cómputo oficial → `carrera/*.json`, `nacional.json`. **Solo resultados**: no proyecta ni llama ganadores. ~12 s con todas las actas | `_publica.sh` |
 | `05_publica_electos.py` | Directorio nacional de autoridades electas | después de 04 |
 | `06_publica_comparacion.py` | 2026 contra 2022 | después de 04 |
 
@@ -43,7 +43,7 @@ No están en ningún ciclo: se corren a mano y su salida se revisa antes de usar
 
 | Script | Hace | Escribe |
 |---|---|---|
-| `m1_crosswalk_organizaciones.py` | **Pendiente.** Propone código ONPE ↔ id JNE por nombre + ámbito, con reporte de cobertura | `data/reference/crosswalk_propuesto.csv` |
+| `m1_crosswalk_organizaciones.py` | **Pendiente, opcional.** `04` ya cruza por nombre dentro de cada carrera; lo que no cruza queda en `processed/publica_sin_cruce.csv`. `m1` sirve para revisar esos casos a mano | `data/reference/crosswalk_organizaciones_2026.csv` |
 
 El operador revisa la propuesta, corrige lo que haga falta en
 `data/reference/crosswalk_manual.csv` (gana sobre lo propuesto) y el resultado
