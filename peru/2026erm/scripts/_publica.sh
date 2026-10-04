@@ -7,6 +7,15 @@
 
 LOCK_DIR="${TMPDIR:-/tmp}/datapol-erm2026-publica.lock"
 
+# GitHub Pages tiene un límite blando de ~10 despliegues por hora. Con ciclos de
+# 5 min (y los otros pipelines de datapol publicando al mismo repo) se pasa, y
+# los despliegues se encolan o se saltan: el sitio quedaría atrasado justo
+# cuando más se mira. El emisor corre en cada ciclo, pero el push sale como
+# máximo cada MIN_PUSH_S segundos. Lo que no se empuja queda en disco y viaja
+# en el siguiente push: no se pierde nada.
+MIN_PUSH_S="${MIN_PUSH_S:-420}"
+MARCA_PUSH="${TMPDIR:-/tmp}/datapol-erm2026-ultimo-push"
+
 # El candado se suelta explícitamente y no con `trap … RETURN`: ese trap queda
 # armado después de que la función vuelve y puede borrar el candado del otro
 # proceso en cualquier retorno posterior.
@@ -47,6 +56,14 @@ _publica_cuerpo() {
   # El emisor escribe directo en peru/2026erm/data, que es lo que sirve el sitio:
   # ya no hay paso de copia. La página es electoral/peru/2026erm/index.html.
 
+  local ahora_s ultimo
+  ahora_s=$(date +%s)
+  ultimo=$(cat "$MARCA_PUSH" 2>/dev/null || echo 0)
+  if (( ahora_s - ultimo < MIN_PUSH_S )); then
+    warn "Último push hace $(( ahora_s - ultimo )) s (< ${MIN_PUSH_S} s) — datos al día en disco, push en el próximo ciclo"
+    return 0
+  fi
+
   step "Git — staging"
   cd "$DATAPOL_DIR" || return 1
   git add peru/2026erm/data electoral/peru/2026erm 2>/dev/null || true
@@ -62,9 +79,12 @@ _publica_cuerpo() {
   if $PUSH; then
     step "Git push"
     for attempt in 1 2 3; do
-      git push -q && echo -e "\n${GREEN}✔  Publicado — $ts${RESET}" && break
-      warn "Push falló (intento $attempt/3) — reintentando en 10s…"
-      sleep 10
+      git push -q && date +%s > "$MARCA_PUSH" && echo -e "\n${GREEN}✔  Publicado — $ts${RESET}" && break
+      # Lo típico: otro pipeline de datapol empujó entre medio. Se trae y se
+      # reaplica encima; --autostash protege lo que el operador tenga sin commitear.
+      warn "Push falló (intento $attempt/3) — trayendo origin y reintentando…"
+      git pull --rebase --autostash -q || { git rebase --abort 2>/dev/null; warn "rebase con conflicto — se reintenta en el próximo ciclo"; return 0; }
+      sleep 5
     done
   else
     warn "(--no-push: omitiendo push)"
