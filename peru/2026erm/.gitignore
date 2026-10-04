@@ -1,0 +1,9 @@
+# Pipeline de la noche: se regenera o es crudo pesado. Lo público vive en data/
+# (carrera/, geo/, candidatos/, hdv/ y los json sueltos) y sí se versiona.
+data/raw/
+data/interim/
+data/processed/
+data/reference/geo/*.geojson
+.venv/
+.pytest_cache/
+__pycache__/

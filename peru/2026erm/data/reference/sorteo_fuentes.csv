@@ -1,0 +1,10 @@
+clave,url,tipo,nota
+cedula_regiones_prov_callao,https://www.onpe.gob.pe/modElecciones/elecciones/ERM2026/Cedula-Regiones-provincias-Callao.pdf,pdf,Cedula regional/provincial y Callao
+cedula_regiones_dist_no_capital,https://www.onpe.gob.pe/modElecciones/elecciones/ERM2026/Cedula-Regiones-distritos-no-capital-provincia.pdf,pdf,Cedula distrital fuera de capital de provincia
+cedula_cercado_lima,https://www.onpe.gob.pe/modElecciones/elecciones/ERM2026/cedula-cercado-de-lima.pdf,pdf,Cedula Cercado de Lima
+pagina_descarga_cedula,https://erm2026.onpe.gob.pe/cedula/descarga-tu-cedula/,html,Pagina que enlaza las cedulas; de aqui salen URLs nuevas
+portal_erm2026,https://erm2026.onpe.gob.pe/,html,Portada del sitio dedicado ERM 2026
+normas_resolucion_jefatural,https://www.onpe.gob.pe/institucion/onpe/normas-legales/tipos/23-resolucion-jefatural,html,Listado de RJ; aqui aparece la que apruebe resultados
+campania_erm2026,https://www.onpe.gob.pe/institucion/onpe/campa%C3%B1as/143000-elecciones-regionales-y-municipales-2026,html,Pagina de campania ERM 2026 en gob.pe
+pagina_miembros_de_mesa,https://erm2026.onpe.gob.pe/electores-y-miembros-de-mesa/miembros-de-mesa/,html,Aqui aparecera el enlace a Conoce tu local de votacion cuando lo descomenten
+bundle_consulta_electoral,https://consultaelectoral.onpe.gob.pe/main-24WX7KXU.js,js,Bundle de la SPA; si cambia el hash es que redesplegaron la app de consulta

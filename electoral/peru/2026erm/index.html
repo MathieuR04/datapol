@@ -345,12 +345,6 @@ tr.mas[hidden]{display:none}
 .edu .lv{font-size:9px;padding:1px 4px;border-radius:2px;letter-spacing:.02em}
 .edu .lv.on{background:var(--tinta);color:#fff}
 .edu .lv.off{background:var(--vacio);color:var(--suave)}
-.bdg{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;
-  padding:2px 5px;border-radius:2px;white-space:nowrap}
-.b-ok{background:var(--ok);color:#fff}
-.b-obs{background:var(--espera);color:#fff}
-.b-mal{background:var(--disputa);color:#fff}
-.b-nn{background:var(--vacio);color:var(--suave)}
 .sent-si{color:var(--disputa);font-weight:700;font-size:10px}
 .nd{color:var(--suave)}
 .lista{border:1px solid var(--linea);border-radius:3px;margin-bottom:8px;
@@ -756,7 +750,9 @@ async function vistaNacional(){
   const GRUPOS={REGIONALES:{nombre:'MOVIMIENTOS REGIONALES', color:'var(--regional)'}};
   for(const o of (n.por_organizacion||[]))
     if(o.grupo && o.grupo_nombre && !GRUPOS[o.grupo])
-      GRUPOS[o.grupo]={nombre:o.grupo_nombre, color:'var(--regional)'};
+      // Los miembros de un grupo heredan el color del ancla en `colores.json`,
+      // así que el de cualquiera de ellos es el del grupo.
+      GRUPOS[o.grupo]={nombre:o.grupo_nombre, color:colorDe(o.codigo)};
   const declara=(n.por_organizacion||[]).some(o=>'grupo' in o);
   const claveDe=o=>declara ? (o.grupo||null)
                            : (esNacional(o.codigo) ? null : 'REGIONALES');
@@ -1137,28 +1133,27 @@ async function vistaComparacion(){
 
 // ------------------------------------------------ vista: buscador de candidatos
 // El mismo buscador del artículo `erm-2026-candidatos`: se elige una
-// circunscripción y salen todas sus listas con sus candidatos, su estado ante el
-// JNE, su escalera de estudios y sus sentencias.
+// circunscripción y salen sus listas con sus candidatos, su escalera de estudios
+// y sus sentencias.
 //
-// Lo único que cambia respecto al artículo es de dónde salen los datos. Allá es
-// un `candidatos.json` de 11 MB que se carga entero; aquí sería insostenible con
-// 20,000 concurrentes, así que `publica_candidatos.py` lo parte por
-// circunscripción: un índice de 130 KB para armar los desplegables y un trozo de
-// 6 KB por circunscripción, que se pide al elegirla.
+// Dos cosas cambian respecto al artículo.
+//
+// De dónde salen los datos: allá es un `candidatos.json` de 11 MB que se carga
+// entero; aquí sería insostenible con 20,000 concurrentes, así que
+// `publica_candidatos.py` lo parte por circunscripción: un índice de 130 KB para
+// armar los desplegables y un trozo de 5 KB por circunscripción, que se pide al
+// elegirla.
+//
+// Y qué se muestra: **solo lo inscrito**. El artículo trata del registro, así que
+// enseña también lo improcedente, lo tachado y lo retirado, con su estado en un
+// distintivo de color. Esta página trata de una elección, y la pregunta es quién
+// está en carrera. `publica_candidatos.py` ya filtra, así que aquí no queda
+// estado que pintar: todo lo que llega está inscrito.
 const SIMBOLO='https://sroppublico.jne.gob.pe/Consulta/Simbolo/GetSimbolo/';
 const EDU_LV=[[1,'Pri','Primaria'],[2,'Sec','Secundaria'],[4,'Téc','Técnica'],
               [8,'Uni','Universitaria'],[16,'Pos','Posgrado']];
 let CAND=null, CAND_TROZO={}, SEL_CAND={te:'',dep:'',prov:'',dist:''};
 
-// Mismo criterio de color que el artículo: verde inscrito, ámbar subsanable,
-// rojo fuera de carrera, y neutro todo lo que sigue en trámite.
-function claseEstado(e){
-  const x=(e||'').toUpperCase();
-  if(x.includes('INSCRITO')) return 'b-ok';
-  if(x.includes('INADMISIBLE')) return 'b-obs';
-  if(x.includes('IMPROCEDENTE')||x.includes('TACHADO')||x.includes('RENUNCIA')) return 'b-mal';
-  return 'b-nn';
-}
 function escalera(bm){
   if(bm==null) return '<span class="nd">—</span>';
   return `<span class="edu">`+EDU_LV.map(([bit,cor,largo])=>
@@ -1192,9 +1187,11 @@ async function vistaCandidatos(){
   }
   const tipos=CAND.tipos||[];
   $('vista').innerHTML=`<h1>Candidatos</h1>
-    <div class="sub">${F(CAND.total_candidatos)} candidaturas en
+    <div class="sub">${F(CAND.total_candidatos)} candidaturas inscritas en
       ${F(CAND.total_listas)} listas · registro del JNE al
-      ${esc(CAND.origen_generado||'')}</div>
+      ${esc(CAND.origen_generado||'')}. No salen las listas improcedentes,
+      tachadas o retiradas, ni los candidatos excluidos: sus votos se cuentan,
+      pero no están en carrera.</div>
     <div class="casc" style="margin-top:12px">
       <label>Tipo de elección<select id="c-te">
         <option value="">Elige un tipo</option>
@@ -1268,7 +1265,6 @@ async function vistaCandidatos(){
         <td>${hay&&c[9]?`<span class="sent-si">${c[9]} SENTENCIA${c[9]>1?'S':''}</span>`
                         :'<span class="nd">—</span>'}</td>
         ${regional?'':`<td class="n">${esc(c[4]||'')}</td><td class="n">${c[5]||''}</td>`}
-        <td>${c[7]?`<span class="bdg ${claseEstado(c[7])}">${esc(c[7])}</span>`:''}</td>
       </tr>`;
     }).join('');
     return `<div class="envuelve"><table>
@@ -1276,7 +1272,7 @@ async function vistaCandidatos(){
         ${regional?'<th>Provincia</th>':''}
         <th>Educación</th><th>Sentencias</th>
         ${regional?'':'<th class="n">Sexo</th><th class="n">Edad</th>'}
-        <th>Estado</th></tr></thead><tbody>${filas}</tbody></table></div>`;
+      </tr></thead><tbody>${filas}</tbody></table></div>`;
   }
 
   function pinta(circ){
@@ -1284,18 +1280,28 @@ async function vistaCandidatos(){
     if(!listas.length){ aviso('No hay listas registradas para esta circunscripción todavía.'); return }
     const regional = SEL_CAND.te==='4';
     const sitio=[circ.dep,circ.prov,circ.dist].filter(Boolean).join(' › ');
+    // Todas cerradas. Abrir la primera daba por sentado que la lista que el JNE
+    // pone de primera es la que se venía a ver, y empujaba las otras veintitantas
+    // fuera de la pantalla; la primera pregunta es qué listas hay.
+    //
+    // Cuando el gobernador o el alcalde de una lista quedó fuera de carrera, el
+    // encabezado lo dice. Poner de cabeza al primer regidor sería inventarle un
+    // candidato a la lista.
+    const ejec = regional ? 'gobernador' : 'alcalde';
     out.innerHTML=`<div class="sub" style="margin-bottom:8px">${esc(sitio)} —
-      <b>${F(listas.length)}</b> lista${listas.length===1?'':'s'}</div>`+
-      listas.map((l,i)=>`<details class="lista"${i===0?' open':''}>
+      <b>${F(listas.length)}</b> lista${listas.length===1?'':'s'} inscrita${
+      listas.length===1?'':'s'}</div>`+
+      listas.map(l=>`<details class="lista">
         <summary>
           <img class="logo" src="${SIMBOLO}${encodeURIComponent(l.org_id)}" alt=""
             loading="lazy" onerror="this.style.visibility='hidden'">
           <b>${esc(l.org)}</b>
-          <span class="bdg ${claseEstado(l.estado)}">${esc(l.estado)}</span>
           <span class="sub">${F((l.cands||[]).length)} candidatos · ${
             F(l.h||0)}H / ${F(l.m||0)}M</span>
-          <span class="cabeza">${esc(l.cabeza?.cargo||'')}:
-            <b>${esc(l.cabeza?.nombre||'')}</b></span>
+          ${l.cabeza
+            ? `<span class="cabeza">${esc(l.cabeza.cargo||'')}:
+                <b>${esc(l.cabeza.nombre||'')}</b></span>`
+            : `<span class="cabeza nd">sin candidato a ${ejec} en carrera</span>`}
         </summary>${tabla(l, regional)}</details>`).join('');
   }
 
