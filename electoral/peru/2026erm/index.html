@@ -77,6 +77,21 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
   border-bottom:2px solid transparent;margin-bottom:-1px}
 .mode-tab[aria-current]{color:var(--terra);border-bottom-color:var(--terra)}
 .mode-tab:hover:not([aria-current]){color:var(--tinta)}
+/* Familia de análisis: mismo peso, otro acento. */
+.mode-tab.an{color:#5b7a99}
+.mode-tab.an[aria-current]{color:var(--s1);border-bottom-color:var(--s1)}
+.mode-sep{font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--tenue);
+  margin-left:.6rem;padding:.15rem .5rem .15rem .75rem;border-left:1px solid var(--linea)}
+/* En móvil la barra se desliza en vez de partirse en dos renglones. */
+.mode-bar{overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+.mode-bar::-webkit-scrollbar{display:none}
+/* RLA: tira de cuatro puntos por distrito y leyenda del mapa de cambio. */
+.tira{display:block;width:100%;height:18px}
+.ley-div{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--suave);margin-top:6px}
+.ley-div .grad{flex:0 0 180px;height:8px;border-radius:4px}
+.pares{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.pares .tab:disabled{opacity:.45;cursor:not-allowed}
+.k .punto, td .punto, .sub .punto{display:inline-block;margin-right:5px;vertical-align:1px}
 .cab{background:var(--fondo);border-bottom:2px solid var(--tinta);
   padding:.55rem 1.25rem;display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap}
 .cab-id{display:flex;align-items:center;gap:.75rem}
@@ -387,14 +402,21 @@ window.PROC = (location.pathname.match(/\/electoral\/peru\/([^/]+)\//) || [])[1]
 if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
 </script>
 
+<!-- Dos familias de pestañas. Las de datos son la noche misma —resultados,
+     candidatos, electos— y van en la terracota de la casa. Las de análisis son
+     lecturas armadas encima de esos datos y van en azul, después de un rótulo,
+     para que no se confunda un tablero editorial con el cómputo oficial. -->
 <div class="mode-bar">
   <a class="mode-tab" href="#/" data-r="/">RESUMEN</a>
-  <a class="mode-tab" href="#/lima" data-r="/lima">LIMA</a>
+  <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
   <a class="mode-tab" href="#/electos" data-r="/electos">ELECTOS</a>
   <a class="mode-tab" href="#/candidatos" data-r="/candidatos">CANDIDATOS</a>
-  <a class="mode-tab" href="#/comparacion" data-r="/comparacion">VS 2022</a>
-  <a class="mode-tab" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
-  <a class="mode-tab" href="#/buscador" data-r="/buscador">BUSCADOR</a>
+  <span class="mode-sep" aria-hidden="true">ANÁLISIS</span>
+  <a class="mode-tab an" href="#/lima" data-r="/lima">LIMA</a>
+  <a class="mode-tab an" href="#/comparacion" data-r="/comparacion">VS 2022</a>
+  <a class="mode-tab an" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
+  <a class="mode-tab an" href="#/rla" data-r="/rla">RLA</a>
+  <a class="mode-tab an" href="#/parlamento" data-r="/parlamento">PARLAMENTO</a>
 </div>
 
 <header class="cab">
@@ -2355,6 +2377,206 @@ async function vistaCarrera(rid){
   $('vista').innerHTML=h;
 }
 
+// ------------------------------------------------------------- vista: RLA
+// Las cuatro elecciones de López Aliaga en Lima Metropolitana, distrito por
+// distrito. Las tres previas vienen de `rla.json` (00i_rla_historico.py); la de
+// esta noche se lee en vivo de la alcaldía de Lima, así que se llena sola con el
+// cómputo. Todo en porcentaje de votos válidos.
+//
+// Son cargos distintos —dos presidenciales y dos alcaldías— y eso se dice en la
+// página: la comparación es de arrastre del candidato, no de la misma elección.
+let RLA=null, PAR_RLA=null;
+// Una sola tonalidad (el celeste de Renovación), de claro a oscuro por fecha: el
+// orden es temporal, así que la secuencia de luz se lee sola. El anillo blanco
+// separa los puntos cuando caen encima.
+const RLA_TONO=['#9fd0ea','#4fa8d8','#1f6fa8','#0b3d66'];
+const RLA_PARES=[['eg2021','erm2022'],['erm2022','eg2026'],['eg2026','erm2026'],
+                 ['erm2022','erm2026'],['eg2021','eg2026']];
+const RLA_TOPE=0.20;   // ±20 pp satura el color del mapa
+
+function mezcla(a,b,t){
+  const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));
+  const [r1,g1,b1]=h(a),[r2,g2,b2]=h(b);
+  const m=(x,y)=>Math.round(x+(y-x)*t).toString(16).padStart(2,'0');
+  return '#'+m(r1,r2)+m(g1,g2)+m(b1,b2);
+}
+const colorCambio=d=> d==null ? css('--vacio')
+  : mezcla(css('--vacio').trim(), (d>=0?css('--s1'):css('--s2')).trim(),
+           Math.min(1,Math.abs(d)/RLA_TOPE));
+const pp=d=> d==null ? '—' : `${d>0?'+':d<0?'−':''}${Math.abs(100*d).toFixed(1)} pp`;
+
+async function vistaRLA(){
+  cabecera();
+  try{ if(!RLA) RLA=await j('rla.json'); }
+  catch(e){ $('vista').innerHTML=`<div class="aviso">No se pudo cargar el histórico de López Aliaga.</div>`; return }
+  let doc=null; try{ doc=await j(`carrera/${LIMA.race}.json`); }catch(e){}
+
+  // ERM 2026, en vivo: la organización se reconoce por su candidato y no por un
+  // código, porque el código pasa de `jne-…` a ONPE cuando entra el crosswalk.
+  const org=(doc?.organizaciones||[]).find(o=>
+    /L[OÓ]PEZ ALIAGA/.test(String(o.candidato?.nombre||'').toUpperCase()));
+  const cod=org?.codigo, vivo={}; let tv=0, tt=0;
+  for(const x of (doc?.desagregado_niveles?.distrito||[])){
+    const t=Object.values(x.votos||{}).reduce((a,b)=>a+b,0);
+    if(cod && t>0){ const v=x.votos[cod]||0; vivo[x.ubigeo]={votos:v, validos:t, pct_actas:x.pct_actas}; tv+=v; tt+=t }
+  }
+  const hayVivo=tt>0;
+  const val=(d,k)=>{ const v=k==='erm2026'?vivo[d.ubigeo]:d[k]; return v&&v.validos?v.votos/v.validos:null };
+  const tot=k=> k==='erm2026' ? (tt?tv/tt:null) : RLA.total[k].votos/RLA.total[k].validos;
+  const E=Object.fromEntries(RLA.elecciones.map((e,i)=>[e.id,{...e,i}]));
+  if(!PAR_RLA) PAR_RLA = hayVivo ? ['erm2022','erm2026'] : ['erm2022','eg2026'];
+  const [A,B]=PAR_RLA;
+
+  let h=`<h1>López Aliaga en Lima</h1>
+    <div class="sub">Cuatro elecciones en Lima Metropolitana, en porcentaje de votos válidos ·
+      ${F(RLA.distritos.length)} distritos</div>
+    <div class="aviso">Dos son presidenciales (primera vuelta) y dos son por la alcaldía
+      de Lima: no es la misma elección, es el arrastre del mismo candidato.
+      ${hayVivo?`ERM 2026 va con el <b>${P(doc.computo?.pct_actas)}</b> de actas contabilizadas y cambia durante la noche.`
+               :`ERM 2026 se llena cuando entren las primeras actas de la alcaldía de Lima.`}</div>
+    <div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">`+
+    RLA.elecciones.map(e=>{const v=tot(e.id); return `<div class="tile">
+      <div class="k"><span class="punto" style="background:${RLA_TONO[E[e.id].i]}"></span>${v==null?'—':P(v)}</div>
+      <div class="e">${esc(e.etiqueta)} · ${esc(e.cargo)}</div></div>`}).join('')+
+    `</div>
+    <h2>Dónde ganó y dónde perdió</h2>
+    <div class="pares" role="group" aria-label="Comparación">`+
+    RLA_PARES.map(([a,b])=>{
+      const off=(a==='erm2026'||b==='erm2026')&&!hayVivo;
+      return `<button class="tab" data-par="${a},${b}" aria-pressed="${a===A&&b===B}"
+        ${off?'disabled title="Sin actas de ERM 2026 todavía"':''}>${E[a].etiqueta} → ${E[b].etiqueta}</button>`}).join('')+
+    `</div>
+    <div class="mapa" id="mapaRLA"></div>
+    <div class="ley-div"><span>baja</span>
+      <span class="grad" style="background:linear-gradient(to right,${css('--s2')},${css('--vacio')},${css('--s1')})"></span>
+      <span>sube</span><span class="sub">· satura en ±${Math.round(100*RLA_TOPE)} pp · ${E[A].etiqueta} → ${E[B].etiqueta}</span></div>`;
+
+  const filas=RLA.distritos.map(d=>{
+    const vs=RLA.elecciones.map(e=>val(d,e.id));
+    const a=val(d,A), b=val(d,B);
+    return {d, vs, delta:(a!=null&&b!=null)?b-a:null};
+  }).sort((x,y)=>(y.delta??-9)-(x.delta??-9));
+  const mx=Math.max(0.3,...filas.flatMap(f=>f.vs.filter(v=>v!=null)));
+  const tira=vs=>{
+    const xs=vs.map(v=>v==null?null:4+92*v/mx), ok=xs.filter(x=>x!=null);
+    // Coordenadas en porcentaje y sin viewBox: con `preserveAspectRatio="none"`
+    // los círculos se estiraban en óvalos al ensanchar la columna.
+    return `<svg class="tira" aria-hidden="true">
+      ${ok.length>1?`<line x1="${Math.min(...ok)}%" x2="${Math.max(...ok)}%" y1="9" y2="9" stroke="${css('--linea-fuerte')}" stroke-width="2"/>`:''}
+      ${xs.map((x,i)=>x==null?'':`<circle cx="${x}%" cy="9" r="4.5" fill="${RLA_TONO[i]}" stroke="${css('--fondo')}" stroke-width="1.5"><title>${RLA.elecciones[i].etiqueta}: ${P(vs[i])}</title></circle>`).join('')}
+    </svg>`;
+  };
+  h+=`<h2>Distrito por distrito</h2>
+    <div class="sub" style="margin-bottom:6px">Ordenado por el cambio ${E[A].etiqueta} → ${E[B].etiqueta}.
+      Puntos: `+RLA.elecciones.map((e,i)=>`<span class="punto" style="background:${RLA_TONO[i]}"></span>${esc(e.etiqueta)}`).join(' · ')+`</div>
+    <div class="envuelve"><table>
+      <thead><tr><th>Distrito</th>`+RLA.elecciones.map(e=>`<th class="n">${esc(e.etiqueta)}</th>`).join('')+
+      `<th class="n">Cambio</th><th style="width:26%"></th></tr></thead><tbody>
+      <tr style="font-weight:600"><td>Lima Metropolitana</td>`+
+      RLA.elecciones.map(e=>`<td class="n">${tot(e.id)==null?'<span class="nd">—</span>':P(tot(e.id))}</td>`).join('')+
+      `<td class="n">${pp(tot(A)!=null&&tot(B)!=null?tot(B)-tot(A):null)}</td><td>${tira(RLA.elecciones.map(e=>tot(e.id)))}</td></tr>`+
+    filas.map(f=>`<tr><td>${esc(f.d.nombre)}</td>`+
+      f.vs.map(v=>`<td class="n">${v==null?'<span class="nd">—</span>':P(v)}</td>`).join('')+
+      `<td class="n">${f.delta==null?'<span class="nd">—</span>':
+        `<span class="punto" style="background:${colorCambio(f.delta)}"></span>${pp(f.delta)}`}</td>
+      <td>${tira(f.vs)}</td></tr>`).join('')+
+    `</tbody></table></div>
+    <div class="sub" style="margin-top:6px">Fuentes: ONPE, resultados por mesa de EG 2021 y
+      EG 2026 (primera vuelta) y cómputo de ERM 2022 y ERM 2026. Un distrito sin dato sale «—», nunca cero.</div>`;
+  $('vista').innerHTML=h;
+
+  document.querySelectorAll('[data-par]').forEach(b=>b.onclick=()=>{
+    PAR_RLA=b.dataset.par.split(','); vistaRLA(); });
+
+  const porU=Object.fromEntries(filas.map(f=>[f.d.ubigeo,f]));
+  try{
+    if(!GEO.lima) GEO.lima=await j(LIMA.geo);
+    const cont=$('mapaRLA'); if(!cont) return;
+    const m=creaMapa(cont);
+    agregaCapa(m, GEO.lima, u=>{
+      const f=porU[u]; if(!f) return {color:css('--vacio'), trama:true, texto:'<span class="tt-est">SIN DATO</span>'};
+      const a=val(f.d,A), b=val(f.d,B);
+      return {color:colorCambio(f.delta),
+        texto:`<span class="tt-est">${pp(f.delta)}</span>
+          <span class="tt-org">${E[A].etiqueta}: ${a==null?'—':P(a)} → ${E[B].etiqueta}: ${b==null?'—':P(b)}</span>`};
+    }, {peso:.8});
+  }catch(e){
+    const cont=$('mapaRLA'); if(cont) cont.innerHTML=`<div class="aviso" style="border:0">No se pudo cargar la geografía de Lima.</div>`;
+  }
+}
+
+// ------------------------------------------------------ vista: parlamento
+// Los seis partidos con bancada en el Congreso 2026–2031, en las regionales y
+// municipales. Cada uno con sus aliados: las alianzas los declara el registro del
+// JNE (`grupo` en el contrato), no se deducen aquí.
+//
+// Listas y autoridades salen de `nacional.json`. Los votos, de
+// `por_organizacion[].votos` (válidos por tipo de elección) contra
+// `votos_validos_tipo`; mientras el emisor no los publique, la tabla lo dice.
+const PARL_ANCLAS=[1366, 1264, 3040, 2961, 2941, 2980];
+const idJNE=o=>{ const m=String(o.codigo||'').match(/^jne-(\d+)$/) || String(o.logo||'').match(/GetSimbolo\/(\d+)/);
+                 return m?+m[1]:null };
+const PARL_CAMPOS=[['listas','Listas'],['gobernador_1v','Gobernadores'],['gobernador_2v','A 2.ª vuelta'],
+  ['alcalde_prov','Alc. prov.'],['alcalde_dist','Alc. dist.'],['consejero','Consejeros'],['regidor','Regidores']];
+const PARL_TIPOS=[['01','Gobernador'],['02','Consejo regional'],['03','Alcaldía provincial'],['04','Alcaldía distrital']];
+
+async function vistaParlamento(){
+  cabecera();
+  const orgs=NAC.por_organizacion||[];
+  const partidos=PARL_ANCLAS.map(id=>{
+    const ancla=orgs.find(o=>idJNE(o)===id);
+    const g=ancla?.grupo;
+    const miembros=orgs.filter(o=>idJNE(o)===id || (g && o.grupo===g));
+    const s={}; for(const o of miembros) for(const k of ['listas','gobernador_1v','gobernador_2v','alcalde_prov',
+      'alcalde_dist','consejero','regidor_prov','regidor_dist']) s[k]=(s[k]||0)+(o[k]||0);
+    s.regidor=(s.regidor_prov||0)+(s.regidor_dist||0);
+    s.autoridades=s.gobernador_1v+s.alcalde_prov+s.alcalde_dist+s.consejero+s.regidor;
+    const votos={}; let hayVotos=false;
+    for(const o of miembros) for(const [t,v] of Object.entries(o.votos||{})){ votos[t]=(votos[t]||0)+v; hayVotos=true }
+    return {id, ancla, nombre:(miembros.length>1&&ancla?.grupo_nombre)||ancla?.nombre||`id ${id}`,
+            n:miembros.length, s, votos, hayVotos};
+  });
+  const faltan=partidos.filter(p=>!p.ancla);
+  const vt=NAC.votos_validos_tipo||null;
+  const totListas=orgs.reduce((a,o)=>a+(o.listas||0),0);
+  const mxL=Math.max(...partidos.map(p=>p.s.listas||0),1);
+
+  let h=`<h1>Los partidos del Congreso</h1>
+    <div class="sub">Los seis partidos con bancada en el Congreso 2026–2031, con sus aliados,
+      en las elecciones regionales y municipales</div>
+    <div class="aviso">Las <b>listas</b> se conocen desde antes de que abran las urnas. Las
+      autoridades y los votos se llenan con el cómputo${(NAC.pct||0)>0?` (va ${P(NAC.pct)})`:''}.</div>`;
+  if(faltan.length) h+=`<div class="aviso">No aparecen en este proceso: ${faltan.map(p=>`id JNE ${p.id}`).join(', ')}.</div>`;
+
+  h+=`<h2>Listas y autoridades electas</h2><div class="envuelve"><table>
+    <thead><tr><th>Partido</th>`+PARL_CAMPOS.map(([,l])=>`<th class="n">${l}</th>`).join('')+
+    `<th class="n">Autoridades</th><th style="width:16%">Listas</th></tr></thead><tbody>`+
+    partidos.map(p=>`<tr><td><span class="org">${burbuja(p.ancla?.codigo)}${esc(p.nombre)}</span>${
+        p.n>1?`<div class="sub">${F(p.n)} organizaciones</div>`:''}</td>`+
+      PARL_CAMPOS.map(([k])=>`<td class="n">${F(p.s[k]||0)}</td>`).join('')+
+      `<td class="n"><b>${F(p.s.autoridades||0)}</b></td>
+       <td title="${P((p.s.listas||0)/(totListas||1))} de todas las listas"><span class="barra" style="width:${(100*(p.s.listas||0)/mxL).toFixed(1)}%;background:${colorDe(p.ancla?.codigo)}"></span></td></tr>`).join('')+
+    `</tbody></table></div>
+    <div class="sub" style="margin-top:6px">«Listas» cuenta una por circunscripción en
+      competencia: el consejo regional suma una por provincia, así que sale más alto que el
+      número de listas inscritas ante el JNE. «Gobernadores» son los electos en primera vuelta;
+      «A 2.ª vuelta», los que pasan a la segunda. Regidores suma provinciales y distritales.</div>`;
+
+  h+=`<h2>Votos válidos, por tipo de elección</h2>`;
+  if(!vt || !partidos.some(p=>p.hayVotos)){
+    h+=`<div class="aviso">Todavía no hay votos publicados. Esta tabla muestra el porcentaje de
+      los votos válidos del país que obtuvo cada partido en cada tipo de elección.</div>`;
+  } else {
+    h+=`<div class="envuelve"><table><thead><tr><th>Partido</th>`+
+      PARL_TIPOS.map(([,l])=>`<th class="n">${l}</th>`).join('')+`</tr></thead><tbody>`+
+      partidos.map(p=>`<tr><td><span class="org">${burbuja(p.ancla?.codigo)}${esc(p.nombre)}</span></td>`+
+        PARL_TIPOS.map(([t])=>`<td class="n">${vt[t]?P((p.votos[t]||0)/vt[t]):'<span class="nd">—</span>'}${
+          vt[t]?`<div class="sub">${F(p.votos[t]||0)}</div>`:''}</td>`).join('')+`</tr>`).join('')+
+      `</tbody></table></div>`;
+  }
+  $('vista').innerHTML=h;
+}
+
 // -------------------------------------------------------------------- rutas
 async function enruta(cambioDeRuta=true){
   const r=location.hash.replace(/^#/,'')||'/';
@@ -2377,6 +2599,8 @@ async function enruta(cambioDeRuta=true){
   else if(r==='/comparacion'){ await vistaComparacion(); }
   else if(r==='/reeleccion'){ await vistaTenientes(); }
   else if(r==='/buscador'){ await vistaBuscador(); }
+  else if(r==='/rla'){ await vistaRLA(); }
+  else if(r==='/parlamento'){ await vistaParlamento(); }
   else { await vistaNacional(); }
   scrollTo(0, y);
 }
@@ -2451,9 +2675,13 @@ addEventListener('hashchange',enruta);
     // El tablero de reelección es un producto de ERM 2026: los 135 casos salen
     // de su registro de candidaturas. En 2022 la pestaña abriría un aviso de
     // «todavía no hay», que es peor que no ofrecerla.
+    // RLA y PARLAMENTO también son de 2026: comparan contra 2026 y contra el
+    // Congreso que salió de EG 2026.
     if(META.proceso !== 'ERM2026'){
-      const t=document.querySelector('.mode-tab[data-r="/reeleccion"]');
-      if(t) t.remove();
+      for(const r of ['/reeleccion','/rla','/parlamento']){
+        const t=document.querySelector(`.mode-tab[data-r="${r}"]`);
+        if(t) t.remove();
+      }
     }
     const anio = String(META.proceso||'').replace(/\D/g,'') || '';
     if(anio){

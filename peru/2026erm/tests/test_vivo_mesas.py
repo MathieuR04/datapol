@@ -108,10 +108,10 @@ def servidor():
 def data(tmp_path, monkeypatch):
     (tmp_path / "processed").mkdir()
     (tmp_path / "reference").mkdir()
-    # 000004 es de cercado: no elige alcalde distrital.
+    # 000004 es de cercado (010103): no elige alcalde distrital.
     pd.DataFrame({
         "mesa": ["000001", "000002", "000003", "000004"],
-        "ubigeo_distrito": ["010101", "010101", "010102", "010101"],
+        "ubigeo_distrito": ["010101", "010101", "010102", "010103"],
         "race_gobernador": ["01-010000"] * 4,
         "race_consejero": ["02-010100"] * 4,
         "race_provincial": ["03-010100"] * 4,
@@ -233,7 +233,8 @@ def test_consolida_descubre_y_luego_publica(servidor, data):
     onpe_.fija("000001", ok(*cuatro("000001", estado="D", observada=True)), ok(*cuatro("000001")))
     onpe_.fija("000002", ok(*cuatro("000002")))
     onpe_.fija("000003", ok(*cuatro("000003", ubigeo="010102")))
-    onpe_.fija("000004", ok(*[acta("000004", i) for i in (GOB, CONS, PROV)]))
+    # 000004: la ONPE lo pone en 010103, como el maestro.
+    onpe_.fija("000004", ok(*[acta("000004", i, ubigeo="010103") for i in (GOB, CONS, PROV)]))
     corre(data, host)
     docs = data / "docs"
     assert consolida.main(["--data", str(data), "--docs", str(docs)]) == 2
@@ -260,6 +261,25 @@ def test_consolida_descubre_y_luego_publica(servidor, data):
     assert m1.ever_observada and m1.race_id == "01-010000"
     assert comp[(comp.mesa == 3) & (comp.tipo == "04")].race_id.iloc[0] == "04-010102"
     assert res.groupby(["mesa", "tipo"]).votos.sum().eq(80).all()
+    assert len(pd.read_csv(data / "processed/mesas_discrepancia_maestro.csv")) == 0
+
+
+def test_manda_el_ubigeo_de_la_onpe(servidor, data):
+    """Si la ONPE pone una mesa en otro distrito, la carrera sigue a la ONPE."""
+    onpe_, host = servidor
+    onpe_.fija("000001", ok(*cuatro("000001")))
+    onpe_.fija("000002", ok(*cuatro("000002", ubigeo="010102")))   # el maestro dice 010101
+    onpe_.fija("000003", ok(*cuatro("000003", ubigeo="010102")))
+    onpe_.fija("000004", ok(*[acta("000004", i, ubigeo="010103") for i in (GOB, CONS, PROV)]))
+    pd.DataFrame({"id_eleccion": [GOB, CONS, PROV, DIST], "tipo": ["01", "02", "03", "04"]}
+                 ).to_csv(data / "reference/id_eleccion.csv", index=False)
+    corre(data, host)
+    assert consolida.main(["--data", str(data), "--docs", str(data / "docs")]) == 0
+    comp = pd.read_parquet(data / "processed/computo_mesa_ERM2026.parquet")
+    assert comp[(comp.mesa == 2) & (comp.tipo == "04")].race_id.iloc[0] == "04-010102"
+    d = pd.read_csv(data / "processed/mesas_discrepancia_maestro.csv", dtype=str)
+    assert d.to_dict("records") == [{"mesa": "000002", "ubigeo_onpe": "010102",
+                                     "ubigeo_maestro": "010101"}]
 
 
 def test_ever_observada_es_monotona():

@@ -30,7 +30,7 @@ comparación es del grupo entero contra el partido, y el documento publica la
 composición para que eso se pueda leer y no se confunda con crecimiento propio.
 
 Uso:
-    uv run python scripts/07_publica_comparacion.py
+    uv run python scripts/06_publica_comparacion.py
 """
 
 from __future__ import annotations

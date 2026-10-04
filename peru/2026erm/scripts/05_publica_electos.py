@@ -21,7 +21,7 @@ Lo derivable no se guarda: la foto se construye desde `hdv` y el logo desde el
 código de organización, igual que hace el resto del sitio.
 
 Uso:
-    uv run python scripts/06_publica_electos.py --anio 2026
+    uv run python scripts/05_publica_electos.py --anio 2026
 """
 
 from __future__ import annotations

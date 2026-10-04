@@ -126,11 +126,19 @@ def main(argv: list[str] | None = None) -> int:
         print(f"AVISO: idEleccion sin tipo en {ref.name}: {sorted(sin_tipo)} — se excluyen")
     con.register("mapa", mapa)
 
-    mesas = pd.read_parquet(a.data / "processed/mesas.parquet")
-    largo = pd.concat([pd.DataFrame({"mesa": mesas.mesa, "tipo": t,
-                                     "race_id": mesas[c].replace("", None)})
+    # LA CARRERA SALE DEL UBIGEO QUE TRAE EL ACTA, no del número de mesa. En el
+    # maestro la carrera es función pura del distrito (1,892 distritos, un solo
+    # valor por tipo, verificado el 4 de octubre), así que (ubigeo, tipo) →
+    # race_id es exacto. El número de mesa → distrito, en cambio, es una
+    # reconstrucción: 100% en el rango normal pero 99.94% en el 900k. Donde la
+    # ONPE y el maestro discrepan, manda la ONPE y la discrepancia se reporta.
+    mesas = pd.read_parquet(a.data / "processed/mesas.parquet").fillna("")
+    por_dist = mesas.drop_duplicates("ubigeo_distrito")
+    largo = pd.concat([pd.DataFrame({"ubigeo_distrito": por_dist.ubigeo_distrito, "tipo": t,
+                                     "race_id": por_dist[c].replace("", None)})
                        for t, c in RACE_COL.items()])
     con.register("race_de", largo)
+    con.register("maestro", mesas[["mesa", "ubigeo_distrito"]])
 
     computo = con.execute("""
         SELECT CAST(u.mesa AS BIGINT) AS mesa, m.tipo, u.ubigeo_distrito,
@@ -143,8 +151,14 @@ def main(argv: list[str] | None = None) -> int:
                u.codigo_local, u.estado_acta, u.ever_observada,
                u.ts_primer_estado, u.ts_contabilizada, u.corte, r.race_id
         FROM ultima u JOIN mapa m USING (id_eleccion)
-        LEFT JOIN race_de r ON r.mesa = u.mesa AND r.tipo = m.tipo
+        LEFT JOIN race_de r ON r.ubigeo_distrito = u.ubigeo_distrito AND r.tipo = m.tipo
         ORDER BY mesa, tipo""").df()
+    discrepa = con.execute("""
+        SELECT DISTINCT u.mesa, u.ubigeo_distrito AS ubigeo_onpe,
+               x.ubigeo_distrito AS ubigeo_maestro
+        FROM ultima u LEFT JOIN maestro x USING (mesa)
+        WHERE x.ubigeo_distrito IS DISTINCT FROM u.ubigeo_distrito
+        ORDER BY 1""").df()
     resultados = con.execute("""
         SELECT CAST(v.mesa AS BIGINT) AS mesa, m.tipo, u.ubigeo_distrito,
                v.codigo_onpe, v.agrupacion, v.votos, v.posicion_cedula
@@ -164,11 +178,23 @@ def main(argv: list[str] | None = None) -> int:
                                     contab=("estado_acta", lambda s: (s == "C").sum()),
                                     sin_race=("race_id", lambda s: s.isna().sum()))
     print(c.to_string())
+    # Mesas cuyo ubigeo ONPE no coincide con el maestro, o que el maestro no
+    # conocía. No es un error del pipeline (manda la ONPE), pero hay que verlo.
+    f_disc = out / "mesas_discrepancia_maestro.csv"
+    discrepa.to_csv(f_disc, index=False)
+    if len(discrepa):
+        print(f"AVISO: {len(discrepa):,} mesas con ubigeo distinto al maestro o fuera de él -> {f_disc}")
+    sin_race = computo[computo.race_id.isna()]
+    if len(sin_race):
+        print(f"AVISO: {len(sin_race):,} actas sin carrera (ubigeo/tipo fuera de carreras): "
+              f"{sorted(set(sin_race.ubigeo_distrito + '/' + sin_race.tipo))[:10]}")
     resumen = {"cortes": int(con.execute("SELECT count(DISTINCT corte) FROM todas").fetchone()[0]),
                "ultimo_corte": str(computo.corte.max()),
                "actas": int(len(computo)),
                "contabilizadas": int((computo.estado_acta == "C").sum()),
-               "filas_voto": int(len(resultados))}
+               "filas_voto": int(len(resultados)),
+               "mesas_discrepancia_maestro": int(len(discrepa)),
+               "actas_sin_carrera": int(len(sin_race))}
     (out / "consolida_resumen.json").write_text(json.dumps(resumen, indent=1))
     print(resumen)
     return 0

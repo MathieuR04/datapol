@@ -34,13 +34,13 @@ _publica_cuerpo() {
   local flujo="$1"
 
   step "Emisor — contrato del sitio"
-  if [[ -f "$ERM_DIR/scripts/05_publica_resultados.py" ]]; then
-    (cd "$ERM_DIR" && uv run python scripts/05_publica_resultados.py) || {
+  if [[ -f "$ERM_DIR/scripts/04_publica_resultados.py" ]]; then
+    (cd "$ERM_DIR" && uv run python scripts/04_publica_resultados.py) || {
       warn "publica_resultados falló — el sitio queda en el último ciclo válido"
       return
     }
   else
-    warn "05_publica_resultados.py todavía no existe — se omite (solo se archivan datos)"
+    warn "04_publica_resultados.py todavía no existe — se omite (solo se archivan datos)"
     return
   fi
 
