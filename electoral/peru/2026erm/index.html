@@ -90,6 +90,10 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .ley-div{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--suave);margin-top:6px}
 .ley-div .grad{flex:0 0 180px;height:8px;border-radius:4px}
 .pares{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.onpe-link{display:inline-block;margin:8px 0 2px;font-size:11.5px;font-weight:600;
+  padding:5px 10px;border:1px solid var(--linea-fuerte);border-radius:3px;
+  text-decoration:none;color:var(--tinta);background:var(--panel)}
+.onpe-link:hover{border-color:var(--tinta)}
 .pares .tab:disabled{opacity:.45;cursor:not-allowed}
 .k .punto, td .punto, .sub .punto{display:inline-block;margin-right:5px;vertical-align:1px}
 .cab{background:var(--fondo);border-bottom:2px solid var(--tinta);
@@ -2076,7 +2080,15 @@ async function vistaCarrera(rid){
   cabecera();
   let h=`<a class="volver" href="#/">← Resumen nacional</a>
     <h1 style="margin-top:6px">${esc(d.nombre)}</h1>
-    <div class="sub">${NIVEL[d.tipo]||d.tipo}</div>`;
+    <div class="sub">${NIVEL[d.tipo]||d.tipo}</div>`+
+    // Enlace al cómputo oficial. La ONPE no tiene una URL por carrera: se llega
+    // a la sección y ahí se elige el ámbito. Solo en 2026, que es el proceso en
+    // curso; en 2022 la página de la ONPE ya no existe.
+    (META.proceso==='ERM2026'
+      ? `<a class="onpe-link" href="${ONPE_VIVO}/main/${
+          d.tipo==='01'||d.tipo==='02'?'elecciones-regionales':'elecciones-municipales'}"
+          target="_blank" rel="noopener">Ver el cómputo oficial en la ONPE ↗</a>`
+      : '');
 
   // --- 0. El desenlace, si ya lo hay. Lo que la gente entra a averiguar va
   // primero; estaba al pie, debajo del mapa y de la tabla de votos.
@@ -2376,6 +2388,8 @@ async function vistaCarrera(rid){
   }
   $('vista').innerHTML=h;
 }
+
+const ONPE_VIVO='https://resultadoelectoral.onpe.gob.pe';
 
 // ------------------------------------------------------------- vista: RLA
 // Las cuatro elecciones de López Aliaga en Lima Metropolitana, distrito por
