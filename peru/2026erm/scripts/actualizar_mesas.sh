@@ -22,7 +22,8 @@ DATAPOL_DIR="$(dirname "$(dirname "$ERM_DIR")")"      # …/datapol
 PUSH=true
 LOOP=true
 SLEEP_SECS=300
-HOST="${ONPE_HOST:-}"
+# Anunciado por la ONPE para ERM 2026 (El Comercio, Infobae, 4 oct.).
+HOST="${ONPE_HOST:-https://resultadoelectoral.onpe.gob.pe}"
 WORKERS=20
 LIMITE=""
 
