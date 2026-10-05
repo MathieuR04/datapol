@@ -2530,7 +2530,6 @@ const idJNE=o=>{ const m=String(o.codigo||'').match(/^jne-(\d+)$/) || String(o.l
                  return m?+m[1]:null };
 const PARL_CAMPOS=[['listas','Listas'],['gobernador_1v','Gobernadores'],['gobernador_2v','A 2.ª vuelta'],
   ['alcalde_prov','Alc. prov.'],['alcalde_dist','Alc. dist.'],['consejero','Consejeros'],['regidor','Regidores']];
-const PARL_TIPOS=[['01','Gobernador'],['02','Consejo regional'],['03','Alcaldía provincial'],['04','Alcaldía distrital']];
 
 async function vistaParlamento(){
   cabecera();
@@ -2543,13 +2542,10 @@ async function vistaParlamento(){
       'alcalde_dist','consejero','regidor_prov','regidor_dist']) s[k]=(s[k]||0)+(o[k]||0);
     s.regidor=(s.regidor_prov||0)+(s.regidor_dist||0);
     s.autoridades=s.gobernador_1v+s.alcalde_prov+s.alcalde_dist+s.consejero+s.regidor;
-    const votos={}; let hayVotos=false;
-    for(const o of miembros) for(const [t,v] of Object.entries(o.votos||{})){ votos[t]=(votos[t]||0)+v; hayVotos=true }
     return {id, ancla, nombre:(miembros.length>1&&ancla?.grupo_nombre)||ancla?.nombre||`id ${id}`,
-            n:miembros.length, s, votos, hayVotos};
+            n:miembros.length, s};
   });
   const faltan=partidos.filter(p=>!p.ancla);
-  const vt=NAC.votos_validos_tipo||null;
   const totListas=orgs.reduce((a,o)=>a+(o.listas||0),0);
   const mxL=Math.max(...partidos.map(p=>p.s.listas||0),1);
 
@@ -2557,7 +2553,7 @@ async function vistaParlamento(){
     <div class="sub">Los seis partidos con bancada en el Congreso 2026–2031, con sus aliados,
       en las elecciones regionales y municipales</div>
     <div class="aviso">Las <b>listas</b> se conocen desde antes de que abran las urnas. Las
-      autoridades y los votos se llenan con el cómputo${(NAC.pct||0)>0?` (va ${P(NAC.pct)})`:''}.</div>`;
+      autoridades se llenan con el cómputo${(NAC.pct||0)>0?` (va ${P(NAC.pct)})`:''}.</div>`;
   if(faltan.length) h+=`<div class="aviso">No aparecen en este proceso: ${faltan.map(p=>`id JNE ${p.id}`).join(', ')}.</div>`;
 
   h+=`<h2>Listas y autoridades electas</h2><div class="envuelve"><table>
@@ -2574,18 +2570,6 @@ async function vistaParlamento(){
       número de listas inscritas ante el JNE. «Gobernadores» son los electos en primera vuelta;
       «A 2.ª vuelta», los que pasan a la segunda. Regidores suma provinciales y distritales.</div>`;
 
-  h+=`<h2>Votos válidos, por tipo de elección</h2>`;
-  if(!vt || !partidos.some(p=>p.hayVotos)){
-    h+=`<div class="aviso">Todavía no hay votos publicados. Esta tabla muestra el porcentaje de
-      los votos válidos del país que obtuvo cada partido en cada tipo de elección.</div>`;
-  } else {
-    h+=`<div class="envuelve"><table><thead><tr><th>Partido</th>`+
-      PARL_TIPOS.map(([,l])=>`<th class="n">${l}</th>`).join('')+`</tr></thead><tbody>`+
-      partidos.map(p=>`<tr><td><span class="org">${burbuja(p.ancla?.codigo)}${esc(p.nombre)}</span></td>`+
-        PARL_TIPOS.map(([t])=>`<td class="n">${vt[t]?P((p.votos[t]||0)/vt[t]):'<span class="nd">—</span>'}${
-          vt[t]?`<div class="sub">${F(p.votos[t]||0)}</div>`:''}</td>`).join('')+`</tr>`).join('')+
-      `</tbody></table></div>`;
-  }
   $('vista').innerHTML=h;
 }
 
