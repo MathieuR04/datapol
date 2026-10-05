@@ -455,6 +455,13 @@ if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
 "use strict";
 // ---------------------------------------------------------------- utilidades
 const F=n=>new Intl.NumberFormat('es-PE').format(n??0);
+// Un dato que la fuente no trae no es cero. Flujo A de la ONPE no separa
+// blancos, nulos ni impugnados: van como «—», y blancos+nulos en una sola cifra.
+const FN=n=>n==null?'—':F(n);
+const tilesBN=co=>(co.votos_blancos==null && co.votos_blancos_nulos!=null)
+  ? `<div class="tile"><div class="k">${F(co.votos_blancos_nulos)}</div><div class="e">Blancos y nulos</div></div>`
+  : `<div class="tile"><div class="k">${FN(co.votos_blancos)}</div><div class="e">Blancos</div></div>
+     <div class="tile"><div class="k">${FN(co.votos_nulos)}</div><div class="e">Nulos</div></div>`;
 const P=x=>(100*(x??0)).toFixed(1)+'%';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1517,8 +1524,7 @@ async function vistaLima(){
     h+=`<div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">
       <div class="tile"><div class="k">${P(co.pct_actas)}</div><div class="e">Actas contabilizadas</div></div>
       <div class="tile"><div class="k">${F(co.votos_validos)}</div><div class="e">Válidos</div></div>
-      <div class="tile"><div class="k">${F(co.votos_blancos)}</div><div class="e">Blancos</div></div>
-      <div class="tile"><div class="k">${F(co.votos_nulos)}</div><div class="e">Nulos</div></div>
+      ${tilesBN(co)}
       <div class="tile"><div class="k">${F(orgs.length)}</div><div class="e">Listas en competencia</div></div>
     </div>
     <div style="margin:10px 0 4px">${chip(prov)}
@@ -2103,11 +2109,11 @@ async function vistaCarrera(rid){
   h+=`<h2>Resultados</h2>
     <div class="marcador">
     <div class="tile"><div class="k">${F(co.votos_validos)}</div><div class="e">Válidos</div></div>
-    <div class="tile"><div class="k">${F(co.votos_blancos)}</div><div class="e">Blancos</div></div>
-    <div class="tile"><div class="k">${F(co.votos_nulos)}</div><div class="e">Nulos</div></div>
-    <div class="tile"><div class="k">${F(co.votos_impugnados)}</div><div class="e">Impugnados</div></div>
+    ${tilesBN(co)}
+    ${co.votos_impugnados!=null?`<div class="tile"><div class="k">${F(co.votos_impugnados)}</div><div class="e">Impugnados</div></div>`
+      :`<div class="tile"><div class="k">${F(co.actas_jee||0)}</div><div class="e">Actas al JEE</div></div>`}
     <div class="tile"><div class="k">${F(co.votos_emitidos)}</div><div class="e">Votos emitidos</div></div>
-    <div class="tile"><div class="k">${F(co.electores_habiles)}</div><div class="e">Electores hábiles</div></div>
+    <div class="tile"><div class="k">${FN(co.electores_habiles)}</div><div class="e">Electores hábiles</div></div>
     </div>`;
 
   // --- 2. proyección
