@@ -1132,9 +1132,10 @@ async function vistaComparacion(){
 
   let h=`<h1>${esc(eB)} frente a ${esc(eA)}</h1>
     <div class="sub">Tres bloques, con las listas presentadas como denominador</div>
-    <div class="aviso">Las carreras ganadas empiezan en cero y se llenan durante la
-      noche. Las <b>listas presentadas</b> se conocen desde antes de que abran las
-      urnas: es la fila que ya se puede leer.</div>`;
+    <div class="aviso">En ${esc(eB)}, las carreras ganadas son las que ya están
+      <b>llamadas</b> y crecen durante la noche: la diferencia con ${esc(eA)} se
+      muestra cuando cierre el escrutinio. Las <b>listas presentadas</b> se conocen
+      desde antes de que abran las urnas y se comparan desde ya.</div>`;
 
   for(const b of (CMP.bloques||[])){
     const A=b.antes||{}, B=b.ahora||{};
@@ -1153,7 +1154,7 @@ async function vistaComparacion(){
         const [lab,fuerte]=CMP_ETIQ[k];
         return `<tr${fuerte?' style="font-weight:600"':''}>
           <td>${lab}</td><td class="n">${F(A[k]||0)}</td>
-          <td class="n">${fuerte||CERRADO?F(B[k]||0):'<span class="nd">—</span>'}</td>
+          <td class="n">${F(B[k]||0)}</td>
           <td class="n">${delta(A[k]||0, B[k]||0, fuerte)}</td></tr>`;
       }).join('')+`</tbody></table></div>`;
   }
