@@ -26,5 +26,19 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+      # GitHub a veces rechaza el despliegue con «Deployment failed, try again
+      # later» (pasó el 4 oct. a las 23:04, noche ERM). La noche corre sin nadie
+      # mirando: se reintenta solo, dos veces, con espera.
       - uses: actions/deploy-pages@v4
         id: deployment
+        continue-on-error: true
+      - if: steps.deployment.outcome == 'failure'
+        run: sleep 60
+      - uses: actions/deploy-pages@v4
+        id: deployment2
+        if: steps.deployment.outcome == 'failure'
+        continue-on-error: true
+      - if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
+        run: sleep 120
+      - uses: actions/deploy-pages@v4
+        if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
