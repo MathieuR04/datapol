@@ -2428,7 +2428,12 @@ async function vistaRLA(){
   }
   const hayVivo=tt>0;
   const val=(d,k)=>{ const v=k==='erm2026'?vivo[d.ubigeo]:d[k]; return v&&v.validos?v.votos/v.validos:null };
-  const tot=k=> k==='erm2026' ? (tt?tv/tt:null) : RLA.total[k].votos/RLA.total[k].validos;
+  // Sin desagregado distrital todavía (flujo A lo trae en el barrido de
+  // distritos), el total de Lima sale de la carrera entera, que ya está.
+  const vRace=doc?.computo?.votos_validos;
+  const tot=k=> k==='erm2026'
+    ? (tt ? tv/tt : (org && vRace ? org.votos/vRace : null))
+    : RLA.total[k].votos/RLA.total[k].validos;
   const E=Object.fromEntries(RLA.elecciones.map((e,i)=>[e.id,{...e,i}]));
   if(!PAR_RLA) PAR_RLA = hayVivo ? ['erm2022','erm2026'] : ['erm2022','eg2026'];
   const [A,B]=PAR_RLA;
@@ -2438,7 +2443,7 @@ async function vistaRLA(){
       ${F(RLA.distritos.length)} distritos</div>
     <div class="aviso">Dos son presidenciales (primera vuelta) y dos son por la alcaldía
       de Lima: no es la misma elección, es el arrastre del mismo candidato.
-      ${hayVivo?`ERM 2026 va con el <b>${P(doc.computo?.pct_actas)}</b> de actas contabilizadas y cambia durante la noche.`
+      ${(hayVivo||(org&&vRace))?`ERM 2026 va con el <b>${P(doc.computo?.pct_actas)}</b> de actas contabilizadas y cambia durante la noche.${hayVivo?'':' El mapa por distrito llega con el siguiente barrido.'}`
                :`ERM 2026 se llena cuando entren las primeras actas de la alcaldía de Lima.`}</div>
     <div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">`+
     RLA.elecciones.map(e=>{const v=tot(e.id); return `<div class="tile">
