@@ -212,6 +212,13 @@ h2 .sec{font-family:inherit;color:var(--suave);font-size:.7em}
 .escanos-mapa i{width:9px;height:9px;border-radius:50%;display:block;
   border:1px solid rgba(0,0,0,.12)}
 .tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.p-mapas{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.p-mapas h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--suave)}
+.p-mapas .lienzo{height:clamp(300px,42vh,440px)}
+.p-sel{font:inherit;font-size:13px;padding:7px 9px;max-width:100%;border:1px solid var(--linea-fuerte);
+  border-radius:3px;background:var(--panel);color:var(--tinta)}
+.p-escala{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--suave);margin-top:6px}
+.p-escala i{display:inline-block;width:160px;height:10px;border:1px solid var(--linea)}
 .tab{font:inherit;font-size:11.5px;padding:6px 12px;border:1px solid var(--linea-fuerte);
   background:var(--panel);color:var(--suave);border-radius:2px;cursor:pointer}
 .tab[aria-pressed="true"]{background:var(--terra);color:#fff;border-color:var(--terra)}
@@ -417,6 +424,7 @@ if (window.initNav && window.PROC) initNav('peru', window.PROC, 'resultados');
   <a class="mode-tab an" href="#/reeleccion" data-r="/reeleccion">REELECCIÓN</a>
   <a class="mode-tab an" href="#/rla" data-r="/rla">RLA</a>
   <a class="mode-tab an" href="#/parlamento" data-r="/parlamento">PARLAMENTO</a>
+  <a class="mode-tab an" href="#/partido" data-r="/partido">PARTIDO</a>
 </div>
 
 <header class="cab">
@@ -851,7 +859,7 @@ async function vistaNacional(){
       if(f.tipo==='org') return `<tr>
         <td><span class="org">${burbuja(f.o.codigo)}<img class="logo"
           src="${esc(f.o.logo||'')}" alt="" loading="lazy"
-          onerror="this.style.visibility='hidden'">${esc(f.o.nombre)}</span></td>
+          onerror="this.style.visibility='hidden'"><a href="#/partido/${encodeURIComponent(f.o.codigo)}">${esc(f.o.nombre)}</a></span></td>
         ${celdas(f.o)}</tr>`;
       const g=f.g, meta=GRUPOS[g.clave];
       return `<tr class="gr">
@@ -859,12 +867,15 @@ async function vistaNacional(){
           <span class="pill" style="background:${meta.color}"></span>
           <button class="abrir" aria-expanded="false" data-g="${g.clave}"
             aria-label="Ver las ${g.hijos.length} organizaciones">+</button>
-          ${esc(meta.nombre)} <span class="sub">· ${g.hijos.length}</span></span></td>
+          ${g.clave==='REGIONALES' ? esc(meta.nombre)
+            : `<a href="#/partido/${encodeURIComponent(g.clave)}">${esc(meta.nombre)}</a>`}
+          <span class="sub">· ${g.hijos.length}</span></span></td>
         ${celdas(g.tot)}</tr>`+
         g.hijos.sort(cmp).map(o=>`<tr class="hijo g-${g.clave}" hidden>
           <td><span class="org" style="padding-left:30px"><img class="logo"
             src="${esc(o.logo||'')}" alt="" loading="lazy"
-            onerror="this.style.visibility='hidden'">${esc(o.nombre)}</span></td>
+            onerror="this.style.visibility='hidden'"><a href="#/partido/${encodeURIComponent(
+              g.clave==='REGIONALES'?o.codigo:g.clave)}">${esc(o.nombre)}</a></span></td>
           ${celdas(o)}</tr>`).join('');
     }).join('')+`</tbody></table></div>`;
 
@@ -2594,6 +2605,154 @@ async function vistaParlamento(){
   $('vista').innerHTML=h;
 }
 
+// ------------------------------------------------------------- vista: partido
+// Una organización a la vez: dónde ganó y dónde le fue bien. Las alianzas
+// (+ ALIADOS) se leen juntas, como en el resumen; los movimientos regionales,
+// cada uno por su cuenta. Los ejecutivos salen de `nacional.json` (las
+// llamadas); votos y escaños por carrera, de `partidos.json`, que escribe el
+// emisor en cada ciclo.
+let PART=null, PART_SELLO=null, PART_VISTA={nivel:'04', met:'pct'};
+const PART_CAMPOS=['gobernador_1v','gobernador_2v','alcalde_prov','alcalde_dist',
+                   'consejero','regidor_prov','regidor_dist','listas'];
+// nivel → [etiqueta, geografía, nombre del escaño]
+const PART_NIV={'01':['Gobernación','01',null], '02':['Consejo regional','03','consejeros'],
+                '03':['Alcaldía provincial','03','regidores'], '04':['Alcaldía distrital','04','regidores']};
+const PART_MET={pct:'% de votos', esc:'Escaños', pesc:'% de escaños'};
+
+function opcionesPartido(){
+  const m={};
+  for(const o of (NAC.por_organizacion||[])){
+    const g=o.grupo, junta=g && g!=='REGIONALES';
+    const clave=junta?g:o.codigo;
+    const e=m[clave]=m[clave]||{clave, nombre:junta?(o.grupo_nombre||o.nombre):o.nombre,
+      regional:g==='REGIONALES', codigos:new Set(), color:colorDe(o.codigo), s:{}};
+    e.codigos.add(o.codigo);
+    for(const k of PART_CAMPOS) e.s[k]=(e.s[k]||0)+(o[k]||0);
+  }
+  const tot=s=>(s.gobernador_1v||0)+(s.alcalde_prov||0)+(s.alcalde_dist||0)+
+    (s.consejero||0)+(s.regidor_prov||0)+(s.regidor_dist||0);
+  return Object.values(m).map(e=>({...e,total:tot(e.s)}))
+    .sort((a,b)=>b.total-a.total || (b.s.listas||0)-(a.s.listas||0) || a.nombre.localeCompare(b.nombre,'es'));
+}
+
+async function vistaPartido(clave){
+  cabecera();
+  try{ if(!PART || PART_SELLO!==NAC.generado){ PART=await j('partidos.json'); PART_SELLO=NAC.generado; } }
+  catch(e){ $('vista').innerHTML=`<div class="aviso">Todavía no hay datos por organización.</div>`; return }
+  const ops=opcionesPartido();
+  // Sin elección, la organización que más autoridades lleva.
+  const sel=ops.find(o=>o.clave===clave) || ops[0];
+  if(!sel){ $('vista').innerHTML=`<div class="aviso">Sin organizaciones.</div>`; return }
+  const S=sel.codigos, col=sel.color, vacio=css('--vacio').trim();
+  const tono=t=>mezcla(vacio, col.startsWith('#')?col:'#888888', t);
+
+  const opt=o=>`<option value="${esc(o.clave)}"${o===sel?' selected':''}>${esc(o.nombre)}${
+    o.codigos.size>1?` (${o.codigos.size})`:''} · ${F(o.total)} electos</option>`;
+  const s=sel.s;
+  const tile=(k,e)=>`<div class="tile"><div class="k">${k}</div><div class="e">${e}</div></div>`;
+  let h=`<h1><span class="pill" style="background:${col}"></span> ${esc(sel.nombre)}</h1>
+    <div class="sub">${sel.regional?'Movimiento regional':sel.codigos.size>1?`${F(sel.codigos.size)} organizaciones (alianza y aliados)`:'Organización'}
+      · ${F(s.listas||0)} listas · escrutado ${P(NAC.pct)}</div>
+    <label class="sub" style="display:block;margin:10px 0 14px">Organización
+      <select class="p-sel" id="pSel">
+        <optgroup label="Partidos y alianzas">${ops.filter(o=>!o.regional).map(opt).join('')}</optgroup>
+        <optgroup label="Movimientos regionales">${ops.filter(o=>o.regional).map(opt).join('')}</optgroup>
+      </select></label>
+    <div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr))">
+      ${tile(`${F(s.gobernador_1v||0)}<span class="sub">+${F(s.gobernador_2v||0)}</span>`,'Gobernadores 1.ª+2.ª')}
+      ${tile(F(s.alcalde_prov||0),'Alcaldes prov.')}${tile(F(s.alcalde_dist||0),'Alcaldes dist.')}
+      ${tile(F(s.consejero||0),'Consejeros')}${tile(F(s.regidor_prov||0),'Regidores prov.')}
+      ${tile(F(s.regidor_dist||0),'Regidores dist.')}${tile(`<b>${F(sel.total)}</b>`,'Total electos')}
+    </div>
+
+    <h2>Dónde ganó</h2>
+    <div class="sub" style="margin:-4px 0 8px">Color pleno: ganó. Tono claro: pasa a
+      segunda vuelta o está en empate. Solo carreras ya llamadas.</div>
+    <div class="p-mapas">
+      ${['01','03','04'].map(t=>`<div><h3>${NIVEL_PLURAL[t]}</h3><div class="mapa" id="pm${t}"></div></div>`).join('')}
+    </div>
+
+    <h2>Dónde le fue bien</h2>
+    <div class="tabs" id="pNiv">${Object.entries(PART_NIV).map(([k,[l]])=>
+      `<button class="tab" data-v="${k}" aria-pressed="${k===PART_VISTA.nivel}">${l}</button>`).join('')}</div>
+    <div class="tabs" id="pMet">${Object.entries(PART_MET).map(([k,l])=>
+      `<button class="tab" data-v="${k}" aria-pressed="${k===PART_VISTA.met}"${
+        PART_VISTA.nivel==='01'&&k!=='pct'?' disabled':''}>${l}</button>`).join('')}</div>
+    <div class="mapa" id="pmInt"></div><div class="p-escala" id="pEsc"></div>
+    <div id="pTop"></div>`;
+  $('vista').innerHTML=h;
+  $('pSel').onchange=e=>{ location.hash='#/partido/'+encodeURIComponent(e.target.value) };
+  for(const [id,k] of [['pNiv','nivel'],['pMet','met']])
+    $(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{
+      PART_VISTA[k]=b.dataset.v;
+      if(PART_VISTA.nivel==='01') PART_VISTA.met='pct';
+      vistaPartido(sel.clave);
+    });
+
+  const porU={}; for(const c of NAC.por_carrera||[]) porU[c.tipo+c.ubigeo]=c;
+  const geo=async t=>GEO[t]||(GEO[t]=await j(`geo/nacional-${t}.geojson`));
+
+  // --- dónde ganó: los tres ejecutivos
+  for(const t of ['01','03','04']){
+    try{
+      const g=await geo(t), m=creaMapa($('pm'+t));
+      agregaCapa(m, g, u=>{
+        const c=porU[t+u];
+        if(!c) return {color:vacio, texto:'<span class="tt-est">NO ELIGE ESTA AUTORIDAD</span>'};
+        const gs=(c.ganadores||[]).filter(x=>S.has(x.codigo));
+        const link=`/c/${c.race_id}`;
+        if(c.estado==='electo' && S.has(c.ganador))
+          return {color:col, href:link, texto:`<span class="tt-est">GANÓ</span>
+            <span class="tt-cand">${esc(gs[0]?.candidato||'')}</span>`};
+        if((c.estado==='segunda_vuelta'||c.estado==='empate') && gs.length)
+          return {color:tono(.4), href:link, texto:`<span class="tt-est">${etiq(c.estado)}</span>
+            <span class="tt-cand">${esc(gs[0]?.candidato||'')}</span>`};
+        return {color:vacio, href:link, texto:`<span class="tt-est">${
+          c.estado==='por_definir'?'EN DISPUTA':'NO GANÓ'}</span>`};
+      }, {peso:t==='04'?.4:.9});
+    }catch(e){ $('pm'+t).innerHTML='<div class="aviso" style="border:0">No se pudo cargar el mapa.</div>' }
+  }
+
+  // --- dónde le fue bien: una medida, un nivel
+  const {nivel, met}=PART_VISTA, [nomNiv, geoT, nomEsc]=PART_NIV[nivel];
+  const uni={};
+  for(const [rid,[n,val,os]] of Object.entries(PART.carreras||{})){
+    if(rid.slice(0,2)!==nivel) continue;
+    const u= nivel==='02' ? rid.slice(3,7)+'00' : rid.slice(3);   // Callao: 7 circunscripciones, una provincia
+    const x=uni[u]=uni[u]||{n:0,val:0,v:0,e:0,compite:false};
+    x.n+=n; x.val+=val;
+    for(const [c,[v,e]] of Object.entries(os)) if(S.has(c)){ x.v+=v; x.e+=e; x.compite=true }
+  }
+  const valor=x=>!x||!x.compite?null: met==='pct'?(x.val?x.v/x.val:0): met==='esc'?x.e:(x.n?x.e/x.n:0);
+  const vals=Object.values(uni).map(valor).filter(v=>v!=null);
+  const mx=Math.max(...vals,0) || 1;
+  const fmt=v=>met==='esc'?F(v):P(v);
+  try{
+    const g=await geo(geoT), m=creaMapa($('pmInt'));
+    agregaCapa(m, g, u=>{
+      const x=uni[u], v=valor(x);
+      if(!x) return {color:vacio, texto:'<span class="tt-est">NO ELIGE ESTA AUTORIDAD</span>'};
+      if(v==null) return {color:vacio, texto:'<span class="tt-est">NO COMPITE</span>'};
+      return {color:v>0?tono(.15+.85*v/mx):vacio, texto:`<span class="tt-est">${PART_MET[met]}: ${fmt(v)}</span>
+        <span class="tt-org">${P(x.val?x.v/x.val:0)} de los votos${nomEsc?` · ${F(x.e)} de ${F(x.n)} ${nomEsc}`:''}</span>`};
+    }, {peso:geoT==='04'?.4:.9});
+  }catch(e){ $('pmInt').innerHTML='<div class="aviso" style="border:0">No se pudo cargar el mapa.</div>' }
+  $('pEsc').innerHTML=vals.length
+    ? `<span>0</span><i style="background:linear-gradient(90deg,${tono(.15)},${col})"></i><span>${fmt(mx)}</span>
+       <span>· ${nomNiv}, ${PART_MET[met].toLowerCase()} · ${F(vals.length)} circunscripciones donde compite</span>`
+    : `<span>No compite en este nivel.</span>`;
+
+  // Las diez mejores, con nombre: el mapa dice dónde, la lista dice cuánto.
+  const nom={}; for(const f of (GEO[geoT]?.features||[])) nom[f.properties.ubigeo]=f.properties.nombre;
+  const top=Object.entries(uni).map(([u,x])=>[u,x,valor(x)]).filter(z=>z[2]>0)
+    .sort((a,b)=>b[2]-a[2]).slice(0,10);
+  if(top.length) $('pTop').innerHTML=`<h3 style="margin:14px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Mejores circunscripciones</h3>
+    <div class="envuelve"><table><thead><tr><th>${nomNiv}</th><th class="n">% votos</th>${
+      nomEsc?`<th class="n">${nomEsc[0].toUpperCase()+nomEsc.slice(1)}</th>`:''}</tr></thead><tbody>`+
+    top.map(([u,x])=>`<tr><td>${esc(nom[u]||u)}</td><td class="n">${P(x.val?x.v/x.val:0)}</td>${
+      nomEsc?`<td class="n">${F(x.e)} de ${F(x.n)}</td>`:''}</tr>`).join('')+`</tbody></table></div>`;
+}
+
 // -------------------------------------------------------------------- rutas
 async function enruta(cambioDeRuta=true){
   const r=location.hash.replace(/^#/,'')||'/';
@@ -2601,7 +2760,8 @@ async function enruta(cambioDeRuta=true){
   RUTA_ACTUAL=r;
   const m=r.match(/^\/c\/([0-9]{2}-[0-9]{6})$/);
   document.querySelectorAll('.mode-tab').forEach(a=>{
-    if(a.dataset.r===r) a.setAttribute('aria-current','page');
+    if(a.dataset.r===r || (a.dataset.r!=='/' && r.startsWith(a.dataset.r+'/')))
+      a.setAttribute('aria-current','page');
     else a.removeAttribute('aria-current');
   });
   // Solo se sube al inicio cuando de verdad cambias de página. Un refresco del
@@ -2618,6 +2778,8 @@ async function enruta(cambioDeRuta=true){
   else if(r==='/buscador'){ await vistaBuscador(); }
   else if(r==='/rla'){ await vistaRLA(); }
   else if(r==='/parlamento'){ await vistaParlamento(); }
+  else if(r==='/partido' || r.startsWith('/partido/')){
+    await vistaPartido(decodeURIComponent(r.slice('/partido/'.length))); }
   else { await vistaNacional(); }
   scrollTo(0, y);
 }
