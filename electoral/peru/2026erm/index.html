@@ -951,11 +951,13 @@ const RES_TEN={
   electo_alcalde: {t:'ALCALDE',          v:'--ok',      d:'Ganó la alcaldía'},
   electo_teniente:{t:'TENIENTE ALCALDE', v:'--ok',      d:'Su lista ganó y él entra al concejo'},
   electo_regidor: {t:'REGIDOR',          v:'--espera',  d:'Entró al concejo, pero su lista no ganó'},
+  electo_concejo: {t:'EN EL CONCEJO',    v:'--espera',  d:'Escaño asegurado: teniente alcalde si su lista gana la alcaldía, si no regidor'},
   fuera:          {t:'FUERA',            v:'--disputa', d:'La carrera está resuelta y no está entre los electos'},
+  descartado:     {t:'SIN OPCIONES',     v:'--disputa', d:'Su lista no gana la alcaldía ni un escaño en ninguna simulación'},
   en_disputa:     {t:'EN DISPUTA',       v:'--vacio',   d:'Todavía sin llamada'},
   sin_cruce:      {t:'NO APARECE',       v:'--vacio',   d:'Su lista no figura en el cómputo de esta carrera'}};
-const ORDEN_RES=['electo_alcalde','electo_teniente','electo_regidor','fuera',
-                 'en_disputa','sin_cruce'];
+const ORDEN_RES=['electo_alcalde','electo_teniente','electo_regidor','electo_concejo',
+                 'fuera','descartado','en_disputa','sin_cruce'];
 let TEN=null, FILTRO_TEN={q:'',region:'',nivel:'',via:'',res:''};
 
 async function vistaTenientes(){
@@ -966,7 +968,8 @@ async function vistaTenientes(){
       para este proceso.</div>`; return;
   }
   const casos=TEN.casos||[], marc=TEN.marcador||{}, vias=TEN.por_via||{};
-  const electos=(marc.electo_alcalde||0)+(marc.electo_teniente||0)+(marc.electo_regidor||0);
+  const electos=(marc.electo_alcalde||0)+(marc.electo_teniente||0)+(marc.electo_regidor||0)+
+    (marc.electo_concejo||0);
 
   // Los cinco números que resumen la noche para este grupo. «Alcalde» va primero
   // y aparte de «teniente alcalde» a propósito: son el mismo movimiento con dos
@@ -991,7 +994,8 @@ async function vistaTenientes(){
       ${tile(marc.electo_alcalde||0,'Alcaldes','--ok')}
       ${tile(marc.electo_teniente||0,'Tenientes alcalde','--ok')}
       ${tile(marc.electo_regidor||0,'Regidores','--espera')}
-      ${tile(marc.fuera||0,'Fuera','--disputa')}
+      ${tile(marc.electo_concejo||0,'En el concejo, cargo por definir','--espera')}
+      ${tile((marc.fuera||0)+(marc.descartado||0),'Fuera o sin opciones','--disputa')}
       ${tile(marc.en_disputa||0,'En disputa','--vacio')}
     </div>
 
