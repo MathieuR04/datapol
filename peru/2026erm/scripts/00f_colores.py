@@ -178,8 +178,12 @@ def main() -> int:
             claro, oscuro, metodo = hexde(h, sc, lc), hexde(h, so, lo), "rueda"
         salida.append({"codigo_onpe": cod, "nombre": nombre,
                        "tipo_organizacion": tipo,
-                       "nacional": int(nac if nac is not None
-                                       else tipo == "PARTIDOS POLITICOS"),
+                       # Una alianza electoral no es un movimiento regional
+                       # aunque ningún miembro sea partido: Venceremos (311
+                       # listas, gobernación del Cusco) salía en el ocre de los
+                       # regionales. Las alianzas llevan su color en el mapa.
+                       "nacional": int(bool(nac) or tipo in ("PARTIDOS POLITICOS",
+                                                             "ALIANZAS ELECTORALES")),
                        "color_claro": claro, "color_oscuro": oscuro,
                        "metodo": metodo})
 

@@ -800,7 +800,14 @@ async function vistaNacional(){
   // inscritas**. El desempate no es cosmético: antes de que abran las urnas todo
   // está a cero y el criterio del cargo no ordena nada, así que la tabla salía
   // alfabética y un partido con 1,191 listas aparecía debajo de uno con 3.
+  // Autoridades electas: gobernadores en primera vuelta (los de segunda aún no
+  // ganan nada), alcaldes, consejeros y regidores. La misma suma que Parlamento.
+  const total=o=>(o.gobernador_1v||0)+(o.alcalde_prov||0)+(o.alcalde_dist||0)+
+    (o.consejero||0)+(o.regidor_prov||0)+(o.regidor_dist||0);
+  // Orden: por autoridades electas; a igualdad, por jerarquía del cargo y luego
+  // por listas inscritas (antes de la primera llamada todo está a cero).
   const cmp=(a,b)=>{
+    const dt=total(b)-total(a); if(dt) return dt;
     for(const k of CAMPOS){ const d=(b[k]||0)-(a[k]||0); if(d) return d }
     const dl=(b.listas||0)-(a.listas||0); if(dl) return dl;
     return String(a.nombre||'').localeCompare(String(b.nombre||''),'es');
@@ -822,14 +829,15 @@ async function vistaNacional(){
       o.gobernador_2v||0}</span></td>
     <td class="n">${F(o.alcalde_prov||0)}</td><td class="n">${F(o.alcalde_dist||0)}</td>
     <td class="n">${F(o.consejero||0)}</td><td class="n">${F(o.regidor_prov||0)}</td>
-    <td class="n">${F(o.regidor_dist||0)}</td>`;
+    <td class="n">${F(o.regidor_dist||0)}</td>
+    <td class="n"><b>${F(total(o))}</b></td>`;
 
   h+=`<h2>Organizaciones <span class="sec">${F((n.por_organizacion||[]).length)}</span></h2>
     <div class="envuelve"><table>
     <thead><tr><th>Organización</th><th class="n">Gob. 1.ª+2.ª</th>
     <th class="n">Alc. prov.</th><th class="n">Alc. dist.</th>
     <th class="n">Consejeros</th><th class="n">Reg. prov.</th>
-    <th class="n">Reg. dist.</th></tr></thead><tbody>`+
+    <th class="n">Reg. dist.</th><th class="n">Total electos</th></tr></thead><tbody>`+
     filas.map(f=>{
       if(f.tipo==='org') return `<tr>
         <td><span class="org">${burbuja(f.o.codigo)}<img class="logo"
