@@ -2618,6 +2618,13 @@ const PART_CAMPOS=['gobernador_1v','gobernador_2v','alcalde_prov','alcalde_dist'
 const PART_NIV={'01':['Gobernación','01',null], '02':['Consejo regional','03','consejeros'],
                 '03':['Alcaldía provincial','03','regidores'], '04':['Alcaldía distrital','04','regidores']};
 const PART_MET={pct:'% de votos', esc:'Escaños', pesc:'% de escaños'};
+// Cómo se llama la medida en cada nivel: consejeros o regidores, nunca «escaños».
+const metNombre=(met,nivel)=>{
+  const e=PART_NIV[nivel][2];
+  if(met==='pct' || !e) return PART_MET.pct;
+  const E=e[0].toUpperCase()+e.slice(1);
+  return met==='esc' ? E : `% de ${e}`;
+};
 
 function opcionesPartido(){
   const m={};
@@ -2633,6 +2640,13 @@ function opcionesPartido(){
     (s.consejero||0)+(s.regidor_prov||0)+(s.regidor_dist||0);
   return Object.values(m).map(e=>({...e,total:tot(e.s)}))
     .sort((a,b)=>b.total-a.total || (b.s.listas||0)-(a.s.listas||0) || a.nombre.localeCompare(b.nombre,'es'));
+}
+
+// Fronteras de referencia, como en el mapa del resumen: el distrital lleva
+// provincias y departamentos encima; el provincial, departamentos.
+async function bordesPartido(m, t){
+  if(t==='04') await contorno(m,'geo/nacional-03.geojson',.7);
+  if(t!=='01') await contorno(m);
 }
 
 async function vistaPartido(clave){
@@ -2664,6 +2678,20 @@ async function vistaPartido(clave){
       ${tile(F(s.consejero||0),'Consejeros')}${tile(F(s.regidor_prov||0),'Regidores prov.')}
       ${tile(F(s.regidor_dist||0),'Regidores dist.')}${tile(`<b>${F(sel.total)}</b>`,'Total electos')}
     </div>
+    <h3 style="margin:14px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em">Dónde tiene escaños</h3>
+    <div class="nivel" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+      ${[['02','Circunscripciones con consejeros'],['03','Provincias con regidores'],
+         ['04','Distritos con regidores']].map(([t,l])=>{
+        let con=0, compite=0;
+        for(const [rid,[,,os]] of Object.entries(PART.carreras||{})){
+          if(rid.slice(0,2)!==t) continue;
+          const mias=Object.entries(os).filter(([c])=>S.has(c));
+          if(!mias.length) continue;
+          compite++; if(mias.some(([,[,e]])=>e>0)) con++;
+        }
+        return tile(`${F(con)} <span class="sub">de ${F(compite)}</span>`, l+' · donde compite');
+      }).join('')}
+    </div>
 
     <h2>Dónde ganó</h2>
     <div class="sub" style="margin:-4px 0 8px">Color pleno: ganó. Tono claro: pasa a
@@ -2675,9 +2703,10 @@ async function vistaPartido(clave){
     <h2>Dónde le fue bien</h2>
     <div class="tabs" id="pNiv">${Object.entries(PART_NIV).map(([k,[l]])=>
       `<button class="tab" data-v="${k}" aria-pressed="${k===PART_VISTA.nivel}">${l}</button>`).join('')}</div>
-    <div class="tabs" id="pMet">${Object.entries(PART_MET).map(([k,l])=>
-      `<button class="tab" data-v="${k}" aria-pressed="${k===PART_VISTA.met}"${
-        PART_VISTA.nivel==='01'&&k!=='pct'?' disabled':''}>${l}</button>`).join('')}</div>
+    <div class="tabs" id="pMet">${Object.keys(PART_MET)
+      .filter(k=>PART_VISTA.nivel!=='01' || k==='pct').map(k=>
+      `<button class="tab" data-v="${k}" aria-pressed="${k===PART_VISTA.met}">${
+        metNombre(k,PART_VISTA.nivel)}</button>`).join('')}</div>
     <div class="mapa" id="pmInt"></div><div class="p-escala" id="pEsc"></div>
     <div id="pTop"></div>`;
   $('vista').innerHTML=h;
@@ -2709,7 +2738,8 @@ async function vistaPartido(clave){
             <span class="tt-cand">${esc(gs[0]?.candidato||'')}</span>`};
         return {color:vacio, href:link, texto:`<span class="tt-est">${
           c.estado==='por_definir'?'EN DISPUTA':'NO GANÓ'}</span>`};
-      }, {peso:t==='04'?.4:.9});
+      }, {peso:t==='04'?.35:1.3});
+      await bordesPartido(m, t);
     }catch(e){ $('pm'+t).innerHTML='<div class="aviso" style="border:0">No se pudo cargar el mapa.</div>' }
   }
 
@@ -2733,13 +2763,14 @@ async function vistaPartido(clave){
       const x=uni[u], v=valor(x);
       if(!x) return {color:vacio, texto:'<span class="tt-est">NO ELIGE ESTA AUTORIDAD</span>'};
       if(v==null) return {color:vacio, texto:'<span class="tt-est">NO COMPITE</span>'};
-      return {color:v>0?tono(.15+.85*v/mx):vacio, texto:`<span class="tt-est">${PART_MET[met]}: ${fmt(v)}</span>
+      return {color:v>0?tono(.15+.85*v/mx):vacio, texto:`<span class="tt-est">${metNombre(met,nivel)}: ${fmt(v)}</span>
         <span class="tt-org">${P(x.val?x.v/x.val:0)} de los votos${nomEsc?` · ${F(x.e)} de ${F(x.n)} ${nomEsc}`:''}</span>`};
-    }, {peso:geoT==='04'?.4:.9});
+    }, {peso:geoT==='04'?.35:1.3});
+    await bordesPartido(m, geoT);
   }catch(e){ $('pmInt').innerHTML='<div class="aviso" style="border:0">No se pudo cargar el mapa.</div>' }
   $('pEsc').innerHTML=vals.length
     ? `<span>0</span><i style="background:linear-gradient(90deg,${tono(.15)},${col})"></i><span>${fmt(mx)}</span>
-       <span>· ${nomNiv}, ${PART_MET[met].toLowerCase()} · ${F(vals.length)} circunscripciones donde compite</span>`
+       <span>· ${nomNiv}, ${metNombre(met,nivel).toLowerCase()} · ${F(vals.length)} circunscripciones donde compite</span>`
     : `<span>No compite en este nivel.</span>`;
 
   // Las diez mejores, con nombre: el mapa dice dónde, la lista dice cuánto.
