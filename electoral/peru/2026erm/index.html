@@ -753,6 +753,15 @@ async function vistaNacional(){
   // el consejo regional no es una carrera que se «gane», es un reparto
   // proporcional y se lee en la página de cada región.
   const nivelesM=Object.entries(NIVEL_PLURAL).filter(([t])=>porTipo[t]);
+  // Debajo de cada ejecutivo, su cuerpo proporcional: cuántos escaños siguen sin
+  // piso garantizado. La gobernación lleva al consejo regional (tipo 02).
+  const CUERPO={'01':['02','Consejeros'],'03':['03','Regidores prov.'],'04':['04','Regidores dist.']};
+  const cuerpoPorDefinir=t=>{
+    const [tc,lab]=CUERPO[t]||[], x=(n.escanos_por_tipo||{})[tc];
+    if(!x || !x.total) return '';
+    return `<div class="l" style="border-top:1px solid var(--linea-fuerte);margin-top:6px;padding-top:6px">
+      <span>${lab} por definir</span><b>${F(x.total-x.adjudicados)} <span class="sub">de ${F(x.total)}</span></b></div>`;
+  };
   const bloqueEstado = `<h2>Estado</h2>` + (!nivelesM.length ? '' :
     `<div class="nivel">`+
     nivelesM.map(([t,l])=>{
@@ -760,7 +769,7 @@ async function vistaNacional(){
       return `<div class="caja"><h3>${l} · ${F(tot)}</h3>`+
         orden.filter(k=>e[k]).map(k=>`<div class="l">
           <span><span class="punto" style="background:var(${EST[k].v})"></span>${etiq(k,true)}</span>
-          <b>${F(e[k])}</b></div>`).join('')+`</div>`;
+          <b>${F(e[k])}</b></div>`).join('')+cuerpoPorDefinir(t)+`</div>`;
     }).join('')+`</div>`);
 
   let h = bloqueBuscar('Busca una contienda') + bloqueMapa + bloqueEstado;
