@@ -1,501 +1,248 @@
 {
  "camara": "diputados",
- "n_votaciones": 12,
- "n_disputadas": 5,
+ "n_votaciones": 19,
+ "n_disputadas": 10,
  "min_votos_miembro": 5,
- "n_miembros_modelo": 107,
- "lambda2": 0.8510190775611699,
- "lambda3": 0.0996844693274051,
- "celdas_imputadas_pct": 0.0,
- "robustez_mds": 0.9182107706725665,
- "robustez_pca": 0.9327008809892492,
- "clasif_1d": 1.0,
- "clasif_2d": 1.0,
- "ganancia_dim2": 0.0,
- "pre_1d": 1.0,
+ "n_miembros_modelo": 126,
+ "lambda2": 0.6676815204397613,
+ "lambda3": 0.19652746134998886,
+ "celdas_imputadas_pct": 0.20317460317460317,
+ "robustez_mds": 0.9632693906968242,
+ "robustez_pca": 0.922403655771799,
+ "clasif_1d": 0.9481090589270009,
+ "clasif_2d": 0.9982409850483729,
+ "ganancia_dim2": 0.05013192612137203,
+ "pre_1d": 0.8691796008869179,
  "linea": {
-  "theta": 0.0,
-  "c": 0.5902698960021343,
+  "theta": 0.13962634015954636,
+  "c": 0.3462719031708916,
   "errores": 0,
-  "margen": 1.2220898486680902,
-  "nx": 1.0,
-  "ny": 0.0,
-  "modo": "1d"
+  "margen": 0.9057584536123275,
+  "nx": 0.9902680687415704,
+  "ny": 0.13917310096006544,
+  "modo": "2d"
  },
  "miembros": [
   {
    "id": "d1329",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 6,
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
     "LIC": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 25.0
+   "rank_bisagra": 37.0
   },
   {
    "id": "d1328",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 9,
-   "n_registrado": 12,
-   "asistencia": 0.75,
+   "x": 1.0636115238,
+   "y": -0.5608414004,
+   "dist_linea": 0.6289345896,
+   "n_emitidos": 14,
+   "n_registrado": 19,
+   "asistencia": 0.7368421053,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9285714286,
    "votos": {
-    "AUS": 3,
-    "NO": 4,
-    "SI": 5
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1327",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 77.0
-  },
-  {
-   "id": "d1326",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "AUS": 5,
+    "NO": 6,
+    "SI": 8
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 40.0
+   "rank_bisagra": 7.0
+  },
+  {
+   "id": "d1327",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 96.0
+  },
+  {
+   "id": "d1326",
+   "x": 1.0263933285,
+   "y": 0.3097379744,
+   "dist_linea": 0.7132398304,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 0.9444444444,
+   "con_oficialismo": 0.9444444444,
+   "votos": {
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
+    "ABS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 21.0
   },
   {
    "id": "d1325",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
+   "x": 1.0925056826,
+   "y": 0.6886199542,
+   "dist_linea": 0.8314389637,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 4,
-    "SI": 7,
-    "SINRES": 1
+    "NO": 7,
+    "SI": 10,
+    "SINRES": 1,
+    "AUS": 1
    },
    "bloque": "oficialismo",
-   "lado": null,
+   "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 71.0
   },
   {
    "id": "d1324",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 7,
-   "n_registrado": 12,
-   "asistencia": 0.5833333333,
+   "x": 0.9766038178,
+   "y": 0.3165072167,
+   "dist_linea": 0.6648769642,
+   "n_emitidos": 13,
+   "n_registrado": 19,
+   "asistencia": 0.6842105263,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "AUS": 4,
+    "AUS": 5,
     "LIC": 1,
-    "SI": 4,
-    "NO": 3
+    "SI": 7,
+    "NO": 6
    },
    "bloque": "oficialismo",
-   "lado": null,
+   "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 10.0
   },
   {
    "id": "d1323",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 5,
+    "NO": 8,
+    "SI": 8,
+    "AUS": 1,
     "LIC": 2
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 41.0
+   "rank_bisagra": 38.0
   },
   {
    "id": "d1322",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 60.0
-  },
-  {
-   "id": "d1321",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5,
-   "votos": {
-    "SI": 10,
-    "AUS": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 78.0
-  },
-  {
-   "id": "d1320",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 6,
-    "SINRES": 1
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 26.0
-  },
-  {
-   "id": "d1319",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 5,
-    "AUS": 2
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 27.0
-  },
-  {
-   "id": "d1318",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 79.0
-  },
-  {
-   "id": "d1317",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 83.0
-  },
-  {
-   "id": "d1316",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 61.0
-  },
-  {
-   "id": "d1315",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 5,
-   "n_registrado": 12,
-   "asistencia": 0.4166666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "AUS": 7,
-    "SI": 5
-   },
-   "bloque": "oposicion",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1314",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 80.0
-  },
-  {
-   "id": "d1313",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 81.0
-  },
-  {
-   "id": "d1312",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 82.0
-  },
-  {
-   "id": "d1311",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 62.0
-  },
-  {
-   "id": "d1310",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.75,
-   "votos": {
-    "SI": 10,
+    "SI": 16,
+    "ABS": 1,
     "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 54.0
+   "rank_bisagra": 58.0
   },
   {
-   "id": "d1309",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 5,
-   "n_registrado": 12,
-   "asistencia": 0.4166666667,
+   "id": "d1321",
+   "x": -1.2234577026,
+   "y": 0.8619754812,
+   "dist_linea": -1.4378591988,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.4666666667,
    "votos": {
-    "AUS": 2,
-    "LIC": 5,
-    "SI": 5
+    "SI": 13,
+    "NO": 3,
+    "AUS": 3
    },
-   "bloque": "oficialismo",
-   "lado": null,
+   "bloque": "oposicion",
+   "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 94.0
   },
   {
-   "id": "d1308",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1320",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 28.0
-  },
-  {
-   "id": "d1307",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
+    "SINRES": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 29.0
+   "rank_bisagra": 39.0
   },
   {
-   "id": "d1306",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 8,
-   "n_registrado": 12,
-   "asistencia": 0.6666666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "id": "d1319",
+   "x": 1.0263933285,
+   "y": 0.3097379744,
+   "dist_linea": 0.7132398304,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
+   "lealtad": 0.9375,
+   "con_oficialismo": 0.9375,
    "votos": {
-    "NO": 2,
-    "SI": 6,
-    "AUS": 4
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1305",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 7,
+    "AUS": 3,
+    "ABS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -503,186 +250,296 @@
    "rank_bisagra": 22.0
   },
   {
-   "id": "d1304",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1318",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.5,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "SI": 15,
+    "NO": 4
    },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
+   "bloque": "oposicion",
+   "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 23.0
+   "rank_bisagra": 105.0
   },
   {
-   "id": "d1303",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1317",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.5,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "SI": 15,
+    "NO": 4
    },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
+   "bloque": "oposicion",
+   "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 24.0
+   "rank_bisagra": 106.0
   },
   {
-   "id": "d1302",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
+   "id": "d1316",
+   "x": -0.6282537852,
+   "y": -0.9271225431,
+   "dist_linea": -1.097442085,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 0.9473684211,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 17,
+    "ABS": 1,
+    "NO": 1
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 76.0
+  },
+  {
+   "id": "d1315",
+   "x": -0.0158609848,
+   "y": -0.6531484622,
+   "dist_linea": -0.4528792268,
    "n_emitidos": 12,
-   "n_registrado": 12,
+   "n_registrado": 19,
+   "asistencia": 0.6315789474,
+   "lealtad": 0.9166666667,
+   "con_oficialismo": 0.7272727273,
+   "votos": {
+    "AUS": 7,
+    "SI": 9,
+    "NO": 3
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 1.0
+  },
+  {
+   "id": "d1314",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 10,
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 107.0
+  },
+  {
+   "id": "d1313",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 108.0
+  },
+  {
+   "id": "d1312",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 109.0
+  },
+  {
+   "id": "d1311",
+   "x": -0.2397533731,
+   "y": -0.4615013499,
+   "dist_linea": -0.6479205869,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 0.8421052632,
+   "con_oficialismo": 0.6111111111,
+   "votos": {
+    "SI": 14,
+    "ABS": 4,
+    "NO": 1
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 8.0
+  },
+  {
+   "id": "d1310",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 78.0
+  },
+  {
+   "id": "d1309",
+   "x": 0.9180003222,
+   "y": -0.7897738531,
+   "dist_linea": 0.4528792268,
+   "n_emitidos": 11,
+   "n_registrado": 19,
+   "asistencia": 0.5789473684,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.9090909091,
+   "votos": {
+    "AUS": 2,
+    "LIC": 6,
+    "SI": 9,
     "NO": 2
    },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 49.0
-  },
-  {
-   "id": "d1301",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 84.0
-  },
-  {
-   "id": "d1300",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 85.0
-  },
-  {
-   "id": "d1299",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 86.0
-  },
-  {
-   "id": "d1298",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 87.0
-  },
-  {
-   "id": "d1297",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 30.0
+   "rank_bisagra": 2.0
   },
   {
-   "id": "d1296",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
+   "id": "d1308",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 4,
-    "SI": 7,
+    "NO": 8,
+    "SI": 10,
     "AUS": 1
    },
    "bloque": "oficialismo",
-   "lado": null,
+   "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 40.0
   },
   {
-   "id": "d1295",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1307",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 41.0
+  },
+  {
+   "id": "d1306",
+   "x": 1.0242466724,
+   "y": 0.8850430286,
+   "dist_linea": 0.7911810538,
+   "n_emitidos": 14,
+   "n_registrado": 19,
+   "asistencia": 0.7368421053,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
     "NO": 5,
-    "SI": 7
+    "SI": 9,
+    "AUS": 5
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 53.0
+  },
+  {
+   "id": "d1305",
+   "x": 1.0263933285,
+   "y": 0.3097379744,
+   "dist_linea": 0.7132398304,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 0.9444444444,
+   "con_oficialismo": 0.9444444444,
+   "votos": {
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
+    "ABS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 25.0
+  },
+  {
+   "id": "d1304",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -690,38 +547,215 @@
    "rank_bisagra": 31.0
   },
   {
-   "id": "d1294",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1303",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 32.0
+  },
+  {
+   "id": "d1302",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 50.0
+   "rank_bisagra": 79.0
+  },
+  {
+   "id": "d1301",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 116.0
+  },
+  {
+   "id": "d1300",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 117.0
+  },
+  {
+   "id": "d1299",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 118.0
+  },
+  {
+   "id": "d1298",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 119.0
+  },
+  {
+   "id": "d1297",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 28.0
+  },
+  {
+   "id": "d1296",
+   "x": 1.0925056826,
+   "y": 0.6886199542,
+   "dist_linea": 0.8314389637,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 7,
+    "SI": 10,
+    "AUS": 2
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 72.0
+  },
+  {
+   "id": "d1295",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 33.0
+  },
+  {
+   "id": "d1294",
+   "x": -0.3705501603,
+   "y": -1.105865954,
+   "dist_linea": -0.8671226888,
+   "n_emitidos": 13,
+   "n_registrado": 19,
+   "asistencia": 0.6842105263,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.7692307692,
+   "votos": {
+    "SI": 11,
+    "NO": 2,
+    "AUS": 6
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 74.0
   },
   {
    "id": "d1293",
    "x": null,
    "y": null,
    "dist_linea": null,
-   "n_emitidos": 4,
-   "n_registrado": 11,
-   "asistencia": 0.3636363636,
-   "lealtad": 0.75,
-   "con_oficialismo": 0.75,
+   "n_emitidos": 6,
+   "n_registrado": 18,
+   "asistencia": 0.3333333333,
+   "lealtad": 0.8333333333,
+   "con_oficialismo": 0.6666666667,
    "votos": {
     "AUS": 2,
-    "LIC": 5,
-    "SI": 3,
+    "LIC": 10,
+    "SI": 5,
     "ABS": 1
    },
    "bloque": "oposicion",
@@ -731,131 +765,136 @@
   },
   {
    "id": "d1292",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 9,
-   "n_registrado": 12,
-   "asistencia": 0.75,
+   "x": 1.1106032496,
+   "y": 0.9630152677,
+   "dist_linea": 0.887548853,
+   "n_emitidos": 15,
+   "n_registrado": 19,
+   "asistencia": 0.7894736842,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 3,
-    "SI": 6,
-    "AUS": 3
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1291",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 6,
+    "SI": 9,
+    "AUS": 4
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 32.0
+   "rank_bisagra": 75.0
+  },
+  {
+   "id": "d1291",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 34.0
   },
   {
    "id": "d1290",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 89.0
+   "rank_bisagra": 120.0
   },
   {
    "id": "d1289",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 11,
-    "ABS": 1
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 63.0
+   "rank_bisagra": 59.0
   },
   {
    "id": "d1288",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "lealtad": 0.9473684211,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 11,
-    "ABS": 1
+    "SI": 16,
+    "ABS": 2,
+    "NO": 1
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 64.0
+   "rank_bisagra": 54.0
   },
   {
    "id": "d1287",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 11,
-    "ABS": 1
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 65.0
+   "rank_bisagra": 55.0
   },
   {
    "id": "d1286",
    "x": null,
    "y": null,
    "dist_linea": null,
-   "n_emitidos": 9,
-   "n_registrado": 12,
-   "asistencia": 0.75,
+   "n_emitidos": 11,
+   "n_registrado": 19,
+   "asistencia": 0.5789473684,
    "lealtad": 1.0,
-   "con_oficialismo": 0.7777777778,
+   "con_oficialismo": 0.7272727273,
    "votos": {
-    "SI": 9,
-    "AUS": 3
+    "SI": 11,
+    "AUS": 8
    },
    "bloque": "oposicion",
    "lado": null,
@@ -864,55 +903,77 @@
   },
   {
    "id": "d1285",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 11,
-    "ABS": 1
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 66.0
+   "rank_bisagra": 56.0
   },
   {
    "id": "d1284",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 9,
-   "n_registrado": 12,
-   "asistencia": 0.75,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5555555556,
+   "x": -0.9221350034,
+   "y": -0.2522712968,
+   "dist_linea": -1.2945421308,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
+   "lealtad": 0.875,
+   "con_oficialismo": 0.4666666667,
    "votos": {
-    "SI": 9,
-    "AUS": 3
+    "SI": 12,
+    "AUS": 3,
+    "NO": 4
    },
    "bloque": "oposicion",
-   "lado": null,
+   "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 92.0
   },
   {
    "id": "d1283",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -1.2103863024,
+   "y": 0.7338551256,
+   "dist_linea": -1.4427459158,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "lealtad": 0.7894736842,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 11,
-    "ABS": 1
+    "SI": 14,
+    "ABS": 1,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 123.0
+  },
+  {
+   "id": "d1282",
+   "x": -0.4032953308,
+   "y": -0.5639186398,
+   "dist_linea": -0.8241246974,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 0.9473684211,
+   "con_oficialismo": 0.6111111111,
+   "votos": {
+    "SI": 17,
+    "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -920,137 +981,125 @@
    "rank_bisagra": 67.0
   },
   {
-   "id": "d1282",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 0.9166666667,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 90.0
-  },
-  {
    "id": "d1281",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 46.0
+   "rank_bisagra": 80.0
   },
   {
    "id": "d1280",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 47.0
+   "rank_bisagra": 81.0
   },
   {
    "id": "d1279",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 48.0
+   "rank_bisagra": 82.0
   },
   {
    "id": "d1278",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
    "lealtad": 1.0,
-   "con_oficialismo": 0.7,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 8,
-    "NO": 2,
+    "SI": 12,
+    "NO": 3,
+    "ABS": 2,
     "LIC": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 44.0
+   "rank_bisagra": 83.0
   },
   {
    "id": "d1277",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 45.0
+   "rank_bisagra": 84.0
   },
   {
    "id": "d1276",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 51.0
+   "rank_bisagra": 85.0
   },
   {
    "id": "d1275",
@@ -1072,232 +1121,60 @@
   },
   {
    "id": "d1274",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 33.0
+   "rank_bisagra": 42.0
   },
   {
    "id": "d1273",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 34.0
+   "rank_bisagra": 43.0
   },
   {
    "id": "d1272",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 5,
-   "n_registrado": 12,
-   "asistencia": 0.4166666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "x": 0.7468977639,
+   "y": 0.5019634144,
+   "dist_linea": 0.463216908,
+   "n_emitidos": 11,
+   "n_registrado": 19,
+   "asistencia": 0.5789473684,
+   "lealtad": 0.9090909091,
+   "con_oficialismo": 0.9090909091,
    "votos": {
     "LIC": 7,
-    "SI": 5
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1271",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 35.0
-  },
-  {
-   "id": "d1270",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 8,
-   "n_registrado": 12,
-   "asistencia": 0.6666666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "AUS": 3,
-    "SI": 5,
+    "SI": 7,
     "NO": 3,
-    "LIC": 1
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1269",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 9,
-   "n_registrado": 12,
-   "asistencia": 0.75,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 4,
     "AUS": 1,
-    "LIC": 2
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 36.0
-  },
-  {
-   "id": "d1268",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 37.0
-  },
-  {
-   "id": "d1267",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 38.0
-  },
-  {
-   "id": "d1266",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 39.0
-  },
-  {
-   "id": "d1265",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 5,
-    "LIC": 2
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 3.0
-  },
-  {
-   "id": "d1264",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 4.0
-  },
-  {
-   "id": "d1263",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 5,
-    "AUS": 2
+    "ABS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1305,151 +1182,41 @@
    "rank_bisagra": 5.0
   },
   {
-   "id": "d1262",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "id": "d1271",
+   "x": 1.0263933285,
+   "y": 0.3097379744,
+   "dist_linea": 0.7132398304,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 0.9444444444,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 9,
+    "SINRES": 1,
+    "ABS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 6.0
+   "rank_bisagra": 26.0
   },
   {
-   "id": "d1261",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1270",
+   "x": 0.9766038178,
+   "y": 0.3165072167,
+   "dist_linea": 0.6648769642,
+   "n_emitidos": 14,
+   "n_registrado": 19,
+   "asistencia": 0.7368421053,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 7.0
-  },
-  {
-   "id": "d1260",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 8.0
-  },
-  {
-   "id": "d1259",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 5,
-   "n_registrado": 12,
-   "asistencia": 0.4166666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "LIC": 7,
-    "SI": 5
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1258",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.75,
-   "votos": {
-    "SI": 10,
-    "NO": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 55.0
-  },
-  {
-   "id": "d1257",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 104.0
-  },
-  {
-   "id": "d1256",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 4,
-    "SI": 7,
-    "AUS": 1
-   },
-   "bloque": "oficialismo",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1255",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "AUS": 4,
+    "SI": 8,
+    "NO": 6,
+    "LIC": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1457,112 +1224,61 @@
    "rank_bisagra": 9.0
   },
   {
-   "id": "d1254",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1269",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 15,
+   "n_registrado": 19,
+   "asistencia": 0.7894736842,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 7,
+    "AUS": 2,
+    "LIC": 2
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 10.0
+   "rank_bisagra": 29.0
   },
   {
-   "id": "d1253",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "id": "d1268",
+   "x": 1.0263933285,
+   "y": 0.3097379744,
+   "dist_linea": 0.7132398304,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 0.9444444444,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "SI": 11,
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
     "ABS": 1
    },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 68.0
-  },
-  {
-   "id": "d1252",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.75,
-   "votos": {
-    "SI": 10,
-    "NO": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 52.0
-  },
-  {
-   "id": "d1251",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 105.0
-  },
-  {
-   "id": "d1250",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 11.0
+   "rank_bisagra": 23.0
   },
   {
-   "id": "d1249",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1267",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 7,
+    "SI": 11,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1570,39 +1286,40 @@
    "rank_bisagra": 12.0
   },
   {
-   "id": "d1248",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
+   "id": "d1266",
+   "x": 1.2095912651,
+   "y": 0.0435918147,
+   "dist_linea": 0.8576145109,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 4,
-    "SI": 7,
-    "AUS": 1
+    "NO": 7,
+    "SI": 10,
+    "AUS": 2
    },
    "bloque": "oficialismo",
-   "lado": null,
+   "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 73.0
   },
   {
-   "id": "d1247",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
+   "id": "d1265",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9375,
    "votos": {
-    "NO": 5,
-    "SI": 6,
-    "LIC": 1
+    "NO": 7,
+    "SI": 9,
+    "AUS": 1,
+    "LIC": 2
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1610,57 +1327,19 @@
    "rank_bisagra": 13.0
   },
   {
-   "id": "d1246",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
+   "id": "d1264",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
-   "con_oficialismo": 0.7,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "SI": 8,
-    "NO": 2,
-    "LIC": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 57.0
-  },
-  {
-   "id": "d1245",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
+    "NO": 7,
     "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 69.0
-  },
-  {
-   "id": "d1244",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1668,95 +1347,19 @@
    "rank_bisagra": 14.0
   },
   {
-   "id": "d1243",
-   "x": -0.9377795754,
-   "y": 0.1202708108,
-   "dist_linea": -1.5280494714,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 0.9166666667,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 59.0
-  },
-  {
-   "id": "d1242",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
+   "id": "d1263",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5,
+   "con_oficialismo": 0.9375,
    "votos": {
+    "NO": 7,
     "SI": 9,
-    "ABS": 1,
-    "AUS": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 70.0
-  },
-  {
-   "id": "d1241",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.75,
-   "votos": {
-    "SI": 10,
-    "NO": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 53.0
-  },
-  {
-   "id": "d1240",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 71.0
-  },
-  {
-   "id": "d1239",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "AUS": 3
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1764,18 +1367,19 @@
    "rank_bisagra": 15.0
   },
   {
-   "id": "d1238",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1262",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 7,
+    "SI": 11,
+    "SINRES": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -1783,243 +1387,19 @@
    "rank_bisagra": 16.0
   },
   {
-   "id": "d1237",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1261",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 17.0
-  },
-  {
-   "id": "d1236",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 91.0
-  },
-  {
-   "id": "d1235",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 7,
-   "n_registrado": 12,
-   "asistencia": 0.5833333333,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.7142857143,
-   "votos": {
-    "SI": 7,
-    "LIC": 3,
-    "AUS": 2
-   },
-   "bloque": "oposicion",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1234",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 106.0
-  },
-  {
-   "id": "d1233",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 107.0
-  },
-  {
-   "id": "d1232",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
+    "NO": 7,
     "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 72.0
-  },
-  {
-   "id": "d1231",
-   "x": -0.0207750283,
-   "y": -2.4200499222,
-   "dist_linea": -0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 0.9166666667,
-   "con_oficialismo": 0.75,
-   "votos": {
-    "SI": 9,
-    "NO": 2,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 2.0
-  },
-  {
-   "id": "d1230",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 73.0
-  },
-  {
-   "id": "d1229",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 92.0
-  },
-  {
-   "id": "d1228",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 10,
-   "n_registrado": 10,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5,
-   "votos": {
-    "SI": 10
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 93.0
-  },
-  {
-   "id": "d1227",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.75,
-   "votos": {
-    "SI": 10,
-    "NO": 2
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 56.0
-  },
-  {
-   "id": "d1226",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 18.0
-  },
-  {
-   "id": "d1225",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 5,
-    "SI": 7
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -2027,18 +1407,19 @@
    "rank_bisagra": 19.0
   },
   {
-   "id": "d1224",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1260",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9444444444,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 7,
+    "SI": 11,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
@@ -2046,90 +1427,758 @@
    "rank_bisagra": 20.0
   },
   {
-   "id": "d1223",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "id": "d1259",
+   "x": 0.9180003222,
+   "y": -0.7897738531,
+   "dist_linea": 0.4528792268,
+   "n_emitidos": 11,
+   "n_registrado": 19,
+   "asistencia": 0.5789473684,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.9090909091,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "LIC": 7,
+    "SI": 9,
+    "NO": 2,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 21.0
+   "rank_bisagra": 4.0
+  },
+  {
+   "id": "d1258",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 90.0
+  },
+  {
+   "id": "d1257",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 121.0
+  },
+  {
+   "id": "d1256",
+   "x": 1.0909045015,
+   "y": 0.6863584495,
+   "dist_linea": 0.8295386245,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 7,
+    "SI": 10,
+    "AUS": 2
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 68.0
+  },
+  {
+   "id": "d1255",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 35.0
+  },
+  {
+   "id": "d1254",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 36.0
+  },
+  {
+   "id": "d1253",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.6111111111,
+   "votos": {
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 57.0
+  },
+  {
+   "id": "d1252",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 86.0
+  },
+  {
+   "id": "d1251",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 122.0
+  },
+  {
+   "id": "d1250",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.9444444444,
+   "votos": {
+    "NO": 7,
+    "SI": 11,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 17.0
+  },
+  {
+   "id": "d1249",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 44.0
+  },
+  {
+   "id": "d1248",
+   "x": 1.0925056826,
+   "y": 0.6886199542,
+   "dist_linea": 0.8314389637,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 7,
+    "SI": 10,
+    "AUS": 2
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 70.0
+  },
+  {
+   "id": "d1247",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
+    "LIC": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 45.0
+  },
+  {
+   "id": "d1246",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 12,
+    "NO": 3,
+    "ABS": 2,
+    "LIC": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 91.0
+  },
+  {
+   "id": "d1245",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.6111111111,
+   "votos": {
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 60.0
+  },
+  {
+   "id": "d1244",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 46.0
+  },
+  {
+   "id": "d1243",
+   "x": -0.1534145673,
+   "y": -0.3539760309,
+   "dist_linea": -0.5474573924,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 0.6666666667,
+   "con_oficialismo": 0.6470588235,
+   "votos": {
+    "SI": 13,
+    "ABS": 3,
+    "AUS": 1,
+    "NO": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 6.0
+  },
+  {
+   "id": "d1242",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5625,
+   "votos": {
+    "SI": 14,
+    "ABS": 1,
+    "NO": 2,
+    "AUS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 61.0
+  },
+  {
+   "id": "d1241",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 87.0
+  },
+  {
+   "id": "d1240",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.6111111111,
+   "votos": {
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 62.0
+  },
+  {
+   "id": "d1239",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 47.0
+  },
+  {
+   "id": "d1238",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.9444444444,
+   "votos": {
+    "NO": 7,
+    "SI": 11,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 18.0
+  },
+  {
+   "id": "d1237",
+   "x": 1.0263933285,
+   "y": 0.3097379744,
+   "dist_linea": 0.7132398304,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 0.9444444444,
+   "con_oficialismo": 0.9444444444,
+   "votos": {
+    "NO": 8,
+    "SI": 9,
+    "AUS": 1,
+    "ABS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 24.0
+  },
+  {
+   "id": "d1236",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 110.0
+  },
+  {
+   "id": "d1235",
+   "x": -1.1901961788,
+   "y": 1.0728012986,
+   "dist_linea": -1.3755800911,
+   "n_emitidos": 14,
+   "n_registrado": 19,
+   "asistencia": 0.7368421053,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5384615385,
+   "votos": {
+    "SI": 10,
+    "LIC": 3,
+    "NO": 4,
+    "AUS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 93.0
+  },
+  {
+   "id": "d1234",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 111.0
+  },
+  {
+   "id": "d1233",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 112.0
+  },
+  {
+   "id": "d1232",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.6111111111,
+   "votos": {
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 64.0
+  },
+  {
+   "id": "d1231",
+   "x": -0.5439834092,
+   "y": -2.0759115803,
+   "dist_linea": -1.1738723552,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 0.9473684211,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 13,
+    "NO": 3,
+    "ABS": 3
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 77.0
+  },
+  {
+   "id": "d1230",
+   "x": -1.2103863024,
+   "y": 0.7338551256,
+   "dist_linea": -1.4427459158,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 0.7894736842,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 14,
+    "ABS": 1,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 124.0
+  },
+  {
+   "id": "d1229",
+   "x": -1.2775113496,
+   "y": 0.1430331929,
+   "dist_linea": -1.5914442271,
+   "n_emitidos": 13,
+   "n_registrado": 19,
+   "asistencia": 0.6842105263,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.6153846154,
+   "votos": {
+    "SI": 13,
+    "AUS": 6
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 125.0
+  },
+  {
+   "id": "d1228",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 17,
+   "n_registrado": 17,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.4375,
+   "votos": {
+    "SI": 13,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 113.0
+  },
+  {
+   "id": "d1227",
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5555555556,
+   "votos": {
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 88.0
+  },
+  {
+   "id": "d1226",
+   "x": 1.1079801086,
+   "y": -0.406488182,
+   "dist_linea": 0.6943531983,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.9444444444,
+   "votos": {
+    "NO": 7,
+    "SI": 11,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 11.0
+  },
+  {
+   "id": "d1225",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 48.0
+  },
+  {
+   "id": "d1224",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 49.0
+  },
+  {
+   "id": "d1223",
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 50.0
   },
   {
    "id": "d1222",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 94.0
-  },
-  {
-   "id": "d1221",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 95.0
-  },
-  {
-   "id": "d1220",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 96.0
-  },
-  {
-   "id": "d1219",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -2137,17 +2186,18 @@
    "rank_bisagra": 97.0
   },
   {
-   "id": "d1218",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1221",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -2155,36 +2205,18 @@
    "rank_bisagra": 98.0
   },
   {
-   "id": "d1217",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1220",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 11,
-    "ABS": 1
-   },
-   "bloque": "oposicion",
-   "lado": "oposicion",
-   "cruzado": false,
-   "rank_bisagra": 75.0
-  },
-  {
-   "id": "d1216",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -2192,17 +2224,37 @@
    "rank_bisagra": 99.0
   },
   {
-   "id": "d1215",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1219",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 114.0
+  },
+  {
+   "id": "d1218",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -2210,37 +2262,38 @@
    "rank_bisagra": 100.0
   },
   {
-   "id": "d1214",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 10,
-   "n_registrado": 12,
-   "asistencia": 0.8333333333,
+   "id": "d1217",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 9,
+    "SI": 16,
     "ABS": 1,
-    "LIC": 2
+    "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 76.0
+   "rank_bisagra": 63.0
   },
   {
-   "id": "d1213",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1216",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -2248,19 +2301,79 @@
    "rank_bisagra": 101.0
   },
   {
+   "id": "d1215",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5,
+   "votos": {
+    "SI": 15,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 102.0
+  },
+  {
+   "id": "d1214",
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.5625,
+   "votos": {
+    "SI": 14,
+    "ABS": 1,
+    "NO": 2,
+    "LIC": 2
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 65.0
+  },
+  {
+   "id": "d1213",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
+   "lealtad": 1.0,
+   "con_oficialismo": 0.4705882353,
+   "votos": {
+    "SI": 14,
+    "AUS": 1,
+    "NO": 4
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 95.0
+  },
+  {
    "id": "d1212",
    "x": null,
    "y": null,
    "dist_linea": null,
    "n_emitidos": 8,
-   "n_registrado": 12,
-   "asistencia": 0.6666666667,
+   "n_registrado": 19,
+   "asistencia": 0.4210526316,
    "lealtad": 0.875,
    "con_oficialismo": 0.75,
    "votos": {
     "SI": 7,
     "NO": 1,
-    "AUS": 2,
+    "AUS": 9,
     "LIC": 2
    },
    "bloque": "oposicion",
@@ -2270,91 +2383,79 @@
   },
   {
    "id": "d1211",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 1,
-   "n_registrado": 12,
-   "asistencia": 0.0833333333,
+   "x": 0.9180003222,
+   "y": -0.7897738531,
+   "dist_linea": 0.4528792268,
+   "n_emitidos": 7,
+   "n_registrado": 19,
+   "asistencia": 0.3684210526,
    "lealtad": 1.0,
-   "con_oficialismo": 1.0,
+   "con_oficialismo": 0.8571428571,
    "votos": {
     "LIC": 11,
-    "SI": 1
+    "SI": 5,
+    "NO": 2,
+    "AUS": 1
    },
    "bloque": "oficialismo",
-   "lado": null,
+   "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 3.0
   },
   {
    "id": "d1210",
-   "x": -0.205838674,
-   "y": -2.1018504795,
-   "dist_linea": -0.79610857,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.6383080534,
+   "y": -1.9031564283,
+   "dist_linea": -1.2432361682,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.75,
+   "con_oficialismo": 0.5555555556,
    "votos": {
-    "SI": 10,
-    "NO": 2
+    "SI": 14,
+    "NO": 3,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 58.0
+   "rank_bisagra": 89.0
   },
   {
    "id": "d1209",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 9,
-   "n_registrado": 12,
-   "asistencia": 0.75,
+   "x": -1.0926789637,
+   "y": -2.2072899176,
+   "dist_linea": -1.7355123728,
+   "n_emitidos": 16,
+   "n_registrado": 19,
+   "asistencia": 0.8421052632,
    "lealtad": 1.0,
-   "con_oficialismo": 0.7777777778,
+   "con_oficialismo": 0.5333333333,
    "votos": {
-    "SI": 9,
-    "AUS": 3
-   },
-   "bloque": "oposicion",
-   "lado": null,
-   "cruzado": false,
-   "rank_bisagra": null
-  },
-  {
-   "id": "d1208",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
-   "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
-   "votos": {
-    "SI": 12
+    "SI": 13,
+    "AUS": 3,
+    "NO": 1,
+    "ABS": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 102.0
+   "rank_bisagra": 126.0
   },
   {
-   "id": "d1207",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "id": "d1208",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
@@ -2362,204 +2463,230 @@
    "rank_bisagra": 103.0
   },
   {
-   "id": "d1206",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
+   "id": "d1207",
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
+   "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.6363636364,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 11,
-    "AUS": 1
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
-   "lado": null,
+   "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 104.0
+  },
+  {
+   "id": "d1206",
+   "x": -0.3674893687,
+   "y": -0.4247331555,
+   "dist_linea": -0.7692963209,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 0.9411764706,
+   "con_oficialismo": 0.6470588235,
+   "votos": {
+    "SI": 15,
+    "AUS": 2,
+    "ABS": 1,
+    "NO": 1
+   },
+   "bloque": "oposicion",
+   "lado": "oposicion",
+   "cruzado": false,
+   "rank_bisagra": 27.0
   },
   {
    "id": "d1205",
-   "x": -0.9604408291,
-   "y": -0.4746485062,
-   "dist_linea": -1.5507107251,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -0.3371166134,
+   "y": -0.9217445435,
+   "dist_linea": -0.8083897672,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.6111111111,
    "votos": {
-    "SI": 11,
-    "ABS": 1
+    "SI": 16,
+    "ABS": 1,
+    "NO": 2
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 74.0
+   "rank_bisagra": 66.0
   },
   {
    "id": "d1204",
-   "x": -0.9703739885,
-   "y": 0.934024346,
-   "dist_linea": -1.5606438845,
-   "n_emitidos": 12,
-   "n_registrado": 12,
+   "x": -1.2622211501,
+   "y": 1.1028852757,
+   "dist_linea": -1.4427172399,
+   "n_emitidos": 19,
+   "n_registrado": 19,
    "asistencia": 1.0,
    "lealtad": 1.0,
-   "con_oficialismo": 0.5833333333,
+   "con_oficialismo": 0.5,
    "votos": {
-    "SI": 12
+    "SI": 15,
+    "NO": 4
    },
    "bloque": "oposicion",
    "lado": "oposicion",
    "cruzado": false,
-   "rank_bisagra": 88.0
+   "rank_bisagra": 115.0
   },
   {
    "id": "d1203",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
-   },
-   "bloque": "oficialismo",
-   "lado": "oficialismo",
-   "cruzado": false,
-   "rank_bisagra": 43.0
-  },
-  {
-   "id": "d1202",
-   "x": null,
-   "y": null,
-   "dist_linea": null,
-   "n_emitidos": 11,
-   "n_registrado": 12,
-   "asistencia": 0.9166666667,
-   "lealtad": 1.0,
-   "con_oficialismo": 1.0,
-   "votos": {
-    "NO": 4,
-    "SI": 7,
+    "NO": 8,
+    "SI": 10,
     "AUS": 1
    },
    "bloque": "oficialismo",
-   "lado": null,
+   "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": null
+   "rank_bisagra": 51.0
+  },
+  {
+   "id": "d1202",
+   "x": 1.0925056826,
+   "y": 0.6886199542,
+   "dist_linea": 0.8314389637,
+   "n_emitidos": 17,
+   "n_registrado": 19,
+   "asistencia": 0.8947368421,
+   "lealtad": 1.0,
+   "con_oficialismo": 1.0,
+   "votos": {
+    "NO": 7,
+    "SI": 10,
+    "AUS": 2
+   },
+   "bloque": "oficialismo",
+   "lado": "oficialismo",
+   "cruzado": false,
+   "rank_bisagra": 69.0
   },
   {
    "id": "d1201",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 1.0
+   "rank_bisagra": 30.0
   },
   {
    "id": "d1200",
-   "x": 1.2013148203,
-   "y": 0.3081382425,
-   "dist_linea": 0.6110449243,
-   "n_emitidos": 12,
-   "n_registrado": 12,
-   "asistencia": 1.0,
+   "x": 1.0779650536,
+   "y": 0.4758180303,
+   "dist_linea": 0.7874235394,
+   "n_emitidos": 18,
+   "n_registrado": 19,
+   "asistencia": 0.9473684211,
    "lealtad": 1.0,
    "con_oficialismo": 1.0,
    "votos": {
-    "NO": 5,
-    "SI": 7
+    "NO": 8,
+    "SI": 10,
+    "AUS": 1
    },
    "bloque": "oficialismo",
    "lado": "oficialismo",
    "cruzado": false,
-   "rank_bisagra": 42.0
+   "rank_bisagra": 52.0
   }
  ],
  "partidos": [
   {
    "grupo": "AN",
-   "n": 7,
-   "x": -0.9604408291409203,
-   "y": -0.4746485062450359,
-   "x_mean": -0.961859851910537,
-   "y_mean": -0.2734095273568756,
-   "sx": 0.0034758817189516657,
-   "sy": 0.49293281463470995,
-   "lealtad": 0.988095238095238
+   "n": 9,
+   "x": -0.33711661336685345,
+   "y": -0.6531484622219035,
+   "x_mean": -0.5678367085815643,
+   "y_mean": -0.4098451468581333,
+   "sx": 0.4076961500216909,
+   "sy": 0.6473904247361357,
+   "lealtad": 0.9242202729044833
   },
   {
    "grupo": "FP",
-   "n": 31,
-   "x": 1.2013148203361828,
-   "y": 0.30813824249748484,
-   "x_mean": 1.2013148203361825,
-   "y_mean": 0.308138242497485,
-   "sx": 1.2977987711744058e-15,
-   "sy": 6.631426285145945e-16,
-   "lealtad": 1.0
+   "n": 41,
+   "x": 1.0779650535808087,
+   "y": 0.47581803029604847,
+   "x_mean": 1.0586187527882198,
+   "y_mean": 0.49214031742418674,
+   "sx": 0.057536885118617646,
+   "sy": 0.14282071422462858,
+   "lealtad": 0.9894832471051984
   },
   {
    "grupo": "JP",
-   "n": 31,
-   "x": -0.9703739885282368,
-   "y": 0.9340243459720899,
-   "x_mean": -0.9693225558455572,
-   "y_mean": 0.9077742319345988,
-   "sx": 0.0057589339800176295,
-   "sy": 0.14377779595416817,
-   "lealtad": 0.9973118279569891
+   "n": 32,
+   "x": -1.262221150053061,
+   "y": 1.1028852756836807,
+   "x_mean": -1.224586624992802,
+   "y_mean": 1.0188944269016535,
+   "sx": 0.1929258755153006,
+   "sy": 0.29984165908186855,
+   "lealtad": 0.9895833333333333
   },
   {
    "grupo": "PBG",
-   "n": 16,
-   "x": -0.20583867404344064,
-   "y": -2.1018504795014334,
-   "x_mean": -0.1942721961864701,
-   "y_mean": -2.121737944667087,
-   "sx": 0.04479677611432404,
-   "sy": 0.0770238213848578,
-   "lealtad": 0.9947916666666666
+   "n": 17,
+   "x": -0.6383080534320945,
+   "y": -1.903156428287751,
+   "x_mean": -0.6437367812460671,
+   "y_mean": -1.8843092616486086,
+   "sx": 0.12982869787328027,
+   "sy": 0.21031837988020138,
+   "lealtad": 0.9969040247678018
   },
   {
    "grupo": "PCO",
-   "n": 11,
-   "x": -0.9604408291409202,
-   "y": -0.47464850624503657,
-   "x_mean": -0.9604408291409201,
-   "y_mean": -0.4746485062450367,
-   "sx": 1.980377162293589e-16,
-   "sy": 9.210046586876194e-16,
-   "lealtad": 1.0
+   "n": 12,
+   "x": -0.3371166133668533,
+   "y": -0.9217445435224436,
+   "x_mean": -0.35579550394679527,
+   "y_mean": -0.842421495017518,
+   "sx": 0.0870709223439302,
+   "sy": 0.17873800372926857,
+   "lealtad": 0.9731682146542827
   },
   {
    "grupo": "RP",
-   "n": 11,
-   "x": 1.2013148203361819,
-   "y": 0.3081382424974848,
-   "x_mean": 1.2013148203361819,
-   "y_mean": 0.3081382424974847,
-   "sx": 3.7872055066332145e-16,
-   "sy": 1.2299310667862546e-16,
+   "n": 15,
+   "x": 1.1079801085706373,
+   "y": -0.40648818204233333,
+   "x_mean": 1.073800322748761,
+   "y_mean": -0.46343019768565374,
+   "sx": 0.08288405144211669,
+   "sy": 0.2030574202995393,
    "lealtad": 1.0
   }
  ],
@@ -2568,6 +2695,11 @@
   "ASISTENCIA-PLENO-DIPUTADOS-20260910-matutina_vb:p005",
   "ASISTENCIA-PLENO-DIPUTADOS-20260910-vespertina_vb:p003",
   "ASISTENCIA-PLENO-DIPUTADOS-20260910-vespertina_vb:p005",
-  "ASISTENCIA-PLENO-DIPUTADOS-20260910-vespertina_vb:p006"
+  "ASISTENCIA-PLENO-DIPUTADOS-20260910-vespertina_vb:p006",
+  "ASISTENCIA-PLENO-DIPUTADOS-20261006-vbR:p005",
+  "ASISTENCIA-PLENO-DIPUTADOS-20261006-vbR:p007",
+  "ASISTENCIA-PLENO-DIPUTADOS-20261006-vbR:p011",
+  "ASISTENCIA-PLENO-DIPUTADOS-20261006-vbR:p013",
+  "ASISTENCIA-PLENO-DIPUTADOS-20261006-vbR:p015"
  ]
 }
