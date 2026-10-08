@@ -17,6 +17,10 @@ Votaciones_y_Asistencias_…) y un archivo llamado sólo «ASISTENCIA» puede tr
 las votaciones. Si la celda trae sólo asistencia (p. ej. las sesiones del Senado
 del 12 y 18/08/2026), eso lo resuelve el parser, no este paso.
 
+Los archivos marcados PROVISIONAL en el nombre se omiten: son versiones sin
+visar que pueden no cuadrar con sus propios cuadros. Cuando la cámara sube la
+versión final (con otro nombre), entra sola en la siguiente corrida.
+
 Todos los años legislativos vienen en el HTML estático: cada <tr> lleva
 `data-periodo="2026-2027"` y las pestañas de año sólo filtran del lado del
 cliente. `--periodo` filtra igual.
@@ -138,6 +142,11 @@ def main():
                 continue
             for url in s["urls"]:
                 nombre = urllib.parse.unquote(url.rsplit("/", 1)[-1])
+                if "PROVISIONAL" in nombre.upper():
+                    # Versión sin visar (Senado 07/10/2026): no cuadra con sus
+                    # propios cuadros. Se espera a que publiquen la final.
+                    print(f"  {tag}  {nombre}  (provisional, se omite)")
+                    continue
                 dest = PDF_DIR / camara / nombre
                 if args.dry_run:
                     print(f"  {tag}  {nombre}")
