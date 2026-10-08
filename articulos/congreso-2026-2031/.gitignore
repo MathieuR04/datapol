@@ -7,3 +7,5 @@ __pycache__/
 # se usa localmente, no se publica.
 data/paginas.csv
 data/revisar.csv
+# Caché cruda del portal de proyectos: se regenera con scrape_proyectos.py
+data/proyectos/
