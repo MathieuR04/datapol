@@ -10,9 +10,11 @@ los autovectores 2 y 3 son las coordenadas, y λ₂ es un índice de polarizaci�
 clásico y PCA del voto; ajuste por clasificación correcta en 1D y 2D.
 
 Novedades 2026:
-* Filtros adaptados a pocas votaciones: se descartan las «unánimes» (minoría
-  < max(3, 2.5% de los votos emitidos)) y los miembros con menos de
-  max(5, 50% de las votaciones que quedan) votos emitidos.
+* Filtros adaptados a pocas votaciones: se descartan las «unánimes»: una votación
+  es disputada si al menos max(3, 2.5% de los votos emitidos) votaron distinto
+  de la opción mayoritaria (SI, NO o ABS; p. ej. 110 SI + 8 ABS es disputada) y los miembros con menos de
+  MIN_VOTOS (5) votos emitidos en las que quedan. Umbral fijo: no sube con
+  el número de votaciones, para no sacar del mapa a quien ya votó bastante.
 * Signo: dim 1 orientada para que el oficialismo (config.OFICIALISMO) quede
   en positivo; dim 2 para que la bancada de oposición más grande quede en
   positivo. Es una convención de etiquetas.
@@ -41,6 +43,7 @@ from config import OFICIALISMO, OPOSICION
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "data"
 EMITIDOS = ("SI", "NO", "ABS")
+MIN_VOTOS = 5   # votos emitidos en disputadas para entrar al mapa
 AUSENCIAS = ("AUS", "LIC", "SUS", "SINRES")
 
 
@@ -138,10 +141,13 @@ def estimate(camara: str, votos: pd.DataFrame, roster: list[dict], paginas: pd.D
     cast = V_all.where(V_all.isin(EMITIDOS))
     n_cast = cast.notna().sum()
     si, no = (cast == "SI").sum(), (cast == "NO").sum()
-    minority = np.minimum(si, no) + (cast == "ABS").sum() * 0   # ABS no cuenta como minoría
+    # Disidencia = quienes no votaron la opción mayoritaria (SI, NO o ABS):
+    # 110 SI + 8 ABS cuenta 8. Las abstenciones sí cuentan como disidencia.
+    ab = (cast == "ABS").sum()
+    minority = n_cast - np.maximum(np.maximum(si, no), ab)
     keep_v = minority[minority >= np.maximum(3, 0.025 * n_cast)].index
     V = cast[keep_v]
-    min_cast = max(5, int(0.5 * len(keep_v)))
+    min_cast = MIN_VOTOS
     per_leg = V.notna().sum(axis=1)
     keep_l = per_leg[per_leg >= min_cast].index
     V = V.loc[keep_l]
