@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Si el Perú votara como EE.UU. — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Si el Perú votara como Estados Unidos">
+  <meta property="og:description" content="Los votos de abril de 2026, contados con las reglas de la Cámara de Representantes de EE.UU.: 435 distritos de un solo escaño, y en cada uno gana el que saca más votos.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/sistemas-electorales/">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    .article { max-width: 760px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+    .wide { width: min(1080px, calc(100vw - 2rem)); position: relative; left: 50%; transform: translateX(-50%); }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.05em;
+      color: var(--text); margin: 2.2em 0 0.7em; padding-top: 0.2em; border-top: 1.5px solid var(--border);
+    }
+    .article-body h3 { font-size: 15px; font-weight: 700; margin: 1.8em 0 0.5em; }
+
+    .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.8em 0; }
+    .stat-box { background: var(--text); color: var(--sand); padding: 0.9rem 1rem; border-radius: 3px; text-align: center; }
+    .stat-box-num { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 0.04em; line-height: 1; color: #fff; }
+    .stat-box-label { font-size: 10px; line-height: 1.45; opacity: 0.75; margin-top: 0.3rem; }
+    .highlight-box { border-left: 3px solid var(--terra); padding: 0.5rem 0 0.5rem 1.1rem; margin: 1.6em 0; background: rgba(196,96,58,0.06); border-radius: 0 3px 3px 0; }
+    .highlight-box p { margin-bottom: 0; font-size: 14px; line-height: 1.7; }
+    figure { margin: 1.8em 0 2em; }
+    .fig-title { font-size: 13px; font-weight: 700; margin-bottom: 0.2rem; }
+    .fig-sub { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-bottom: 0.8rem; }
+    figcaption { font-size: 10.5px; color: var(--muted); line-height: 1.5; margin-top: 0.6rem; }
+    svg text { font-family: 'Inter', -apple-system, sans-serif; }
+
+    .hemis { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.5rem; align-items: end; }
+    .hemi h4 { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-top: 0.3rem; }
+    .hemi svg { width: 100%; height: auto; display: block; }
+    .hemi .tot { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 34px; fill: var(--text); }
+    .seat { stroke: var(--bg); stroke-width: 0.8; }
+    .seat.duda { fill-opacity: 0.45; }
+    .dim .seat:not(.on) { opacity: 0.15; }
+
+    table.t { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+    table.t th { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 0.35rem 0.4rem; border-bottom: 1.5px solid var(--text); }
+    table.t th:first-child, table.t td:first-child { text-align: left; }
+    table.t td { padding: 0.32rem 0.4rem; border-bottom: 1px solid var(--sand); text-align: right; }
+    table.t tr.p { cursor: pointer; }
+    table.t tr.p:hover td { background: rgba(255,255,255,0.35); }
+    table.t i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.45rem; vertical-align: -1px; }
+    .bar { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; vertical-align: 0; margin-left: 0.3rem; }
+    .muted { color: var(--muted); }
+
+    #mapa { height: 620px; background: #ebe4d8; border-radius: 3px; }
+    .leaflet-container { font-family: 'Inter', sans-serif; background: #ebe4d8; }
+    .map-ctrl { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+    .map-ctrl button { font: 600 10px 'Inter', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.4rem 0.7rem; border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 3px; cursor: pointer; }
+    .map-ctrl button.on { background: var(--text); color: #fff; border-color: var(--text); }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; font-size: 11px; color: var(--muted); margin: 0.6rem 0; }
+    .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.35rem; vertical-align: -1px; }
+    #tip { position: fixed; pointer-events: none; background: var(--text); color: #fff; font-size: 11.5px; line-height: 1.45; padding: 0.5rem 0.65rem; border-radius: 3px; max-width: 280px; z-index: 1000; display: none; }
+    #tip b { font-weight: 600; }
+    #tip .k { opacity: 0.7; font-size: 10.5px; }
+    .pex { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.4rem; margin-top: 0.6rem; }
+    .pex div { font-size: 11px; padding: 0.4rem 0.5rem; border-left: 4px solid; background: rgba(255,255,255,0.3); line-height: 1.35; }
+    .reparto { columns: 3; column-gap: 1.5rem; font-size: 12px; }
+    .reparto div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--sand); padding: 0.2rem 0; break-inside: avoid; font-variant-numeric: tabular-nums; }
+    .strip svg { width: 100%; height: auto; display: block; }
+    .strip .lbl { font-size: 11px; font-weight: 600; fill: var(--text); }
+    .strip .sub { font-size: 9.5px; fill: var(--muted); }
+    .strip .ax { font-size: 9.5px; fill: var(--muted); }
+    .strip .grid { stroke: var(--sand); stroke-width: 1; }
+    .strip .med { stroke: var(--text); stroke-width: 2; }
+    .strip circle { stroke: var(--bg); stroke-width: 0.6; }
+    .strip circle:hover { stroke: var(--text); stroke-width: 1.5; }
+    .scroll { overflow-x: auto; }
+    table.z td.c { text-align: center; white-space: nowrap; }
+    table.z th { text-align: center; white-space: normal; line-height: 1.25; }
+    table.z td.c small { color: var(--muted); font-size: 10px; margin-left: 0.2rem; }
+    table.z td.c b { font-weight: 600; }
+    table.f td { white-space: nowrap; }
+    table.f td.n { white-space: normal; text-align: left; font-size: 11px; color: var(--muted); min-width: 150px; }
+    .footnotes { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.6; color: var(--muted); }
+    .footnotes p { margin-bottom: 0.6em; }
+    .footnotes h4 { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); margin: 1.2em 0 0.4em; }
+    .article-footer { margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 11px; color: var(--muted); }
+    .article-footer a { color: var(--muted); text-decoration: none; font-weight: 600; letter-spacing: 0.06em; font-size: 10px; text-transform: uppercase; }
+    .article-footer a:hover { color: var(--text); }
+
+    @media (max-width: 760px) { .hemis { grid-template-columns: 1fr; } .reparto { columns: 2; } }
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 32px; }
+      .article-body { font-size: 14px; }
+      .stats-strip { grid-template-columns: 1fr; }
+      #mapa { height: 480px; }
+      .reparto { columns: 1; }
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-26RZM28VBS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-26RZM28VBS');
+  </script>
+</head>
+<body>
+
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.850 3.370-1.850 3.601 0 4.267 2.370 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <article class="article">
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+    <div class="article-tag">Sistemas electorales · EE.UU. y Perú 2026</div>
+    <h1 class="article-title">Si el Perú votara como Estados Unidos</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span id="fecha"></span>
+    </div>
+
+    <div class="article-body">
+      <p>Estados Unidos elige su Cámara de Representantes con uno de los sistemas más simples del mundo: el país se parte en <strong>435 distritos de un solo escaño</strong>, todos con la misma población, y en cada uno gana quien saca más votos, aunque sea por uno. No hay listas, ni cifra repartidora, ni valla, ni segunda vuelta. Es la <strong>mayoría simple</strong>, lo que en inglés llaman <em>first-past-the-post</em>: el primero que cruza la meta se lleva todo.</p>
+      <p>El Perú elige a sus diputados de la forma opuesta: listas en 27 circunscripciones y escaños repartidos en proporción a los votos, con cifra repartidora y valla. ¿Qué Cámara habría salido de los votos de abril de 2026 con las reglas de EE.UU.? Copiamos el sistema estadounidense pieza por pieza: <strong>435 distritos</strong>, repartidos entre las circunscripciones como EE.UU. reparte escaños entre sus estados, trazados con igual número de electores y contados por mayoría simple.</p>
+      <p id="p-fuente"></p>
+
+      <div class="stats-strip">
+        <div class="stat-box"><div class="stat-box-num" id="s1"></div><div class="stat-box-label" id="s1l"></div></div>
+        <div class="stat-box"><div class="stat-box-num" id="s2"></div><div class="stat-box-label" id="s2l"></div></div>
+        <div class="stat-box"><div class="stat-box-num" id="s3"></div><div class="stat-box-label" id="s3l"></div></div>
+      </div>
+
+      <h2>La Cámara que saldría con reglas de EE.UU.</h2>
+      <p id="p-congreso"></p>
+      <figure class="wide">
+        <div class="fig-title">Cámara de Diputados con reglas de EE.UU. (435 distritos) frente a la cámara real de 130</div>
+        <div class="fig-sub">Cada punto es un escaño. Pasa el cursor por un partido en la tabla para resaltarlo.</div>
+        <div class="hemis">
+          <div class="hemi"><svg id="h-us" viewBox="0 0 520 280"></svg><h4>Reglas de EE.UU. · mayoría simple en 435 distritos</h4></div>
+          <div class="hemi"><svg id="h-real" viewBox="0 0 520 280"></svg><h4>Real · 130 diputados (cifra repartidora y valla)</h4></div>
+        </div>
+      </figure>
+      <figure>
+        <table class="t" id="tabla"></table>
+        <figcaption id="cap-tabla"></figcaption>
+      </figure>
+
+      <h2>El mapa</h2>
+      <p id="p-mapa"></p>
+      <figure class="wide">
+        <div class="fig-title">Ganador por distrito</div>
+        <div class="fig-sub">435 distritos de aproximadamente igual número de electores. Pasa el cursor por un distrito para ver qué lo compone y por cuánto se gana.</div>
+        <div class="map-ctrl" id="ctrl">
+          <button data-v="peru" class="on">Perú</button>
+          <button data-v="lima">Lima y Callao</button>
+          <button data-v="arequipa">Arequipa</button>
+          <button data-v="trujillo">Trujillo</button>
+          <button data-v="chiclayo">Chiclayo</button>
+          <button data-v="piura">Piura</button>
+          <button data-v="cusco">Cusco</button>
+          <button data-v="huancayo">Huancayo</button>
+          <button data-v="juliaca">Juliaca</button>
+          <button data-v="ayacucho">Ayacucho</button>
+          <button data-v="iquitos">Iquitos</button>
+        </div>
+        <div id="mapa"></div>
+        <div class="legend" id="leyenda"></div>
+        <div class="fig-title" style="margin-top:1rem">Peruanos en el extranjero</div>
+        <div class="fig-sub">EE.UU. no tiene distritos para sus ciudadanos en el exterior; acá se mantienen, nombrados por las regiones que los componen. Pasa el cursor para ver los países.</div>
+        <div class="pex" id="pex"></div>
+        <figcaption>Líneas gruesas: los límites de las circunscripciones. Cada distrito se nombra por los distritos o provincias que lo componen. Los distritos se dibujan uniendo celdas alrededor de cada local de votación dentro de los límites distritales, con los bordes suavizados; donde un local tuvo que repartirse por mesas entre dos distritos, su área se pinta en uno solo.</figcaption>
+      </figure>
+
+      <h2>Cómo copiamos el sistema de EE.UU.</h2>
+      <p><strong>Votos.</strong> <span id="m-fuente"></span></p>
+      <p><strong>Reparto.</strong> Primero, los peruanos en el extranjero: reciben escaños según su parte de los votos válidos (<span id="pex-pct"></span>, es decir <span id="pex-n"></span> escaños), porque votan mucho menos de lo que pesan en el padrón. Los <span id="nac-n"></span> restantes se reparten entre las 26 circunscripciones del territorio (24 departamentos, con Lima partida en Lima Metropolitana y Lima Provincias, más Callao) con el método de Huntington-Hill, el mismo con que EE.UU. reparte sus 435 escaños entre los 50 estados tras cada censo, con un mínimo de un escaño. Las circunscripciones hacen de estados; la diferencia es que allá se reparte por población y acá por electores hábiles. Cada distrito del territorio tiene en promedio <span id="cuota"></span> electores.</p>
+      <div class="reparto" id="reparto"></div>
+      <p style="margin-top:1.2em"><strong>Trazado.</strong> En EE.UU. cada estado dibuja sus propios distritos, y muchas veces lo hace a favor del partido que controla la legislatura: es el <em>gerrymandering</em>. Acá, dentro de cada circunscripción, los distritos se dibujan sin mirar un solo voto. La unidad es el local de votación: alrededor de cada uno se dibuja una celda dentro de su distrito, y dos locales son vecinos si sus celdas se tocan. Cada circunscripción se parte en dos mitades con la mitad de los escaños cada una, una y otra vez, hasta llegar a distritos de un escaño. Cada corte se hace sobre un árbol que recorre el mapa, lo que garantiza que las dos mitades sean contiguas. Entre muchos árboles posibles se elige el corte que parte menos provincias y distritos y que deja mitades más compactas.</p>
+      <p>Como en EE.UU., donde la Corte Suprema exige distritos de igual población desde los años sesenta, la igualdad es estricta: todos los distritos quedan dentro de <span id="desv"></span> de la cuota de su circunscripción. Para llegar ahí, algunos locales grandes se reparten por mesas entre dos distritos.</p>
+
+      <h2>Quién gana dónde</h2>
+      <p id="a-ganador"></p>
+      <figure class="wide strip">
+        <div class="fig-title">El % de cada partido en los 435 distritos</div>
+        <div class="fig-sub">Cada punto es un distrito: lleno donde el partido gana, tenue donde pierde. La raya negra marca su % mediano. Pasa el cursor por un punto para ver el distrito.</div>
+        <svg id="strip"></svg>
+      </figure>
+      <div id="a-partidos"></div>
+      <figure class="wide">
+        <div class="fig-title">Mejor y peor distrito de cada partido</div>
+        <div class="fig-sub">% de los votos válidos en el distrito. «Cuando gana»: % mediano del partido en los distritos que gana.</div>
+        <div class="scroll"><table class="t f" id="t-partidos"></table></div>
+      </figure>
+      <figure class="wide">
+        <div class="fig-title">Votos y escaños por zona</div>
+        <div class="fig-sub">% de los votos válidos del partido en cada zona y, entre paréntesis, los distritos que gana ahí. Bajo cada zona, cuántos distritos tiene.</div>
+        <div class="scroll"><table class="t z" id="t-zonas"></table></div>
+        <figcaption>Zonas a grandes rasgos: región natural por departamento, con excepciones por provincia (las provincias costeras de Áncash y Arequipa van a la costa; las altoandinas de Piura, La Libertad y Lima, a la sierra; La Convención, Chanchamayo, Satipo, Jaén y otras, a la selva). «Ciudades»: distritos con al menos 150 electores por km².</figcaption>
+      </figure>
+
+      <div class="footnotes">
+        <h4>Datos y advertencias</h4>
+        <p id="nota-pend"></p>
+        <p>Votos: actas de la ONPE, mesa por mesa. Electores y locales: padrón de mesas de la EG 2026. Ubicación de los locales: geocodificación propia (cruce con el padrón de instituciones educativas y correcciones manuales); un local cuya coordenada cae fuera de su distrito se ubica dentro de él.</p>
+        <p>Es un ejercicio mecánico: los votantes y los partidos se habrían comportado distinto con otras reglas (candidatos únicos por distrito, alianzas, voto estratégico). Lo que muestra es cómo las mismas preferencias se traducen en escaños bajo cada sistema.</p>
+      </div>
+    </div>
+  </article>
+  <div id="tip"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script>
+  const $ = s => document.querySelector(s);
+  const fmt = n => Math.round(n).toLocaleString('es-PE');
+  // 'MADRE DE DIOS' → 'Madre de Dios'
+  const bonito = x => x.toLowerCase().split(' ').map((w, i) => i && ['de', 'del', 'la', 'las', 'los', 'el', 'y', 'en'].includes(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const pct = (x, d = 1) => (100 * x).toFixed(d).replace('.', ',') + '%';
+  // Izquierda → derecha, a grandes rasgos; el resto al centro por votos.
+  const ORDEN = ['00000010','00000002','00000016','00000014','00000023','00000032','00000037','00000001','00000020','00000035','00000008'];
+  const tip = $('#tip');
+  function muestra(e, html) { tip.innerHTML = html; tip.style.display = 'block';
+    const x = Math.min(e.clientX + 14, innerWidth - 290); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; }
+  function oculta() { tip.style.display = 'none'; }
+
+  function hemiciclo(svg, asientos, total) {
+    // Filas con escaños proporcionales al radio: mismo tamaño de punto en todas.
+    const cx = 260, cy = 262, R1 = 70, R2 = 245;
+    const filas = Math.max(3, Math.round(Math.sqrt(total / 4.2)));
+    const radios = Array.from({length: filas}, (_, i) => R1 + (R2 - R1) * i / (filas - 1));
+    const suma = radios.reduce((a, b) => a + b, 0);
+    const por = radios.map(r => Math.round(total * r / suma));
+    por[filas - 1] += total - por.reduce((a, b) => a + b, 0);
+    const pos = [];
+    radios.forEach((r, i) => { for (let k = 0; k < por[i]; k++) {
+      const ang = Math.PI * (1 - (k + 0.5) / por[i]);
+      pos.push({x: cx + r * Math.cos(ang), y: cy - r * Math.sin(ang), ang}); } });
+    pos.sort((a, b) => b.ang - a.ang);
+    const rad = Math.min(Math.PI * R1 / por[0], (R2 - R1) / (filas - 1)) * 0.45;
+    svg.innerHTML = pos.map((p, i) => { const s = asientos[i]; return s ?
+      `<circle class="seat${s.duda ? ' duda' : ''}" data-c="${s.c}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${rad.toFixed(2)}" fill="${s.color}"></circle>` : ''; }).join('') +
+      `<text class="tot" x="${cx}" y="${cy - 4}" text-anchor="middle">${total}</text>`;
+  }
+
+  Promise.all([fetch('web/data.json').then(r => r.json()), fetch('web/distritos_us.topojson').then(r => r.json()),
+               fetch('web/circunscripciones.geojson').then(r => r.json())]).then(([D, T, C]) => {
+    const G = topojson.feature(T, T.objects.data);
+    // «PIURA 03 · TALARA SUR»
+    const titulo = k => { const d = D.distritos[k]; const c = d.circ.startsWith('PERUANOS') ? 'EXTRANJERO' : d.circ;
+      return `${c} ${k.split('-')[1]} · ${d.nombre.toUpperCase()}`; };
+    const P = Object.fromEntries(D.partidos.map(p => [p.codigo, p]));
+    const nombre = c => (P[c] || {}).nombre || c, color = c => (P[c] || {}).color || '#9ca3af';
+    const sigla = c => (P[c] || {}).sigla || '';
+    const conEsc = D.partidos.filter(p => p.escanos > 0 || p.real > 0);
+    const orden = [...conEsc].sort((a, b) => {
+      const ia = ORDEN.indexOf(a.codigo), ib = ORDEN.indexOf(b.codigo);
+      return (ia < 0 ? 5.5 : ia) - (ib < 0 ? 5.5 : ib); });
+    $('#fecha').textContent = 'Actualizado ' + D.generado;
+
+    // Asientos
+    const dist = Object.values(D.distritos);
+    const us = [], real = [];
+    orden.forEach(p => {
+      const mios = dist.filter(d => d.g === p.codigo);
+      mios.sort((a, b) => a.duda - b.duda).forEach(d => us.push({c: p.codigo, color: p.color, duda: d.duda}));
+      for (let i = 0; i < p.real; i++) real.push({c: p.codigo, color: p.color});
+    });
+    hemiciclo($('#h-us'), us, D.escanos);
+    hemiciclo($('#h-real'), real, 130);
+
+    // Tabla
+    const maxv = Math.max(...D.partidos.map(p => Math.max(p.pct_votos, p.escanos / D.escanos)));
+    const filas = [...D.partidos].sort((a, b) => b.escanos - a.escanos || b.votos - a.votos).filter(p => p.escanos > 0 || p.real > 0 || p.pct_votos > 0.02);
+    $('#tabla').innerHTML = '<tr><th>Partido</th><th>% votos</th><th>Escaños (435)</th><th>% escaños</th><th>Real (130)</th></tr>' +
+      filas.map(p => `<tr class="p" data-c="${p.codigo}"><td><i style="background:${p.color}"></i>${p.nombre}</td>
+        <td>${pct(p.pct_votos)}</td><td><b>${p.escanos}</b>${p.en_duda ? ` <span class="muted">(${p.en_duda} en duda)</span>` : ''}</td>
+        <td>${pct(p.escanos / D.escanos)}<span class="bar" style="width:${(60 * p.escanos / D.escanos / maxv).toFixed(1)}px;background:${p.color}"></span></td>
+        <td>${p.real || '<span class="muted">—</span>'}</td></tr>`).join('');
+    document.querySelectorAll('#tabla tr.p').forEach(tr => {
+      tr.addEventListener('mouseenter', () => { document.querySelectorAll('.hemi svg').forEach(s => { s.classList.add('dim');
+        s.querySelectorAll('.seat').forEach(c => c.classList.toggle('on', c.dataset.c === tr.dataset.c)); }); });
+      tr.addEventListener('mouseleave', () => document.querySelectorAll('.hemi svg').forEach(s => s.classList.remove('dim')));
+    });
+
+    // Cifras del texto
+    const [p1, p2, p3] = [...D.partidos].sort((a, b) => b.escanos - a.escanos);
+    $('#s1').textContent = p1.escanos; $('#s1l').textContent = `escaños de ${p1.nombre}, con ${pct(p1.pct_votos)} de los votos`;
+    $('#s2').textContent = pct(p1.escanos / D.escanos, 0); $('#s2l').textContent = `de la cámara para ${sigla(p1.codigo)}; en la real tiene ${pct(p1.real / 130, 0)}`;
+    const nconEsc = D.partidos.filter(p => p.escanos > 0).length;
+    $('#s3').textContent = nconEsc; $('#s3l').textContent = 'partidos con al menos un escaño, sin valla';
+    const mayoria = Math.floor(D.escanos / 2) + 1;
+    $('#p-congreso').innerHTML = `Con mayoría simple, <strong>${p1.nombre}</strong> se queda con <strong>${p1.escanos} de ${D.escanos}</strong> escaños (${pct(p1.escanos / D.escanos)}) con solo ${pct(p1.pct_votos)} de los votos válidos. ` +
+      (p1.escanos >= mayoria ? `Le alcanza para la mayoría absoluta (${mayoria}).` : `Le faltan ${mayoria - p1.escanos} para la mayoría absoluta (${mayoria}).`) +
+      ` Le siguen ${p2.nombre} (${p2.escanos}) y ${p3.nombre} (${p3.escanos}). El sistema premia al que gana en muchos lugares a la vez, aunque sea por poco, y borra a quien tiene votos repartidos por todo el país sin ganar en ninguna parte. Es el mismo mecanismo que en EE.UU. deja a los terceros partidos fuera de la Cámara (la «ley de Duverger»: la mayoría simple empuja hacia dos partidos).`;
+    const pex = dist.filter(d => d.circ.startsWith('PERUANOS'));
+    const ciudades = {}; dist.forEach(d => d.g && (ciudades[d.g] = (ciudades[d.g] || 0) + 1));
+    $('#p-mapa').innerHTML = `Lima Metropolitana tiene ${D.reparto.find(r => r.circ === 'LIMA METROPOLITANA').escanos} distritos; ${(() => { const r = D.reparto.filter(r => !r.circ.startsWith('PERUANOS')).sort((a, b) => a.electores - b.electores)[0]; return bonito(r.circ) + ', la circunscripción con menos electores, ' + r.escanos; })()}. Los distritos rurales son enormes porque tienen pocos electores por kilómetro cuadrado; en las ciudades, un distrito uninominal es apenas un puñado de barrios.`;
+
+    // Reparto
+    const rPex = D.reparto.find(r => r.circ.startsWith('PERUANOS')), rNac = D.reparto.filter(r => !r.circ.startsWith('PERUANOS'));
+    const nNac = rNac.reduce((a, r) => a + r.escanos, 0);
+    $('#cuota').textContent = fmt(rNac.reduce((a, r) => a + r.electores, 0) / nNac);
+    $('#pex-n').textContent = rPex.escanos; $('#nac-n').textContent = nNac;
+    $('#pex-pct').textContent = pct(D.pex_validos, 2);
+    $('#reparto').innerHTML = D.reparto.map(r => `<div><span>${bonito(r.circ)}</span><b>${r.escanos}</b></div>`).join('');
+    $('#desv').textContent = '±' + pct(Math.max(...dist.map(d => Math.abs(d.desv))), 1);
+    const PRES = D.fuente === 'presidencial';
+    $('#p-fuente').innerHTML = PRES
+      ? 'Usamos el voto de la <strong>primera vuelta presidencial de abril de 2026</strong>, mesa por mesa y con todas las actas contabilizadas, asignando cada voto al partido del candidato. Es la mejor aproximación disponible a un voto por partido: los resultados de diputados por mesa todavía tienen actas pendientes.'
+      : 'Tomamos los votos de diputados de la EG 2026, mesa por mesa, y los volvimos a contar así.';
+    $('#cap-tabla').textContent = (PRES ? '% de votos: votos válidos de la primera vuelta presidencial, por partido del candidato.' : '% de votos: votos válidos de diputados contabilizados.') + ' Real (130): composición por organización de la Cámara de Diputados elegida en 2026.';
+    $('#m-fuente').innerHTML = PRES
+      ? 'Primera vuelta presidencial, 92,766 mesas, todas contabilizadas. El voto presidencial no es igual al voto por diputados: hay voto cruzado y candidatos que arrastran más (o menos) que sus listas. Por eso la tabla compara con la cámara real, pero no es una comparación de los mismos votos.'
+      : 'Votos de diputados, mesa por mesa.';
+    if (PRES) $('#nota-pend').remove(); else
+    $('#nota-pend').innerHTML = `<strong>Actas pendientes.</strong> Este cálculo usa las actas contabilizadas en el momento de la descarga. ${pct(D.pct_pendiente)} de los electores votó en mesas cuya acta seguía en el JEE: no se imputan. Un distrito figura "en duda" cuando sus electores pendientes, con la participación del distrito, alcanzarían para voltear el margen aunque votaran todos por el segundo.`;
+
+    // Leyenda
+    $('#leyenda').innerHTML = orden.filter(p => p.escanos > 0).map(p => `<span><i style="background:${p.color}"></i>${p.nombre} · ${p.escanos}</span>`).join('');
+
+    // PEX
+    $('#pex').innerHTML = Object.entries(D.distritos).filter(([k, d]) => d.circ.startsWith('PERUANOS')).map(([k, d]) =>
+      `<div style="border-color:${color(d.g)}" title="${d.piezas.map(p => p[0]).join(', ')}"><b>${k.split('-')[1]} · ${d.nombre}</b><br>${sigla(d.g) || nombre(d.g)} ${pct(d.p1, 0)}</div>`).join('');
+
+    analisis(D, {nombre, color, sigla, titulo});
+
+    // Mapa
+    const map = L.map('mapa', {zoomSnap: 0.25, preferCanvas: true});
+    map.attributionControl.setPrefix(false);
+    // Mapa base gris claro de Esri (sin clave); los nombres van en un panel sobre los distritos.
+    const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+    L.tileLayer(ESRI + 'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16,
+      attribution: 'Mapa base &copy; Esri, HERE, Garmin, &copy; OpenStreetMap'}).addTo(map);
+    map.createPane('nombres'); map.getPane('nombres').style.zIndex = 650; map.getPane('nombres').style.pointerEvents = 'none';
+    L.tileLayer(ESRI + 'World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16, pane: 'nombres'}).addTo(map);
+    const capa = L.geoJSON(G, {
+      style: f => { const d = D.distritos[f.properties.distrito_us] || {};
+        return {fillColor: color(d.g), fillOpacity: d.duda ? 0.3 : 0.5, color: '#ffffff', weight: 0.8, opacity: 0.9}; },
+      onEachFeature: (f, l) => {
+        const k = f.properties.distrito_us, d = D.distritos[k];
+        l.on('mousemove', e => { l.setStyle({weight: 2, color: '#1a1209'});
+          const comp = d.piezas.slice(0, 5).map(p => `${p[0]}${p[3] < 0.995 ? ` <span class="k">(${pct(p[3], 0)})</span>` : ''}`).join(', ') + (d.piezas.length > 5 ? ` y ${d.piezas.length - 5} más` : '');
+          muestra(e.originalEvent, `<b>${titulo(k)}</b><br><span class="k">${comp}</span><br>
+            <span style="color:${color(d.g)}">■</span> <b>${nombre(d.g)}</b> ${pct(d.p1)}<br>
+            <span style="color:${color(d.s)}">■</span> ${nombre(d.s)} ${pct(d.p2)}<br>
+            <span class="k">Margen ${fmt(d.margen)} votos · ${fmt(d.electores)} electores${d.duda ? ` · <b>en duda</b>: ${fmt(d.pend)} electores con acta pendiente` : ''}</span>`); });
+        l.on('mouseout', () => { capa.resetStyle(l); oculta(); });
+      }}).addTo(map);
+    // Bordes de las circunscripciones, encima de todo y sin capturar el cursor.
+    L.geoJSON(C, {interactive: false, style: {fill: false, color: '#1a1209', weight: 1.6, opacity: 0.85}}).addTo(map);
+    const vistas = {peru: capa.getBounds(), lima: [[-12.52, -77.22], [-11.75, -76.75]],
+      trujillo: [[-8.2, -79.15], [-7.95, -78.9]], arequipa: [[-16.55, -71.65], [-16.28, -71.4]],
+      chiclayo: [[-6.83, -79.92], [-6.70, -79.79]], piura: [[-5.25, -80.73], [-5.12, -80.58]],
+      cusco: [[-13.58, -72.02], [-13.48, -71.87]], huancayo: [[-12.12, -75.27], [-11.99, -75.16]],
+      juliaca: [[-15.55, -70.20], [-15.45, -70.08]], ayacucho: [[-13.20, -74.26], [-13.11, -74.18]],
+      iquitos: [[-3.82, -73.32], [-3.69, -73.22]]};
+    map.fitBounds(vistas.peru);
+    // El contenedor puede no tener su ancho final al crear el mapa.
+    requestAnimationFrame(() => { map.invalidateSize(); map.fitBounds(vistas.peru); });
+    window._mapa = map;
+    document.querySelectorAll('#ctrl button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('#ctrl button').forEach(x => x.classList.toggle('on', x === b));
+      map.fitBounds(vistas[b.dataset.v]); }));
+  });
+
+  function analisis(D, {nombre, color, sigla, titulo}) {
+    const A = D.analisis, G = A.ganador, dist = D.distritos;
+    const nom = k => { const d = dist[k]; return `${d.nombre} (${d.circ.startsWith('PERUANOS') ? 'extranjero' : bonito(d.circ)})`; };
+    const P = Object.fromEntries(D.partidos.map(p => [p.codigo, p]));
+    const cods = Object.keys(A.partidos).sort((a, b) => P[b].pct_votos - P[a].pct_votos);
+    const X = c => A.partidos[c];
+    $('#a-ganador').innerHTML = `En EE.UU., con dos partidos grandes, el ganador de un distrito casi siempre pasa del 50%. En el Perú, con más de treinta candidaturas en la cédula, no: el ganador típico se lleva el distrito con <strong>${pct(G.mediana)}</strong> de los votos válidos (promedio ${pct(G.media)}). En ${G.bajo25} de los 435 distritos se gana con menos de una cuarta parte de los votos, en ${G.bajo20} con menos de un quinto, y solo en ${G.sobre50} con mayoría absoluta. El distrito ganado con menos votos es ${nom(G.min[0])}: ${sigla(dist[G.min[0]].g)} con ${pct(G.min[1])}. El más holgado, ${nom(G.max[0])}: ${sigla(dist[G.max[0]].g)} con ${pct(G.max[1])}.`;
+
+    // Tira de puntos
+    const svg = $('#strip'), W = 1000, L = 100, R = 20, H = 44, top = 22;
+    const xmax = Math.ceil(Math.max(...cods.flatMap(c => X(c).pcts)) * 10) / 10;
+    const sx = v => L + (W - L - R) * v / xmax;
+    let h = '';
+    for (let t = 0; t <= xmax + 1e-9; t += 0.1) h += `<line class="grid" x1="${sx(t)}" x2="${sx(t)}" y1="${top - 6}" y2="${top + H * cods.length}"/><text class="ax" x="${sx(t)}" y="${top - 10}" text-anchor="middle">${Math.round(100 * t)}%</text>`;
+    cods.forEach((c, i) => {
+      const y0 = top + H * i, x = X(c), col = color(c);
+      h += `<text class="lbl" x="0" y="${y0 + H / 2 - 2}">${P[c].sigla}</text><text class="sub" x="0" y="${y0 + H / 2 + 11}">${pct(P[c].pct_votos)} · ${P[c].escanos} esc.</text>`;
+      x.pcts.forEach((v, j) => { const k = A.orden[j], g = dist[k].g === c;
+        // Desplazamiento vertical fijo por distrito para que no se apilen.
+        const jit = ((j * 0.618034) % 1 - 0.5) * (H - 14);
+        h += `<circle data-k="${k}" data-c="${c}" cx="${sx(v).toFixed(1)}" cy="${(y0 + H / 2 + jit).toFixed(1)}" r="${g ? 3.4 : 2.6}" fill="${col}" fill-opacity="${g ? 0.95 : 0.16}"/>`; });
+      h += `<line class="med" x1="${sx(x.mediana)}" x2="${sx(x.mediana)}" y1="${y0 + 5}" y2="${y0 + H - 5}"/>`;
+    });
+    svg.setAttribute('viewBox', `0 0 ${W} ${top + H * cods.length + 4}`);
+    svg.innerHTML = h;
+    svg.addEventListener('mousemove', e => { const t = e.target; if (t.tagName !== 'circle') return oculta();
+      const k = t.dataset.k, c = t.dataset.c, d = dist[k], v = X(c).pcts[A.orden.indexOf(k)];
+      muestra(e, `<b>${titulo(k)}</b><br>${P[c].nombre}: <b>${pct(v)}</b>${d.g === c ? ' · gana' : `<br><span class="k">Gana ${sigla(d.g) || nombre(d.g)} con ${pct(d.p1)}</span>`}`); });
+    svg.addEventListener('mouseleave', oculta);
+
+    // Tabla de partidos
+    $('#t-partidos').innerHTML = '<tr><th>Partido</th><th>% votos</th><th>Escaños</th><th>% mediano</th><th colspan="2" style="text-align:left">Mejor distrito</th><th colspan="2" style="text-align:left">Peor distrito</th><th>Cuando gana</th><th>2.º lugar</th></tr>' +
+      cods.map(c => { const x = X(c); return `<tr><td><i style="background:${color(c)}"></i>${P[c].sigla}</td><td>${pct(P[c].pct_votos)}</td><td><b>${x.ganados}</b></td><td>${pct(x.mediana)}</td>
+        <td class="n">${nom(x.mejor[0])}</td><td><b>${pct(x.mejor[1])}</b></td><td class="n">${nom(x.peor[0])}</td><td>${pct(x.peor[1])}</td>
+        <td>${x.med_gana == null ? '<span class="muted">—</span>' : pct(x.med_gana)}</td><td>${x.segundos}</td></tr>`; }).join('');
+
+    // Tabla de zonas
+    const zmax = Math.max(...cods.flatMap(c => Object.values(X(c).zona_pct)));
+    $('#t-zonas').innerHTML = '<tr><th style="text-align:left">Partido</th>' + A.zonas.map(z => `<th>${z.replace(' · ', '<br>')}<br><span style="font-weight:400">${A.zona_n[z]}</span></th>`).join('') + '</tr>' +
+      cods.map(c => '<tr>' + `<td><i style="background:${color(c)}"></i>${P[c].sigla}</td>` + A.zonas.map(z => { const v = X(c).zona_pct[z], n = X(c).zona_esc[z];
+        return `<td class="c" style="background:color-mix(in srgb, ${color(c)} ${Math.round(55 * v / zmax)}%, transparent)">${n ? '<b>' : ''}${pct(v)}${n ? '</b>' : ''}${n ? `<small>(${n})</small>` : ''}</td>`; }).join('') + '</tr>').join('');
+
+    // Texto por partido
+    const zp = (c, z) => pct(X(c).zona_pct[z]), ze = (c, z) => X(c).zona_esc[z];
+    const circ = c => X(c).circ_gana.map(([k, n]) => `${bonito(k)} (${n})`).join(', ');
+    const ganados = (c, z) => Object.entries(dist).filter(([k, d], j) => d.g === c && (!z || A.zona[A.orden.indexOf(k)] === z)).map(([k, d]) => d.nombre);
+    const T = {
+      '00000008': c => `<strong>Fuerza Popular gana sin arrasar en casi ningún lado.</strong> Su % mediano por distrito (${pct(X(c).mediana)}) es casi su votación nacional (${pct(P[c].pct_votos)}): es un voto parejo, pero que en la costa, Lima y la selva suele alcanzar para ser la primera minoría. Así se lleva ${X(c).ganados} distritos ganando con un mediano de ${pct(X(c).med_gana)}. Donde más gana: ${circ(c)}. Su techo es ${nom(X(c).mejor[0])} con ${pct(X(c).mejor[1])}; en la sierra rural cae a ${zp(c, 'Sierra · resto')}, y su piso es ${nom(X(c).peor[0])}, con ${pct(X(c).peor[1])}.`,
+      '00000010': c => `<strong>Juntos por el Perú es lo contrario: arrasa donde gana y desaparece donde no.</strong> Su % mediano en los 435 distritos es apenas ${pct(X(c).mediana)}, pero en los ${X(c).ganados} que gana saca un mediano de ${pct(X(c).med_gana)}, el más alto de todos, con picos de ${pct(X(c).mejor[1])} en ${nom(X(c).mejor[0])}. ${ze(c, 'Sierra · resto') + ze(c, 'Selva · resto')} de sus escaños vienen de la sierra y la selva rurales, donde saca ${zp(c, 'Sierra · resto')} y ${zp(c, 'Selva · resto')}. En Lima y Callao tiene ${zp(c, 'Lima y Callao')} y ningún distrito; su peor distrito es ${nom(X(c).peor[0])}, con ${pct(X(c).peor[1])}.`,
+      '00000035': c => `<strong>Renovación Popular es un partido limeño.</strong> ${ze(c, 'Lima y Callao')} de sus ${X(c).ganados} distritos están en Lima y Callao y ${ze(c, 'Extranjero')} en el extranjero, donde es primera con ${zp(c, 'Extranjero')}. Su mejor distrito es ${nom(X(c).mejor[0])}, con ${pct(X(c).mejor[1])}; en la sierra rural saca ${zp(c, 'Sierra · resto')}.`,
+      '00000016': c => `<strong>Buen Gobierno es la gran víctima de las reglas de EE.UU.</strong> Con ${pct(P[c].pct_votos)} de los votos, cuarto a nivel nacional, se queda con ${X(c).ganados} escaños: ${pct(X(c).ganados / D.escanos)} de la Cámara. Su voto es el más parejo de los grandes: su % mediano es ${pct(X(c).mediana)} y su mejor distrito, ${nom(X(c).mejor[0])}, apenas llega a ${pct(X(c).mejor[1])}. Queda <strong>segundo en ${X(c).segundos} distritos</strong>, más que nadie: está en todas partes y no gana en casi ninguna. De sus ${X(c).ganados} escaños, ${(X(c).circ_gana.find(([k]) => k === 'AREQUIPA') || [0, 0])[1]} son de Arequipa; fuera de ahí casi no existe como ganador.`,
+      '00000014': c => `<strong>Obras repite la historia de Buen Gobierno.</strong> ${pct(P[c].pct_votos)} de los votos, segundo en ${X(c).segundos} distritos y apenas ${X(c).ganados} ganados (${circ(c)}). Su mejor distrito es ${nom(X(c).mejor[0])}, con ${pct(X(c).mejor[1])}.`,
+      '00000002': c => { const ciud = ganados(c, 'Sierra · ciudades'); return `<strong>Ahora Nación tiene un voto de ciudad andina.</strong> Saca ${zp(c, 'Sierra · ciudades')} en las ciudades de la sierra, frente a ${zp(c, 'Lima y Callao')} en Lima y Callao y ${zp(c, 'Sierra · resto')} en la sierra rural. ${ciud.length} de sus ${X(c).ganados} distritos son de ahí: ${ciud.join(', ')}. Su mejor distrito es ${nom(X(c).mejor[0])}, con ${pct(X(c).mejor[1])}; gana con un mediano de ${pct(X(c).med_gana)}, de los más bajos.`; },
+    };
+    const sinEsc = cods.filter(c => !X(c).ganados && P[c].pct_votos >= 0.05);
+    $('#a-partidos').innerHTML = cods.filter(c => T[c]).map(c => `<p>${T[c](c)}</p>`).join('') +
+      sinEsc.map(c => `<p><strong>${P[c].nombre} es el caso extremo: ${pct(P[c].pct_votos)} de los votos y ningún escaño.</strong> Su mejor distrito es ${nom(X(c).mejor[0])}, con ${pct(X(c).mejor[1])}, y queda segundo en ${X(c).segundos}. Con cifra repartidora, ese voto valdría escaños; con mayoría simple, no vale ninguno.</p>`).join('');
+  }
+  </script>
+</body>
+</html>
