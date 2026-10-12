@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Senado como en EE.UU. — Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/nav.css">
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="El Senado como en EE.UU.">
+  <meta property="og:description" content="Dos senadores por circunscripción, renovados por tercios y elegidos por mayoría simple: el Senado que habrían formado las elecciones de 2016, 2021 y 2026.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/senado-como-eeuu/">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #f5f0e8;
+      --border: #cfc0ab;
+      --text:   #1a1209;
+      --muted:  #7a6858;
+      --dim:    #b0a090;
+      --terra:  #c4603a;
+      --sand:   #d9c9b4;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; }
+
+    .article { max-width: 760px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+    .wide { width: min(1080px, calc(100vw - 2rem)); position: relative; left: 50%; transform: translateX(-50%); }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+
+    .article-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra); margin-bottom: 0.6rem; }
+    .article-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 48px; letter-spacing: 0.03em; line-height: 1.0; color: var(--text); margin-bottom: 1rem; }
+    .article-byline {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 11px; color: var(--muted);
+      padding-bottom: 1.4rem; border-bottom: 2px solid var(--text); margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+
+    .article-body { font-size: 15px; line-height: 1.82; color: var(--text); }
+    .article-body p { margin-bottom: 1.4em; }
+    .article-body strong { font-weight: 600; }
+    .article-body em { font-style: italic; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif; font-size: 26px; letter-spacing: 0.05em;
+      color: var(--text); margin: 2.2em 0 0.7em; padding-top: 0.2em; border-top: 1.5px solid var(--border);
+    }
+    .article-body h3 { font-size: 15px; font-weight: 700; margin: 1.8em 0 0.5em; }
+
+    .stats-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 1.8em 0; }
+    .stat-box { background: var(--text); color: var(--sand); padding: 0.9rem 1rem; border-radius: 3px; text-align: center; }
+    .stat-box-num { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 36px; letter-spacing: 0.04em; line-height: 1; color: #fff; }
+    .stat-box-label { font-size: 10px; line-height: 1.45; opacity: 0.75; margin-top: 0.3rem; }
+    .highlight-box { border-left: 3px solid var(--terra); padding: 0.5rem 0 0.5rem 1.1rem; margin: 1.6em 0; background: rgba(196,96,58,0.06); border-radius: 0 3px 3px 0; }
+    .highlight-box p { margin-bottom: 0; font-size: 14px; line-height: 1.7; }
+    figure { margin: 1.8em 0 2em; }
+    .fig-title { font-size: 13px; font-weight: 700; margin-bottom: 0.2rem; }
+    .fig-sub { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-bottom: 0.8rem; }
+    figcaption { font-size: 10.5px; color: var(--muted); line-height: 1.5; margin-top: 0.6rem; }
+    svg text { font-family: 'Inter', -apple-system, sans-serif; }
+
+    .hemis { display: grid; grid-template-columns: 1.35fr 1fr; gap: 1.5rem; align-items: end; }
+    .hemi h4 { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: center; margin-top: 0.3rem; }
+    .hemi svg { width: 100%; height: auto; display: block; }
+    .hemi .tot { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 34px; fill: var(--text); }
+    .seat { stroke: var(--bg); stroke-width: 0.8; }
+    .seat.duda { fill-opacity: 0.45; }
+    .dim .seat:not(.on) { opacity: 0.15; }
+
+    table.t { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+    table.t th { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 0.35rem 0.4rem; border-bottom: 1.5px solid var(--text); }
+    table.t th:first-child, table.t td:first-child { text-align: left; }
+    table.t td { padding: 0.32rem 0.4rem; border-bottom: 1px solid var(--sand); text-align: right; }
+    table.t tr.p { cursor: pointer; }
+    table.t tr.p:hover td { background: rgba(255,255,255,0.35); }
+    table.t i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.45rem; vertical-align: -1px; }
+    .bar { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; vertical-align: 0; margin-left: 0.3rem; }
+    .muted { color: var(--muted); }
+
+
+    .grilla { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    .grilla th { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 0.3rem; text-align: center; border-bottom: 1.5px solid var(--text); }
+    .grilla th:first-child, .grilla td:first-child { text-align: left; }
+    .grilla td { padding: 2px; border-bottom: 1px solid var(--sand); }
+    .grilla td.c { width: 22%; }
+    .chip { display: block; border-radius: 3px; padding: 0.22rem 0.4rem; color: #fff; font-weight: 600; font-size: 10.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chip small { font-weight: 400; opacity: 0.85; margin-left: 0.25rem; }
+    .chip.claro { color: var(--text); }
+
+    .ctrls { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.8rem; }
+    .ctrls button { font: 600 10px 'Inter', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.5rem 0.8rem; border: 1px solid var(--text); background: var(--text); color: #fff; border-radius: 3px; cursor: pointer; }
+    .ctrls button.sec { background: transparent; color: var(--text); }
+    .ctrls .estado { font-size: 11px; color: var(--muted); }
+    .ctrls .estado b { color: var(--text); }
+    .ctrls .estado.mal b { color: var(--terra); }
+    .mapas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+    .mapa h4 { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 22px; letter-spacing: 0.04em; margin-bottom: 0.1rem; }
+    .mapa .sub { font-size: 10.5px; color: var(--muted); margin-bottom: 0.3rem; }
+    .mapa svg { width: 100%; height: auto; display: block; }
+    .mapa path, .mapa rect.pex { stroke: #fff; stroke-width: 0.6; cursor: pointer; }
+    .mapa path:hover, .mapa rect.pex:hover { stroke: var(--text); stroke-width: 1.4; }
+    .mapa .pexlab { font-size: 9px; fill: var(--muted); pointer-events: none; }
+    .resultado { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; align-items: center; margin-top: 1.2rem; }
+    .hemi svg { width: 100%; height: auto; display: block; }
+    .hemi .tot { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 34px; fill: var(--text); }
+    .seat { stroke: var(--bg); stroke-width: 0.8; }
+    table.t { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+    table.t th { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); text-align: right; padding: 0.35rem 0.4rem; border-bottom: 1.5px solid var(--text); }
+    table.t th:first-child, table.t td:first-child { text-align: left; }
+    table.t td { padding: 0.3rem 0.4rem; border-bottom: 1px solid var(--sand); text-align: right; }
+    table.t i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.45rem; vertical-align: -1px; }
+    .muted { color: var(--muted); }
+    .leyenda { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; font-size: 11px; color: var(--muted); margin: 0.6rem 0; }
+    .leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.35rem; vertical-align: -1px; }
+    #tip { position: fixed; pointer-events: none; background: var(--text); color: #fff; font-size: 11.5px; line-height: 1.45; padding: 0.5rem 0.65rem; border-radius: 3px; max-width: 260px; z-index: 1000; display: none; }
+    #tip .k { opacity: 0.7; font-size: 10.5px; }
+    .footnotes { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 11px; line-height: 1.6; color: var(--muted); }
+    .footnotes p { margin-bottom: 0.6em; }
+    .footnotes h4 { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); margin: 1.2em 0 0.4em; }
+    .article-footer { margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 1rem; font-size: 11px; color: var(--muted); }
+    .article-footer a { color: var(--muted); text-decoration: none; font-weight: 600; letter-spacing: 0.06em; font-size: 10px; text-transform: uppercase; }
+    .article-footer a:hover { color: var(--text); }
+
+    @media (max-width: 760px) { .mapas { grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; } .mapa h4 { font-size: 17px; } .resultado { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) {
+      .article { padding: 1.5rem 1rem 3rem; }
+      .article-title { font-size: 32px; }
+      .article-body { font-size: 14px; }
+      .stats-strip { grid-template-columns: 1fr; }
+      .mapa .sub { display: none; }
+      .grilla { font-size: 10.5px; }
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-26RZM28VBS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-26RZM28VBS');
+  </script>
+</head>
+<body>
+
+  <div class="nav">
+    <a class="nav-brand" href="/">DATAPOL</a>
+    <div class="nav-social">
+      <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+      </a>
+      <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.850 3.370-1.850 3.601 0 4.267 2.370 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+        <span class="nav-yape-label">YAPE</span>
+      </button>
+      <div class="nav-sep" style="margin:0 0.4rem"></div>
+      <span class="nav-author">MATHIEU ROJAS</span>
+    </div>
+  </div>
+
+  <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+      <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+      <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+      <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+    </div>
+  </div>
+
+  <article class="article">
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+    <div class="article-tag">Sistemas electorales · Perú</div>
+    <h1 class="article-title">El Senado como en EE.UU.</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>Octubre 2026</span>
+    </div>
+
+    <div class="article-body">
+      <p>El Senado de Estados Unidos tiene dos senadores por estado, sin importar su población. Se eligen por mayoría simple —gana el más votado, sin valla— y no todos a la vez: cada dos años se renueva un tercio de la cámara, así que los dos senadores de un estado casi nunca se eligen en la misma elección.</p>
+      <p>¿Qué Senado tendría el Perú con esas reglas? Tomamos las 27 circunscripciones (24 departamentos con Lima partida en Lima Metropolitana y Lima Provincias, más Callao y los peruanos en el extranjero), dos senadores por cada una —54 en total— y las tres últimas elecciones: <strong>2016, 2021 y 2026</strong>. Cada circunscripción vota en dos de ellas y descansa en la tercera, de modo que cada elección renueva 18 escaños.</p>
+
+      <div class="stats-strip">
+        <div class="stat-box"><div class="stat-box-num" id="s1"></div><div class="stat-box-label" id="s1l"></div></div>
+        <div class="stat-box"><div class="stat-box-num" id="s2"></div><div class="stat-box-label">probabilidad de que Fuerza Popular tenga mayoría propia (28 de 54)</div></div>
+        <div class="stat-box"><div class="stat-box-num" id="s3"></div><div class="stat-box-label">partidos distintos ganaron al menos una circunscripción en las tres elecciones</div></div>
+      </div>
+
+      <h2>Quién ganó cada circunscripción</h2>
+      <p id="p-gan"></p>
+      <figure class="wide">
+        <div class="fig-title">Partido más votado por circunscripción</div>
+        <div class="fig-sub">2016 y 2021: elecciones al Congreso. 2026: Senado regional. Porcentaje sobre los votos válidos.</div>
+        <table class="grilla" id="grilla"></table>
+      </figure>
+
+      <h2>El Senado más probable</h2>
+      <p id="p-moda"></p>
+      <figure class="wide">
+        <div class="resultado">
+          <div class="hemi"><svg id="h-moda" viewBox="0 0 520 280"></svg></div>
+          <table class="t" id="t-moda"></table>
+        </div>
+        <figcaption id="cap-moda"></figcaption>
+      </figure>
+
+      <h2>Sortea tú las clases</h2>
+      <p>Qué circunscripción descansa en qué elección se decide al azar, como cuando el Senado de EE.UU. sorteó las clases de sus primeros senadores en 1789. Cambia el sorteo y mira cómo se mueve la cámara. También puedes hacer clic en una circunscripción de un mapa para que descanse en esa elección.</p>
+      <figure class="wide">
+        <div class="ctrls">
+          <button id="b-sortea">Sortear clases</button>
+          <button id="b-moda" class="sec">Volver al más probable</button>
+          <span class="estado" id="estado"></span>
+        </div>
+        <div class="mapas" id="mapas"></div>
+        <div class="leyenda" id="leyenda"></div>
+        <div class="resultado">
+          <div class="hemi"><svg id="h-juego" viewBox="0 0 520 280"></svg></div>
+          <table class="t" id="t-juego"></table>
+        </div>
+        <figcaption>En gris claro, las circunscripciones que descansan en esa elección: sus dos senadores salen de los otros dos años.</figcaption>
+      </figure>
+
+      <div class="footnotes">
+        <h4>Datos y supuestos</h4>
+        <p>Ganador = partido más votado de la circunscripción, sin valla. 2016: resultados del Congreso por circunscripción (Wikipedia, con las cifras de la ONPE); en Cajamarca ganó Democracia Directa (39.4%), que no obtuvo escaños por la valla. En 2016 Lima Metropolitana y los peruanos en el extranjero votaban en una sola circunscripción, ganada por Fuerza Popular: se asigna a ambas. 2021: elección al Congreso, ONPE, resultados por mesa. 2026: Senado regional, ONPE, al 100%.</p>
+        <p>«El más probable» es, para cada bancada, el número de senadores que más se repite en <span id="nsim"></span> sorteos de clases (9 circunscripciones descansan en cada elección); si esas modas no suman 54, se ajusta la bancada cuya moda está más cerca de empatar con el valor siguiente. La tabla muestra también el rango en el que cae cada partido en el 90% de los sorteos.</p>
+        <p>Es un ejercicio mecánico: con estas reglas, los partidos y votantes se habrían comportado distinto.</p>
+      </div>
+    </div>
+  </article>
+  <div id="tip"></div>
+
+  <script>
+  const $ = s => document.querySelector(s);
+  const AÑOS = ['2016', '2021', '2026'];
+  const tip = $('#tip');
+  const muestra = (e, h) => { tip.innerHTML = h; tip.style.display = 'block';
+    tip.style.left = Math.min(e.clientX + 14, innerWidth - 270) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; };
+  const oculta = () => tip.style.display = 'none';
+  const pct = x => x == null ? '' : x.toFixed(1).replace('.', ',') + '%';
+
+  function hemiciclo(svg, asientos, total) {
+    const cx = 260, cy = 262, R1 = 90, R2 = 245;
+    const filas = Math.max(3, Math.round(Math.sqrt(total / 4.2)));
+    const radios = Array.from({length: filas}, (_, i) => R1 + (R2 - R1) * i / (filas - 1));
+    const suma = radios.reduce((a, b) => a + b, 0);
+    const por = radios.map(r => Math.round(total * r / suma));
+    por[filas - 1] += total - por.reduce((a, b) => a + b, 0);
+    const pos = [];
+    radios.forEach((r, i) => { for (let k = 0; k < por[i]; k++) {
+      const ang = Math.PI * (1 - (k + 0.5) / por[i]); pos.push({x: cx + r * Math.cos(ang), y: cy - r * Math.sin(ang), ang}); } });
+    pos.sort((a, b) => b.ang - a.ang);
+    const rad = Math.min(Math.PI * R1 / por[0], (R2 - R1) / (filas - 1)) * 0.44;
+    svg.innerHTML = pos.map((p, i) => asientos[i] ? `<circle class="seat" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${rad.toFixed(1)}" fill="${asientos[i].color}"><title>${asientos[i].t}</title></circle>` : '').join('') +
+      `<text class="tot" x="${cx}" y="${cy - 4}" text-anchor="middle">${total}</text>`;
+  }
+
+  Promise.all([fetch('web/data.json').then(r => r.json()), fetch('web/circunscripciones.geojson').then(r => r.json())]).then(([D, G]) => {
+    const P = D.partidos, col = k => (P[k] || {}).color || '#999', nom = k => (P[k] || {}).nombre || k;
+    const claro = k => ['FA', 'PBG', 'AP', 'RP'].includes(k);
+    const CIRCS = Object.keys(D.circs).sort((a, b) => D.circs[a].nombre.localeCompare(D.circs[b].nombre, 'es'));
+    const sim = D.sim;
+    // Los años del sorteo guardado vienen como números; los mapas usan texto.
+    sim.descansa_moda = Object.fromEntries(Object.entries(sim.descansa_moda).map(([c, a]) => [c, String(a)]));
+
+    // Escaños de un sorteo: descansa[circ] = año.
+    function cuenta(descansa) {
+      const n = {}, quien = {};
+      CIRCS.forEach(c => AÑOS.forEach(a => { if (descansa[c] !== a) { const g = D.circs[c].anios[a].g; n[g] = (n[g] || 0) + 1; (quien[g] = quien[g] || []).push(`${D.circs[c].nombre} ${a}`); } }));
+      return {n, quien};
+    }
+    function asientos(n, quien) {
+      const out = [];
+      D.orden.forEach(k => (quien[k] || []).forEach(t => out.push({color: col(k), t: `${nom(k)} · ${t}`})));
+      return out;
+    }
+    function tabla(el, n, extra) {
+      const filas = D.orden.slice().reverse().filter(k => n[k] || (extra && extra[k])).sort((a, b) => (n[b] || 0) - (n[a] || 0));
+      el.innerHTML = `<tr><th>Partido</th><th>Senadores</th>${extra ? '<th>90% de los sorteos</th><th>Posibles</th>' : ''}</tr>` +
+        filas.map(k => `<tr><td><i style="background:${col(k)}"></i>${nom(k)}</td><td><b>${n[k] || 0}</b></td>${extra ? `<td class="muted">${extra[k].p05}–${extra[k].p95}</td><td class="muted">${sim.posibles[k]}</td>` : ''}</tr>`).join('');
+    }
+
+    // Cifras
+    const m = sim.moda;
+    $('#s1').textContent = m.FP; $('#s1l').textContent = `senadores de Fuerza Popular en el Senado más probable, de 54`;
+    $('#s2').textContent = Math.round(100 * sim.p_fp_mayoria) + '%';
+    const todos = new Set(); CIRCS.forEach(c => AÑOS.forEach(a => todos.add(D.circs[c].anios[a].g)));
+    $('#s3').textContent = todos.size;
+    $('#nsim').textContent = sim.n.toLocaleString('es-PE');
+    const gana = a => { const n = {}; CIRCS.forEach(c => { const g = D.circs[c].anios[a].g; n[g] = (n[g] || 0) + 1; }); return n; };
+    const g16 = gana('2016'), g21 = gana('2021'), g26 = gana('2026');
+    $('#p-gan').innerHTML = `En 2016 Fuerza Popular ganó ${g16.FP} de las 27 circunscripciones. En 2021 el mapa se partió: Perú Libre ganó ${g21.PL}, casi todo el sur y el centro andino, y Fuerza Popular apenas ${g21.FP}, en la costa norte. En 2026 Fuerza Popular volvió a ${g26.FP} y Juntos por el Perú se quedó con el sur (${g26.JP}). Lima Metropolitana y los peruanos en el extranjero pasaron de Fuerza Popular a Renovación Popular en 2021 y siguieron ahí en 2026.`;
+    $('#p-moda').innerHTML = `Sumando los dos años en que vota cada circunscripción y tomando, bancada por bancada, el número de escaños más probable, el Senado le da a <strong>Fuerza Popular ${m.FP} de 54 senadores</strong>, a ${28 - m.FP} de la mayoría absoluta, seguida de Perú Libre (${m.PL}) y Juntos por el Perú (${m.JP}). Fuerza Popular gana tantos escaños porque es el único partido que ganó circunscripciones en las tres elecciones: aparece en ${sim.posibles.FP} de los 81 «senadores posibles».`;
+
+    // Grilla
+    $('#grilla').innerHTML = '<tr><th>Circunscripción</th>' + AÑOS.map(a => `<th>${a}</th>`).join('') + '</tr>' +
+      CIRCS.map(c => '<tr><td>' + D.circs[c].nombre + '</td>' + AÑOS.map(a => { const r = D.circs[c].anios[a];
+        return `<td class="c"><span class="chip${claro(r.g) ? ' claro' : ''}" style="background:${col(r.g)}" title="${nom(r.g)} ${pct(r.p)}${r.s ? ' · 2º ' + nom(r.s) + ' ' + pct(r.p2) : ''}">${r.g}<small>${pct(r.p)}</small></span></td>`; }).join('') + '</tr>').join('');
+
+    // Moda
+    const cm = cuenta(sim.descansa_moda);
+    hemiciclo($('#h-moda'), asientos(cm.n, cm.quien), 54);
+    tabla($('#t-moda'), m, sim.partidos);
+    const ajuste = Object.keys(sim.modas_bancada).filter(k => sim.modas_bancada[k] !== m[k]).map(k => `${nom(k)} (${sim.modas_bancada[k]} → ${m[k]})`);
+    $('#cap-moda').textContent = `Número de senadores más probable de cada bancada en ${sim.n.toLocaleString('es-PE')} sorteos de clases.` + (ajuste.length ? ` Esas modas suman ${Object.values(sim.modas_bancada).reduce((a, b) => a + b, 0)}, no 54: se ajusta la bancada con el empate más cerrado, ${ajuste.join(', ')}.` : '') + ' «Posibles»: senadores que el partido tendría si ninguna de sus victorias cayera en un año de descanso.';
+
+    // Mapas
+    const feats = Object.fromEntries(G.features.map(f => [f.properties.circ, f]));
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    const k = Math.cos(10 * Math.PI / 180);
+    const pts = g => (g.type === 'Polygon' ? [g.coordinates] : g.coordinates);
+    G.features.forEach(f => pts(f.geometry).forEach(p => p.forEach(r => r.forEach(([x, y]) => {
+      x0 = Math.min(x0, x * k); x1 = Math.max(x1, x * k); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }))));
+    const W = 300, H = W * (y1 - y0) / (x1 - x0 + 4);
+    const px = x => ((x * k - x0 + 4) / (x1 - x0 + 4)) * W, py = y => ((y1 - y) / (y1 - y0)) * H;
+    const ruta = f => pts(f.geometry).map(p => p.map(r => 'M' + r.map(([x, y]) => px(x).toFixed(1) + ',' + py(y).toFixed(1)).join('L') + 'Z').join('')).join('');
+    const RUTAS = Object.fromEntries(Object.entries(feats).map(([c, f]) => [c, ruta(f)]));
+    const PEX = 'PERUANOS EN EL EXTRANJERO';
+    let descansa = {...sim.descansa_moda};
+
+    function pinta() {
+      $('#mapas').innerHTML = AÑOS.map(a => {
+        const vot = CIRCS.filter(c => descansa[c] !== a).length;
+        const forma = c => c === PEX ? `<rect class="pex" data-c="${c}" x="6" y="${H - 52}" width="38" height="26" rx="3"` : `<path data-c="${c}" d="${RUTAS[c]}"`;
+        return `<div class="mapa"><h4>${a}</h4><div class="sub">eligen ${vot} · descansan ${27 - vot}</div><svg viewBox="0 0 ${W} ${H.toFixed(0)}">` +
+          CIRCS.map(c => { const r = D.circs[c].anios[a], fuera = descansa[c] === a;
+            return `${forma(c)} data-a="${a}" fill="${fuera ? '#e4dccf' : col(r.g)}"></${c === PEX ? 'rect' : 'path'}>`; }).join('') +
+          `<text class="pexlab" x="25" y="${H - 56}" text-anchor="middle">Extranjero</text></svg></div>`; }).join('');
+      const vistos = new Set(); CIRCS.forEach(c => AÑOS.forEach(a => { if (descansa[c] !== a) vistos.add(D.circs[c].anios[a].g); }));
+      $('#leyenda').innerHTML = D.orden.filter(k => vistos.has(k)).map(k => `<span><i style="background:${col(k)}"></i>${nom(k)}</span>`).join('');
+      const r = cuenta(descansa);
+      hemiciclo($('#h-juego'), asientos(r.n, r.quien), 54);
+      tabla($('#t-juego'), r.n);
+      const por = AÑOS.map(a => CIRCS.filter(c => descansa[c] === a).length);
+      const ok = por.every(x => x === 9);
+      $('#estado').className = 'estado' + (ok ? '' : ' mal');
+      $('#estado').innerHTML = `Descansan: ${AÑOS.map((a, i) => `${a} <b>${por[i]}</b>`).join(' · ')}` + (ok ? '' : ' — en EE.UU. cada clase tiene el mismo tamaño (9)');
+      document.querySelectorAll('.mapa [data-c]').forEach(el => {
+        const c = el.dataset.c, a = el.dataset.a;
+        el.addEventListener('mousemove', e => { const r = D.circs[c].anios[a];
+          muestra(e, `<b>${D.circs[c].nombre} · ${a}</b><br>${descansa[c] === a ? '<span class="k">Descansa: no elige senador este año</span><br>' : ''}${nom(r.g)} ${pct(r.p)}${r.s ? `<br><span class="k">2º ${nom(r.s)} ${pct(r.p2)}</span>` : ''}<br><span class="k">Clic: que descanse en ${a}</span>`); });
+        el.addEventListener('mouseleave', oculta);
+        el.addEventListener('click', () => { descansa[c] = a; oculta(); pinta(); });
+      });
+    }
+    $('#b-sortea').addEventListener('click', () => {
+      const base = [].concat(...AÑOS.map(a => Array(9).fill(a)));
+      for (let i = base.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [base[i], base[j]] = [base[j], base[i]]; }
+      CIRCS.forEach((c, i) => descansa[c] = base[i]); pinta(); });
+    $('#b-moda').addEventListener('click', () => { descansa = {...sim.descansa_moda}; pinta(); });
+    pinta();
+  });
+  </script>
+</body>
+</html>
