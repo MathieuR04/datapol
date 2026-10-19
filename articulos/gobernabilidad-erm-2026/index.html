@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gobernar sin base | Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Gobernar sin base: Mendoza llega al Cusco con el apoyo más débil del país">
+  <meta property="og:description" content="De los 10 gobernadores electos en primera vuelta, Verónika Mendoza es la que tiene menos consejeros y alcaldes propios. Pedro Spadaro, en el Callao, es el que tiene más.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/gobernabilidad-erm-2026/">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@KhamaRamaq">
+  <meta name="twitter:title"       content="Gobernar sin base">
+  <meta name="twitter:description" content="Mendoza tiene 4 de 22 consejeros y 7 de 101 alcaldes distritales en el Cusco. Spadaro, 11 de 12 en el Callao.">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #f5f0e8;
+      --surface: #ede8df;
+      --border:  #cfc0ab;
+      --text:    #1a1209;
+      --muted:   #7a6858;
+      --dim:     #b0a090;
+      --terra:   #c4603a;
+      --steel:   #2e7bad;
+      --sand:    #d9c9b4;
+      --off:     #e2d8ca;   /* unidades que el partido del gobernador no ganó */
+      --rival:   #8a7a69;   /* mayor bloque rival en el consejo */
+      --cm:      #664082;   /* Venceremos (Mendoza); se reemplaza con el color de los datos */
+      --cs:      #3f9bbe;   /* Renovación Popular (Spadaro) */
+    }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text); background: var(--bg);
+      line-height: 1.55; -webkit-font-smoothing: antialiased;
+    }
+    .article { max-width: 760px; margin: 0 auto; padding: 2.4rem 1.1rem 4rem; }
+    .wide { width: min(980px, calc(100vw - 2.2rem)); position: relative; left: 50%; transform: translateX(-50%); }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+    .article-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--terra); margin-bottom: 0.7rem;
+    }
+    .article-title {
+      font-family: 'Bebas Neue', sans-serif; font-weight: 400;
+      font-size: clamp(2.3rem, 7vw, 3.8rem); line-height: 1.0; letter-spacing: 0.5px;
+      margin-bottom: 0.9rem;
+    }
+    .article-title .num { color: var(--terra); }
+    .article-dek { font-size: 17px; line-height: 1.5; color: var(--muted); margin-bottom: 1.1rem; }
+    .article-byline {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 0.55rem;
+      font-size: 12.5px; color: var(--muted); margin-bottom: 2.2rem;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--dim); }
+
+    .article-body p { margin-bottom: 1.05rem; font-size: 15.5px; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.5px;
+      font-size: clamp(1.5rem, 4vw, 2rem); margin: 2.6rem 0 0.8rem;
+    }
+    .article-body h2 .knum { color: var(--terra); margin-right: .35rem; }
+    .article-body a { color: var(--terra); }
+    .mendoza { color: var(--cm); font-weight: 700; }
+    .spadaro { color: var(--cs); font-weight: 700; }
+
+    /* cara a cara */
+    .duelo { margin: 1.6rem 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.1rem .7rem; }
+    .duelo-grid { display: grid; grid-template-columns: 120px 1fr 1fr; gap: 6px 16px; align-items: center; }
+    @media (max-width: 600px) { .duelo-grid { grid-template-columns: 1fr 1fr; } .duelo-k { grid-column: 1 / 3; margin-top: 6px; } .duelo-grid > .duelo-sp { display: none; } }
+    .duelo-who { display: flex; gap: 9px; align-items: center; padding-bottom: 8px; border-bottom: 2px solid; }
+    .duelo-who .avatar { width: 38px; height: 38px; }
+    .duelo-who b { font-size: 13.5px; display: block; line-height: 1.2; }
+    .duelo-who small { font-size: 11px; color: var(--muted); }
+    .duelo-k { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); line-height: 1.25; }
+    .duelo-k small { display: block; text-transform: none; letter-spacing: 0; font-weight: 400; }
+    .duelo-v { padding: 7px 0 5px; border-bottom: 1px solid var(--border); }
+    .duelo-n { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; line-height: 1; }
+    .duelo-n small { font-size: 1rem; color: var(--muted); margin-left: 2px; }
+    .duelo-n em { font-style: normal; font-family: 'Inter', sans-serif; font-size: 11px; color: var(--muted); margin-left: 6px; }
+    .duelo-bar { height: 7px; background: var(--off); border-radius: 4px; margin-top: 5px; overflow: hidden; }
+    .duelo-bar i { display: block; height: 100%; border-radius: 4px; }
+
+    .highlight-box {
+      background: var(--surface); border-left: 3px solid var(--terra); border-radius: 0 10px 10px 0;
+      padding: 0.95rem 1.1rem; margin: 1.4rem 0; font-size: 14px;
+    }
+    .highlight-box.steel { border-left-color: var(--cs); }
+    .highlight-box p { margin: 0; font-size: 14px; }
+    .highlight-box p + p { margin-top: .6rem; }
+
+    .fig { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.15rem 1.15rem 0.9rem; margin: 1.5rem 0; }
+    .fig-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .fig-sub   { font-size: 12px; color: var(--muted); margin-bottom: 0.9rem; }
+    .fig-note  { font-size: 11px; color: var(--muted); margin-top: 0.7rem; padding-top: .55rem; border-top: 1px solid var(--border); }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.45rem 1.1rem; margin: .2rem 0 .8rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: .42rem; font-size: 12px; }
+    .legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+    .legend-swatch.hatch { background: repeating-linear-gradient(45deg, var(--sand) 0 2px, var(--surface) 2px 4px); border: 1px solid var(--dim); }
+    .legend-swatch.round { border-radius: 50%; }
+
+    /* controles */
+    .controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: .9rem; }
+    .pill {
+      font: inherit; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
+      transition: background .1s, border-color .1s;
+    }
+    .pill:hover { border-color: var(--muted); }
+    .pill[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .pill.segunda { font-weight: 500; color: var(--muted); }
+    .pill.segunda[aria-pressed="true"] { color: var(--bg); }
+    .toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); cursor: pointer; user-select: none; }
+    .toggle input { accent-color: var(--text); }
+    .ctl-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+
+    /* ranking */
+    .rk-row { display: grid; grid-template-columns: 40px minmax(130px, 210px) 1fr 44px; gap: 10px; align-items: center; padding: 5px 0; cursor: pointer; border-radius: 8px; }
+    .rk-row:hover { background: var(--bg); }
+    @media (max-width: 560px) { .rk-row { grid-template-columns: 34px 1fr 40px; } .rk-row .rk-bar { grid-column: 2 / 4; } }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: center 20%; background: var(--sand); border: 2px solid var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--muted); }
+    .rk-row.is-m .avatar { border-color: var(--cm); }
+    .rk-row.is-s .avatar { border-color: var(--cs); }
+    .rk-row.is-m .rk-name, .rk-row.is-s .rk-name { font-weight: 700; }
+    @media (max-width: 560px) { .avatar { width: 34px; height: 34px; } }
+    .rk-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
+    .rk-name small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+    .rk-bar { position: relative; height: 18px; background: var(--bg); border-radius: 4px; }
+    .rk-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--dim); transition: width .5s; }
+    .rk-range { position: absolute; top: 0; bottom: 0; border-radius: 0 4px 4px 0; background: repeating-linear-gradient(45deg, var(--cs) 0 2px, transparent 2px 5px); opacity: .55; }
+    .rk-val { font-size: 13px; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+
+    /* mapa nacional */
+    .natgrid { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; align-items: center; }
+    @media (max-width: 680px) { .natgrid { grid-template-columns: 1fr; } }
+    .natmap svg { display: block; width: 100%; height: auto; max-width: 420px; margin: 0 auto; }
+    .natmap path { stroke: var(--text); stroke-width: .8; stroke-linejoin: round; cursor: pointer; transition: opacity .1s; }
+    .natmap path:hover { opacity: .75; }
+    .natmap path.sel { stroke-width: 2.2; }
+    .ramp { display: flex; height: 10px; border-radius: 5px; overflow: hidden; width: 180px; }
+    .ramp span { flex: 1; }
+    .ramp-cap { display: flex; justify-content: space-between; width: 180px; font-size: 10.5px; color: var(--muted); margin-top: 3px; }
+
+    /* hemiciclos */
+    .hemi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+    .hemi { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 10px 8px; cursor: pointer; transition: border-color .1s; }
+    .hemi:hover { border-color: var(--muted); }
+    .hemi.is-m { border: 2px solid var(--cm); }
+    .hemi svg { display: block; max-width: 100%; height: auto; }
+    .hemi svg circle { stroke: none; }
+    .hemi svg { margin: 8px auto 2px; }
+    .hemi-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+    .hemi-region { font-size: 13px; font-weight: 700; }
+    .hemi-org { font-size: 11px; color: var(--muted); line-height: 1.25; min-height: 28px; }
+    .hemi-num { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .hemi-faltan { font-size: 11px; text-align: center; margin-top: 2px; color: var(--muted); }
+    .hemi-faltan b { color: var(--text); }
+    .hemi-faltan.ok b { color: var(--text); }
+    .hemi.big { cursor: default; max-width: 520px; margin: 0 auto 1rem; background: transparent; border: none; padding: 0; }
+    .hemi.big svg { margin: 4px auto 0; }
+
+    /* explorador */
+    .exp-head { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; margin: .4rem 0 1rem; }
+    .exp-head .avatar { width: 64px; height: 64px; font-size: 16px; }
+    .exp-name { font-size: 17px; font-weight: 700; line-height: 1.2; }
+    .exp-meta { font-size: 12.5px; color: var(--muted); }
+    .exp-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: var(--text); color: var(--bg); margin-left: 6px; vertical-align: 1px; }
+    .exp-badge.segunda { background: var(--steel); }
+    .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem; }
+    @media (max-width: 600px) { .tiles { grid-template-columns: 1fr; } }
+    .tile { background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 9px 11px; }
+    .tile-k { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .tile-v { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; line-height: 1; }
+    .tile-v small { font-size: 1.1rem; color: var(--muted); }
+    .tile-s { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+    .mbar { display: grid; grid-template-columns: 64px 1fr 36px; gap: 7px; align-items: center; margin-top: 5px; font-size: 11px; color: var(--muted); }
+    .mbar-t { height: 8px; background: var(--off); border-radius: 4px; position: relative; overflow: hidden; }
+    .mbar-f { position: absolute; left: 0; top: 0; bottom: 0; background: var(--terra); border-radius: 4px; transition: width .4s; }
+    .mbar-v { text-align: right; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .mbar-ref { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text); opacity: .55; }
+
+    .dualmap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .dualmap { grid-template-columns: 1fr; gap: 22px; } }
+    .dmap-title { font-size: 12px; font-weight: 700; text-align: center; }
+    .dmap-sub { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 6px; }
+    .dmap svg { display: block; width: 100%; height: auto; max-height: 440px; }
+    .dmap path { stroke: var(--surface); stroke-width: .4; stroke-linejoin: round; transition: opacity .1s; }
+    .dmap path.linea { fill: none; pointer-events: none; stroke: var(--muted); stroke-width: .8; stroke-linejoin: round; }
+    .dmap path.borde { fill: none; pointer-events: none; stroke: var(--text); stroke-width: 1.4; stroke-linejoin: round; }
+    .dmap path:hover { opacity: .75; }
+
+    /* dot plot */
+    .dp-row { display: grid; grid-template-columns: 150px 1fr; gap: 10px; align-items: center; height: 44px; }
+    @media (max-width: 560px) { .dp-row { grid-template-columns: 92px 1fr; } }
+    .dp-label { font-size: 12px; font-weight: 600; text-align: right; line-height: 1.2; }
+    .dp-label small { display: block; font-weight: 400; color: var(--muted); font-size: 10.5px; }
+    .dp-track { position: relative; height: 100%; }
+    .dp-axis { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--border); }
+    .dp-dot { position: absolute; top: 50%; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; background: var(--dim); border: 1.5px solid var(--surface); transition: left .4s; }
+    .dp-dot.seg { background: transparent !important; border: 1.8px solid; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; opacity: .85; }
+    .dp-dot.m, .dp-dot.s { width: 16px; height: 16px; margin: -8px 0 0 -8px; z-index: 3; border: 2px solid var(--text); }
+    .dp-name { position: absolute; top: 1px; transform: translateX(-50%); font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .dp-hit { position: absolute; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; z-index: 4; }
+    .dp-ticks { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
+    @media (max-width: 560px) { .dp-ticks { grid-template-columns: 92px 1fr; } }
+    .dp-ticks div:last-child { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); }
+
+    /* segunda vuelta */
+    .sv-row { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; height: 50px; }
+    @media (max-width: 560px) { .sv-row { grid-template-columns: 82px 1fr; } }
+    .sv-label { font-size: 12px; font-weight: 600; text-align: right; }
+    .sv-track { position: relative; height: 100%; }
+    .sv-line { position: absolute; top: 50%; height: 3px; margin-top: -1.5px; background: var(--sand); border-radius: 2px; }
+    .sv-dot { position: absolute; top: 50%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%; border: 2px solid var(--surface); z-index: 2; }
+    .sv-dot.debil { box-shadow: 0 0 0 2px var(--text); }
+    .sv-name.abajo { top: auto; bottom: 1px; }
+    .sv-name.debil { color: var(--text); font-weight: 700; }
+    .sv-name { position: absolute; top: 2px; font-size: 10px; color: var(--muted); white-space: nowrap; transform: translateX(-50%); }
+    .sv-ref { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 2px dashed var(--cm); z-index: 1; }
+    .sv-ref-cap { position: absolute; top: -18px; transform: translateX(-50%); font-size: 10.5px; font-weight: 700; color: var(--cm); white-space: nowrap; }
+
+    /* tabla */
+    .tablescroll { overflow-x: auto; }
+    .gtab { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .gtab th { text-align: right; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; padding: 6px 7px; border-bottom: 2px solid var(--border); cursor: pointer; user-select: none; white-space: nowrap; vertical-align: bottom; }
+    .gtab th:first-child, .gtab td:first-child { text-align: left; }
+    .gtab th.sorted { color: var(--text); }
+    .gtab th .grp { display: block; font-size: 9px; color: var(--dim); }
+    .gtab td { padding: 6px 7px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+    .gtab tr.is-m td, .gtab tr.is-s td { background: var(--bg); font-weight: 600; }
+    .gtab tr.seg td { color: var(--muted); }
+    .gtab tr.seg td:first-child .st-name { font-weight: 500; }
+    .gtab tr { cursor: pointer; }
+    .st-name { font-weight: 600; }
+    .st-sub { font-size: 11px; color: var(--muted); }
+    .cell-bar { display: inline-block; height: 6px; border-radius: 3px; opacity: .8; margin-right: 5px; vertical-align: 1px; }
+
+    .tip { position: fixed; z-index: 50; pointer-events: none; display: none; background: var(--text); color: var(--bg); border-radius: 8px; padding: 7px 10px; font-size: 12px; line-height: 1.45; max-width: 250px; box-shadow: 0 4px 14px rgba(26,18,9,.25); }
+    .tip b { color: #fff; }
+    .tip .tip-sub { color: var(--dim); font-size: 11px; }
+
+    .foot { margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+    .foot a { color: var(--terra); }
+    .method p { font-size: 13.5px; color: var(--muted); }
+  </style>
+</head>
+<body data-palette="#c4603a,#2e7bad">
+
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · ERM 2026</div>
+    <h1 class="article-title">Gobernar sin base: Mendoza llega al Cusco <span class="num">con el apoyo más débil del país</span></h1>
+    <p class="article-dek">Ganar la gobernación no es lo mismo que gobernar. Medimos cuánto del consejo regional y de las alcaldías quedó en manos del partido de cada gobernador electo. Verónika Mendoza está última en todas las métricas. Pedro Spadaro, en el Callao, encabeza todas.</p>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>18 de octubre, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>6 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+
+      <p>El 4 de octubre, diez regiones eligieron gobernador en primera vuelta. Las otras quince irán a segunda vuelta. Pero el gobernador no gobierna solo: el <strong>consejo regional</strong> aprueba el presupuesto, fiscaliza y puede vacarlo, y las obras llegan al territorio a través de <strong>alcaldes provinciales y distritales</strong> con los que hay que negociar. Un gobernador cuyo partido también ganó el consejo y las alcaldías tiene el camino despejado. Uno que llega solo, no.</p>
+
+      <p>Para cada gobernador electo calculamos cinco proporciones: los escaños de su partido en el consejo; las alcaldías provinciales y distritales que ganó su partido, contadas una por una; y esas mismas alcaldías ponderadas por electores hábiles, porque no es lo mismo ganar la capital que un distrito de 800 votantes. El <strong>índice de base</strong> es el promedio simple de las cinco.</p>
+
+      <p>Los dos extremos de la lista lo muestran mejor que cualquier promedio. Los dos ganaron en primera vuelta, pero uno se queda con casi todo el poder regional y la otra con muy poco:</p>
+
+      <div class="duelo wide" id="duelo"></div>
+
+      <div class="fig wide" id="fig-ranking">
+        <div class="fig-title">Índice de base de los 10 gobernadores electos</div>
+        <div class="fig-sub">Promedio de las cinco proporciones: consejo, alcaldías provinciales y distritales (en número y en electores). 100 = su partido lo ganó todo.</div>
+        <div id="ranking"></div>
+        <div class="fig-note" id="ranking-note"></div>
+      </div>
+
+      <p>Mendoza ganó el Cusco con 33% de los votos válidos al frente de Venceremos, pero el resto del voto cusqueño se repartió entre otros partidos. <strong>Ahora Nación</strong> sacó más consejeros que ella (7 contra 4), 7 de las 13 alcaldías provinciales y 28 distritales. Venceremos tiene 2 provincias y 7 distritos.</p>
+
+      <p>En el otro extremo, Renovación Popular arrasó en el Callao: 11 de 12 consejeros, la alcaldía provincial y todos los distritos ya resueltos. Solo falta <strong>Ventanilla</strong>, y ahí la cosa está ajustada.</p>
+
+      <div class="highlight-box steel" id="ventanilla"></div>
+
+      <div class="fig wide">
+        <div class="fig-title">Dónde se eligió gobernador en primera vuelta</div>
+        <div class="fig-sub">Color según el índice de base del gobernador electo en cada departamento. Toca uno para verlo en detalle más abajo.</div>
+        <div class="natgrid">
+          <div class="natmap" id="natmap"></div>
+          <div>
+            <div class="ramp" id="ramp"></div>
+            <div class="ramp-cap"><span>base débil</span><span>base fuerte</span></div>
+            <div class="legend" style="margin-top:12px; flex-direction:column; gap:.4rem">
+              <span class="legend-item"><span class="legend-swatch hatch"></span>Segunda vuelta pendiente</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--off)"></span>Lima Metropolitana (no elige gobernador)</span>
+            </div>
+            <div id="natlist" style="font-size:12px; margin-top:.6rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <h2><span class="knum">1</span>El consejo: Mendoza necesita ocho votos ajenos</h2>
+
+      <p>El consejo regional del Cusco tiene 22 escaños. Para tener mayoría hacen falta 12. Venceremos tiene 4, así que Mendoza necesita <strong>8 consejeros de otros partidos</strong> para aprobar cualquier cosa. Entre los otros nueve gobernadores, al que más le falta le faltan 2.</p>
+
+      <div class="fig wide">
+        <div class="fig-title">Consejo regional del Cusco</div>
+        <div class="fig-sub">Cada punto es un consejero. A la izquierda de la línea, los 12 votos que hacen mayoría.</div>
+        <div id="hemi-cusco"></div>
+        <div class="legend" id="hemi-cusco-legend"></div>
+      </div>
+
+      <p id="consejo-texto"></p>
+
+      <div class="fig wide">
+        <div class="fig-title">Los 10 consejos regionales, ordenados por los votos que le faltan al gobernador</div>
+        <div class="fig-sub">Escaños del partido del gobernador primero; luego el mayor bloque rival y el resto. Para tener mayoría propia, el rojo tiene que cruzar la línea. Pasa el cursor sobre un escaño para ver al consejero.</div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch round" style="background:conic-gradient(var(--cm) 0 25%, #0f9b8e 0 50%, #1f5fd1 0 75%, #d87c80 0)"></span>Partido del gobernador (en su color)</span>
+          <span class="legend-item"><span class="legend-swatch round" style="background:var(--rival)"></span>Mayor bloque rival</span>
+          <span class="legend-item"><span class="legend-swatch round" style="background:var(--sand)"></span>Otros partidos</span>
+        </div>
+        <div class="hemi-grid" id="hemis"></div>
+      </div>
+
+      <h2><span class="knum">2</span>El territorio: provincias y distritos</h2>
+
+      <p>El consejo es solo una parte. Las alcaldías muestran dónde tiene el partido del gobernador una red propia de aliados. Elige una región: en los mapas solo se resalta lo que ganó el partido del gobernador.</p>
+
+      <div class="fig wide" id="explorador">
+        <div class="controls" id="exp-pills"></div>
+        <div class="controls">
+          <label class="toggle"><input type="checkbox" id="exp-seg"> Mostrar también las 15 regiones en segunda vuelta</label>
+        </div>
+        <div class="controls" id="exp-fin" style="display:none"></div>
+        <div id="exp-body"></div>
+        <div class="legend" style="margin-top:.8rem">
+          <span class="legend-item"><span class="legend-swatch" id="exp-sw" style="background:var(--terra)"></span><span id="exp-sw-t">Ganó el partido del gobernador</span></span>
+          <span class="legend-item"><span class="legend-swatch" style="background:var(--off)"></span>Ganó otro partido</span>
+          <span class="legend-item"><span class="legend-swatch hatch"></span>Por definirse</span>
+        </div>
+        <div class="fig-note">La línea oscura en las barras marca el valor de Mendoza en el Cusco. El porcentaje de electores se calcula sobre los electores hábiles de las alcaldías ya resueltas; los cercados no cuentan entre las alcaldías distritales porque no eligen alcalde propio.</div>
+      </div>
+
+      <h2><span class="knum">3</span>Última en las cinco métricas</h2>
+
+      <p>Las cinco medidas no siempre van juntas. Ayacucho, por ejemplo, tiene el mayor bloque del consejo, pero el partido del gobernador ganó menos distritos que Podemos. Apurímac ganó la mitad de los distritos, pero sus provincias suman apenas un cuarto de los electores provinciales. Mendoza, en cambio, es la última de los diez en las cinco, y Spadaro el primero en las cinco (en dos, empatado en 100%).</p>
+
+      <div class="fig wide">
+        <div class="fig-title">Las cinco métricas, gobernador por gobernador</div>
+        <div class="fig-sub">Cada punto es un gobernador electo, en el color de su partido. Pasa el cursor para ver quién es.</div>
+        <div class="controls">
+          <label class="toggle"><input type="checkbox" id="dp-seg"> Añadir a los finalistas de segunda vuelta (círculos vacíos)</label>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch round" style="background:var(--cm); box-shadow:0 0 0 1.5px var(--text)"></span>Mendoza (Venceremos)</span>
+          <span class="legend-item"><span class="legend-swatch round" style="background:var(--cs); box-shadow:0 0 0 1.5px var(--text)"></span>Spadaro (Renovación Popular)</span>
+          <span class="legend-item"><span class="legend-swatch round" style="background:var(--dim)"></span>Otros electos, en el color de su partido</span>
+          <span class="legend-item"><span class="legend-swatch round" style="background:transparent; border:1.5px solid var(--muted)"></span>Finalistas de segunda vuelta</span>
+        </div>
+        <div id="dotplot"></div>
+      </div>
+
+      <h2><span class="knum">4</span>¿Y en diciembre?</h2>
+
+      <p id="sv-texto"></p>
+
+      <div class="fig wide">
+        <div class="fig-title">Los finalistas de segunda vuelta frente a la vara de Mendoza</div>
+        <div class="fig-sub">Índice de base de cada finalista si gana, en el color de su partido. La línea discontinua es el índice de Mendoza; los puntos con anillo negro quedarían por debajo.</div>
+        <div id="segunda"></div>
+        <div class="fig-note">El consejo regional y las alcaldías ya se eligieron el 4 de octubre: la segunda vuelta solo decide quién será gobernador, así que la base de cada finalista ya está fijada. En Piura, el segundo lugar todavía se disputa entre Podemos Perú y Somos Perú; se muestran los tres.</div>
+      </div>
+
+      <h2><span class="knum">5</span>La tabla completa</h2>
+
+      <div class="fig wide">
+        <div class="controls">
+          <label class="toggle"><input type="checkbox" id="tab-seg"> Incluir finalistas de segunda vuelta</label>
+        </div>
+        <div class="tablescroll"><table class="gtab" id="tabla"></table></div>
+        <div class="fig-note">Toca un encabezado para ordenar; toca una fila para verla en el mapa. Consejo: escaños propios / total. Faltan: escaños que le faltan para la mayoría absoluta. Prov. y dist.: alcaldías ganadas / resueltas, y porcentaje de electores hábiles en ellas.</div>
+      </div>
+
+      <div class="method">
+        <h2>Metodología</h2>
+        <p><strong>Fuente.</strong> Resultados oficiales de la ONPE y autoridades electas de las ERM 2026, actualizados al <span id="generado"></span>. Las carreras que todavía no tienen ganador (por actas observadas o en el JEE) quedan fuera del denominador y en los mapas aparecen como «por definirse».</p>
+        <p><strong>Partido del gobernador.</strong> Se cuenta al partido junto con sus alianzas electorales registradas: por ejemplo, la alianza Renovación Popular y Toro (Lima provincias) cuenta como Renovación Popular, y las dos inscripciones de Somos Perú cuentan como una sola. No se cuentan acuerdos posteriores a la elección ni afinidades informales.</p>
+        <p><strong>Ponderación.</strong> Cada alcaldía pesa según sus electores hábiles (no la población total). Las alcaldías distritales no incluyen los cercados de cada capital, que no eligen alcalde propio; en los mapas el cercado aparece con el color de la alcaldía provincial. Lima Metropolitana no forma parte de la región Lima y no elige gobernador.</p>
+        <p><strong>Consejo.</strong> El gobernador y el vicegobernador no votan en el consejo regional; la mayoría absoluta es la mitad más uno del número legal de consejeros.</p>
+      </div>
+
+      <div class="foot">
+        Datapol · datos abiertos, código reproducible. Los datos de este artículo están en <a href="data/gobernabilidad.json">gobernabilidad.json</a>.
+      </div>
+
+    </div>
+  </article>
+
+  <div class="tip" id="tip"></div>
+
+  <script>
+  (async function () {
+    const $ = (s) => document.querySelector(s);
+    const el = (tag, attrs = {}, html = '') => { const e = document.createElement(tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (html) e.innerHTML = html; return e; };
+    const svgEl = (tag, attrs = {}) => { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+    const pct = (x) => Math.round(x * 100) + '%';
+    const num = (x) => x.toLocaleString('es-PE');
+    const corto = (n) => { const p = n.split(' '); return p.length > 3 ? p[0] + ' ' + p[p.length - 2] : n; };
+    const iniciales = (n) => n.split(' ').filter(Boolean).slice(0, 1).concat(n.split(' ').slice(-2, -1)).map(s => s[0]).join('');
+
+    const tip = $('#tip');
+    const showTip = (ev, html) => { tip.innerHTML = html; tip.style.display = 'block'; moveTip(ev); };
+    const moveTip = (ev) => {
+      const w = tip.offsetWidth, h = tip.offsetHeight;
+      let x = ev.clientX + 14, y = ev.clientY + 14;
+      if (x + w > innerWidth - 8) x = ev.clientX - w - 14;
+      if (y + h > innerHeight - 8) y = ev.clientY - h - 14;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    };
+    const hideTip = () => { tip.style.display = 'none'; };
+    const hover = (node, html) => {
+      node.addEventListener('mouseenter', (ev) => showTip(ev, typeof html === 'function' ? html() : html));
+      node.addEventListener('mousemove', moveTip);
+      node.addEventListener('mouseleave', hideTip);
+    };
+
+    const [D, PAIS] = await Promise.all([fetch('data/gobernabilidad.json').then(r => r.json()), fetch('data/mapas/peru.json').then(r => r.json())]);
+    const C = D.candidatos;
+    C.forEach(c => { c.id = c.race + '|' + c.fam; c.mets = [c.consejo.propios / c.consejo.n, c.prov.n / c.prov.d, c.prov.w, c.dist.n / c.dist.d, c.dist.w]; });
+    const electos = C.filter(c => c.estado === 'electo').sort((a, b) => b.indice - a.indice);
+    const segunda = C.filter(c => c.estado === 'segunda');
+    const M = C.find(c => c.race === '01-070000');
+    const S = C.find(c => c.race === '01-240000');
+    const V = D.ventanilla;
+    const indiceSi = (c, dist) => (c.mets[0] + c.mets[1] + c.mets[2] + dist.n / dist.d + dist.w) / 5;
+    const S_bajo = indiceSi(S, V.si_pierde);
+    document.documentElement.style.setProperty('--cm', M.color);
+    document.documentElement.style.setProperty('--cs', S.color);
+    $('#generado').textContent = new Date(D.generado).toLocaleString('es-PE', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    const avatar = (c) => {
+      const w = el('div', { class: 'avatar' }, iniciales(c.nombre));
+      if (c.foto) {
+        const img = el('img', { class: 'avatar', src: c.foto, alt: c.nombre, loading: 'lazy', referrerpolicy: 'no-referrer' });
+        img.onerror = () => img.replaceWith(w);
+        return img;
+      }
+      return w;
+    };
+
+    // ── cifras de entrada ─────────────────────────────────────────────
+    const duelo = $('#duelo');
+    const filasDuelo = [
+      ['Consejo regional', 'escaños propios', c => [c.consejo.propios, c.consejo.n, c.mets[0], c.consejo.faltan ? `le faltan ${c.consejo.faltan}` : 'mayoría propia']],
+      ['Alcaldías provinciales', 'y % de sus electores', c => [c.prov.n, c.prov.d, c.mets[1], `${pct(c.prov.w)} de electores`]],
+      ['Alcaldías distritales', 'y % de sus electores', c => [c.dist.n, c.dist.d, c.mets[3], `${pct(c.dist.w)} de electores${c.dist.pend && c === S ? ' · falta Ventanilla' : ''}`]],
+    ];
+    const g = el('div', { class: 'duelo-grid' });
+    g.append(el('div', { class: 'duelo-sp' }));
+    [M, S].forEach(c => {
+      const w = el('div', { class: 'duelo-who', style: `border-color:${c.color}` });
+      w.append(avatar(c));
+      w.append(el('div', {}, `<b>${corto(c.nombre)}</b><small>${c.region} · ${c.org} · índice ${Math.round(c.indice * 100)}</small>`));
+      g.append(w);
+    });
+    filasDuelo.forEach(([k, sub, f]) => {
+      g.append(el('div', { class: 'duelo-k' }, `${k}<small>${sub}</small>`));
+      [M, S].forEach(c => {
+        const [n, d, v, nota] = f(c);
+        g.append(el('div', { class: 'duelo-v' }, `<div class="duelo-n">${n}<small>/${d}</small><em>${nota}</em></div><div class="duelo-bar"><i style="width:${v * 100}%; background:${c.color}"></i></div>`));
+      });
+    });
+    duelo.append(g);
+    duelo.append(el('div', { class: 'fig-note', style: 'border-top:0; margin-top:.3rem' }, `En el Cusco, ${M.consejo.bloques[0].org} sacó más consejeros (${M.consejo.bloques[0].n}), más provincias (7) y más distritos (28) que el partido de la gobernadora. En el Callao, el único distrito que se le puede escapar a Spadaro es Ventanilla.`));
+
+    // ── ranking ───────────────────────────────────────────────────────
+    const rk = $('#ranking');
+    electos.forEach(c => {
+      const row = el('div', { class: 'rk-row' + (c === M ? ' is-m' : '') + (c === S ? ' is-s' : '') });
+      row.append(avatar(c));
+      row.append(el('div', { class: 'rk-name' }, `${corto(c.nombre)}<small>${c.region} · ${c.org}</small>`));
+      const bar = el('div', { class: 'rk-bar' });
+      const fill = el('div', { class: 'rk-fill' }); fill.style.width = '0%'; fill.style.background = c.color;
+      bar.append(fill);
+      if (c === S) {
+        const r = el('div', { class: 'rk-range' });
+        r.style.left = (S_bajo * 100) + '%'; r.style.width = ((c.indice - S_bajo) * 100) + '%';
+        bar.append(r);
+      }
+      row.append(bar);
+      row.append(el('div', { class: 'rk-val' }, Math.round(c.indice * 100)));
+      requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = (c === S ? S_bajo : c.indice) * 100 + '%'; }));
+      hover(row, () => `<b>${c.nombre}</b><br>${c.region} · ${c.org}<br>Consejo ${c.consejo.propios}/${c.consejo.n} · Prov. ${c.prov.n}/${c.prov.d} · Dist. ${c.dist.n}/${c.dist.d}<div class="tip-sub">Toca para ver el detalle</div>`);
+      row.addEventListener('click', () => { selectRegion(c); $('#explorador').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      rk.append(row);
+    });
+    const vl = V.lideres;
+    $('#ranking-note').innerHTML = `La parte rayada de la barra de Spadaro depende de <b>Ventanilla</b>, aún sin resolver: si la gana Renovación Popular su índice es ${Math.round(S.indice * 100)}; si la gana ${vl[0].org}, ${Math.round(S_bajo * 100)}. Aun en ese caso seguiría primero.`;
+
+    const diff = vl[0].votos - vl[1].votos;
+    $('#ventanilla').innerHTML = `<p><b>Ventanilla, por definirse.</b> Con ${(V.pct_actas * 100).toFixed(1)}% de actas contabilizadas, ${vl[0].org} va adelante por <b>${num(diff)} votos</b> (${(vl[0].pct * 100).toFixed(1)}% contra ${(vl[1].pct * 100).toFixed(1)}%), y nuestra proyección le da ${pct(vl[0].p_gana)} de probabilidades. Ventanilla es el distrito más grande del Callao: ${num(V.electores)} electores, más de la mitad de los electores de los distritos fuera del Cercado.</p>
+      <p>Si la pierde, Spadaro pasa de controlar el 100% al ${pct(V.si_pierde.w)} de esos electores distritales. Igual seguiría siendo el gobernador con la base más fuerte: conserva 11 de 12 consejeros, la alcaldía provincial y ${V.si_pierde.n} de 6 distritos.</p>`;
+
+    // ── mapa nacional ─────────────────────────────────────────────────
+    const RAMP = ['#e9bc9f', '#dd9a76', '#cf7a52', '#b5552f', '#86361b'];
+    $('#ramp').innerHTML = RAMP.map(c => `<span style="background:${c}"></span>`).join('');
+    const rampa = (x) => RAMP[Math.min(4, Math.floor(x / 0.2))];
+    const porRegion = {}; C.forEach(c => (porRegion[c.race] ||= []).push(c));
+    const nat = svgEl('svg', { viewBox: `0 0 ${PAIS.ancho} ${PAIS.alto}`, role: 'img', 'aria-label': 'Mapa del Perú por región' });
+    const defs = svgEl('defs');
+    defs.innerHTML = `<pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#ede8df"/><line x1="0" y1="0" x2="0" y2="4" stroke="#d9cdbd" stroke-width="1.4"/></pattern>`;
+    nat.append(defs);
+    const natPaths = [];
+    PAIS.dep.forEach(p => {
+      const cs = porRegion[p.r] || [];
+      const e = cs.find(c => c.estado === 'electo');
+      const path = svgEl('path', { d: p.d, fill: p.r === 'lima-metropolitana' ? 'var(--off)' : e ? rampa(e.indice) : 'url(#hatch)' });
+      path.dataset.r = p.r;
+      if (p.r !== 'lima-metropolitana') {
+        hover(path, () => e
+          ? `<b>${e.region}</b><br>${e.nombre} · ${e.org}<br>Índice de base: <b>${Math.round(e.indice * 100)}</b>`
+          : `<b>${cs[0].region}</b> · segunda vuelta<br>${cs.map(c => `${corto(c.nombre)} (${c.org}): ${Math.round(c.indice * 100)}`).join('<br>')}`);
+        path.addEventListener('click', () => { selectRegion(e || cs[0]); $('#explorador').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      }
+      natPaths.push(path); nat.append(path);
+    });
+    $('#natmap').append(nat);
+    // etiquetas de los dos extremos
+    [[M, -1], [S, -1]].forEach(([c]) => {
+      const ps = natPaths.filter(p => p.dataset.r === c.race).map(p => p.getBBox());
+      const x0 = Math.min(...ps.map(b => b.x)), x1 = Math.max(...ps.map(b => b.x + b.width));
+      const y0 = Math.min(...ps.map(b => b.y)), y1 = Math.max(...ps.map(b => b.y + b.height));
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const izq = true;
+      const [lx1, ly1, lx2, ly2] = c === S ? [x0 - 1, cy, x0 - 22, cy] : [cx - 10, cy + 14, x0 - 40, y1 + 22];
+      const tx = izq ? lx2 - 3 : lx2 + 3, ty = ly2 + 4;
+      nat.append(svgEl('line', { x1: lx1, y1: ly1, x2: lx2, y2: ly2, stroke: 'var(--text)', 'stroke-width': .7 }));
+      const t = svgEl('text', { x: tx, y: ty, 'font-size': 11, 'font-weight': 700, fill: c.color, 'text-anchor': izq ? 'end' : 'start' });
+      t.textContent = `${c === M ? 'Mendoza' : 'Spadaro'} · ${Math.round(c.indice * 100)}`;
+      nat.append(t);
+    });
+    $('#natlist').innerHTML = electos.map(c => `<div style="display:flex; gap:8px; align-items:center; padding:2px 0"><span class="legend-swatch" style="background:${rampa(c.indice)}"></span><span style="flex:1">${c.region}</span><b style="font-variant-numeric:tabular-nums">${Math.round(c.indice * 100)}</b></div>`).join('');
+
+    // ── hemiciclos ────────────────────────────────────────────────────
+    // Dos filas llenadas por columna, como en el sitio ERM 2026: con 7 a 25 escaños
+    // un hemiciclo queda ralo. Partido del gobernador primero, luego el mayor rival,
+    // el resto y los escaños en disputa; la línea marca dónde se alcanza la mayoría.
+    function hemiciclo(c, grande) {
+      const n = c.consejo.n;
+      const orden = [...c.consejo.asientos].sort((x, y) => (y.p === 1) - (x.p === 1) || (x.p === -1) - (y.p === -1) || (x.r < 0 ? 99 : x.r) - (y.r < 0 ? 99 : y.r));
+      const cols = Math.ceil(n / 2), paso = grande ? 30 : 13, rad = paso * 0.41;
+      const ancho = cols * paso, alto = 2 * paso + 13;
+      const svg = svgEl('svg', { viewBox: `-2 -2 ${ancho + 4} ${alto + 4}`, width: ancho + 4, height: alto + 4, role: 'img', 'aria-label': `Consejo regional de ${c.region}: ${c.consejo.propios} de ${n} escaños` });
+      const xm = Math.ceil(c.consejo.mayoria / 2) * paso;
+      svg.append(svgEl('line', { x1: xm, y1: 0, x2: xm, y2: 2 * paso + 2, stroke: 'var(--text)', 'stroke-width': 1, 'stroke-dasharray': '2.5 2', opacity: .6 }));
+      const t = svgEl('text', { x: xm, y: alto, 'font-size': 9.5, 'text-anchor': 'middle', fill: 'var(--muted)' });
+      t.textContent = `mayoría: ${c.consejo.mayoria}`;
+      svg.append(t);
+      orden.forEach((s, i) => {
+        const col = Math.floor(i / 2), fila = i % 2;
+        const fill = s.p === 1 ? c.color : s.p === -1 ? 'url(#hatch)' : s.r === 0 ? 'var(--rival)' : 'var(--sand)';
+        const circ = svgEl('circle', { cx: col * paso + paso / 2, cy: fila * paso + paso / 2, r: rad, fill });
+        hover(circ, s.p === -1 ? `<b>Escaño en disputa</b><br>${s.circ}` : `<b>${s.nombre}</b><br>${s.org}<div class="tip-sub">Circunscripción: ${s.circ}</div>`);
+        svg.append(circ);
+      });
+      return svg;
+    }
+    const hc = $('#hemi-cusco');
+    const big = el('div', { class: 'hemi big' }); big.append(hemiciclo(M, true)); hc.append(big);
+    $('#hemi-cusco-legend').innerHTML = [[M.color, `Venceremos (${M.consejo.propios})`], ['var(--rival)', `${M.consejo.bloques[0].org} (${M.consejo.bloques[0].n})`],
+      ['var(--sand)', `Otros: ${M.consejo.bloques.slice(1).map(b => `${b.org} (${b.n})`).join(', ')}`]]
+      .map(([c, t]) => `<span class="legend-item"><span class="legend-swatch round" style="background:${c}"></span>${t}</span>`).join('');
+
+    const porFaltan = [...electos].sort((a, b) => b.consejo.faltan - a.consejo.faltan || a.consejo.propios / a.consejo.n - b.consejo.propios / b.consejo.n);
+    const conMayoria = electos.filter(c => c.consejo.faltan === 0);
+    const aUno = electos.filter(c => c.consejo.faltan === 1);
+    const aDos = electos.filter(c => c.consejo.faltan === 2);
+    const lista = (cs) => cs.map(c => c.region).join(', ').replace(/, ([^,]*)$/, ' y $1');
+    $('#consejo-texto').innerHTML = `De los diez gobernadores electos, solo <strong>${conMayoria.length} tienen mayoría propia</strong> en su consejo: ${lista(conMayoria)}. A ${aUno.length} les falta un solo escaño (${lista(aUno)}) y a ${aDos.length}, dos (${lista(aDos)}). Mendoza no solo necesita ocho votos ajenos: en el Cusco el mayor bloque es de ${M.consejo.bloques[0].org}, con ${M.consejo.bloques[0].n} consejeros, y ${M.consejo.bloques[0].org} y ${M.consejo.bloques[1].org} juntos suman ${M.consejo.bloques[0].n + M.consejo.bloques[1].n} de 22, es decir, la mayoría sin ella.`;
+
+    const hg = $('#hemis');
+    porFaltan.forEach(c => {
+      const card = el('div', { class: 'hemi' + (c === M ? ' is-m' : '') });
+      card.append(el('div', { class: 'hemi-head' }, `<span class="hemi-region">${c.region}</span><span class="hemi-num">${c.consejo.propios}/${c.consejo.n}</span>`));
+      card.append(el('div', { class: 'hemi-org' }, `${corto(c.nombre)} · ${c.org}`));
+      card.append(hemiciclo(c));
+      card.append(el('div', { class: 'hemi-faltan' + (c.consejo.faltan ? '' : ' ok') }, c.consejo.faltan ? `le faltan <b>${c.consejo.faltan}</b> para la mayoría` : `<b>mayoría propia</b>`));
+      card.addEventListener('click', () => { selectRegion(c); $('#explorador').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+      hg.append(card);
+    });
+
+    // ── explorador ────────────────────────────────────────────────────
+    const mapas = {};
+    const cargarMapa = (race) => (mapas[race] ||= fetch(`data/mapas/${race}.json`).then(r => r.json()));
+    let actual = M;
+    const pillsEl = $('#exp-pills'), finEl = $('#exp-fin'), segChk = $('#exp-seg');
+    function dibujarPills() {
+      pillsEl.innerHTML = '<span class="ctl-label">Región</span>';
+      const regiones = segChk.checked ? Object.values(porRegion).map(cs => cs[0]).sort((a, b) => a.region.localeCompare(b.region)) : [...electos].sort((a, b) => a.region.localeCompare(b.region));
+      regiones.forEach(c => {
+        const b = el('button', { class: 'pill' + (c.estado === 'segunda' ? ' segunda' : ''), 'aria-pressed': c.race === actual.race ? 'true' : 'false' }, c.region);
+        b.addEventListener('click', () => selectRegion(porRegion[c.race].find(x => x.estado === 'electo') || porRegion[c.race][0]));
+        pillsEl.append(b);
+      });
+      const cs = porRegion[actual.race];
+      if (actual.estado === 'segunda') {
+        finEl.style.display = '';
+        finEl.innerHTML = '<span class="ctl-label">Si gana</span>';
+        cs.forEach(c => {
+          const b = el('button', { class: 'pill', 'aria-pressed': c === actual ? 'true' : 'false' }, `${corto(c.nombre)} · ${c.org}`);
+          b.addEventListener('click', () => selectRegion(c));
+          finEl.append(b);
+        });
+      } else finEl.style.display = 'none';
+    }
+    segChk.addEventListener('change', dibujarPills);
+
+    function mbar(label, v, ref, color) {
+      return `<div class="mbar"><span>${label}</span><div class="mbar-t"><div class="mbar-f" style="width:${v * 100}%; background:${color}"></div>${ref != null ? `<div class="mbar-ref" style="left:calc(${ref * 100}% - 1px)"></div>` : ''}</div><span class="mbar-v">${pct(v)}</span></div>`;
+    }
+
+    function mapa(m, units, ganadas, tipo, c) {
+      const { alto, ancho } = m;
+      const svg = svgEl('svg', { viewBox: `0 0 ${ancho} ${alto}`, role: 'img', 'aria-label': `${tipo} de ${c.region} ganadas por ${c.org}` });
+      const d = svgEl('defs');
+      d.innerHTML = `<pattern id="hatch-${tipo}" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#e2d8ca"/><line x1="0" y1="0" x2="0" y2="4" stroke="#b0a090" stroke-width="1.6"/></pattern>`;
+      svg.append(d);
+      const set = new Set(ganadas);
+      units.forEach(u => {
+        const gana = set.has(u.u);
+        const p = svgEl('path', { d: u.d, fill: gana ? c.color : u.pend ? `url(#hatch-${tipo})` : 'var(--off)' });
+        const estado = gana ? `Ganó <b>${c.org}</b>` : u.pend ? 'Por definirse' : 'Ganó otro partido';
+        hover(p, `<b>${u.nombre}</b>${u.cercado ? ' (cercado)' : ''}<br>${estado}<div class="tip-sub">${num(u.elect)} electores hábiles${u.cercado ? ' · lo gobierna el alcalde provincial' : ''}</div>`);
+        svg.append(p);
+      });
+      // bordes provinciales y departamental encima de los rellenos
+      if (tipo === 'dist') m.prov.forEach(u => svg.append(svgEl('path', { d: u.d, class: 'linea' })));
+      else units.forEach(u => svg.append(svgEl('path', { d: u.d, class: 'linea' })));
+      svg.append(svgEl('path', { d: m.borde, class: 'borde' }));
+      return svg;
+    }
+
+    async function selectRegion(c) {
+      actual = c;
+      if (c.estado === 'segunda' && !segChk.checked) segChk.checked = true;
+      dibujarPills();
+      natPaths.forEach(p => p.classList.toggle('sel', p.dataset.r === c.race));
+      const body = $('#exp-body');
+      $('#exp-sw').style.background = c.color;
+      $('#exp-sw-t').textContent = `Ganó ${c.org}`;
+      const ref = c === M ? null : M;
+      const badge = c.estado === 'electo' ? '<span class="exp-badge">Electo</span>' : '<span class="exp-badge segunda">Segunda vuelta</span>';
+      const head = el('div', { class: 'exp-head' });
+      head.append(avatar(c));
+      head.append(el('div', {}, `<div class="exp-name">${c.nombre}${badge}</div><div class="exp-meta">${c.org} · ${c.region} · ${(c.pct_validos * 100).toFixed(1)}% de votos válidos en primera vuelta · índice de base <b style="color:var(--text)">${Math.round(c.indice * 100)}</b></div>`));
+      const con = c.consejo;
+      const tiles = el('div', { class: 'tiles' }, `
+        <div class="tile"><div class="tile-k">Consejo regional</div><div class="tile-v">${con.propios}<small>/${con.n}</small></div>
+          <div class="tile-s">${con.faltan ? `Le faltan ${con.faltan} para la mayoría (${con.mayoria})` : 'Mayoría propia'}${con.bloques[0] ? ` · mayor rival: ${con.bloques[0].org} (${con.bloques[0].n})` : ''}</div>
+          ${mbar('Escaños', con.propios / con.n, ref && ref.mets[0], c.color)}</div>
+        <div class="tile"><div class="tile-k">Alcaldías provinciales</div><div class="tile-v">${c.prov.n}<small>/${c.prov.d}</small></div>
+          <div class="tile-s">${c.prov.pend ? `${c.prov.pend} por definirse` : 'Todas resueltas'}</div>
+          ${mbar('Alcaldías', c.prov.n / c.prov.d, ref && ref.mets[1], c.color)}${mbar('Electores', c.prov.w, ref && ref.mets[2], c.color)}</div>
+        <div class="tile"><div class="tile-k">Alcaldías distritales</div><div class="tile-v">${c.dist.n}<small>/${c.dist.d}</small></div>
+          <div class="tile-s">${c.dist.pend ? `${c.dist.pend} por definirse${c === S ? ' (Ventanilla)' : ''}` : 'Todas resueltas'}</div>
+          ${mbar('Alcaldías', c.dist.n / c.dist.d, ref && ref.mets[3], c.color)}${mbar('Electores', c.dist.w, ref && ref.mets[4], c.color)}</div>`);
+      const dual = el('div', { class: 'dualmap' }, '<div class="dmap" id="dm-prov"><div class="dmap-title">Provincias</div><div class="dmap-sub">cargando…</div></div><div class="dmap" id="dm-dist"><div class="dmap-title">Distritos</div><div class="dmap-sub">cargando…</div></div>');
+      body.replaceChildren(head, tiles, dual);
+      const m = await cargarMapa(c.race);
+      if (actual !== c) return;
+      const dp = $('#dm-prov'), dd = $('#dm-dist');
+      dp.querySelector('.dmap-sub').textContent = `${c.prov.n} de ${c.prov.d} ganadas · ${pct(c.prov.w)} de los electores`;
+      dd.querySelector('.dmap-sub').textContent = `${c.dist.n} de ${c.dist.d} ganadas · ${pct(c.dist.w)} de los electores`;
+      dp.append(mapa(m, m.prov, c.prov_ganadas, 'prov', c));
+      dd.append(mapa(m, m.dist, c.dist_ganadas, 'dist', c));
+    }
+    selectRegion(M);
+
+    // ── dot plot ──────────────────────────────────────────────────────
+    const METS = [['Consejo regional', 'escaños'], ['Alcaldías provinciales', 'en número'], ['Alcaldías provinciales', 'en electores'], ['Alcaldías distritales', 'en número'], ['Alcaldías distritales', 'en electores']];
+    function dibujarDots() {
+      const conSeg = $('#dp-seg').checked;
+      const dp = $('#dotplot'); dp.innerHTML = '';
+      METS.forEach(([t, s], i) => {
+        const row = el('div', { class: 'dp-row' }, `<div class="dp-label">${t}<small>${s}</small></div>`);
+        const track = el('div', { class: 'dp-track' }, '<div class="dp-axis"></div>');
+        const pts = (conSeg ? segunda : []).concat(electos.filter(c => c !== M && c !== S), [S, M]);
+        pts.forEach(c => {
+          const v = c.mets[i];
+          const cls = c === M ? 'm' : c === S ? 's' : c.estado === 'segunda' ? 'seg' : '';
+          const dot = el('div', { class: 'dp-dot ' + cls }); dot.style.left = (v * 100) + '%';
+          if (cls === 'seg') dot.style.borderColor = c.color; else dot.style.background = c.color;
+          if (i === 0 && (c === M || c === S)) {
+            const nm = el('div', { class: 'dp-name', style: `left:${v * 100}%; color:${c.color}` }, c === M ? 'Mendoza' : 'Spadaro');
+            if (c === S) { nm.style.transform = 'translateX(-100%)'; }
+            track.append(nm);
+          }
+          const hit = el('div', { class: 'dp-hit' }); hit.style.left = (v * 100) + '%';
+          hover(hit, `<b>${c.nombre}</b><br>${c.region} · ${c.org}${c.estado === 'segunda' ? ' (segunda vuelta)' : ''}<br>${t} ${s}: <b>${pct(v)}</b>`);
+          hit.addEventListener('click', () => { selectRegion(c); $('#explorador').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+          track.append(dot, hit);
+        });
+        row.append(track); dp.append(row);
+      });
+      dp.append(el('div', { class: 'dp-ticks' }, '<div></div><div><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>'));
+    }
+    $('#dp-seg').addEventListener('change', dibujarDots);
+    dibujarDots();
+
+    // ── segunda vuelta ────────────────────────────────────────────────
+    const regs = Object.values(porRegion).filter(cs => cs[0].estado === 'segunda')
+      .sort((a, b) => Math.min(...a.map(c => c.indice)) - Math.min(...b.map(c => c.indice)));
+    const debiles = segunda.filter(c => c.indice < M.indice);
+    const sv = $('#segunda');
+    const maxI = 0.8;
+    const x = (v) => (v / maxI * 100) + '%';
+    const refWrap = el('div', { class: 'sv-row', style: 'height:22px' }, '<div></div>');
+    const refT = el('div', { class: 'sv-track' }, `<span class="sv-ref-cap" style="left:${x(M.indice)}; top:4px">Mendoza: ${Math.round(M.indice * 100)}</span>`);
+    refWrap.append(refT); sv.append(refWrap);
+    regs.forEach(cs => {
+      const row = el('div', { class: 'sv-row' }, `<div class="sv-label">${cs[0].region}</div>`);
+      const tr = el('div', { class: 'sv-track' });
+      const lo = Math.min(...cs.map(c => c.indice)), hi = Math.max(...cs.map(c => c.indice));
+      const line = el('div', { class: 'sv-line' }); line.style.left = x(lo); line.style.width = `calc(${x(hi)} - ${x(lo)})`;
+      tr.append(line, el('div', { class: 'sv-ref', style: `left:${x(M.indice)}` }));
+      [...cs].sort((a, b) => a.indice - b.indice).forEach((c, i) => {
+        const d = el('div', { class: 'sv-dot' + (c.indice < M.indice ? ' debil' : '') }); d.style.left = x(c.indice);
+        d.style.background = c.color;
+        tr.append(el('div', { class: 'sv-name' + (i % 2 ? ' abajo' : '') + (c.indice < M.indice ? ' debil' : ''), style: `left:${x(c.indice)}` }, c.org));
+        if (c.p_segunda < 0.5) d.style.opacity = .45;
+        hover(d, `<b>${c.nombre}</b><br>${c.org} · ${(c.pct_validos * 100).toFixed(1)}% en primera vuelta<br>Índice de base: <b>${Math.round(c.indice * 100)}</b><br>Consejo ${c.consejo.propios}/${c.consejo.n} · Prov. ${c.prov.n}/${c.prov.d} · Dist. ${c.dist.n}/${c.dist.d}${c.p_segunda < 0.5 ? '<div class="tip-sub">Aún podría no pasar a segunda vuelta</div>' : ''}`);
+        d.style.cursor = 'pointer';
+        d.addEventListener('click', () => { selectRegion(c); $('#explorador').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        tr.append(d);
+      });
+      row.append(tr); sv.append(row);
+    });
+    sv.append(el('div', { class: 'dp-ticks', style: 'grid-template-columns:110px 1fr' }, `<div></div><div><span>0</span><span>${Math.round(maxI * 25)}</span><span>${Math.round(maxI * 50)}</span><span>${Math.round(maxI * 75)}</span><span>${Math.round(maxI * 100)}</span></div>`));
+
+    const peor = [...segunda].sort((a, b) => a.indice - b.indice)[0];
+    const empates = segunda.filter(c => c.indice >= M.indice && c.indice < M.indice + 0.01);
+    $('#sv-texto').innerHTML = `La segunda vuelta podría quitarle a Mendoza el último lugar. De los ${segunda.length} finalistas posibles en las quince regiones pendientes, <strong>${debiles.length} llegarían con una base todavía más débil</strong> que la suya: ${debiles.map(c => `${c.org} en ${c.region}`).join(', ').replace(/, ([^,]*)$/, ' y $1')}.${empates.length ? ` ${empates.map(c => `${c.org} en ${c.region}`).join(' y ')} quedaría${empates.length > 1 ? 'n' : ''} prácticamente empatado${empates.length > 1 ? 's' : ''} con ella.` : ''} El caso extremo es ${peor.org} en ${peor.region}: ${peor.consejo.propios} consejeros, ${peor.prov.n} provincias y ${peor.dist.n} distritos. En ninguna región los dos finalistas quedan por debajo de Mendoza, así que el resultado de diciembre decide si alguien la supera en debilidad.`;
+
+    // ── tabla ─────────────────────────────────────────────────────────
+    const COLS = [
+      { k: 'region', t: 'Gobernador', g: '', v: c => c.region, f: c => `<div class="st-name">${c.region} · ${corto(c.nombre)}</div><div class="st-sub">${c.org}${c.estado === 'segunda' ? ' · segunda vuelta' : ''}</div>` },
+      { k: 'votos', t: '% válidos', g: '', v: c => c.pct_validos, f: c => (c.pct_validos * 100).toFixed(1) },
+      { k: 'cons', t: 'Escaños', g: 'Consejo', v: c => c.mets[0], f: c => `${c.consejo.propios}/${c.consejo.n}` },
+      { k: 'faltan', t: 'Faltan', g: 'Consejo', v: c => -c.consejo.faltan, f: c => c.consejo.faltan || '—' },
+      { k: 'pn', t: 'N.º', g: 'Prov.', v: c => c.mets[1], f: c => `${c.prov.n}/${c.prov.d}` },
+      { k: 'pw', t: 'Electores', g: 'Prov.', v: c => c.mets[2], f: c => pct(c.prov.w) },
+      { k: 'dn', t: 'N.º', g: 'Dist.', v: c => c.mets[3], f: c => `${c.dist.n}/${c.dist.d}` },
+      { k: 'dw', t: 'Electores', g: 'Dist.', v: c => c.mets[4], f: c => pct(c.dist.w) },
+      { k: 'ind', t: 'Índice', g: '', v: c => c.indice, f: c => `<span class="cell-bar" style="width:${c.indice * 40}px; background:${c.color}"></span><b>${Math.round(c.indice * 100)}</b>` },
+    ];
+    let orden = { k: 'ind', dir: 1 };
+    function dibujarTabla() {
+      const filas = ($('#tab-seg').checked ? C : electos).slice();
+      const col = COLS.find(c => c.k === orden.k);
+      filas.sort((a, b) => { const x = col.v(a), y = col.v(b); return (x < y ? -1 : x > y ? 1 : 0) * orden.dir; });
+      const t = $('#tabla');
+      t.innerHTML = `<thead><tr>${COLS.map(c => `<th data-k="${c.k}" class="${c.k === orden.k ? 'sorted' : ''}"><span class="grp">${c.g || '&nbsp;'}</span>${c.t}${c.k === orden.k ? (orden.dir > 0 ? ' ↑' : ' ↓') : ''}</th>`).join('')}</tr></thead>`;
+      const tb = el('tbody');
+      filas.forEach(c => {
+        const tr = el('tr', { class: (c === M ? 'is-m' : c === S ? 'is-s' : '') + (c.estado === 'segunda' ? ' seg' : '') }, COLS.map(col => `<td>${col.f(c)}</td>`).join(''));
+        tr.addEventListener('click', () => { selectRegion(c); $('#explorador').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        tb.append(tr);
+      });
+      t.append(tb);
+      t.querySelectorAll('th').forEach(th => th.addEventListener('click', () => {
+        orden = { k: th.dataset.k, dir: orden.k === th.dataset.k ? -orden.dir : (th.dataset.k === 'region' ? 1 : -1) };
+        dibujarTabla();
+      }));
+    }
+    $('#tab-seg').addEventListener('change', dibujarTabla);
+    orden.dir = -1;
+    dibujarTabla();
+  })();
+  </script>
+</body>
+</html>
