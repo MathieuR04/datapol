@@ -286,10 +286,17 @@ def rodar():
     (OUT / "aggregate_stats.json").write_text(json.dumps(agg, ensure_ascii=False, indent=2))
 
     # Projeção
-    m, res, tot = modelo.projetar(4000)
+    # Modelo por seções si hay base del 1ro y urnas leídas; si no, el municipal
+    try:
+        import modelo_secoes
+        m, res, tot = modelo_secoes.projetar(3000)
+    except Exception as e:
+        print("modelo por seções falhou, uso o municipal:", repr(e), flush=True)
+        m, res, tot = modelo.projetar(4000)
     fc = {"generated_at": now, "pct_actas": agg["actas_pct"], "mesas_contabilizadas": agg["actas_contabilizadas"],
           "mesas_remaining": agg["actas_total"] - agg["actas_contabilizadas"], "mesas_total": agg["actas_total"],
-          "mesas_in_analysis": agg["actas_contabilizadas"], "n_sims": 4000}
+          "mesas_in_analysis": tot.get("secoes_lidas", agg["actas_contabilizadas"]), "n_sims": 3000,
+          "modelo": tot.get("modo")}
     if res is not None:
         p = float(res["p_lula"])
         fc["candidates"] = [c | {"votes": votos.get(c["codigo"], 0), "pct_emitidos": agg["candidatos"][i]["pct_emitidos"],
