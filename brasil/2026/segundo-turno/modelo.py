@@ -72,27 +72,41 @@ def projetar(sims=4000, k=200_000, seed=1):
     m["falta"] = (m.esperado - m.validos2).clip(lower=0)
 
     # Desvio logit nos municípios com votos apurados
-    obs = m[m.validos2 > 0].copy()
+    # Para estimar el desvío: municipios del país con al menos 300 votos válidos contados
+    # (las primeras urnas sueltas son demasiado ruidosas)
+    obs = m[(m.validos2 >= 300) & (m.uf != "zz")].copy()
     tot = {"apurado": m.validos2.sum() / m.esperado.sum(), "lula_atual": m.lula2.sum() / max((m.lula2 + m.flavio2).sum(), 1)}
-    if len(obs) < 30:
-        return m, None, tot
-    obs["d"] = logit(obs.lula2 / (obs.lula2 + obs.flavio2).clip(lower=1)) - logit(obs.base)
-    obs["w"] = obs.validos2
-    oc = obs.outros1 - np.average(obs.outros1, weights=obs.w)
-    beta = np.sum(obs.w * oc * (obs.d - np.average(obs.d, weights=obs.w))) / max(np.sum(obs.w * oc ** 2), 1e-9)
-    obs["d0"] = obs.d - beta * oc
-    mu = np.average(obs.d0, weights=obs.w)
-    g = obs.groupby("uf").apply(lambda x: pd.Series({"w": x.w.sum(), "m": np.average(x.d0, weights=x.w)}))
-    mu_uf = ((g.w * g.m + k * mu) / (g.w + k)).to_dict()
-    resid = obs.d0 - obs.uf.map(mu_uf)
-    sig_mun = np.sqrt(np.average(resid ** 2, weights=obs.w))
-    # Incerteza das UFs sem/ com poucos dados e erro nacional, que encolhem com a apuração
+    # Previa: sin votos contados, la 2da vuelta repite el reparto Lula/Flávio de la 1ra
+    # en cada municipio (desvío 0) y los votos de los otros candidatos se reparten en la
+    # misma proporción (β = 0), con incertidumbre amplia. A medida que entran votos, la
+    # estimación se aleja de la previa con peso W / (W + K0).
+    K0 = 3_000_000
+    W = obs.validos2.sum()
+    if len(obs) >= 30:
+        obs["d"] = logit(obs.lula2 / (obs.lula2 + obs.flavio2).clip(lower=1)) - logit(obs.base)
+        obs["w"] = obs.validos2
+        oc = obs.outros1 - np.average(obs.outros1, weights=obs.w)
+        beta = np.sum(obs.w * oc * (obs.d - np.average(obs.d, weights=obs.w))) / max(np.sum(obs.w * oc ** 2), 1e-9)
+        beta *= W / (W + K0)
+        obs["d0"] = obs.d - beta * oc
+        mu = np.average(obs.d0, weights=obs.w) * W / (W + K0)
+        g = obs.groupby("uf").apply(lambda x: pd.Series({"w": x.w.sum(), "m": np.average(x.d0, weights=x.w)}))
+        mu_uf = ((g.w * g.m + k * mu) / (g.w + k)).to_dict()
+        resid = obs.d0 - obs.uf.map(mu_uf)
+        sig_mun = min(max(np.sqrt(np.average(resid ** 2, weights=obs.w)), 0.03), 0.25)
+        oc_media = np.average(obs.outros1, weights=obs.w)
+        gw = g.w
+    else:
+        beta, mu, mu_uf, sig_mun, gw = 0.0, 0.0, {}, 0.12, pd.Series(dtype=float)
+        oc_media = np.average(m.outros1, weights=m.validos)
     frac = tot["apurado"]
-    sig_nac = 0.08 * (1 - frac) + 0.005
-    sig_uf = pd.Series({u: 0.10 * k / (g.w.get(u, 0) + k) + 0.01 for u in m.uf.unique()})
+    peso = W / (W + K0)
+    sig_nac = 0.15 * (1 - peso) + 0.08 * (1 - frac) * peso + 0.005
+    sig_uf = pd.Series({u: 0.10 * k / (gw.get(u, 0) + k) + 0.01 for u in m.uf.unique()})
+    tot["modo"] = "previa" if len(obs) < 30 else "conteo"
 
     rng = np.random.default_rng(seed)
-    m["oc"] = m.outros1 - np.average(obs.outros1, weights=obs.w)
+    m["oc"] = m.outros1 - oc_media
     pred = logit(m.base) + m.uf.map(mu_uf).fillna(mu) + beta * m.oc
     falta = m.falta.values
     ufs = m.uf.values
@@ -115,7 +129,7 @@ def projetar(sims=4000, k=200_000, seed=1):
         marg["dom"][s] = lula_m[~ext].sum() - flav_m[~ext].sum()
         marg["ext"][s] = lula_m[ext].sum() - flav_m[ext].sum()
     m["pred"] = 1 / (1 + np.exp(-pred))
-    res = {"beta": beta, "mu": mu, "sig_mun": sig_mun, "final_med": np.median(final),
+    res = {"modo": tot["modo"], "beta": beta, "mu": mu, "sig_mun": sig_mun, "final_med": np.median(final),
            "lo": np.quantile(final, .05), "hi": np.quantile(final, .95), "p_lula": (final > .5).mean(), "margens": marg}
     return m, res, tot
 
