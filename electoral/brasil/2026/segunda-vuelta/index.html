@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Brasil — 2º Turno 2026 | Datapol</title>
+  <title>Brasil — 2da Vuelta 2026 | Datapol</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,13 +13,13 @@
   <!-- Social preview -->
   <meta property="og:type"        content="website">
   <meta property="og:site_name"   content="Datapol">
-  <meta property="og:title"       content="Brasil — 2º Turno 2026">
+  <meta property="og:title"       content="Brasil — 2da Vuelta 2026">
   <meta property="og:description" content="Resultados en tiempo real, pronóstico estadístico y mapas interactivos.">
-  <meta property="og:url"         content="https://datapol.lat/electoral/brasil/2026/segundo-turno/">
+  <meta property="og:url"         content="https://datapol.lat/electoral/brasil/2026/segunda-vuelta/">
   <meta property="og:image"       content="https://datapol.lat/shared/images/og_peru_segunda.png">
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:site"        content="@KhamaRamaq">
-  <meta name="twitter:title"       content="Brasil — 2º Turno 2026">
+  <meta name="twitter:title"       content="Brasil — 2da Vuelta 2026">
   <meta name="twitter:description" content="Resultados en tiempo real, pronóstico estadístico y mapas interactivos.">
   <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_peru_segunda.png">
   <style>
@@ -693,7 +693,7 @@
 </div>
 <div id="nav-mob" class="nav-mobile-menu"></div>
 <script src="/shared/nav.js"></script>
-<script>initNav('brasil', '2026', 'segundo-turno');</script>
+<script>initNav('brasil', '2026', 'segunda-vuelta');</script>
 
 <!-- Yape modal -->
 <div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
@@ -716,7 +716,7 @@
 <!-- Header -->
 <div class="header">
   <div>
-    <div class="header-title">🇧🇷 2º Turno · Brasil 2026</div>
+    <div class="header-title">🇧🇷 2da Vuelta · Brasil 2026</div>
   </div>
   <div id="mob-status">
     <span id="mob-pct">—</span>
@@ -999,7 +999,7 @@
         Probabilidades de ganar la presidencia
         <span class="pron-section-sub" id="pron-source-note">Escrutinio</span>
       </div>
-      <div class="pron-prob-note">Probabilidad de ganar la presidencia en el 2º turno, basada en la proyección de los votos que faltan por municipio.</div>
+      <div class="pron-prob-note">Probabilidad de ganar la presidencia en el 2da vuelta, basada en la proyección de los votos que faltan por municipio.</div>
       <div class="cand-prob-list" id="cand-prob-list"></div>
     </div>
 
@@ -1177,15 +1177,15 @@
   // Keys A/B/C/D match the Python build script order exactly:
   // A=Keiko/Keiko  B=Sánchez/Castillo  C=Aliaga/Aliaga  D=Nieto/DeSoto
   const COMPARISONS = {
-    A: { key: "A", line1: "FLÁVIO BOLSONARO 2º TURNO", line2: "VS. FLÁVIO BOLSONARO 1º TURNO", line3: "2026", imagen: "images/flavio.jpeg", color: "#1D4ED8" },
-    B: { key: "B", line1: "LULA 2º TURNO",             line2: "VS. LULA 1º TURNO",             line3: "2026", imagen: "images/lula.jpeg",   color: "#C8102E" },
-    C: { key: "C", line1: "FLÁVIO BOLSONARO 2026",     line2: "VS. JAIR BOLSONARO 2022",       line3: "2º TURNO PRESIDENCIAL", imagen: "images/flavio.jpeg", color: "#1D4ED8" },
-    D: { key: "D", line1: "LULA 2026",                 line2: "VS. LULA 2022",                 line3: "2º TURNO PRESIDENCIAL", imagen: "images/lula.jpeg",   color: "#C8102E" },
+    A: { key: "A", line1: "FLÁVIO BOLSONARO 2DA VUELTA", line2: "VS. FLÁVIO BOLSONARO 1RA VUELTA", line3: "2026", imagen: "images/flavio.jpeg", color: "#1D4ED8" },
+    B: { key: "B", line1: "LULA 2DA VUELTA",             line2: "VS. LULA 1RA VUELTA",             line3: "2026", imagen: "images/lula.jpeg",   color: "#C8102E" },
+    C: { key: "C", line1: "FLÁVIO BOLSONARO 2026",     line2: "VS. JAIR BOLSONARO 2022",       line3: "2DA VUELTA PRESIDENCIAL", imagen: "images/flavio.jpeg", color: "#1D4ED8" },
+    D: { key: "D", line1: "LULA 2026",                 line2: "VS. LULA 2022",                 line3: "2DA VUELTA PRESIDENCIAL", imagen: "images/lula.jpeg",   color: "#C8102E" },
   };
   // Display name pairs for tooltip
   const COMP_NAMES = {
-    A: { c26: "Flávio (2º turno)", c21: "Flávio (1º turno)" },
-    B: { c26: "Lula (2º turno)",   c21: "Lula (1º turno)" },
+    A: { c26: "Flávio (2da vuelta)", c21: "Flávio (1ra vuelta)" },
+    B: { c26: "Lula (2da vuelta)",   c21: "Lula (1ra vuelta)" },
     C: { c26: "Flávio 2026",       c21: "Jair Bolsonaro 2022" },
     D: { c26: "Lula 2026",         c21: "Lula 2022" },
   };

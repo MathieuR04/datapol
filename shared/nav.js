@@ -43,7 +43,7 @@
         {
           code: '2026', label: '2026', fullLabel: 'Eleições Gerais 2026',
           elections: [
-            { code: 'segundo-turno', label: '2º Turno', url: '/electoral/brasil/2026/segundo-turno/', available: true },
+            { code: 'segunda-vuelta', label: '2da Vuelta', url: '/electoral/brasil/2026/segunda-vuelta/', available: true },
           ]
         },
       ]
