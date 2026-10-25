@@ -159,10 +159,10 @@ def escrever_geo(g, df, campos, destino):
 
 
 def battle(samples, nome_a="LULA", nome_b="FLÁVIO BOLSONARO"):
-    s = np.asarray(samples)
-    lula_lidera = np.median(s) >= 0
-    m = s if lula_lidera else -s
-    a, b = (CANDS[0], CANDS[1]) if lula_lidera else (CANDS[1], CANDS[0])
+    # Siempre Lula a la izquierda (margen = Lula − Flávio), igual que las agujas de
+    # Brasil y del exterior, para que las tres se lean en el mismo sentido.
+    m = np.asarray(samples)
+    a, b = CANDS[0], CANDS[1]
     counts, edges = np.histogram(m, bins=40)
     return {"cand_2nd": a["codigo"], "cand_3rd": b["codigo"], "nombre_2nd": a["nombre"], "nombre_3rd": b["nombre"],
             "color_2nd": a["color"], "color_3rd": b["color"], "prob_2nd_pct": round(100 * (m > 0).mean(), 1),
@@ -308,18 +308,44 @@ def rodar():
           + (f" · proj {fc.get('lula_pct_proj')}% P={fc['candidates'][0]['prob_runoff']}%" if res is not None else ""), flush=True)
 
 
+# Ciudades del exterior cuyo campo de país en el TSE viene vacío o con el barrio.
+CIUDAD_PAIS = {
+    "AMSTERDÃ": "PAÍSES BAIXOS", "ASTANA": "CAZAQUISTÃO", "BAGDÁ": "IRAQUE", "BAMAKO": "MALI",
+    "BAREIN": "BAREIN", "BOSTON": "ESTADOS UNIDOS", "CASTRIES": "SANTA LÚCIA", "COBIJA": "BOLÍVIA",
+    "EDIMBURGO": "REINO UNIDO", "GUATEMALA": "GUATEMALA", "KINGSTON-JAMAICA": "JAMAICA",
+    "KINSHASA": "REP. DEM. DO CONGO", "LILONGUE": "MALAWI", "LUSACA": "ZÂMBIA", "MARSELHA": "FRANÇA",
+    "MIAMI": "ESTADOS UNIDOS", "MILÃO": "ITÁLIA", "NASSAU": "BAHAMAS", "NOVA YORK": "ESTADOS UNIDOS",
+    "ORLANDO": "ESTADOS UNIDOS", "PARIS": "FRANÇA", "PUERTO IGUAZÚ": "ARGENTINA",
+    "PUERTO QUIJARRO": "BOLÍVIA", "PYONGYANG": "COREIA DO NORTE", "RIVERA": "URUGUAI",
+    "SAINT JOHNS": "ANTÍGUA E BARBUDA", "SANTA ELENA DE UAIRÉN": "VENEZUELA", "SANTIAGO": "CHILE",
+    "ST GEORGES DE LOYAPOCK": "GUIANA FRANCESA", "SÃO FRANCISCO": "ESTADOS UNIDOS", "TALIN": "ESTÔNIA",
+    "TBILISI": "GEÓRGIA", "TIRANA": "ALBÂNIA", "TÓQUIO": "JAPÃO", "XANGAI": "CHINA", "YANGON": "MIANMAR",
+    "ZURIQUE": "SUÍÇA",
+}
+# Variantes del mismo país en el campo del TSE
+PAIS_CANON = {
+    "AUSTRALIA": "AUSTRÁLIA", "BOLIVIA": "BOLÍVIA", "CANADA": "CANADÁ", "COLOMBIA": "COLÔMBIA",
+    "ESLOVENIA": "ESLOVÊNIA", "INDIA": "ÍNDIA", "INGLATERRA": "REINO UNIDO", "ATLANTA": "ESTADOS UNIDOS",
+    "KATMANDU": "NEPAL", "BRAZZAVILLE": "CONGO", "CORÉIA": "COREIA DO SUL", "VIETNAM": "VIETNÃ",
+    "EMBAIXADA DO BRASIL EM ESTOCOLMO": "SUÉCIA", "BOSNIA E HERZ.": "BÓSNIA E HERZEGOVINA",
+    "GUINE EQUATORIAL": "GUINÉ EQUATORIAL", "TERRIT PALESTINOS": "TERRITÓRIOS PALESTINOS",
+}
+
+
 def roll_exterior():
     """Ciudad del exterior → país, desde los locales de votación del TSE (en la UF ZZ
-    el país viene en NM_BAIRRO). Se genera una vez."""
+    el país suele venir en NM_BAIRRO; donde viene el barrio se usa CIUDAD_PAIS)."""
     destino = OUT / "exterior_roll.csv"
-    if destino.exists():
-        return
     import zipfile
     z = zipfile.ZipFile(HERE / "data" / "abertos" / "eleitorado_local_votacao_2026.zip")
     loc = pd.read_csv(z.open("eleitorado_local_votacao_2026_ZZ.csv"), sep=";", encoding="latin1",
                       usecols=["NR_TURNO", "CD_MUNICIPIO", "NM_MUNICIPIO", "NM_BAIRRO", "QT_ELEITOR_SECAO"])
-    loc = loc[loc.NR_TURNO == 2]
-    pais = loc.groupby("CD_MUNICIPIO").NM_BAIRRO.agg(lambda x: x.mode().iat[0]).str.strip().str.upper()
+    loc = loc[loc.NR_TURNO == 2].copy()
+    loc["b"] = loc.NM_BAIRRO.str.strip().str.upper()
+    ok = loc[~loc.b.isin(["CENTRO", "CENTER", "DOWNTOWN", "-", "#NULO"])]
+    pais = ok.groupby("CD_MUNICIPIO").b.agg(lambda x: x.mode().iat[0])
+    ciudad = loc.drop_duplicates("CD_MUNICIPIO").set_index("CD_MUNICIPIO").NM_MUNICIPIO.str.strip().str.upper()
+    pais = ciudad.map(CIUDAD_PAIS).fillna(pais).fillna(ciudad).replace(PAIS_CANON)
     elec = loc.groupby("CD_MUNICIPIO").QT_ELEITOR_SECAO.sum()
     paises = sorted(pais.unique())
     r = pd.DataFrame({"ubigeo_distrito": ["9" + str(c).zfill(5) for c in pais.index],
@@ -327,6 +353,7 @@ def roll_exterior():
                       "nombre_provincia": pais.values, "num_electores": elec.reindex(pais.index).values,
                       "is_exterior": "True"})
     r.to_csv(destino, index=False)
+    return r
 
 
 def num_br(s):
