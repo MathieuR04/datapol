@@ -16,7 +16,7 @@ Saída: data/site/{candidates,aggregate_stats,forecast,forecast_national,forecas
        comparison/brasil_2026_segunda_{nivel}_comparison.geojson, results/brasil_2026_distrito_segunda.csv
 Uso: python3 site.py [--loop 60]
 """
-import argparse, json, time, urllib.request, ssl
+import argparse, json, time, urllib.request, ssl, warnings
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 
 HERE = Path(__file__).resolve().parent
+warnings.filterwarnings("ignore")
 OUT = HERE / "data" / "site"
 CTX = ssl.create_default_context(cafile=certifi.where())
 LULA_COLOR, FLAVIO_COLOR = "#C8102E", "#1D4ED8"
