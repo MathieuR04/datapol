@@ -60,7 +60,7 @@ publica() {
 
 while true; do
   echo "── $(date '+%H:%M:%S')"
-  python3 -u baixar.py 6258 --hilos 12
+  python3 -u baixar.py 6258 --hilos "${HILOS:-32}"
   python3 -u site.py 2>&1 | grep -v -i warning
   $PUSH && publica
   $ONCE && break
