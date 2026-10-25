@@ -37,6 +37,17 @@
         */
       ]
     },
+    brasil: {
+      flag: '🇧🇷', name: 'Brasil',
+      processes: [
+        {
+          code: '2026', label: '2026', fullLabel: 'Eleições Gerais 2026',
+          elections: [
+            { code: 'segundo-turno', label: '2º Turno', url: '/electoral/brasil/2026/segundo-turno/', available: true },
+          ]
+        },
+      ]
+    },
     colombia: {
       flag: '🇨🇴', name: 'Colombia',
       processes: [

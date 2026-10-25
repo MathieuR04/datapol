@@ -16,3 +16,11 @@ colombia/2026/senado/data/processed/resultados_mesas_errors.csv
 
 # Large raw source files (download separately per README)
 colombia/2026/metadata/raw/Divipole_definitiva_*.pdf
+
+# Brasil 2026 — descargas crudas (se regeneran)
+brasil/2026/segundo-turno/data/raw/
+brasil/2026/segundo-turno/data/abertos/
+brasil/2026/segundo-turno/data/geo/
+brasil/2026/segundo-turno/web/
+brasil/2026/segundo-turno/data/*.log
+brasil/2026/segundo-turno/data/historico.csv

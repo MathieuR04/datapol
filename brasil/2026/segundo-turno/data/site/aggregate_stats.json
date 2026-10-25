@@ -1,0 +1,37 @@
+{
+  "n_distritos": 10,
+  "num_electores": 158745502,
+  "votos_emitidos": 345054,
+  "votos_validos": 335743,
+  "votos_blancos": 4158,
+  "votos_nulos": 5153,
+  "actas_contabilizadas": 1225,
+  "actas_total": 499248,
+  "participacion_pct": 50.53,
+  "actas_pct": 0.25,
+  "candidatos": [
+    {
+      "codigo": "01",
+      "src": "c13",
+      "nombre": "LULA",
+      "partido": "PT",
+      "color": "#C8102E",
+      "imagen": "images/lula.jpeg",
+      "votos": 193574,
+      "pct_validos": 57.655,
+      "pct_emitidos": 56.1
+    },
+    {
+      "codigo": "02",
+      "src": "c22",
+      "nombre": "FLÁVIO BOLSONARO",
+      "partido": "PL",
+      "color": "#1D4ED8",
+      "imagen": "images/flavio.jpeg",
+      "votos": 142169,
+      "pct_validos": 42.345,
+      "pct_emitidos": 41.202
+    }
+  ],
+  "generated_at": "2026-10-25T21:56:28.118646Z"
+}

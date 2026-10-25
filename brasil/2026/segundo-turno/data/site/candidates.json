@@ -1,0 +1,16 @@
+[
+  {
+    "codigo": "01",
+    "nombre": "LULA",
+    "partido": "PT",
+    "color": "#C8102E",
+    "imagen": "images/lula.jpeg"
+  },
+  {
+    "codigo": "02",
+    "nombre": "FLÁVIO BOLSONARO",
+    "partido": "PL",
+    "color": "#1D4ED8",
+    "imagen": "images/flavio.jpeg"
+  }
+]
