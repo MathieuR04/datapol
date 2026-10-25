@@ -659,7 +659,9 @@
     white-space: nowrap;
     display: none;
   }
-  </style>
+      /* Mapa base pálido, como en ERM 2026 */
+    .leaflet-tile-pane{filter:grayscale(1) sepia(.35) brightness(1.05) contrast(.7) opacity(.45)}
+</style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-26RZM28VBS"></script>
   <script>
