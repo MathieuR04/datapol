@@ -3650,7 +3650,7 @@
     if(line){const na=toA(dm); line.setAttribute("x2",(cx+(r+5)*Math.cos(na)).toFixed(1)); line.setAttribute("y2",(cy-(r+5)*Math.sin(na)).toFixed(1));}
 
     // Labels outside SVG
-    function fmt(v){const s=v>=0?"+":"−";const a=Math.abs(v);return a>=1e5?`${s}${Math.round(a/1e3)}k`:a>=1e3?`${s}${(a/1e3).toFixed(1)}k`:`${s}${Math.round(a)}`;}
+    function fmt(v){const s=v>=0?"+":"−";const a=Math.abs(v);return a>=1e6?`${s}${(a/1e6).toFixed(2)}M`:a>=1e5?`${s}${Math.round(a/1e3)}k`:a>=1e3?`${s}${(a/1e3).toFixed(1)}k`:`${s}${Math.round(a)}`;}
     const probK = isKeiko ? battle.prob_2nd_pct : battle.prob_3rd_pct;
     const probR = 100 - (probK||0);
     const set=(id,txt,col)=>{const el=document.getElementById(id);if(el){el.textContent=txt;if(col)el.style.color=col;}};
