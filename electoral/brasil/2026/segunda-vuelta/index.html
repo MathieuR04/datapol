@@ -1948,7 +1948,7 @@
     // Load district CSV + electoral roll to get country names
     Promise.all([
       fetch(BASE + "results/brasil_2026_distrito_segunda.csv").then(r => r.text()),
-      Promise.resolve("ubigeo_distrito")
+      fetch(BASE + "exterior_roll.csv").then(r => r.text())
     ])
     .then(([csvText, rollText]) => {
       const distRows = parseCSV(csvText).filter(r => String(r.ubigeo_distrito || "").startsWith("9"));

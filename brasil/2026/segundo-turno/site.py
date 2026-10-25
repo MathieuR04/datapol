@@ -254,7 +254,10 @@ def rodar():
     for nv in ("departamento", "provincia"):
         escrever_geo(gu, comp_u, list(comp_u.columns), OUT / "comparison" / f"brasil_2026_segunda_{nv}_comparison.geojson")
 
-    # CSV por município
+    # CSV por município. Las ciudades del exterior (UF "zz") van con código "9" + código
+    # TSE, como el Perú: la pestaña Exterior las agrupa por país con exterior_roll.csv.
+    df.loc[df.uf == "zz", "ubigeo_distrito"] = "9" + df.index[df.uf == "zz"].str[2:]
+    roll_exterior()
     csv = df[df.ubigeo_distrito != ""][["ubigeo_distrito", "validos", "brancos", "nulos", "emitidos", "secoes_tot", "secoes", "c13", "c22"]]
     csv.columns = ["ubigeo_distrito", "votos_validos", "votos_blancos", "votos_nulos", "votos_emitidos",
                    "actas_contabilizadas", "actas_total", "cand_01", "cand_02"]
@@ -303,6 +306,27 @@ def rodar():
     (OUT / "forecast.json").write_text(json.dumps(fc, ensure_ascii=False))
     print(f"[{time.strftime('%H:%M:%S')}] site: seções {agg['actas_pct']}% · Lula {agg['candidatos'][0]['pct_validos']}%"
           + (f" · proj {fc.get('lula_pct_proj')}% P={fc['candidates'][0]['prob_runoff']}%" if res is not None else ""), flush=True)
+
+
+def roll_exterior():
+    """Ciudad del exterior → país, desde los locales de votación del TSE (en la UF ZZ
+    el país viene en NM_BAIRRO). Se genera una vez."""
+    destino = OUT / "exterior_roll.csv"
+    if destino.exists():
+        return
+    import zipfile
+    z = zipfile.ZipFile(HERE / "data" / "abertos" / "eleitorado_local_votacao_2026.zip")
+    loc = pd.read_csv(z.open("eleitorado_local_votacao_2026_ZZ.csv"), sep=";", encoding="latin1",
+                      usecols=["NR_TURNO", "CD_MUNICIPIO", "NM_MUNICIPIO", "NM_BAIRRO", "QT_ELEITOR_SECAO"])
+    loc = loc[loc.NR_TURNO == 2]
+    pais = loc.groupby("CD_MUNICIPIO").NM_BAIRRO.agg(lambda x: x.mode().iat[0]).str.strip().str.upper()
+    elec = loc.groupby("CD_MUNICIPIO").QT_ELEITOR_SECAO.sum()
+    paises = sorted(pais.unique())
+    r = pd.DataFrame({"ubigeo_distrito": ["9" + str(c).zfill(5) for c in pais.index],
+                      "ubigeo_provincia": ["9" + str(paises.index(x)).zfill(3) for x in pais.values],
+                      "nombre_provincia": pais.values, "num_electores": elec.reindex(pais.index).values,
+                      "is_exterior": "True"})
+    r.to_csv(destino, index=False)
 
 
 def num_br(s):
