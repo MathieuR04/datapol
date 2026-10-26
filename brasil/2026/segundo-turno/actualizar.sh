@@ -62,7 +62,7 @@ publica() {
 # Urnas seção por seção (para el pronóstico): corre aparte, en paralelo, y se cierra
 # junto con este script.
 if ! pgrep -f "secoes.py --hilos" >/dev/null; then
-  python3 -u secoes.py --hilos 48 --loop 20 >> data/secoes.log 2>&1 &
+  python3 -u secoes.py --hilos 8 --loop 30 >> data/secoes.log 2>&1 &
   PID_SECOES=$!
   trap 'kill $PID_SECOES 2>/dev/null' EXIT
 fi

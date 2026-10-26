@@ -18,7 +18,7 @@ rodada só baixa as seções recebidas que ainda não estão no cache.
 
 Uso: python3 secoes.py [--ufs ba,sp] [--hilos 48] [--loop 0]
 """
-import argparse, json, ssl, time, urllib.request, concurrent.futures as cf
+import argparse, json, ssl, time, urllib.error, urllib.request, concurrent.futures as cf
 from pathlib import Path
 import certifi
 
@@ -31,12 +31,19 @@ UFS = ["ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma", "mg", "ms", "
 
 
 def get(url, timeout=30):
+    """Con 429 (Too Many Requests) el TSE pide bajar el ritmo: se espera y se reintenta,
+    cada vez más. Con ~96 hilos el TSE bloqueó la lectura el 25/10; 8 hilos es el ritmo seguro."""
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 datapol-scraper/1.0"})
-    for i in range(3):
+    for i in range(6):
         try:
             return urllib.request.urlopen(req, context=CTX, timeout=timeout).read()
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and i < 5:
+                time.sleep(30 * (i + 1))
+                continue
+            raise
         except Exception:
-            if i == 2:
+            if i >= 2:
                 raise
             time.sleep(1 + 2 * i)
 
@@ -189,7 +196,7 @@ def rodada(ufs, hilos):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--ufs", default=",".join(UFS))
-    ap.add_argument("--hilos", type=int, default=48)
+    ap.add_argument("--hilos", type=int, default=8)
     ap.add_argument("--loop", type=int, default=0)
     a = ap.parse_args()
     while True:
