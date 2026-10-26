@@ -146,6 +146,14 @@ def revisar(paginas: pd.DataFrame) -> pd.DataFrame:
 def run(camaras=("diputados", "senado")) -> None:
     votos = pd.read_csv(DATA / "votos.csv", keep_default_na=False, dtype=str)
     paginas = pd.read_csv(DATA / "paginas.csv", keep_default_na=False, dtype=str)
+    # Páginas revisadas a mano contra la imagen (data/verificadas.csv): si el «mismatch»
+    # era del validador (OCR del cuadro impreso) y no de los votos, cuentan como validadas.
+    ver = DATA / "verificadas.csv"
+    if ver.exists():
+        v = pd.read_csv(ver, dtype=str)
+        clave = set(zip(v.pdf, v.pagina))
+        marca = [(a, b) in clave for a, b in zip(paginas.pdf, paginas.pagina)]
+        paginas.loc[marca, "validacion"] = "ok"
     roster = json.loads((DATA / "roster.json").read_text(encoding="utf-8"))
     WEB.mkdir(exist_ok=True)
     rv = revisar(paginas)
