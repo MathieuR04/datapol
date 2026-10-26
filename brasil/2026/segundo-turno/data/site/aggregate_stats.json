@@ -1,11 +1,11 @@
 {
-  "n_distritos": 5568,
+  "n_distritos": 5569,
   "num_electores": 158745502,
-  "votos_emitidos": 128224771,
-  "votos_validos": 124071304,
-  "votos_blancos": 1430382,
-  "votos_nulos": 2723085,
-  "actas_contabilizadas": 499198,
+  "votos_emitidos": 128226371,
+  "votos_validos": 124072849,
+  "votos_blancos": 1430393,
+  "votos_nulos": 2723129,
+  "actas_contabilizadas": 499206,
   "actas_total": 499248,
   "participacion_pct": 80.78,
   "actas_pct": 99.99,
@@ -17,7 +17,7 @@
       "partido": "PT",
       "color": "#C8102E",
       "imagen": "images/lula.jpeg",
-      "votos": 64249053,
+      "votos": 64249974,
       "pct_validos": 51.784,
       "pct_emitidos": 50.107
     },
@@ -28,10 +28,10 @@
       "partido": "PL",
       "color": "#1D4ED8",
       "imagen": "images/flavio.jpeg",
-      "votos": 59822251,
+      "votos": 59822875,
       "pct_validos": 48.216,
       "pct_emitidos": 46.654
     }
   ],
-  "generated_at": "2026-10-26T01:16:30.650921Z"
+  "generated_at": "2026-10-26T01:21:59.137855Z"
 }
