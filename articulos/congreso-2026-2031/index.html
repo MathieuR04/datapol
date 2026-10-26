@@ -246,7 +246,8 @@
   <div class="chips" id="chips"></div>
   <div class="mapas">
     <div class="panel">
-      <h3>Por parlamentario</h3>
+      <h3 style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">Por parlamentario
+        <button type="button" class="chip" id="btnNombres" aria-pressed="false">Ver nombres</button></h3>
       <div class="legend" id="legM"></div>
       <svg id="mapM" viewBox="0 0 600 470" role="img" aria-label="Mapa de posiciones por parlamentario"></svg>
     </div>
@@ -324,13 +325,65 @@ const VOTO = {
 const colorGrupo = g => g ? `var(--p-${g}, var(--dim))` : 'var(--dim)';
 const BLOQUE_L = { oficialismo: 'Oficialismo', oposicion: 'Oposición', otro: 'Otro' };
 const cache = {};
-let D = null, filtroGrupo = null, orden = { k: 'x', asc: false };
+let D = null, filtroGrupo = null, verNombres = false, orden = { k: 'x', asc: false };
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const pct = v => v == null ? '—' : Math.round(v * 100) + '%';
 const foto = m => m.foto ? 'data/' + m.foto : '';
 const fmtFecha = f => { if (!f) return ''; const [y, mo, d] = f.split('-'); return `${+d}/${+mo}/${y}`; };
+// Etiqueta del mapa: el apellido paterno. Con tres palabras de apellido y ninguna
+// partícula («López Chau Nava») el paterno es compuesto y van las dos primeras; si otro
+// miembro de la cámara comparte el paterno, se añade el materno («Vásquez Chuquilín»).
+const PARTICULAS = new Set(['de', 'del', 'la', 'las', 'los', 'y']);
+function paterno(m) {
+  const ap = m.nombre.split(',')[0].trim().split(/\s+/);
+  // «De Paz Lancho», «Del Águila Cárdenas»: las partículas iniciales van con el apellido
+  let i = 0;
+  while (i < ap.length - 1 && PARTICULAS.has(ap[i].toLowerCase())) i++;
+  if (i > 0) return ap.slice(0, i + 1);
+  return ap.length >= 3 && !ap.some(w => PARTICULAS.has(w.toLowerCase())) ? ap.slice(0, 2) : ap.slice(0, 1);
+}
+function apellidoEtiqueta(m) {
+  const ap = m.nombre.split(',')[0].trim().split(/\s+/), pat = paterno(m);
+  const igual = D.miembros.some(o => o.id !== m.id && paterno(o).join(' ') === pat.join(' '));
+  if (!igual || !ap[pat.length]) return pat.join(' ');
+  // materno, con sus partículas («Fernández de la Torre»)
+  let j = pat.length;
+  while (j < ap.length - 1 && PARTICULAS.has(ap[j].toLowerCase())) j++;
+  return ap.slice(0, j + 1).join(' ');
+}
+
+// Nombres sobre el mapa sin que se pisen: se prueban cuatro posiciones alrededor de
+// cada punto (derecha, izquierda, arriba, abajo) y se descarta la etiqueta si choca
+// con otra ya puesta, con un punto destacado o con el borde. Prioridad: cruzados,
+// luego los más cerca de la línea (bisagras), luego los más alejados del centro.
+function etiquetas(P, on, W, H, pad) {
+  const cand = P.filter(p => on(p.m));
+  const L = D.meta.linea;
+  const dl = m => L ? Math.abs(L.nx * m.x + L.ny * m.y - L.c) : 0;
+  cand.sort((a, b) => (b.m.cruzado - a.m.cruzado) || (filtroGrupo ? Math.hypot(b.m.x, b.m.y) - Math.hypot(a.m.x, a.m.y) : dl(a.m) - dl(b.m)));
+  const cajas = [], puntos = cand.map(p => ({ x: p.dx, y: p.dy })), out = [];
+  const choca = (r) => r.x0 < pad || r.x1 > W - pad || r.y0 < pad || r.y1 > H - pad
+    || cajas.some(c => r.x0 < c.x1 && r.x1 > c.x0 && r.y0 < c.y1 && r.y1 > c.y0)
+    || puntos.some(q => q.x > r.x0 - 4 && q.x < r.x1 + 4 && q.y > r.y0 - 4 && q.y < r.y1 + 4);
+  for (const p of cand) {
+    const t = apellidoEtiqueta(p.m), w = t.length * 5.9 + 2, h = 11;
+    const opciones = [
+      { x: p.dx + 7, y: p.dy + 3.5, a: 'start', r: { x0: p.dx + 6, x1: p.dx + 6 + w, y0: p.dy - h / 2, y1: p.dy + h / 2 } },
+      { x: p.dx - 7, y: p.dy + 3.5, a: 'end', r: { x0: p.dx - 6 - w, x1: p.dx - 6, y0: p.dy - h / 2, y1: p.dy + h / 2 } },
+      { x: p.dx, y: p.dy - 8, a: 'middle', r: { x0: p.dx - w / 2, x1: p.dx + w / 2, y0: p.dy - 7 - h, y1: p.dy - 7 } },
+      { x: p.dx, y: p.dy + 16, a: 'middle', r: { x0: p.dx - w / 2, x1: p.dx + w / 2, y0: p.dy + 7, y1: p.dy + 7 + h } },
+    ];
+    const ok = opciones.find(o => !choca(o.r));
+    if (!ok) continue;
+    cajas.push(ok.r);
+    out.push(`<text x="${ok.x}" y="${ok.y}" text-anchor="${ok.a}" font-size="10" font-weight="600" fill="var(--text)"
+      paint-order="stroke" stroke="var(--card)" stroke-width="3" stroke-linejoin="round" pointer-events="none">${esc(t)}</text>`);
+  }
+  return out.join('');
+}
+
 const nombreCorto = n => { const [ap, no] = n.split(','); return (no ? no.trim().split(' ')[0] + ' ' : '') + ap.trim(); };
 
 async function cargar(c) {
@@ -449,7 +502,10 @@ function mapaMiembros() {
       <circle cx="${dx}" cy="${dy}" r="${on(m) ? 4.6 : 3.6}" fill="${colorGrupo(m.grupo)}" fill-opacity="${on(m) ? .9 : .15}"
         stroke="${m.cruzado ? 'var(--text)' : 'var(--card)'}" stroke-width="${m.cruzado ? 1.6 : 1}"/>
       <circle cx="${dx}" cy="${dy}" r="7" fill="transparent"/>
-    </g>`).join('');
+    </g>`).join('') + (verNombres ? etiquetas(P, on, W, H, pad) : '');
+  const bn = $('#btnNombres');
+  bn.setAttribute('aria-pressed', verNombres);
+  bn.onclick = () => { verNombres = !verNombres; mapaMiembros(); };
   hover('#mapM', id => tipMiembro(D.byId[id]), id => ficha(id));
 }
 
