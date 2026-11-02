@@ -71,7 +71,9 @@ SUMMARY_LABELS = [
 ]
 
 CONSTANCIA_DIR = {"a favor": "SI", "en contra": "NO", "en abstencion": "ABS"}
-ROL = r"(?:congresistas?|senador(?:a|es|as)?|diputad[oa]s?)"
+# El OCR a veces corta el inicio de «diputada/os» contra el borde o el sello
+# («la itada Fernández», «los liputados Salas»), Diputados 06/10 y 22/10/2026.
+ROL = r"(?:congresistas?|senador(?:a|es|as)?|[a-z]*(?:putad|itad)[oa]s?)"
 
 N_COLUMNS = 3
 
