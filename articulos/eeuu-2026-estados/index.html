@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estados de EE. UU. en vivo | Datapol</title>
+<meta name="description" content="Quién controla gobernador y legislatura en cada estado tras el 3 de noviembre de 2026: resultados, probabilidades de trifecta y mapas por distrito.">
+<link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+<link rel="stylesheet" href="/shared/nav.css">
+<meta property="og:type" content="article"><meta property="og:site_name" content="Datapol"><meta property="og:title" content="Estados de EE. UU. en vivo"><meta property="og:description" content="Quién controla gobernador y legislatura en cada estado tras el 3 de noviembre de 2026: resultados, probabilidades de trifecta y mapas por distrito."><meta property="og:url" content="https://datapol.lat/articulos/eeuu-2026-estados/"><meta property="og:image" content="https://datapol.lat/shared/images/og_datapol.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@KhamaRamaq"><meta name="twitter:title" content="Estados de EE. UU. en vivo"><meta name="twitter:description" content="Quién controla gobernador y legislatura en cada estado tras el 3 de noviembre de 2026: resultados, probabilidades de trifecta y mapas por distrito."><meta name="twitter:image" content="https://datapol.lat/shared/images/og_datapol.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f0e8;--surface:#ede8df;--border:#cfc0ab;--text:#1a1209;--muted:#6b5a4b;--terra:#c4603a;--d:#2b62a8;--d-soft:#c9d9ec;--r:#b8352f;--r-soft:#efcdc8;--div:#6d5f7c;--open:#e2d8c8;--card:#fbf8f2;--grid:#e4d9c9;--sand:#d9c9b4}
+html,body{background:var(--bg)}body{font-family:'Inter',-apple-system,sans-serif;font-size:14px;color:var(--text);line-height:1.45}
+.wrap{max-width:1120px;margin:0 auto;padding:2.5rem 1.25rem 5rem}
+.article-back svg{width:12px;height:12px;max-width:none;flex:none;background:none;border:0;margin:0;display:block}
+.article-back{display:inline-flex;gap:.4rem;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;margin-bottom:2rem}.article-back:hover{color:var(--text)}
+.atag{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);margin-bottom:.6rem}
+.byline{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--muted);padding-bottom:1.2rem;border-bottom:2px solid var(--text);margin-bottom:1.6rem}.byline b{color:var(--text);font-weight:600}
+.lede{font-size:15px;line-height:1.75;max-width:720px;margin-bottom:1.6rem}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--terra);margin-right:5px}.dot.off{background:var(--muted)}
+h1{font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(40px,8vw,52px);font-weight:400;letter-spacing:.03em;line-height:1;margin-bottom:1rem}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:10px}
+.kpis.three{grid-template-columns:repeat(3,1fr);margin:0 0 16px}
+.kpi{background:var(--card);padding:12px 14px}.kpi b{display:block;font:400 42px/1 'Bebas Neue',sans-serif;margin-bottom:3px}.kpi span{font-size:12px;color:var(--muted)}.kpi small{display:block;font-size:11px;color:var(--muted)}
+.kpi h3{font:600 12px 'Inter',sans-serif;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}.kpi em{font-style:normal}
+.kpi.d b{color:var(--d)}.kpi.r b{color:var(--r)}.kpi.x b{color:var(--div)}
+.kpi.wD{background:var(--d)}.kpi.wR{background:var(--r)}.kpi.wD *,.kpi.wR *{color:#fff}
+.sbar{display:flex;height:12px;margin-bottom:10px;background:var(--open)}.sbar i{display:block;height:100%}
+.exp{margin-bottom:24px}
+h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:30px;letter-spacing:.03em;margin:0 0 .6rem}
+.tiles{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin-bottom:12px}
+.tile{aspect-ratio:1;border:0;font:700 clamp(10px,1.9vw,15px) 'Inter',sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:var(--open);color:var(--text);min-width:0;padding:0}
+.tile em{font:600 clamp(9px,1.25vw,12px) 'Inter',sans-serif;font-style:normal}
+.tile.D3{background:#2b62a8;color:#fff}.tile.D2{background:#7ba3d0}.tile.D1{background:#bcd1e8}.tile.R3{background:#b8352f;color:#fff}.tile.R2{background:#d9837b}.tile.R1{background:#efc3bd}.tile.X3{background:#6d5f7c;color:#fff}.tile.X2{background:#a596b4}.tile.X1{background:#d4cbdc}.tile.TT{background:#efb93f}
+.tile:hover{outline:2px solid var(--text);outline-offset:-2px}.tile:focus-visible,.fbtn:focus-visible{outline:2px solid var(--text);outline-offset:1px}
+.pips{display:flex;gap:2px}.pip{width:clamp(4px,.8vw,8px);height:clamp(4px,.8vw,8px);background:#fff;border:1px solid rgba(26,18,9,.45)}.pip.D{background:var(--d)}.pip.R{background:var(--r)}.pip.N{background:transparent}
+.tile.D3 .pip,.tile.R3 .pip,.tile.X3 .pip{border-color:#fff}.tile.D3 .pip.D,.tile.R3 .pip.R,.tile.X3 .pip.D,.tile.X3 .pip.R{background:#fff}
+.leg{display:flex;flex-wrap:wrap;gap:5px 14px;font-size:12px;margin:6px 0 14px}.leg i{display:inline-block;width:12px;height:12px;margin-right:5px;vertical-align:-2px}
+.legend{margin-bottom:26px;color:var(--muted)}
+.filters,.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.fbtn{font:600 12px 'Inter',sans-serif;background:transparent;border:1px solid var(--border);color:var(--text);padding:7px 11px;cursor:pointer}.fbtn[aria-pressed=true]{background:var(--text);color:var(--bg);border-color:var(--text)}
+.tw{overflow-x:auto;border-top:2px solid var(--text)}table{width:100%;border-collapse:collapse}.big{min-width:720px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:8px 10px 8px 0;border-bottom:1px solid var(--border);background:var(--bg)}
+td{padding:8px 10px 8px 0;border-bottom:1px solid var(--border);vertical-align:top;font-variant-numeric:tabular-nums}td .m{display:block;font-size:12px;color:var(--muted)}
+tbody tr[data-st]{cursor:pointer}tbody tr[data-st]:hover td{background:var(--surface)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 6px;white-space:nowrap;background:var(--open)}.tag.DL{background:var(--d);color:#fff}.tag.RL{background:var(--r);color:#fff}.tag.DO{background:var(--d-soft)}.tag.RO{background:var(--r-soft)}.tag.XX{background:var(--div);color:#fff}
+.ch{font-weight:700;margin-left:6px;color:var(--terra);font-size:11px}.pD{color:var(--d);font-weight:700}.pR{color:var(--r);font-weight:700}
+.barw{position:relative;display:flex;height:44px;gap:1px;margin-top:4px}.seg{display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;min-width:0}.maj{position:absolute;top:-6px;bottom:-6px;left:50%;width:2px;background:var(--text)}.majt{text-align:center;font-size:12px;font-weight:600;margin:7px 0 6px}
+.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:start}svg{display:block;width:100%;height:auto}
+.dist{stroke:#1a1209;stroke-width:.4;cursor:pointer}.dist:hover,.dist.on{stroke:#1a1209;stroke-width:1.6}
+.card{background:var(--surface);padding:12px 14px;margin-bottom:14px;min-height:112px}.card>b{font-size:16px}.card dl{display:grid;grid-template-columns:auto auto;gap:3px 12px;margin-top:6px;justify-content:space-between}.card dt{color:var(--muted);font-size:13px}.card dd{text-align:right;font-size:15px}.card p{color:var(--muted);font-size:13px}
+.list{max-height:430px;overflow:auto;border-top:2px solid var(--text)}.list td{font-size:13px;padding:7px 6px 7px 0}.list th{position:sticky;top:0}tr[data-d]{cursor:pointer}
+.snote{font-size:13px;margin:0 0 8px;background:var(--surface);padding:8px 12px}
+.back{font-size:13px;color:var(--muted)}.notes{margin-top:24px;font-size:12px;color:var(--muted);max-width:760px}.notes p{margin-bottom:8px}.notes a{color:var(--text)}
+.err{background:var(--r-soft);padding:10px 12px;margin-bottom:14px;display:none}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.kpis.three{grid-template-columns:1fr}.list{max-height:none}}@media(max-width:620px){.kpis{grid-template-columns:repeat(2,1fr)}.tiles{gap:2px}.pips{display:none}}
+</style></head><body>
+<div class="nav">
+  <a class="nav-brand" href="/">DATAPOL</a>
+  <div class="nav-social">
+    <a class="nav-social-link" href="https://x.com/KhamaRamaq" target="_blank" rel="noopener" title="X / Twitter">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+    </a>
+    <a class="nav-social-link" href="https://www.linkedin.com/in/mathieu-rojas-egoavil-889a64293/" target="_blank" rel="noopener" title="LinkedIn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <button class="nav-social-link nav-yape-btn" onclick="document.getElementById('yape-modal').style.display='flex'" title="Yape">
+      <span class="nav-yape-label">YAPE</span>
+    </button>
+    <div class="nav-sep" style="margin:0 0.4rem"></div>
+    <span class="nav-author">MATHIEU ROJAS</span>
+  </div>
+</div>
+
+<div id="yape-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(26,18,9,0.6);align-items:center;justify-content:center" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#f5f0e8;border-radius:12px;padding:1.5rem;text-align:center;max-width:280px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.35)">
+    <p style="color:#1a1209;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.12em;margin-bottom:.75rem">APOYA CON YAPE</p>
+    <img src="/shared/images/yape_qr.png" alt="Yape QR" style="width:100%;border-radius:8px;display:block">
+    <button onclick="document.getElementById('yape-modal').style.display='none'" style="margin-top:1rem;background:none;border:1px solid #cfc0ab;color:#7a6858;padding:.35rem 1rem;border-radius:4px;cursor:pointer;font-size:12px">Cerrar</button>
+  </div>
+</div>
+
+<div class="wrap">
+<a class="article-back" id="back" href="/articulos/"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg><span id="backT">Todos los artículos</span></a>
+<div class="atag">EE. UU. 2026 · Gobernadores y legislaturas</div>
+<h1 id="title">Estados de EE. UU. en vivo</h1>
+<div class="byline"><b>Mathieu Rojas</b><span>·</span><span><span class="dot" id="dot"></span><span id="upd">Cargando…</span></span></div>
+<p class="lede" id="lede">Quién controla gobernador y legislatura en cada estado tras el 3 de noviembre de 2026. Toca un estado para ver su panel.</p>
+<div class="err" id="err" role="alert"></div>
+<div id="home" hidden>
+ <div class="kpis" id="kpis"></div><div class="sbar" id="sbar" aria-hidden="true"></div><p class="exp" id="exp"></p>
+ <div class="tiles" id="tiles"></div>
+ <div class="leg legend"><span><i style="background:#2b62a8"></i>Trifecta D 95%+</span><span><i style="background:#7ba3d0"></i>Probable 75-95%</span><span><i style="background:#bcd1e8"></i>Inclinada 55-75%</span><span><i style="background:#efb93f"></i>Toss-up</span><span><i style="background:#d4cbdc"></i>Dividido 55-75%</span><span><i style="background:#a596b4"></i>Probable 75-95%</span><span><i style="background:#6d5f7c"></i>95%+</span><span><i style="background:#efc3bd"></i>Trifecta R 55-75%</span><span><i style="background:#d9837b"></i>Probable 75-95%</span><span><i style="background:#b8352f"></i>95%+</span><span>Cuadros: gobernador, cámara baja, senado</span></div>
+ <div class="filters" id="filters"></div>
+ <div class="tw"><table class="big"><thead><tr><th>Estado</th><th>Prob. trifecta</th><th>Ahora</th><th>Gobernador</th><th>Cámara baja</th><th>Senado</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+<div id="state" hidden>
+ <div class="kpis three" id="boxes"></div>
+ <div class="tabs" id="tabs"></div>
+ <div id="sbarState"></div>
+ <div class="grid"><div id="map"></div><div><div class="card" id="card"></div><h2>Más competidos</h2><div class="list"><table><thead><tr><th>Distrito</th><th>Pronóstico</th><th>Previo</th><th>Prob.</th></tr></thead><tbody id="dist"></tbody></table></div></div></div>
+</div>
+<div class="notes">
+ <p><b>Método (experimental).</b> Los llamados y el estado de cada cámara son datos reales. Las probabilidades parten del pronóstico final de <a href="https://projects.statenavigate.com/25-26/national/">State Navigate</a> y sus simulaciones, y se actualizan con el voto para gobernador, las llamadas y los distritos competitivos con datos. El margen pronosticado de un distrito es una estimación del modelo, no votos contados, salvo cuando indica conteo. Los pesos son supuestos de Datapol, sin calibrar con elecciones pasadas.</p>
+ <p><b>Casos especiales.</b> Algunos estados eligen más de un escaño por distrito, como Arizona o New Hampshire. No es representación proporcional: cada escaño se muestra por separado. "Llamado" incluye candidatos sin rival. Alaska se gobierna con coaliciones. La legislatura de Nebraska es oficialmente apartidista y usa la afiliación de sus miembros. Quién organiza una cámara empatada puede depender de acuerdos posteriores.</p>
+ <p><b>Datos.</b> Resultados de <a href="https://electionhub.org/states/">ElectionHub</a> (fuentes oficiales, AP y Decision Desk HQ), consultados cada 2 minutos; la fuente actualiza con menos frecuencia. Mapas y pronósticos de State Navigate.</p>
+</div></div>
+<script>
+(function(){
+'use strict';
+var API='https://electionhub.org',POLL=120000;
+var GOV_FIXED={DE:'D',IN:'R',KY:'D',LA:'R',MS:'R',MO:'R',MT:'R',NJ:'D',NC:'D',ND:'R',UT:'R',VA:'D',WA:'D',WV:'R'};
+var GRID=[['AK',0,0],['ME',10,0],['WI',5,1],['VT',9,1],['NH',10,1],
+['WA',0,2],['ID',1,2],['MT',2,2],['ND',3,2],['MN',4,2],['IL',5,2],['MI',6,2],['NY',8,2],['MA',9,2],
+['OR',0,3],['NV',1,3],['WY',2,3],['SD',3,3],['IA',4,3],['IN',5,3],['OH',6,3],['PA',7,3],['NJ',8,3],['CT',9,3],['RI',10,3],
+['CA',0,4],['UT',1,4],['CO',2,4],['NE',3,4],['MO',4,4],['KY',5,4],['WV',6,4],['VA',7,4],['MD',8,4],['DE',9,4],
+['AZ',1,5],['NM',2,5],['KS',3,5],['AR',4,5],['TN',5,5],['NC',6,5],['SC',7,5],
+['OK',3,6],['LA',4,6],['MS',5,6],['AL',6,6],['GA',7,6],['HI',0,7],['TX',3,7],['FL',8,7]];
+var PRI={AK:[83.6,89.5,99.9],ME:[96.8,94.3,98.8],WI:[73.1,67.8,89.5],VT:[23.3,99.9,99.9],NH:[2.2,82.3,43.3],WA:[0,99.9,99.9],ID:[.1,.1,.1],MT:[0,3,.1],ND:[0,.1,.1],MN:[98.7,98,97],IL:[99.9,99.9,99.9],MI:[92,83.3,93],NY:[99.2,99.9,99.9],MA:[99.9,99.9,99.9],RI:[99.9,99.9,99.9],OR:[90.6,99.5,99.8],NV:[26.4,95.9,98],WY:[.1,.1,.1],SD:[.2,.1,.1],IA:[91.7,12.7,.1],IN:[0,.6,.1],OH:[74.2,5.1,.1],PA:[99.9,96.4,68.7],CT:[99.8,99.9,99.9],CA:[99.9,99.9,99.9],UT:[0,.4,.1],CO:[99.9,99.9,99.9],NE:[10.2,0,.1],MO:[0,1,.1],KY:[0,.1,.1],WV:[0,.1,.1],MD:[99.9,99.9,99.9],DE:[0,99.9,99.9],AZ:[93.3,82.3,84],NM:[98.5,99.9,99.9],KS:[27.6,1.4,.1],AR:[.1,.1,.1],TN:[.5,.1,.1],NC:[0,49.9,26.8],SC:[5.1,1.1,.1],AL:[4.1,.1,.1],HI:[99.9,99.9,99.9],TX:[29.1,24.5,.5],FL:[23.7,9.7,.5],GA:[54,31,8],OK:[.5,.1,.1]};
+var LABEL={DL:'Trifecta D',RL:'Trifecta R',DO:'Solo D posible',RO:'Solo R posible',XX:'Dividido',OO:'Abierto'};
+var CAT={Dn:{l:'D no en juego',c:'url(#nuD)',b:'repeating-linear-gradient(45deg,#c9d9ec 0 4px,#f5f0e8 4px 7px)'},Dc:{l:'D llamado',c:'#2b62a8',b:'#2b62a8',w:1},Dl:{l:'D inclinado',c:'#8fb0d6',b:'#8fb0d6'},T:{l:'Toss-up',c:'#efb93f',b:'#efb93f'},Rl:{l:'R inclinado',c:'#dd9b93',b:'#dd9b93'},Rc:{l:'R llamado',c:'#b8352f',b:'#b8352f',w:1},Rn:{l:'R no en juego',c:'url(#nuR)',b:'repeating-linear-gradient(45deg,#efcdc8 0 4px,#f5f0e8 4px 7px)'}};
+CAT.M={l:'Distrito repartido',c:'#a78fc4',b:'#a78fc4'};
+var ORDER=['Dn','Dc','Dl','T','Rl','Rc','Rn'];
+var A=Math.sqrt(.3),B=Math.sqrt(.3),C=Math.sqrt(.4),GZ=[];for(var gi=-12;gi<=12;gi++)GZ.push(gi/4);
+var FC=null,states=[],byST={},filter='all',geo={},cur=null,chan=null,sel=null,natShift=0,liveRows={},usingSnap=false;
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function pdf(x){return Math.exp(-x*x/2)}
+function Phi(x){var t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
+function inv(p){var lo=-5,hi=5;for(var i=0;i<45;i++){var m=(lo+hi)/2;if(Phi(m)<p)lo=m;else hi=m}return (lo+hi)/2}
+function pc(p){return p<.01?'<1%':p>.99?'>99%':Math.round(p*100)+'%'}
+function mtxt(m){return '<span class="p'+(m>=0?'D':'R')+'">'+(m>=0?'D':'R')+'+'+Math.abs(m*100).toFixed(1)+'</span>'}
+function isCalled(r){return !!r&&(r.status==='Called'||!!r.calledBy)&&(r.leader==='D'||r.leader==='R')}
+function repOf(r){var v=parseFloat(String(r&&r.reporting).replace(/[^0-9.]/g,''));return isNaN(v)?null:v/100}
+function chamberState(b,live){
+  var c=live||{},h=b.hold||{},D=(h.D||0)+(c.D||0),R=(h.R||0)+(c.R||0),rem=b.el?Math.max(0,b.up-(c.D||0)-(c.R||0)-(c.I||0)):0;
+  var won=!b.el?(b.ctl==='D'||b.ctl==='R'?b.ctl:null):(D>=b.maj?'D':R>=b.maj?'R':null);
+  return {b:b,D:D,R:R,rem:rem,won:won,feed:c,canD:won?won==='D':b.el&&D+rem>=b.maj,canR:won?won==='R':b.el&&R+rem>=b.maj};
+}
+function classify(cs){var d=cs.every(function(c){return c.canD}),r=cs.every(function(c){return c.canR});if(cs.every(function(c){return c.won==='D'}))return'DL';if(cs.every(function(c){return c.won==='R'}))return'RL';if(!d&&!r)return'XX';if(d&&!r)return'DO';if(r&&!d)return'RO';return'OO'}
+function chId(r){var c=String(r.chamber||'');return r.state+(c==='Senate'||c==='Legislature'?'-S':'-H')}
+function gmEst(prior,r){var rep=repOf(r);rep=rep>0?Math.min(rep,.9):.5;var gm=(r.leader==='D'?1:-1)*Math.abs(r.marginPts)/100;return {m:rep*gm+(1-rep)*prior,rep:rep,gm:gm}}
+function build(chLive,gov,rows){
+  liveRows={};rows.forEach(function(r){var k=chId(r);(liveRows[k]=liveRows[k]||{})[String(r.district)]=r});
+  var n=0,w=0;
+  states=GRID.map(function(g){
+    var st=g[0],o=FC.states[st],held=o.gh||GOV_FIXED[st],live=gov[st],gv;
+    if(!o.gh)gv={won:held,canD:held==='D',canR:held==='R',up:false};
+    else if(isCalled(live))gv={won:live.leader,canD:live.leader==='D',canR:live.leader==='R',up:true,r:live};
+    else gv={won:null,canD:true,canR:true,up:true,r:live};
+    var cs=o.ch.slice().sort(function(a,b){return a.lc==='lower'?-1:1}).map(function(c){return chamberState(c,chLive[c.id])});
+    var j=(cs[0].b.j||cs[cs.length-1].b.j),status=classify([gv].concat(cs));
+    var ok=function(p){return held===p&&o.ch.every(function(c){return c.ctl===p})},before=ok('D')?'DL':ok('R')?'RL':'XX';
+    if(j&&live&&live.leader&&live.marginPts!=null&&repOf(live)>=.4){var e=gmEst(-j.mx,live);n+=e.rep;w+=e.rep*(e.gm+j.mx)}
+    return {st:st,name:o.name,gov:gv,cs:cs,status:status,before:before,changed:(status==='DL'||status==='RL'||status==='XX')&&status!==before,broken:(before==='DL'&&(status==='RO'||status==='RL'||status==='XX'))||(before==='RL'&&(status==='DO'||status==='DL'||status==='XX'))};
+  });
+  natShift=n?w/n:0;byST={};states.forEach(function(s){byST[s.st]=s});
+}
+function softDelta(id){var o=liveRows[id];if(!o)return 0;var ks=Object.keys(o),w=0,net=0;ks.forEach(function(k){var r=o[k];if(r.leader!=='D'&&r.leader!=='R')return;var rep=repOf(r);rep=rep==null?.5:Math.min(rep,.9);w+=rep;if(r.flip||r.wouldFlip)net+=rep*(r.leader==='D'?1:-1)});return w?(net/w)*(w/ks.length):0}
+function model(){
+  states.forEach(function(s){
+    var pri=PRI[s.st]||[0,0,0];s.comps=[s.gov].concat(s.cs);
+    s.comps.forEach(function(c,i){
+      var gov=i===0,slot=gov?0:(c.b.lc==='lower'?1:2),fixed=gov?!c.up:!c.b.el;
+      c.k=gov?(c.won||null):(c.won||((!c.canD&&!c.canR)?'T':!c.canD?'R':!c.canR?'D':null));c.fixed=fixed;c.direct=null;
+      var p=Math.min(.999,Math.max(.001,(pri[slot]||(c.k==='D'?99.9:.1))/100)),z=inv(p);
+      if(gov){var r=c.r;if(r&&r.leader&&r.marginPts!=null&&repOf(r)>0){var rp=Math.min(repOf(r),.9);z=(1-rp)*z+rp*(((r.leader==='D'?1:-1)*Math.abs(r.marginPts)/100)*100/(12*Math.sqrt(1-rp)+1.5))}c.z=z}
+      else{var d=softDelta(c.b.id),jj=c.b.j,lv=s.gov.r;c.z=z+d;
+        if(jj&&s.st!=='AK'&&lv&&lv.leader&&lv.marginPts!=null){var e=gmEst(-jj.mx,lv),Rs=jj.my+jj.b*(-e.m-jj.mx),sd=Math.sqrt(jj.rs*jj.rs+Math.pow(jj.b*(1-e.rep)*.08,2));c.target=Rs;c.direct=Phi(inv(Math.min(.999,Math.max(.001,Phi((c.b.total-c.b.maj+.5-Rs)/sd))))+d)}else c.target=null}
+    });
+    s.like=function(N,S){var l=1;this.comps.forEach(function(c){if(!c.k||c.k==='T'||c.fixed)return;var p=c.direct!=null?c.direct:Phi((c.z+A*N+B*S)/C);l*=Math.max(1e-6,c.k==='D'?p:1-p)});return l};
+    s.ln=GZ.map(function(N){return GZ.reduce(function(t,S){return t+pdf(S)*s.like(N,S)},0)});
+  });
+  var post=GZ.map(function(N,i){var lg=-N*N/2;states.forEach(function(s){lg+=Math.log(Math.max(1e-300,s.ln[i]))});return lg}),mx=Math.max.apply(null,post);
+  post=post.map(function(x){return Math.exp(x-mx)});var tot=post.reduce(function(a,b){return a+b},0);post=post.map(function(x){return x/tot});
+  states.forEach(function(s){
+    var pD=0,pR=0;s.comps.forEach(function(c){c.p=0});
+    GZ.forEach(function(N,i){if(post[i]<1e-9)return;var sum=0;GZ.forEach(function(S){sum+=pdf(S)*s.like(N,S)});
+      GZ.forEach(function(S){var w=post[i]*pdf(S)*s.like(N,S)/sum,tD=1,tR=1;s.comps.forEach(function(c){var p=c.k==='D'?1:c.k==='R'?0:c.k==='T'?NaN:c.direct!=null?c.direct:Phi((c.z+A*N+B*S)/C);if(p!==p){tD=0;tR=0;return}c.p+=w*p;tD*=p;tR*=1-p});pD+=w*tD;pR+=w*tR})});
+    s.pD=pD;s.pR=pR;s.pX=Math.max(0,1-pD-pR);s.unc=1-Math.max(pD,pR,s.pX);
+  });
+}
+function count(k){return states.filter(function(s){return s.status===k}).length}
+function kpi(c,n,l,x){return '<div class="kpi '+c+'"><b>'+n+'</b><span>'+l+'</span><small>'+x+'</small></div>'}
+function band(s){var t=s.pD>=s.pR&&s.pD>=s.pX?['D',s.pD]:s.pR>=s.pX?['R',s.pR]:['X',s.pX],p=t[1];return p>=.95?t[0]+'3':p>=.75?t[0]+'2':p>=.55?t[0]+'1':'TT'}
+function tileP(s){var m=Math.max(s.pD,s.pR,s.pX);return (s.pD===m?'D ':s.pR===m?'R ':'Div. ')+pc(m)}
+function pass(s){return filter==='changed'?s.changed||s.broken:filter==='open'?['DL','RL','XX'].indexOf(s.status)<0:filter==='DL'||filter==='RL'?s.status===filter:true}
+function pt(w){return w?'<span class="p'+w+'">'+w+'</span>':''}
+function govCell(s){var g=s.gov,r=g.r;if(!g.up)return pt(g.won)+'<span class="m">Sin elección</span>';if(g.won)return pt(g.won)+(r&&r.marginPts!=null?' +'+Math.abs(r.marginPts).toFixed(1):'')+'<span class="m">Llamado'+(r&&r.calledBy?' por '+esc(r.calledBy):'')+'</span>';return '<b>D '+pc(g.p)+'</b><span class="m">'+(r&&r.leader&&r.marginPts!=null?esc(r.leader)+' +'+Math.abs(r.marginPts).toFixed(1)+(r.reporting?' · '+esc(r.reporting):''):'Sin resultados')+'</span>'}
+function chCell(c){if(!c)return '<span class="m">Unicameral</span>';if(!c.b.el)return pt(c.won)+'<span class="m">Sin elección</span>';return (c.won?pt(c.won)+' decidida':'<b>D '+pc(c.p)+'</b>')+'<span class="m">D '+c.D+' · R '+c.R+' · faltan '+c.rem+' · mayoría '+c.b.maj+'</span>'}
+function renderHome(){
+  var dl=count('DL'),rl=count('RL'),xx=count('XX'),dO=count('DO'),rO=count('RO'),oo=count('OO'),pd=states.filter(function(s){return s.before==='DL'}).length,pr=states.filter(function(s){return s.before==='RL'}).length;
+  $('kpis').innerHTML=kpi('d',dl,'Trifectas D confirmadas','Antes: '+pd+' · Solo D posible: '+dO)+kpi('r',rl,'Trifectas R confirmadas','Antes: '+pr+' · Solo R posible: '+rO)+kpi('x',xx,'Divididos asegurados','Antes: '+(50-pd-pr)+' divididos')+kpi('',oo,'Abiertos','Ambos partidos aún pueden');
+  var bn={};states.forEach(function(s){var k=band(s);bn[k]=(bn[k]||0)+1});
+  $('sbar').innerHTML=[['D3','#2b62a8'],['D2','#7ba3d0'],['D1','#bcd1e8'],['TT','#efb93f'],['X1','#d4cbdc'],['X2','#a596b4'],['X3','#6d5f7c'],['R1','#efc3bd'],['R2','#d9837b'],['R3','#b8352f']].map(function(s){return '<i style="width:'+(bn[s[0]]||0)*2+'%;background:'+s[1]+'"></i>'}).join('');
+  var eD=states.reduce(function(a,s){return a+s.pD},0),eR=states.reduce(function(a,s){return a+s.pR},0);
+  $('exp').innerHTML='<b>Pronóstico actual:</b> <span class="pD">'+eD.toFixed(1)+' trifectas D</span> y <span class="pR">'+eR.toFixed(1)+' trifectas R</span> esperadas, y '+(50-eD-eR).toFixed(1)+' estados divididos.';
+  $('tiles').innerHTML=GRID.map(function(g){var s=byST[g[0]];return '<button class="tile '+band(s)+'" style="grid-column:'+(g[1]+1)+';grid-row:'+(g[2]+1)+'" data-st="'+s.st+'" title="'+esc(s.name)+': abrir panel">'+s.st+'<em>'+tileP(s)+'</em><span class="pips">'+[s.gov].concat(s.cs).map(function(c){return '<span class="pip '+(c.won==='D'||c.won==='R'?c.won:'N')+'"></span>'}).join('')+'</span></button>'}).join('');
+  $('filters').innerHTML=[['all','Todos'],['changed','Cambios'],['open','Por definir'],['DL','Trifectas D'],['RL','Trifectas R']].map(function(x){return '<button class="fbtn" data-f="'+x[0]+'" aria-pressed="'+(filter===x[0])+'">'+x[1]+'</button>'}).join('');
+  var list=states.filter(pass).sort(function(a,b){return (b.unc-a.unc)||a.name.localeCompare(b.name)});
+  $('rows').innerHTML=list.length?list.map(function(s){var lo=s.cs.filter(function(c){return c.b.lc==='lower'})[0],up=s.cs.filter(function(c){return c.b.lc!=='lower'})[0];return '<tr data-st="'+s.st+'"><td><b>'+esc(s.name)+'</b></td><td><span class="pD">D '+pc(s.pD)+'</span> · <span class="pR">R '+pc(s.pR)+'</span><span class="m">Dividido '+pc(s.pX)+' · antes: '+LABEL[s.before]+'</span></td><td><span class="tag '+s.status+'">'+LABEL[s.status]+'</span>'+(s.broken?'<span class="ch">Rota</span>':s.changed?'<span class="ch">Cambio</span>':'')+'</td><td>'+govCell(s)+'</td><td>'+chCell(lo)+'</td><td>'+chCell(up)+'</td></tr>'}).join(''):'<tr><td colspan="6">Ningún estado en este filtro todavía.</td></tr>';
+}
+/* Distritos */
+function base(c){var b=c.b,m={};b.nu.forEach(function(k){m[k]=1});var sh=shiftFor(c),lr=liveRows[b.id]||{};
+  return b.rows.map(function(r,i){var d=r[0],sd=r[2]||.074,fixed=Math.abs(r[1])>=.999,nu=m[d]||!b.el,so=b.sole[d],lv=lr[d],adj=r[1]+sh,p=fixed?(r[1]>0?1:0):Phi(adj/sd),cat,cnt=null;
+    if(nu)cat=(r[1]>=0?'D':'R')+'n';else if(so){p=so==='D'?1:0;cat=so+'c'}
+    else if(isCalled(lv)){p=lv.leader==='D'?1:0;cat=lv.leader+'c';cnt=lv}
+    else{if(lv&&lv.leader&&lv.marginPts!=null&&repOf(lv)>0){var q=Math.min(repOf(lv),.9),m2=(lv.leader==='D'?1:-1)*Math.abs(lv.marginPts)/100;adj=q*m2+(1-q)*adj;p=Phi(adj/(sd*Math.sqrt(1-q)+.01));cnt=lv}cat=(p>.4&&p<.6)?'T':(p>=.5?'D':'R')+'l'}
+    return {d:d,prior:r[1],adj:fixed&&!cnt?r[1]:adj,p:p,cat:cat,fixed:fixed||nu||!!so,locked:fixed&&!cnt,live:cnt}});
+}
+function shiftFor(c){var rows=c.b.rows;if(c.target==null)return natShift*.6;var lo=-.5,hi=.5,sum=function(s){return rows.reduce(function(a,r){return a+(Math.abs(r[1])>=.999?(r[1]<0?1:0):Phi(-(r[1]+s)/(r[2]||.074)))},0)};for(var i=0;i<34;i++){var m=(lo+hi)/2;if(sum(m)>c.target)lo=m;else hi=m}return (lo+hi)/2}
+function box(t,cl,big,sub){return '<div class="kpi '+cl+'"><h3>'+t+'</h3><b>'+big+'</b><span>'+sub+'</span></div>'}
+function seatNote(c){var k={},n=0,mx=0;c.b.rows.forEach(function(r){k[r[0]]=(k[r[0]]||0)+1});Object.keys(k).forEach(function(x){n++;mx=Math.max(mx,k[x])});return mx>1?'<p class="snote"><b>'+c.b.total+' escaños en '+n+' distritos, hasta '+mx+' por distrito.</b> No es proporcional: cada escaño lo gana quien saca más votos. La barra cuenta escaños; el mapa colorea distritos, y en morado los que se espera repartir entre partidos.</p>':''}
+function chName(c){return c.b.lc==='lower'?'Cámara':(c.b.id==='NE-S'?'Legislatura':'Senado')}
+function chBox(c){var rs=base(c),D=Math.round(rs.reduce(function(a,r){return a+r.p},0)),n=c.b.total,sub='Pronóstico: D '+D+', R '+(n-D)+' · mayoría '+c.b.maj;
+  if(!c.b.el)return box(chName(c),c.won?'w'+c.won:'',c.won?c.won+' controla':esc(c.b.ctl),'Sin elección este año');
+  if(c.won)return box(chName(c),'w'+c.won,c.won+' ganó',sub);var pD=c.p,f=pD>=.5?'D':'R';return box(chName(c),'','<em class="p'+f+'">'+f+' '+pc(Math.max(pD,1-pD))+'</em>',sub)}
+function barHtml(c){var b=c.b,n={Dn:0,Dc:0,Dl:0,T:0,Rl:0,Rc:0,Rn:0};base(c).forEach(function(r){n[r.cat]++});
+  if(b.el){['D','R'].forEach(function(p){var hold=(b.hold||{})[p]||0,f=(c.feed||{})[p]||0,xn=Math.max(0,hold-n[p+'n']),xc=Math.max(0,f-n[p+'c']);n[p+'n']+=xn;n[p+'c']+=xc;n[p+'l']=Math.max(0,n[p+'l']-xn-xc)})}
+  var seg=ORDER.filter(function(k){return n[k]}).map(function(k){var K=CAT[k];return '<div class="seg" style="flex:'+n[k]+' 0 0;background:'+K.b+';color:'+(K.w?'#fff':'#1a1209')+'" title="'+K.l+': '+n[k]+'">'+(n[k]/b.total>.035?n[k]:'')+'</div>'}).join('');
+  return '<div class="barw">'+seg+'<i class="maj"></i></div><div class="majt">Mayoría: '+b.maj+' de '+b.total+'</div><div class="leg">'+ORDER.filter(function(k){return n[k]}).map(function(k){return '<span><i style="background:'+CAT[k].b+'"></i>'+CAT[k].l+' '+n[k]+'</span>'}).join('')+'</div>'}
+function gk(d){return String(d).replace(/^0+(?=.)/,'')}
+function indexRows(rs){var m={};rs.forEach(function(r){var k=gk(r.d),b=k.replace(/^(\d+)(A|B|s1|s2)$/,'$1');(m[k]=m[k]||[]).push(r);if(b!==k)(m[b]=m[b]||[]).push(r)});return m}
+function agg(a){if(!a||!a.length)return null;if(a.length>1){var ps={};a.forEach(function(r){ps[r.p>=.5?'D':'R']=1});if(ps.D&&ps.R)return {p:.5,cat:'M'}}var p=a.reduce(function(x,r){return x+r.p},0)/a.length,cats={};a.forEach(function(r){cats[r.cat]=(cats[r.cat]||0)+1});var cat=cats.T?'T':Object.keys(cats).sort(function(x,y){return cats[y]-cats[x]})[0];return {p:p,cat:cat}}
+function curCh(s){return s.cs.filter(function(c){return c.b.lc===chan})[0]||s.cs[0]}
+function drawMap(s){var el=$('map'),t=(geo[s.st]||{})[curCh(s).b.lc];if(!t){el.textContent='Cargando mapa…';return}
+  var key=Object.keys(t.objects)[0],fc=topojson.feature(t,t.objects[key]),W=640,H=560,proj=d3.geoIdentity().reflectY(true);
+  if(s.st==='AK'||s.st==='HI')proj=d3.geoMercator();else proj=d3.geoAlbers().rotate([-d3.geoCentroid(fc)[0],0]).center([0,d3.geoCentroid(fc)[1]]).parallels([d3.geoBounds(fc)[0][1],d3.geoBounds(fc)[1][1]]);
+  proj.fitSize([W,H],fc);var path=d3.geoPath(proj),idx=indexRows(base(curCh(s)));el.innerHTML='';
+  var svg=d3.select(el).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('role','img').attr('aria-label','Mapa de distritos de '+s.name),defs=svg.append('defs');
+  [['nuD','#c9d9ec'],['nuR','#efcdc8']].forEach(function(p){var g=defs.append('pattern').attr('id',p[0]).attr('width',6).attr('height',6).attr('patternUnits','userSpaceOnUse').attr('patternTransform','rotate(45)');g.append('rect').attr('width',6).attr('height',6).attr('fill','#f5f0e8');g.append('rect').attr('width',3.5).attr('height',6).attr('fill',p[1])});
+  var kOf=function(f){return gk(f.properties.district)};
+  svg.selectAll('path.dist').data(fc.features).join('path').attr('class','dist').attr('d',path).attr('data-d',kOf).attr('fill',function(f){var a=agg(idx[kOf(f)]);return a?CAT[a.cat].c:'#e2d8c8'}).append('title').text(function(f){var a=agg(idx[kOf(f)]);return 'Distrito '+kOf(f)+(a?': '+CAT[a.cat].l:'')})}
+function card(s,k){var c=curCh(s),idx=indexRows(base(c)),rs=idx[k];if(!rs){return}sel=k;
+  d3.selectAll('.dist').classed('on',function(f){return gk(f.properties.district)===k});
+  $('card').innerHTML='<b>'+chName(c)+', distrito '+esc(k)+'</b>'+rs.map(function(r,i){var eD=rs.filter(function(x){return x.p>=.5}).length;var h=rs.length>1?(i===0?'<p style="margin-top:6px;color:var(--text)">Elige '+rs.length+' escaños · esperado: <span class="pD">D '+eD+'</span>, <span class="pR">R '+(rs.length-eD)+'</span></p>':'')+'<p style="margin-top:8px;font-weight:600;color:var(--text)">Escaño '+(i+1)+' de '+rs.length+'</p>':'';return h+one(r)}).join('')}
+function one(r){{if(r.cat[1]==='n')return '<p>No se elige este año, '+CAT[r.cat].l+'</p>';if(r.cat[1]==='c')return '<p>'+CAT[r.cat].l+(r.live?'':', sin rival')+'</p>';if(r.locked)return '<p><span class="p'+(r.prior>0?'D':'R')+'">Escaño '+(r.prior>0?'D':'R')+' sin competencia real</span></p>';return '<dl><dt>'+(r.live?'Margen con conteo':'Margen pronosticado')+'</dt><dd>'+mtxt(r.adj)+'</dd><dt>Margen previo</dt><dd>'+mtxt(r.prior)+'</dd><dt>Probabilidad</dt><dd>'+(r.p>=.5?'<span class="pD">D '+pc(r.p)+'</span>':'<span class="pR">R '+pc(1-r.p)+'</span>')+'</dd></dl>'}}
+function renderState(s){
+  var g=s.gov,r=g.r,gb;
+  if(!g.up)gb=box('Gobernador','w'+g.won,g.won+' gobierna','Sin elección este año');
+  else if(g.won)gb=box('Gobernador','w'+g.won,g.won+' ganó',r?('Llamado'+(r.calledBy?' por '+esc(r.calledBy):'')+(r.marginPts!=null?' · '+r.leader+'+'+Math.abs(r.marginPts).toFixed(1):'')+(r.reporting?' · '+esc(r.reporting)+' contado':'')):'Llamado');
+  else{var f=g.p>=.5?'D':'R';gb=box('Gobernador','','<em class="p'+f+'">'+f+' '+pc(Math.max(g.p,1-g.p))+'</em>',r&&r.leader&&r.marginPts!=null?r.leader+'+'+Math.abs(r.marginPts).toFixed(1)+(r.reporting?' · '+esc(r.reporting)+' contado':''):'Sin resultados')}
+  $('boxes').innerHTML=gb+s.cs.map(chBox).join('');
+  if(!s.cs.some(function(c){return c.b.lc===chan}))chan=s.cs[0].b.lc;
+  $('tabs').innerHTML=s.cs.length>1?s.cs.map(function(c){return '<button class="fbtn" data-c="'+c.b.lc+'" aria-pressed="'+(c.b.lc===chan)+'">'+chName(c)+', '+c.b.total+'</button>'}).join(''):'';
+  var c=curCh(s);$('sbarState').innerHTML=seatNote(c)+barHtml(c);drawMap(s);
+  var ctr={};var rs=base(c).map(function(x){ctr[x.d]=(ctr[x.d]||0)+1;x.mm=c.b.rows.filter(function(r){return r[0]===x.d}).length>1?ctr[x.d]:0;return x}).filter(function(x){return !x.fixed}).sort(function(a,b){return Math.abs(a.adj)-Math.abs(b.adj)}).slice(0,30);
+  $('dist').innerHTML=rs.length?rs.map(function(x){return '<tr data-d="'+esc(gk(x.d))+'"><td>'+esc(x.d)+(x.mm?' <span style="color:var(--muted)">esc. '+x.mm+'</span>':'')+'</td><td>'+mtxt(x.adj)+'</td><td>'+mtxt(x.prior)+'</td><td class="'+(x.p>=.5?'pD':'pR')+'">'+(x.p>=.5?'D '+pc(x.p):'R '+pc(1-x.p))+'</td></tr>'}).join(''):'<tr><td colspan="4">Sin distritos en juego.</td></tr>';
+  if(sel)card(s,sel);else $('card').innerHTML='<p>Selecciona un distrito.</p>';
+}
+function route(){if(!states.length)return;var h=location.hash.slice(1).toUpperCase(),s=byST[h];$('home').hidden=!!s;$('state').hidden=!s;
+  $('title').textContent=s?s.name:'Estados de EE. UU. en vivo';$('lede').hidden=!!s;$('back').setAttribute('href',s?'#':'/articulos/');$('backT').textContent=s?'Todos los estados':'Todos los artículos';
+  if(s){if(cur!==h){cur=h;sel=null;chan='lower';window.scrollTo(0,0)}document.title=s.name+' | Datapol';if(geo[h])renderState(s);else{renderState(s);json('data/geo/'+h.toLowerCase()+'.json').then(function(g){geo[h]=g;if(cur===h)renderState(s)}).catch(function(){$('map').textContent='No se pudo cargar el mapa.'})}}
+  else{cur=null;document.title='Estados de EE. UU. en vivo | Datapol';renderHome()}}
+function json(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(u);return r.json()})}
+function feeds(){var t='?t='+Math.floor(Date.now()/POLL);return Promise.all([json(API+'/states/data.json'+t),json(API+'/statewide/data.json'+t),json(API+'/states/governors.json'+t)]).then(function(x){usingSnap=false;return {d:x[0],s:x[1],g:x[2]}}).catch(function(){usingSnap=true;return json('data/snapshot.json')})}
+function hm(t){var d=new Date(t);return isNaN(d)?'?':d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}
+function load(){(FC?Promise.resolve(FC):json('data/forecast.json')).then(function(f){FC=f;return feeds()}).then(function(x){
+  var gov={};x.s.races.forEach(function(r){var m=/^([A-Z]{2})-GOV$/.exec(r.id);if(m)gov[m[1]]=r});x.g.races.forEach(function(r){var m=/^([A-Z]{2})-GOV$/.exec(r.id);if(m&&!isCalled(gov[m[1]]))gov[m[1]]=r});
+  build(x.d.chambers||{},gov,x.d.races||[]);model();route();
+  $('dot').className='dot'+(usingSnap?' off':'');$('upd').textContent=(usingSnap?'Foto fija. ':'En vivo. ')+'Legislaturas '+hm(x.d.updated)+' · gobernadores '+hm(x.s.updated);$('err').style.display='none';
+}).catch(function(e){var el=$('err');el.textContent='No se pudieron cargar los datos. Se reintenta en 2 minutos.';el.style.display='block';if(window.console)console.warn(e)})}
+document.addEventListener('click',function(e){var q=function(s){return e.target.closest&&e.target.closest(s)},t;
+  if((t=q('[data-f]'))){filter=t.dataset.f;renderHome();return}
+  if((t=q('[data-c]'))){chan=t.dataset.c;sel=null;renderState(byST[cur]);return}
+  if((t=q('[data-d]'))){card(byST[cur],t.getAttribute('data-d'));return}
+  if((t=q('[data-st]'))){location.hash=t.dataset.st}});
+window.addEventListener('hashchange',route);window.__tri=function(){return states};window.__base=base;
+load();setInterval(load,POLL);
+})();
+</script>
+</body></html>
