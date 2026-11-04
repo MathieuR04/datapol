@@ -140,10 +140,11 @@ function chamberState(b,live){
   return {b:b,D:D,R:R,rem:rem,won:won,feed:c,canD:won?won==='D':b.el&&D+rem>=b.maj,canR:won?won==='R':b.el&&R+rem>=b.maj};
 }
 function classify(cs){var d=cs.every(function(c){return c.canD}),r=cs.every(function(c){return c.canR});if(cs.every(function(c){return c.won==='D'}))return'DL';if(cs.every(function(c){return c.won==='R'}))return'RL';if(!d&&!r)return'XX';if(d&&!r)return'DO';if(r&&!d)return'RO';return'OO'}
+function distKey(d){return String(d).replace(/^[A-Za-z]+-0*(?=.)/,'')}
 function chId(r){var c=String(r.chamber||'');return r.state+(c==='Senate'||c==='Legislature'?'-S':'-H')}
 function gmEst(prior,r){var rep=repOf(r);rep=rep>0?Math.min(rep,.9):.5;var gm=(r.leader==='D'?1:-1)*Math.abs(r.marginPts)/100;return {m:rep*gm+(1-rep)*prior,rep:rep,gm:gm}}
 function build(chLive,gov,rows){
-  liveRows={};rows.forEach(function(r){var k=chId(r);(liveRows[k]=liveRows[k]||{})[String(r.district)]=r});
+  liveRows={};rows.forEach(function(r){var k=chId(r);(liveRows[k]=liveRows[k]||{})[distKey(r.district)]=r});
   var n=0,w=0;
   states=GRID.map(function(g){
     var st=g[0],o=FC.states[st],held=o.gh||GOV_FIXED[st],live=gov[st],gv;
@@ -255,12 +256,13 @@ function route(){if(!states.length)return;var h=location.hash.slice(1).toUpperCa
   if(s){if(cur!==h){cur=h;sel=null;chan='lower';window.scrollTo(0,0)}document.title=s.name+' | Datapol';if(geo[h])renderState(s);else{renderState(s);json('data/geo/'+h.toLowerCase()+'.json').then(function(g){geo[h]=g;if(cur===h)renderState(s)}).catch(function(){$('map').textContent='No se pudo cargar el mapa.'})}}
   else{cur=null;document.title='Estados de EE. UU. en vivo | Datapol';renderHome()}}
 function json(u){return fetch(u).then(function(r){if(!r.ok)throw new Error(u);return r.json()})}
-function feeds(){var t='?t='+Math.floor(Date.now()/POLL);return Promise.all([json(API+'/states/data.json'+t),json(API+'/statewide/data.json'+t),json(API+'/states/governors.json'+t)]).then(function(x){usingSnap=false;return {d:x[0],s:x[1],g:x[2]}}).catch(function(){usingSnap=true;return json('data/snapshot.json')})}
+function feeds(){var t='?t='+Math.floor(Date.now()/POLL);return Promise.all([json(API+'/states/data.json'+t),json(API+'/statewide/data.json'+t),json(API+'/states/governors.json'+t),json(API+'/feeds/states.json'+t).catch(function(){return null})]).then(function(x){usingSnap=false;return {d:x[0],s:x[1],g:x[2],f:x[3]}}).catch(function(){usingSnap=true;return json('data/snapshot.json')})}
 function hm(t){var d=new Date(t);return isNaN(d)?'?':d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}
 function load(){(FC?Promise.resolve(FC):json('data/forecast.json')).then(function(f){FC=f;return feeds()}).then(function(x){
   var gov={};x.s.races.forEach(function(r){var m=/^([A-Z]{2})-GOV$/.exec(r.id);if(m)gov[m[1]]=r});x.g.races.forEach(function(r){var m=/^([A-Z]{2})-GOV$/.exec(r.id);if(m&&!isCalled(gov[m[1]]))gov[m[1]]=r});
-  build(x.d.chambers||{},gov,x.d.races||[]);model();route();
-  $('dot').className='dot'+(usingSnap?' off':'');$('upd').textContent=(usingSnap?'Foto fija. ':'En vivo. ')+'Legislaturas '+hm(x.d.updated)+' · gobernadores '+hm(x.s.updated);$('err').style.display='none';
+  var rows=x.d.races||[],of=x.f&&x.f.races||[],ost={};if(of.length){var seen={};of.forEach(function(r){seen[chId(r)+distKey(r.district)]=1;ost[r.state]=1});rows=rows.filter(function(r){return isCalled(r)||!seen[chId(r)+distKey(r.district)]}).concat(of.filter(function(r){return !rows.some(function(o){return isCalled(o)&&chId(o)===chId(r)&&distKey(o.district)===distKey(r.district)})}))}
+  build(x.d.chambers||{},gov,rows);model();route();
+  $('dot').className='dot'+(usingSnap?' off':'');$('upd').textContent=(usingSnap?'Foto fija. ':'En vivo. ')+'Legislaturas '+(of.length?Object.keys(ost).sort().join(' y ')+' '+hm(x.f.updated)+', resto ':'')+hm(x.d.updated)+' · gobernadores '+hm(x.s.updated);$('err').style.display='none';
 }).catch(function(e){var el=$('err');el.textContent='No se pudieron cargar los datos. Se reintenta en 2 minutos.';el.style.display='block';if(window.console)console.warn(e)})}
 document.addEventListener('click',function(e){var q=function(s){return e.target.closest&&e.target.closest(s)},t;
   if((t=q('[data-f]'))){filter=t.dataset.f;renderHome();return}
