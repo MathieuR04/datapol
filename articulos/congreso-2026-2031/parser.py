@@ -73,7 +73,8 @@ SUMMARY_LABELS = [
 CONSTANCIA_DIR = {"a favor": "SI", "en contra": "NO", "en abstencion": "ABS"}
 # El OCR a veces corta el inicio de «diputada/os» contra el borde o el sello
 # («la itada Fernández», «los liputados Salas»), Diputados 06/10 y 22/10/2026.
-ROL = r"(?:congresistas?|senador(?:a|es|as)?|[a-z]*(?:putad|itad)[oa]s?)"
+# «diputado» llega cortado por el OCR: «liputado», «itada», «¡tado» (Diputados 10/11 p15)
+ROL = r"(?:congresistas?|senador(?:a|es|as)?|\S*(?:putad|tad)[oa]s?)"
 
 N_COLUMNS = 3
 
@@ -157,6 +158,7 @@ class TableRow:
     name_raw: str
     vote_raw: str
     box: tuple = ()    # (y0, y1, x0, x1) de la celda de voto, para re-OCR
+    name_x: float = 0  # borde izquierdo de la primera palabra del nombre
 
 
 @dataclass
@@ -189,6 +191,14 @@ def render_page(pdf_path: str, page: int, dpi: int) -> np.ndarray:
     if proc.returncode != 0 or not proc.stdout:
         raise RuntimeError(f"pdftoppm falló en p{page}")
     img = cv2.imdecode(np.frombuffer(proc.stdout, np.uint8), cv2.IMREAD_COLOR)
+    b, g, r = (img[:, :, i].astype(np.int16) for i in range(3))
+    # Actas PROVISIONAL (Senado 11/11 y 17/11): marca de agua roja «COPIA
+    # INFORMATIVA» sobre la tabla. En el canal azul sale negra; el máximo de
+    # los tres canales la borra igual que a los sellos azules (el texto negro
+    # es oscuro en todos). Sin tinta roja, como siempre: canal azul.
+    rojo = ((r - np.maximum(g, b)) > 80).mean()
+    if rojo > 0.002:
+        return img.max(axis=2)
     return img[:, :, 0]   # canal azul: borra los sellos
 
 
@@ -337,6 +347,7 @@ def parse_table(words: pd.DataFrame, res: PageResult, scale: float) -> dict:
     bounds = [col_x[0] - margin, col_x[1] - margin, col_x[2] - margin,
               float(words.left.max() + 1000)]
     rows: list[TableRow] = []
+    prev_off = None
     for c in range(N_COLUMNS):
         band = table[(table.left >= bounds[c]) & (table.left < bounds[c + 1])]
         if band.empty:
@@ -345,8 +356,16 @@ def parse_table(words: pd.DataFrame, res: PageResult, scale: float) -> dict:
         vt = band[band.text.map(lambda t: vote_key(t) != "")]
         # La marca de voto es la última palabra de la fila; el borde izquierdo
         # más frecuente de los tokens de voto ancla la subcolumna.
-        vote_x = (float(vt.left.quantile(0.2)) if len(vt) >= 5
-                  else bounds[c + 1] - 160 * scale)
+        # Sin votos legibles (provisionales del Senado: el OCR de página se
+        # salta la subcolumna de la derecha), mismo desfase que la columna
+        # anterior; la re-lectura por celda los recupera.
+        if len(vt) >= 5:
+            vote_x = float(vt.left.quantile(0.2))
+        elif c == N_COLUMNS - 1 and prev_off is not None:
+            vote_x = col_x[c] + prev_off
+        else:
+            vote_x = bounds[c + 1] - 160 * scale
+        prev_off = vote_x - col_x[c]
         tops = np.sort(band[band.text.map(lambda t: norm_key(t) in PARTY_CODES)]
                        .top.to_numpy(float))
         pitch = float(np.median(np.diff(tops))) if len(tops) > 5 else 44 * scale
@@ -355,12 +374,18 @@ def parse_table(words: pd.DataFrame, res: PageResult, scale: float) -> dict:
         for g in cluster_by_gap(band.cy.to_numpy(float), gap=0.5 * pitch):
             sub = band.iloc[g].sort_values("left")
             p_t, n_t, v_t = [], [], []
+            name_x = 0.0
             for _, w in sub.iterrows():
                 if w.left >= vote_x - 30 * scale:
                     v_t.append(w.text)
-                elif w.left < col_x[c] + 110 * scale and not n_t:
+                # Desde Diputados 29/10 la sigla va casi pegada al apellido:
+                # una vez que lo acumulado ya es una sigla, lo demás es nombre.
+                elif (w.left < col_x[c] + 110 * scale and not n_t
+                      and norm_key("".join(p_t)) not in PARTY_CODES):
                     p_t.append(w.text)
                 else:
+                    if not n_t:
+                        name_x = float(w.left)
                     n_t.append(w.text)
             # «— SI»: el guion de relleno a veces cae antes de la subcolumna
             if n_t and not v_t and vote_key(n_t[-1]):
@@ -368,7 +393,8 @@ def parse_table(words: pd.DataFrame, res: PageResult, scale: float) -> dict:
             box = (int(sub.top.min() - 8 * scale), int((sub.top + sub.height).max() + 8 * scale),
                    int(vote_x - 40 * scale), int(bounds[c + 1] - 20 * scale)
                    if c < N_COLUMNS - 1 else int(vote_x + 200 * scale))
-            row = TableRow(c, len(kept), "".join(p_t), " ".join(n_t), " ".join(v_t), box)
+            row = TableRow(c, len(kept), "".join(p_t), " ".join(n_t), " ".join(v_t), box,
+                           name_x)
             if (canon_party(row.party_raw) or normalize_vote(row.vote_raw)
                     or len(norm_key(row.name_raw)) >= 8):
                 kept.append(row)
@@ -415,6 +441,40 @@ def reocr_votes(gray, res: PageResult, lang: str) -> None:
             r.vote_raw = raw
 
 
+def reocr_names(gray, res: PageResult, geom: dict, scale: float, lang: str) -> None:
+    """Segunda lectura de nombres sin coma (sin apellido).
+
+    En el formato de Diputados desde el 29/10 el OCR de página completa a veces
+    se salta un apellido corto entero («ISLA ROJAS,» → sólo «AZUCENA»). Sobre la
+    celda del nombre sola sale bien."""
+    # También cuando el nombre arranca muy a la derecha de lo habitual en su
+    # columna: se perdió el comienzo («NAVA, PABLO ALFONSO» sin «LÓPEZ CHAU»,
+    # Senado provisional 11/11).
+    tipico = {}
+    for c in {r.col for r in res.rows}:
+        xs = [r.name_x - geom["col_x"][c] for r in res.rows if r.col == c and r.name_x]
+        tipico[c] = float(np.median(xs)) if xs else None
+    for r in res.rows:
+        corrido = (r.name_x and tipico.get(r.col) is not None
+                   and r.name_x - geom["col_x"][r.col] > tipico[r.col] + 60 * scale)
+        if ("," in r.name_raw and not corrido) or not r.box:
+            continue
+        y0, y1, vx0, _ = r.box
+        x0 = int(geom["col_x"][r.col] - 10 * scale)
+        crop = gray[max(0, y0):y1, max(0, x0):max(0, vx0)]
+        if crop.size == 0:
+            continue
+        crop = cv2.copyMakeBorder(crop, 12, 12, 12, 12, cv2.BORDER_CONSTANT, value=255)
+        t = pytesseract.image_to_string(crop, lang=lang, config="--psm 7").strip()
+        toks = t.split()
+        if toks and canon_party(toks[0]) and norm_key(toks[0]) in PARTY_CODES:
+            toks = toks[1:]
+        nombre = " ".join(toks).strip(" —-")
+        if "," in nombre and len(nombre) > len(r.name_raw):
+            log.info("p%d: re-OCR nombre %r → %r", res.page, r.name_raw, nombre)
+            r.name_raw = nombre
+
+
 def parse_asunto(words: pd.DataFrame, res: PageResult, geom: dict, scale: float):
     zone = words[(words.cy > geom["header_bottom"] - 45 * scale)
                  & (words.cy < geom["table_top"])]
@@ -441,6 +501,19 @@ def grupo_geometry(words: pd.DataFrame, geom: dict, scale: float) -> dict | None
         t = hline[hline.text.str.contains(pat, regex=True) & (hline.left > hx + 400 * scale)]
         if len(t):
             cols[key] = float(t.cx.iloc[0]) + (25 * scale if key == "SINRES" else 0)
+    if len(cols) < 4:
+        # Cabecera mal leída («No---» → «1o--», «Abst.» perdido; Senado 09/09
+        # p39 con OCR de un hilo): las cuatro columnas de números de las filas
+        # dan los centros que falten.
+        nums = below[(below.cy > hy + 15 * scale) & (below.cy < hy + 330 * scale)
+                     & (below.left > hx + 400 * scale)
+                     & below.text.str.fullmatch(r"[\[\(]?[\dOoL]{1,3}[\]\)]?")]
+        cl = [g for g in cluster_by_gap(nums.cx.to_numpy(float), gap=50 * scale)
+              if len(g) >= 3]
+        if len(cl) == 4:
+            xs = sorted(float(np.median(nums.cx.to_numpy(float)[g])) for g in cl)
+            for key, x in zip(("SI", "NO", "ABS", "SINRES"), xs):
+                cols.setdefault(key, x)
     codes = below[(below.cy > hy + 15 * scale) & ((below.left - hx).abs() < 60 * scale)
                   & below.text.map(lambda t: norm_key(t) in PARTY_CODES)]
     if len(cols) < 3 or codes.empty:
@@ -499,6 +572,7 @@ def parse_constancia(gray, words, geom: dict, gg: dict | None, scale: float,
     if y1 - y0 < 30 * scale:
         return ""
     text = pytesseract.image_to_string(gray[y0:y1, x0:], lang=lang, config="--psm 6")
+    text = re.split(r"Firmado digitalmente", text)[0]
     text = re.sub(r"\s+", " ", text.replace("-\n", "")).strip()
     return limpiar_constancia(text) if "constancia" in strip_accents(text).lower() else ""
 
@@ -513,6 +587,8 @@ def parse_nota(gray, words, scale: float, lang: str) -> str:
     if gray.shape[0] - y0 < 25 * scale:
         return ""
     text = pytesseract.image_to_string(gray[y0:, :], lang=lang, config="--psm 6")
+    # Desde el 29/10 Diputados firma digitalmente al pie: no es observación.
+    text = re.split(r"Firmado digitalmente", text)[0]
     text = re.sub(r"\s+", " ", text).strip()
     return text if es_prosa(text) else ""
 
@@ -640,6 +716,7 @@ def process_page(pdf: str, page: int, dpi: int, lang: str) -> tuple[PageResult, 
     res.kind = "VOTACION"
     geom = parse_table(words, res, scale)
     reocr_votes(gray, res, lang)
+    reocr_names(gray, res, geom, scale, lang)
     parse_asunto(words, res, geom, scale)
     gg = grupo_geometry(words, geom, scale)
     if gg:

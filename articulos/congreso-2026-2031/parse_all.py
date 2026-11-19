@@ -82,6 +82,15 @@ def run(force: bool = False, jobs: int = 4) -> pd.DataFrame:
     pg = pd.DataFrame(paginas)
     pg.to_csv(DATA / "paginas.csv", index=False)
     vt = pd.concat(votos, ignore_index=True) if votos else pd.DataFrame()
+    # Votos corregidos a mano contra la imagen (celdas que el OCR no lee).
+    corr = DATA / "correcciones.csv"
+    if corr.exists() and len(vt):
+        c = pd.read_csv(corr, dtype=str, keep_default_na=False)
+        for r in c.itertuples():
+            sel = (vt.vote_id == r.vote_id) & (vt.miembro_id == r.miembro_id)
+            if not sel.any():
+                print(f"  ⚠ corrección sin fila: {r.vote_id} {r.miembro_id}")
+            vt.loc[sel, "voto"], vt.loc[sel, "fuente"] = r.voto, "manual"
     vt.to_csv(DATA / "votos.csv", index=False)
 
     v = pg[pg.tipo == "VOTACION"]
