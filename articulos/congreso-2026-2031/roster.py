@@ -144,10 +144,15 @@ def run(fotos: bool = True) -> list[dict]:
     todos = []
     for camara in API:
         ms = miembros(camara)
-        if fotos:
-            for m in ms:
+        for m in ms:
+            if fotos:
                 m["foto"] = bajar_foto(m)
-            print(f"  fotos: {sum(bool(m['foto']) for m in ms)}/{len(ms)}")
+            else:
+                # --sin-fotos: no baja nada, pero enlaza las que ya están en
+                # disco (antes las dejaba en None y el tablero perdía las fotos).
+                dest = FOTOS / m["camara"] / f"{m['slug']}.jpg"
+                m["foto"] = str(dest.relative_to(HERE / "data")) if dest.exists() else None
+        print(f"  fotos: {sum(bool(m['foto']) for m in ms)}/{len(ms)}")
         todos += ms
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(todos, ensure_ascii=False, indent=1), encoding="utf-8")
