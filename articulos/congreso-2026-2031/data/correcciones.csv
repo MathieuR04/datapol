@@ -1,2 +1,4 @@
 vote_id,miembro_id,voto,fecha_revision,nota
 ASISTENCIA-VOTACION-PLENO-DIPUTADOS-20260818_vb:p005,d1293,ABS,2026-11-19,"Celda ilegible para el OCR; la imagen dice «Abst.» y así cuadra PCO (13 SI, 1 Abst.)."
+Asistencia_y_votacion_sesion_17_08_2026_vbo:p004,d1256,SI,2026-11-23,"Pleno del Congreso 17/08 (Diputados): celda ilegible para el OCR; la imagen dice «SI» y así cuadra FP (36 SI)."
+Asistencias_y_votaciones_congreso_sesion_del_28_10_2026_vb:p004,d1290,NO,2026-11-23,"Pleno del Congreso 28/10, PL 1 Cuenta General (Diputados): el OCR leyó «LE»; la imagen dice «NO —» y así cuadra JP (11 NO)."

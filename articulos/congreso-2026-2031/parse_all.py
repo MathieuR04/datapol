@@ -64,7 +64,10 @@ def run(force: bool = False, jobs: int = 4) -> pd.DataFrame:
         meta = json.loads(base.with_suffix(".json").read_text(encoding="utf-8"))
         for p in meta["paginas"]:
             paginas.append({
-                "camara": m["camara"], "pdf": stem, "fecha_sesion": m["fecha"],
+                # PDF del Pleno del Congreso: cada página dice de qué cámara es
+                "camara": p.get("camara") or m["camara"], "pdf": stem,
+                "fecha_sesion": m["fecha"], "formato": p.get("formato", ""),
+                "conjunta": p.get("conjunta", ""),
                 "orden_sesion": m["orden"], "url": m["url"], "pagina": p["page"],
                 "tipo": p["kind"], "fecha": p["date"], "hora": p["time"],
                 "asunto": p["asunto"], "validacion": p["validacion"],

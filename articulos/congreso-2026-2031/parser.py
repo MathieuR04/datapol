@@ -175,6 +175,10 @@ class PageResult:
     constancia_text: str = ""
     validacion: str = ""       # ok | mismatch | sin_validar
     nota: str = ""             # texto bajo el pie («se anunciaron 115 votos…»)
+    camara: str = ""           # diputados | senado (en los PDF del Congreso, por página)
+    formato: str = ""          # "" (tabla de siempre) | grilla (Senado en sesión conjunta)
+    printed_cols: dict = field(default_factory=dict)   # grilla: SI/NO/ABS de la cabecera
+    conjunta: str = ""         # votación del Pleno del Congreso: vote_id de la página de Diputados
     warnings: list = field(default_factory=list)
 
     def warn(self, msg: str) -> None:
@@ -704,11 +708,18 @@ def match_constancia(name: str, members: list[dict]) -> tuple[int | None, float]
 
 # ── página ───────────────────────────────────────────────────────────────────
 
-def process_page(pdf: str, page: int, dpi: int, lang: str) -> tuple[PageResult, dict]:
+def process_page(pdf: str, page: int, dpi: int, lang: str,
+                 grillas: bool = False) -> tuple[PageResult, dict]:
     res = PageResult(page=page)
     scale = dpi / 300.0
     gray = deskew(render_page(pdf, page, dpi))
     parse_header(ocr_words(gray[: int(gray.shape[0] * 0.18)], lang), res, scale)
+    if res.kind == "TABLA_CHECK" and grillas:
+        # Sesión del Pleno del Congreso: la mitad del Senado viene en cuadrícula.
+        import grilla
+        if grilla.es_grilla_votacion(gray, lang):
+            grilla.parse(gray, res, lang)
+        return res, {}
     if res.kind != "VOTACION":
         return res, {}
     words = ocr_words(gray, lang)
@@ -790,6 +801,12 @@ def validate(p: PageResult, recs: list[dict], n: int) -> None:
                 if got != want:
                     fails.append(f"{party} {k}: nuestro {got} vs impreso {want}")
             grupos_ok = len(fails) == antes
+    if p.printed_cols and all(v is not None for v in p.printed_cols.values()):
+        # Grilla del Senado: totales SI/NO/ABST. de la cabecera.
+        checks += 1
+        tally = Counter(r["voto_tabla"] for r in recs)
+        fails += [f"columna {k}: nuestro {tally[k]} vs impreso {want}"
+                  for k, want in p.printed_cols.items() if tally[k] != want]
     if p.printed_totals and sum(p.printed_totals.values()) == n:
         checks += 1
         tally = Counter("SINRES" if r["voto_tabla"] == "PRESIDENTE" else r["voto_tabla"]
@@ -826,6 +843,10 @@ def assemble(p: PageResult, members: list[dict], camara: str, pdf_stem: str) -> 
         if v is None:
             if p.president and surname_score(p.president.split(",")[0], m) > 0.85:
                 v = "PRESIDENTE"
+            elif p.formato == "grilla" and not r.vote_raw:
+                # Grilla sin marca en ninguna columna: no votó (provisional
+                # 20/11: 7 filas en blanco con 0 ausentes y 0 licencias).
+                v = "SINRES"
             else:
                 p.warn(f"voto ilegible {r.vote_raw!r} de {m['nombre']}")
                 v = "ILEGIBLE"
@@ -835,6 +856,7 @@ def assemble(p: PageResult, members: list[dict], camara: str, pdf_stem: str) -> 
             "asunto": p.asunto, "miembro_id": m["id"], "nombre": m["nombre"],
             "grupo": m["grupo"], "grupo_pdf": canon_party(r.party_raw) or m["grupo"],
             "voto_tabla": v, "voto": v, "voto_raw": r.vote_raw, "fuente": "tabla",
+            "conjunta": p.conjunta,
         })
     validate(p, recs, n)
     by_id = {r["miembro_id"]: r for r in recs}
@@ -847,6 +869,28 @@ def assemble(p: PageResult, members: list[dict], camara: str, pdf_stem: str) -> 
         if rec and rec["voto"] != vote:
             rec["voto"], rec["fuente"] = vote, "constancia"
     return recs
+
+
+def emparejar(results: list[PageResult], stem: str) -> None:
+    """Pleno del Congreso: cada votación tiene una página por cámara, la de
+    Diputados primero. Se enlazan por asunto; la grilla del Senado no trae
+    fecha numérica ni hora y las toma de su par."""
+    dips = [p for p in results if p.kind == "VOTACION" and p.camara == "diputados"]
+    for p in results:
+        if p.kind != "VOTACION" or p.camara != "senado":
+            continue
+        cand = [d for d in dips if d.page < p.page]
+        if not cand:
+            p.warn("votación del Senado sin par de Diputados")
+            continue
+        par = max(cand, key=lambda d: (ratio(norm_key(d.asunto), norm_key(p.asunto)), d.page))
+        s = ratio(norm_key(par.asunto), norm_key(p.asunto))
+        if s < 0.6:
+            p.warn(f"par de Diputados dudoso (p{par.page}, asunto {s:.2f})")
+            continue
+        par.conjunta = p.conjunta = f"{stem}:p{par.page:03d}"
+        p.date = p.date or par.date
+        p.time = p.time or par.time
 
 
 def pick_lang() -> str:
@@ -867,11 +911,12 @@ def parse_pdf(pdf: str, camara: str, roster: list[dict], pages=None,
     """→ (votos: una fila por miembro×votación, páginas: metadatos + advertencias)."""
     os.environ.setdefault("OMP_THREAD_LIMIT", "1")
     lang = pick_lang()
-    members = [m for m in roster if m["camara"] == camara]
+    congreso = camara == "congreso"
+    por_camara = {c: [m for m in roster if m["camara"] == c] for c in ("diputados", "senado")}
     pages = pages or list(range(1, n_pages(pdf) + 1))
     results = []
     with ThreadPoolExecutor(max_workers=jobs) as pool:
-        futs = {pool.submit(process_page, pdf, pg, dpi, lang): pg for pg in pages}
+        futs = {pool.submit(process_page, pdf, pg, dpi, lang, congreso): pg for pg in pages}
         for fut, pg in futs.items():
             try:
                 results.append(fut.result()[0])
@@ -881,10 +926,21 @@ def parse_pdf(pdf: str, camara: str, roster: list[dict], pages=None,
                 results.append(bad)
     results.sort(key=lambda r: r.page)
     stem = Path(pdf).stem
+    for p in results:
+        if p.kind != "VOTACION":
+            continue
+        if not congreso:
+            p.camara = camara
+        else:
+            # Pleno del Congreso: la tabla de siempre es Diputados (130 filas);
+            # la grilla, el Senado.
+            p.camara = "senado" if p.formato == "grilla" or len(p.rows) < 100 else "diputados"
+    if congreso:
+        emparejar(results, stem)
     recs = []
     for p in results:
         if p.kind == "VOTACION" and p.rows:
-            recs += assemble(p, members, camara, stem)
+            recs += assemble(p, por_camara[p.camara], p.camara, stem)
     meta = []
     for p in results:
         d = asdict(p)

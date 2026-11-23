@@ -31,7 +31,7 @@ Salida: data/pdfs/<camara>/<archivo>.pdf + data/pdfs/manifest.csv
 (camara, periodo, fecha, orden, url, archivo, bytes, sha256). Idempotente:
 los archivos ya presentes no se vuelven a bajar, sólo se re-hashean.
 
-Run: python3 scrape_sesiones.py [--camara diputados|senado] [--periodo 2026-2027] [--dry-run]
+Run: python3 scrape_sesiones.py [--camara diputados|senado|congreso] [--periodo 2026-2027] [--dry-run]
 """
 from __future__ import annotations
 
@@ -60,6 +60,10 @@ MANIFEST = PDF_DIR / "manifest.csv"
 CAMARAS = {
     "diputados": "https://diputados.congreso.gob.pe/sesiones-del-pleno/",
     "senado": "https://senado.congreso.gob.pe/sesiones_del_pleno/",
+    # Pleno del Congreso (sesiones conjuntas: presupuesto, cuenta general,
+    # comisiones bicamerales). Un PDF por sesión con las dos cámaras; parser.py
+    # reparte cada página a su cámara.
+    "congreso": "https://www.congreso.gob.pe/sesiones-del-pleno/",
 }
 COLUMNA = "Votaciones y Asistencias"
 
@@ -174,6 +178,10 @@ def main():
         print("\ndry run — no se descargó nada")
         return
     PDF_DIR.mkdir(parents=True, exist_ok=True)
+    if args.camara and MANIFEST.exists():
+        # --camara: conservar las filas de las otras fuentes
+        with open(MANIFEST, encoding="utf-8") as f:
+            filas = [r for r in csv.DictReader(f) if r["camara"] != args.camara] + filas
     with open(MANIFEST, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(filas[0]) if filas else ["camara"])
         w.writeheader()

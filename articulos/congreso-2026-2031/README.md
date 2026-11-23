@@ -25,9 +25,10 @@ Requisitos (una vez): `brew install poppler tesseract`,
 
 | script | hace |
 |---|---|
-| `scrape_sesiones.py` | lee la tabla de sesiones de cada cámara y baja lo que haya en la columna **«Votaciones y Asistencias»** (por encabezado, no por nombre de archivo: los nombres cambian sin aviso) |
+| `scrape_sesiones.py` | lee la tabla de sesiones de cada cámara y del Pleno del Congreso (sesiones conjuntas) y baja lo que haya en la columna **«Votaciones y Asistencias»** (por encabezado, no por nombre de archivo: los nombres cambian sin aviso) |
 | `roster.py` | padrón oficial desde la API WordPress de cada cámara (`/wp-json/wp/v2/diputado`, `/senador`): nombre, bancada, distrito, foto |
 | `parser.py` | OCR de cada página (heredado del parser 2021, ver su docstring) y asignación de cada fila al padrón oficial |
+| `grilla.py` | cuadrícula de votación del Senado en las sesiones del Pleno del Congreso (✓ por columna SI/NO/ABST.), leída de la imagen |
 | `parse_all.py` | corre el parser sobre el manifiesto y consolida `data/votos.csv` + `data/paginas.csv` |
 | `estimate.py` | puntos ideales (embedding espectral, Golub-Jackson), línea oficialismo/oposición, métricas por miembro |
 | `build_web.py` | `web/<camara>.json` para el tablero |
@@ -50,8 +51,23 @@ Requisitos (una vez): `brew install poppler tesseract`,
 - **Constancias** («deja constancia del voto a favor de…») se aplican sobre el voto
   de la tabla; el conteo de validación es el de *antes* de aplicarlas, porque así
   está impreso.
-- **Fuera por ahora:** las páginas de tabla con ✓ («VOTACIÓN NOMINAL», votación
-  manual de Diputados del 05/08/2026). Son pocas y procedimentales; el parser las
-  marca `TABLA_CHECK`.
+- **Sesiones del Pleno del Congreso (bicamerales).** www.congreso.gob.pe/sesiones-del-pleno/
+  publica un PDF por sesión con las dos cámaras: cada votación trae la página de
+  Diputados en su formato de siempre y la del Senado como cuadrícula con ✓
+  (`grilla.py`). Cada mitad entra a la vista de su cámara; la columna `conjunta` de
+  `votos.csv` enlaza ambas (presupuesto, cuenta general, comisiones bicamerales).
+  En la grilla una «P» cuenta como voto de su columna y una fila en blanco es «sin
+  respuesta»; se valida contra los totales SI/NO/ABST. de la cabecera.
+- **Actas PROVISIONAL** entran de forma preliminar; cuando la cámara publica la final,
+  la provisional sale del manifiesto y la final la reemplaza en el siguiente
+  `update.py`. Traen la marca de agua roja «COPIA INFORMATIVA» (se borra al
+  rasterizar) y vienen «SIN REGISTROS ORALES»: Senado 11/11/2026, la final cambió 9 de
+  420 votos, todos votos orales o constancias que la provisional no traía.
+- **Correcciones a mano:** `data/correcciones.csv` (voto por miembro, celdas que el OCR
+  no lee, verificadas contra la imagen) y `data/verificadas.csv` (páginas cuyo
+  desajuste era del validador).
+- **Fuera por ahora:** las páginas de tabla con ✓ de las sesiones de cada cámara
+  (votación manual de Diputados y Senado del 05/08/2026). Son pocas y
+  procedimentales; el parser las marca `TABLA_CHECK`.
 - **Pocas votaciones al inicio:** con pocas votaciones disputadas las posiciones son
   preliminares; el tablero lo advierte solo (umbral: 30 disputadas).
