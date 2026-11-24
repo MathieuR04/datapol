@@ -1,0 +1,1295 @@
+{
+ "votaciones": [
+  {
+   "key": "endeudamiento",
+   "nombre": "Endeudamiento",
+   "fecha": "20/11/2026",
+   "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 4-2026-2031-CR, QUE PROPONE LA LEY DE ENDEUDAMIENTO DEL SECTOR PÚBLICO PARA EL ANO FISCAL 2027",
+   "totales": {
+    "diputados": {
+     "SI": 71,
+     "NO": 30,
+     "ABS": 4
+    },
+    "senado": {
+     "SI": 38,
+     "NO": 10,
+     "ABS": 4
+    }
+   },
+   "provisional": true
+  },
+  {
+   "key": "equilibrio",
+   "nombre": "Equilibrio Financiero",
+   "fecha": "20/11/2026",
+   "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 3-2026-2031-CR, QUE PROPONE LA LEY DE EQUILIBRIO FINANCIERO DEL PRESUPUESTO DEL SECTOR PUBLICO PARA EL AÑO FISCAL 2027",
+   "totales": {
+    "diputados": {
+     "SI": 75,
+     "NO": 30,
+     "ABS": 4
+    },
+    "senado": {
+     "SI": 39,
+     "NO": 13,
+     "ABS": 0
+    }
+   },
+   "provisional": true
+  },
+  {
+   "key": "presupuesto",
+   "nombre": "Presupuesto",
+   "fecha": "20/11/2026",
+   "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 2-2026-2031-CR, QUE PROPONE LA LEY DE PRESUPUESTO DEL SECTOR PÚBLICO PARA EL AÑO FISCAL 2027",
+   "totales": {
+    "diputados": {
+     "SI": 71,
+     "NO": 32,
+     "ABS": 12
+    },
+    "senado": {
+     "SI": 35,
+     "NO": 14,
+     "ABS": 3
+    }
+   },
+   "provisional": true
+  }
+ ],
+ "bandos": {
+  "AN": {
+   "ABS": "Ala López Chau",
+   "NO": "Ala Huilca"
+  },
+  "PBG": {
+   "SI": "Ala Figallo",
+   "NO": "Ala Alayza"
+  },
+  "PCO": {
+   "SI": "Ala Barragán",
+   "ABS": "Ala Agripina Flores"
+  }
+ },
+ "miembros": [
+  {
+   "id": "d1322",
+   "slug": "cabrera-nieto-juan-cesar",
+   "nombre": "Cabrera Nieto, Juan César",
+   "apellidos": "Cabrera Nieto",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/cabrera-nieto-juan-cesar.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1316",
+   "slug": "hancco-hancco-dina-irene",
+   "nombre": "Hancco Hancco, Dina Irene",
+   "apellidos": "Hancco Hancco",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/hancco-hancco-dina-irene.jpg",
+   "trayectoria": {
+    "endeudamiento": "ABS",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "ABS",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1315",
+   "slug": "sonco-villanueva-helard-bladimir",
+   "nombre": "Sonco Villanueva, Helard Bladimir",
+   "apellidos": "Sonco Villanueva",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/sonco-villanueva-helard-bladimir.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1311",
+   "slug": "albanil-carmona-henry-antonio",
+   "nombre": "Albañil Carmona, Henry Antonio",
+   "apellidos": "Albañil Carmona",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/albanil-carmona-henry-antonio.jpg",
+   "trayectoria": {
+    "endeudamiento": "ABS",
+    "equilibrio": "ABS",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "ABS",
+    "equilibrio": "ABS",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1310",
+   "slug": "huaman-cornejo-miguel-felix",
+   "nombre": "Huamán Cornejo, Miguel Felix",
+   "apellidos": "Huamán Cornejo",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/huaman-cornejo-miguel-felix.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1302",
+   "slug": "fernandez-nina-nery-rodolfo",
+   "nombre": "Fernández Nina, Nery Rodolfo",
+   "apellidos": "Fernández Nina",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/fernandez-nina-nery-rodolfo.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1294",
+   "slug": "santana-vera-milagros-karina",
+   "nombre": "Santana Vera, Milagros Karina",
+   "apellidos": "Santana Vera",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/santana-vera-milagros-karina.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "LIC",
+    "equilibrio": "LIC",
+    "presupuesto": "LIC"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "d1293",
+   "slug": "eusebio-padilla-arturo-cesar",
+   "nombre": "Eusebio Padilla, Arturo César",
+   "apellidos": "Eusebio Padilla",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/eusebio-padilla-arturo-cesar.jpg",
+   "trayectoria": {
+    "endeudamiento": "ABS",
+    "equilibrio": "ABS",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "ABS",
+    "equilibrio": "ABS",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1289",
+   "slug": "camargo-porta-raul-jesus",
+   "nombre": "Camargo Porta, Raúl Jesús",
+   "apellidos": "Camargo Porta",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/camargo-porta-raul-jesus.jpg",
+   "trayectoria": {
+    "endeudamiento": "ABS",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "ABS",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1288",
+   "slug": "medina-stein-andrea-dayna",
+   "nombre": "Medina Stein, Andrea Dayna",
+   "apellidos": "Medina Stein",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/medina-stein-andrea-dayna.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "ABS",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "ABS",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1287",
+   "slug": "pinan-mamani-victor-eduardo",
+   "nombre": "Piñán Mamani, Víctor Eduardo",
+   "apellidos": "Piñán Mamani",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/pinan-mamani-victor-eduardo.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1286",
+   "slug": "samanez-gonzales-vigil-jeenny-cristina",
+   "nombre": "Samanez Gonzales Vigil, Jeenny Cristina",
+   "apellidos": "Samanez Gonzales Vigil",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/samanez-gonzales-vigil-jeenny-cristina.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1285",
+   "slug": "meneses-crispin-angel-renato",
+   "nombre": "Meneses Crispin, Angel Renato",
+   "apellidos": "Meneses Crispin",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/meneses-crispin-angel-renato.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SINRES",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1284",
+   "slug": "manrique-olivera-bernardino-jair",
+   "nombre": "Manrique Olivera, Bernardino Jair",
+   "apellidos": "Manrique Olivera",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/manrique-olivera-bernardino-jair.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "LIC",
+    "equilibrio": "LIC",
+    "presupuesto": "LIC"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "d1283",
+   "slug": "huilca-flores-indira-isabel",
+   "nombre": "Huilca Flores, Indira Isabel",
+   "apellidos": "Huilca Flores",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/huilca-flores-indira-isabel.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "d1282",
+   "slug": "colchado-huamani-harvey-julio",
+   "nombre": "Colchado Huamani, Harvey Julio",
+   "apellidos": "Colchado Huamani",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/colchado-huamani-harvey-julio.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1281",
+   "slug": "uribe-saenz-romina-alejandra",
+   "nombre": "Uribe Saenz, Romina Alejandra",
+   "apellidos": "Uribe Saenz",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/uribe-saenz-romina-alejandra.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1280",
+   "slug": "alayza-maccera-rossana-herminia",
+   "nombre": "Alayza Maccera, Rossana Herminia",
+   "apellidos": "Alayza Maccera",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/alayza-maccera-rossana-herminia.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "d1279",
+   "slug": "benitez-barrionuevo-jessica",
+   "nombre": "Benitez Barrionuevo, Jessica",
+   "apellidos": "Benitez Barrionuevo",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/benitez-barrionuevo-jessica.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "d1278",
+   "slug": "fernandez-de-la-torre-hilda-judit",
+   "nombre": "Fernández de la Torre, Hilda Judit",
+   "apellidos": "Fernández de la Torre",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/fernandez-de-la-torre-hilda-judit.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1277",
+   "slug": "quispe-candia-luis-eliseo",
+   "nombre": "Quispe Candia, Luis Eliseo",
+   "apellidos": "Quispe Candia",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/quispe-candia-luis-eliseo.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1276",
+   "slug": "molina-soto-nathaly-milagros",
+   "nombre": "Molina Soto, Nathaly Milagros",
+   "apellidos": "Molina Soto",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/molina-soto-nathaly-milagros.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1275",
+   "slug": "reto-otero-oscar-de-jesus",
+   "nombre": "Reto Otero, Oscar de Jesús",
+   "apellidos": "Reto Otero",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/reto-otero-oscar-de-jesus.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1258",
+   "slug": "castrejon-fernandez-segundo-juan",
+   "nombre": "Castrejon Fernandez, Segundo Juan",
+   "apellidos": "Castrejon Fernandez",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/castrejon-fernandez-segundo-juan.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "LIC",
+    "equilibrio": "LIC",
+    "presupuesto": "LIC"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "d1253",
+   "slug": "valqui-calderon-demetrio-flavio",
+   "nombre": "Valqui Calderón, Demetrio Flavio",
+   "apellidos": "Valqui Calderón",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/valqui-calderon-demetrio-flavio.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1252",
+   "slug": "llaque-linares-nora-maria",
+   "nombre": "Llaque Linares, Nora María",
+   "apellidos": "Llaque Linares",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/llaque-linares-nora-maria.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1246",
+   "slug": "duarte-georgina",
+   "nombre": "Duarte, Georgina",
+   "apellidos": "Duarte",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/duarte-georgina.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "d1245",
+   "slug": "peralta-jorpa-maximo",
+   "nombre": "Peralta Jorpa, Máximo",
+   "apellidos": "Peralta Jorpa",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/peralta-jorpa-maximo.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "AUS",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1242",
+   "slug": "muedas-balbiese-cesar-augusto",
+   "nombre": "Muedas Balbiese, Cesar Augusto",
+   "apellidos": "Muedas Balbiese",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/muedas-balbiese-cesar-augusto.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1241",
+   "slug": "prado-vallejos-lila-marianela",
+   "nombre": "Prado Vallejos, Lila Marianela",
+   "apellidos": "Prado Vallejos",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/prado-vallejos-lila-marianela.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1240",
+   "slug": "yataco-torrealva-jose-ricardo",
+   "nombre": "Yataco Torrealva, José Ricardo",
+   "apellidos": "Yataco Torrealva",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/yataco-torrealva-jose-ricardo.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "LIC",
+    "equilibrio": "LIC",
+    "presupuesto": "LIC"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "d1232",
+   "slug": "lopez-letona-heber",
+   "nombre": "López Letona, Heber",
+   "apellidos": "López Letona",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/lopez-letona-heber.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1231",
+   "slug": "espinoza-huillca-edwin",
+   "nombre": "Espinoza Huillca, Edwin",
+   "apellidos": "Espinoza Huillca",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/espinoza-huillca-edwin.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1230",
+   "slug": "holguin-loaiza-cesar-augusto",
+   "nombre": "Holguin Loaiza, Cesar Augusto",
+   "apellidos": "Holguin Loaiza",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/holguin-loaiza-cesar-augusto.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "ABS",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "ABS",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "d1227",
+   "slug": "garcia-huby-fernando-alberto",
+   "nombre": "García Huby, Fernando Alberto",
+   "apellidos": "García Huby",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/garcia-huby-fernando-alberto.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "d1217",
+   "slug": "buitron-martinez-freshman",
+   "nombre": "Buitron Martínez, Freshman",
+   "apellidos": "Buitron Martínez",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/buitron-martinez-freshman.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1214",
+   "slug": "masco-caceres-luis-aurelio",
+   "nombre": "Masco Cáceres, Luis Aurelio",
+   "apellidos": "Masco Cáceres",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/masco-caceres-luis-aurelio.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1212",
+   "slug": "arminta-valencia-marleny-bibiana",
+   "nombre": "Arminta Valencia, Marleny Bibiana",
+   "apellidos": "Arminta Valencia",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/arminta-valencia-marleny-bibiana.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "LIC",
+    "equilibrio": "LIC",
+    "presupuesto": "LIC"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "d1210",
+   "slug": "hirache-pizarro-gloria-charito",
+   "nombre": "Hirache Pizarro, Gloria Charito",
+   "apellidos": "Hirache Pizarro",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/hirache-pizarro-gloria-charito.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1209",
+   "slug": "gonzales-polar-edgar-dember",
+   "nombre": "Gonzales Polar, Edgar Dember",
+   "apellidos": "Gonzales Polar",
+   "camara": "diputados",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/gonzales-polar-edgar-dember.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "d1206",
+   "slug": "alvaron-de-la-cruz-edgar-adrian",
+   "nombre": "Alvaron de la Cruz, Edgar Adrián",
+   "apellidos": "Alvaron de la Cruz",
+   "camara": "diputados",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/alvaron-de-la-cruz-edgar-adrian.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "AUS",
+    "equilibrio": "AUS",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "d1205",
+   "slug": "marcelo-salazar-jose-miguel",
+   "nombre": "Marcelo Salazar, José Miguel",
+   "apellidos": "Marcelo Salazar",
+   "camara": "diputados",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/diputados/marcelo-salazar-jose-miguel.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "s1285",
+   "slug": "ticona-cohaila-juana-guisella",
+   "nombre": "Ticona Cohaila, Juana Guisella",
+   "apellidos": "Ticona Cohaila",
+   "camara": "senado",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/senado/ticona-cohaila-juana-guisella.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "s1284",
+   "slug": "astucuri-laura-roger-miguel",
+   "nombre": "Astucuri Laura, Roger Miguel",
+   "apellidos": "Astucuri Laura",
+   "camara": "senado",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/senado/astucuri-laura-roger-miguel.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1283",
+   "slug": "gago-rodriguez-walter-francisco",
+   "nombre": "Gago Rodríguez, Walter Francisco",
+   "apellidos": "Gago Rodríguez",
+   "camara": "senado",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/senado/gago-rodriguez-walter-francisco.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1282",
+   "slug": "flores-cordova-agripina-maria-del-pilar",
+   "nombre": "Flores Córdova, Agripina María del Pilar",
+   "apellidos": "Flores Córdova",
+   "camara": "senado",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/senado/flores-cordova-agripina-maria-del-pilar.jpg",
+   "trayectoria": {
+    "endeudamiento": "ABS",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "ABS",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  },
+  {
+   "id": "s1281",
+   "slug": "barragan-coloma-daniel-hugo",
+   "nombre": "Barragán Coloma, Daniel Hugo",
+   "apellidos": "Barragán Coloma",
+   "camara": "senado",
+   "grupo": "PCO",
+   "foto": "../congreso-2026-2031/data/fotos/senado/barragan-coloma-daniel-hugo.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1244",
+   "slug": "bonifaz-carmona-nora",
+   "nombre": "Bonifaz Carmona, Nora",
+   "apellidos": "Bonifaz Carmona",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/bonifaz-carmona-nora.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "s1243",
+   "slug": "gavidia-rodriguez-jorge-octavio",
+   "nombre": "Gavidia Rodríguez, Jorge Octavio",
+   "apellidos": "Gavidia Rodríguez",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/gavidia-rodriguez-jorge-octavio.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": "Anunció su renuncia al partido el 26/10; sigue en el padrón oficial del PBG."
+  },
+  {
+   "id": "s1242",
+   "slug": "caballero-leon-carlos-david",
+   "nombre": "Caballero León, Carlos David",
+   "apellidos": "Caballero León",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/caballero-leon-carlos-david.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1241",
+   "slug": "matute-charun-susana-flor-de-maria",
+   "nombre": "Matute Charún, Susana Flor de María",
+   "apellidos": "Matute Charún",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/matute-charun-susana-flor-de-maria.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "SINRES",
+    "equilibrio": "SINRES",
+    "presupuesto": "SINRES"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "s1240",
+   "slug": "iturregui-byrne-patricia-milagros",
+   "nombre": "Iturregui Byrne, Patricia Milagros",
+   "apellidos": "Iturregui Byrne",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/iturregui-byrne-patricia-milagros.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1239",
+   "slug": "figallo-rivadeneyra-flavio-felipe",
+   "nombre": "Figallo Rivadeneyra, Flavio Felipe",
+   "apellidos": "Figallo Rivadeneyra",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/figallo-rivadeneyra-flavio-felipe.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1238",
+   "slug": "flores-suarez-juver-nilson",
+   "nombre": "Flores Suárez, Juver Nilson",
+   "apellidos": "Flores Suárez",
+   "camara": "senado",
+   "grupo": "PBG",
+   "foto": "../congreso-2026-2031/data/fotos/senado/flores-suarez-juver-nilson.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "SI"
+   },
+   "bando": "SI",
+   "nota": ""
+  },
+  {
+   "id": "s1237",
+   "slug": "vasquez-chuquilin-mirtha-esther",
+   "nombre": "Vásquez Chuquilín, Mirtha Esther",
+   "apellidos": "Vásquez Chuquilín",
+   "camara": "senado",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/senado/vasquez-chuquilin-mirtha-esther.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "s1236",
+   "slug": "luque-ibarra-ruth",
+   "nombre": "Luque Ibarra, Ruth",
+   "apellidos": "Luque Ibarra",
+   "camara": "senado",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/senado/luque-ibarra-ruth.jpg",
+   "trayectoria": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "voto_raw": {
+    "endeudamiento": "NO",
+    "equilibrio": "NO",
+    "presupuesto": "NO"
+   },
+   "bando": "NO",
+   "nota": ""
+  },
+  {
+   "id": "s1235",
+   "slug": "delgado-zegarra-jaime-ricardo",
+   "nombre": "Delgado Zegarra, Jaime Ricardo",
+   "apellidos": "Delgado Zegarra",
+   "camara": "senado",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/senado/delgado-zegarra-jaime-ricardo.jpg",
+   "trayectoria": {
+    "endeudamiento": "NV",
+    "equilibrio": "NV",
+    "presupuesto": "NV"
+   },
+   "voto_raw": {
+    "endeudamiento": "SINRES",
+    "equilibrio": "SINRES",
+    "presupuesto": "SINRES"
+   },
+   "bando": "NV",
+   "nota": ""
+  },
+  {
+   "id": "s1234",
+   "slug": "chau-nava-pablo-alfonso-lopez",
+   "nombre": "López Chau Nava, Pablo Alfonso",
+   "apellidos": "López Chau Nava",
+   "camara": "senado",
+   "grupo": "AN",
+   "foto": "../congreso-2026-2031/data/fotos/senado/chau-nava-pablo-alfonso-lopez.jpg",
+   "trayectoria": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "voto_raw": {
+    "endeudamiento": "SI",
+    "equilibrio": "SI",
+    "presupuesto": "ABS"
+   },
+   "bando": "ABS",
+   "nota": ""
+  }
+ ]
+}

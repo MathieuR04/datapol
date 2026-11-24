@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Las oposiciones que el presupuesto partió | Datapol</title>
+  <link rel="icon" type="image/svg+xml" href="/shared/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="robots" content="noindex">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:site_name"   content="Datapol">
+  <meta property="og:title"       content="Las oposiciones que el presupuesto partió">
+  <meta property="og:description" content="En las leyes del presupuesto 2027, Ahora Nación, Buen Gobierno y Obras votaron divididas en Diputados y en el Senado. Sus facciones, cara por cara.">
+  <meta property="og:url"         content="https://datapol.lat/articulos/facciones-presupuesto-2027/">
+  <meta property="og:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@KhamaRamaq">
+  <meta name="twitter:title"       content="Las oposiciones que el presupuesto partió">
+  <meta name="twitter:description" content="Ahora Nación, Buen Gobierno y Obras, divididas en el presupuesto 2027: sus facciones, cara por cara.">
+  <meta name="twitter:image"       content="https://datapol.lat/shared/images/og_datapol.png">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #f5f0e8;
+      --surface: #ede8df;
+      --card:    #fbf8f2;
+      --border:  #cfc0ab;
+      --text:    #1a1209;
+      --muted:   #7a6858;
+      --dim:     #b0a090;
+      --terra:   #c4603a;
+      /* votos: los del tablero de votaciones */
+      --olive:   #6b7d2a;   /* sí */
+      --red:     #a8322a;   /* no */
+      --neutral: #9c8f80;   /* abstención */
+      /* partidos: colores de congresoperu2026.com */
+      --p-AN:  #EF4444;
+      --p-PBG: #F59E0B;
+      --p-PCO: #139167;
+    }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text); background: var(--bg);
+      line-height: 1.55; -webkit-font-smoothing: antialiased;
+    }
+    .article { max-width: 760px; margin: 0 auto; padding: 2.4rem 1rem 4rem; }
+
+    .article-back {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; margin-bottom: 2rem; transition: color .12s;
+    }
+    .article-back:hover { color: var(--text); }
+    .article-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--terra); margin-bottom: 0.7rem;
+    }
+    .borrador { background: var(--text); color: var(--bg); padding: 1px 6px; border-radius: 3px; margin-left: .5rem; }
+    .article-title {
+      font-family: 'Bebas Neue', sans-serif; font-weight: 400;
+      font-size: clamp(2.3rem, 7vw, 3.8rem); line-height: 1.0; letter-spacing: 0.5px;
+      margin-bottom: 0.9rem;
+    }
+    .article-title .num { color: var(--terra); }
+    .article-byline {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 0.55rem;
+      font-size: 12.5px; color: var(--muted); margin-bottom: 2.2rem;
+    }
+    .article-byline-author { font-weight: 600; color: var(--text); }
+    .article-byline-sep { width: 3px; height: 3px; border-radius: 50%; background: var(--dim); }
+
+    .article-body p { margin-bottom: 1.05rem; font-size: 15.5px; }
+    .article-body h2 {
+      font-family: 'Bebas Neue', sans-serif; font-weight: 400; letter-spacing: 0.5px;
+      font-size: clamp(1.5rem, 4vw, 2rem); margin: 2.4rem 0 0.8rem;
+      display: flex; align-items: center; gap: .55rem;
+    }
+    .article-body h2 .sw { width: 13px; height: 13px; border-radius: 50%; flex: none; }
+    .article-body a { color: var(--terra); }
+    .article-body ul { margin: 0 0 1.05rem 1.1rem; font-size: 15px; }
+    .article-body li { margin-bottom: .5rem; }
+
+    .highlight-box {
+      background: var(--surface); border-left: 3px solid var(--terra); border-radius: 0 10px 10px 0;
+      padding: 0.95rem 1.1rem; margin: 1.4rem 0; font-size: 14px;
+    }
+    .highlight-box p { margin: 0; font-size: 14px; }
+
+    /* ── figure scaffold (como en el resto de artículos) ── */
+    .fig {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.15rem 1.15rem 0.9rem; margin: 1.5rem 0;
+    }
+    .fig-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .fig-sub   { font-size: 12px; color: var(--muted); margin-bottom: 0.9rem; }
+    .fig-note  { font-size: 11px; color: var(--muted); margin-top: 0.7rem; padding-top: .55rem; border-top: 1px solid var(--border); }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.45rem 1.1rem; margin: .2rem 0 .9rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: .42rem; font-size: 12px; color: var(--text); }
+
+    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+    .d-SI { background: var(--olive); } .d-NO { background: var(--red); }
+    .d-ABS { background: var(--neutral); }
+    .d-NV { background: transparent; box-shadow: inset 0 0 0 1.5px var(--dim); }
+
+    /* ── bandos ── */
+    /* un bando por franja: nombre a la izquierda, caras a la derecha */
+    .camps { display: flex; flex-direction: column; gap: 8px; }
+    .camp { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center;
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: .7rem .8rem; }
+    .camp.nv { background: transparent; border-style: dashed; }
+    .camp-name { font-size: 13.5px; font-weight: 700; line-height: 1.25; }
+    .camp-sub { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .35rem; font-size: 11px; color: var(--muted); margin-top: .3rem; }
+    .camp-sub .n { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; line-height: 1; color: var(--text); width: 100%; }
+    .faces { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 12px 2px; }
+    @media (max-width: 600px) {
+      .camp { grid-template-columns: 1fr; gap: .6rem; }
+      .camp-sub .n { width: auto; font-size: 1.4rem; }
+    }
+    .face { text-align: center; position: relative; outline: none; }
+    .ph { width: 54px; height: 54px; border-radius: 50%; margin: 0 auto; overflow: hidden;
+      background: var(--surface); box-shadow: 0 0 0 3px var(--pc), 0 0 0 5px var(--card); }
+    .camp.nv .ph { opacity: .5; box-shadow: 0 0 0 3px var(--pc), 0 0 0 5px var(--surface); }
+    .ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; display: block; }
+    /* blanco y negro aclarado: las fotos oficiales tienen fondo oscuro */
+    body.bn .ph img { filter: grayscale(1) brightness(1.18) contrast(.92); }
+
+    /* selector de prueba (borrador) */
+    .fototoggle { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; font-size: 12px; }
+    .fototoggle button { font: inherit; border: 0; background: var(--card); color: var(--muted); padding: .3rem .7rem; cursor: pointer; }
+    .fototoggle button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+    .toggle-row { display: flex; align-items: center; gap: .6rem; font-size: 12px; color: var(--muted); margin: -.4rem 0 .4rem; }
+    .face:hover .ph, .face:focus .ph { box-shadow: 0 0 0 3px var(--pc), 0 0 0 5px var(--card), 0 0 0 6px var(--text); }
+    .cam { position: absolute; left: calc(50% + 17px); top: -4px; font-size: 8.5px; font-weight: 700; line-height: 1;
+      background: var(--text); color: var(--bg); border-radius: 3px; padding: 2px 3px; }
+    .cam.inline { position: static; }
+    .nm { font-size: 10.5px; line-height: 1.2; margin-top: .45rem; font-weight: 600; }
+    .nm .ast { color: var(--terra); }
+    .tray { display: flex; justify-content: center; gap: 3px; margin-top: .28rem; }
+    .tray .dot { width: 7px; height: 7px; }
+
+    #tip { position: fixed; pointer-events: none; z-index: 10; background: var(--text); color: var(--bg);
+      font-size: 12px; border-radius: 6px; padding: .5rem .65rem; max-width: 250px; line-height: 1.45; display: none; }
+    #tip b { display: block; margin-bottom: .15rem; }
+    #tip .row { display: flex; align-items: center; gap: .4rem; }
+
+    details { margin-top: .9rem; }
+    details summary { cursor: pointer; font-size: 12.5px; color: var(--muted); }
+    table.t { border-collapse: collapse; font-size: 12px; width: 100%; margin-top: .6rem; }
+    table.t th, table.t td { text-align: left; padding: .3rem .35rem; border-bottom: 1px solid var(--border); }
+    .src { font-size: 12.5px; margin: .6rem 0 0 1.1rem; }
+    .src li { margin-bottom: .3rem; }
+    .metodo { font-size: 13px; color: var(--muted); }
+    @media (max-width: 520px) { .ph { width: 50px; height: 50px; } .cam { left: calc(50% + 15px); } }
+  </style>
+</head>
+<body>
+<div id="tip" role="tooltip"></div>
+
+  <article class="article">
+
+    <a class="article-back" href="/articulos/">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="8,1 3,6 8,11"/></svg>
+      Todos los artículos
+    </a>
+
+    <div class="article-tag">Análisis · Congreso 2026-2031<span class="borrador">Borrador</span></div>
+    <h1 class="article-title">Las oposiciones que el <span class="num">presupuesto</span> partió</h1>
+    <div class="article-byline">
+      <span class="article-byline-author">Mathieu Rojas</span>
+      <span class="article-byline-sep"></span>
+      <span>23 de noviembre, 2026</span>
+      <span class="article-byline-sep"></span>
+      <span>5 min de lectura</span>
+    </div>
+
+    <div class="article-body">
+      <p>El 20 de noviembre, en sesión conjunta, el Congreso aprobó las tres leyes que sostienen el gasto público de 2027: Endeudamiento, Equilibrio Financiero y la Ley de Presupuesto, por S/ 266 506 millones. El oficialismo, Fuerza Popular y Renovación Popular, votó en bloque: ni un voto en contra ni una abstención en las tres leyes. La oposición no.</p>
+      <p>En las sesiones conjuntas, diputados y senadores votan lo mismo el mismo día. Eso permite mirar a cada partido entero, con sus dos cámaras juntas. Tres bancadas de oposición se partieron: <b>Ahora Nación</b> (14 parlamentarios), <b>Buen Gobierno</b> (25) y <b>Obras</b> (19).</p>
+
+      <div class="highlight-box"><p>Cada parlamentario aparece en el bando de su voto en la Ley de Presupuesto, la votación final. Los tres puntos bajo su foto muestran cómo votó en las tres leyes, en orden: Endeudamiento, Equilibrio Financiero y Presupuesto.</p></div>
+
+      <div class="toggle-row">Fotos (prueba de borrador):
+        <span class="fototoggle" role="group" aria-label="Fotos">
+          <button type="button" data-f="color" aria-pressed="true">Color</button><button type="button" data-f="bn" aria-pressed="false">Blanco y negro</button>
+        </span></div>
+      <div id="parties"></div>
+
+      <h2>Cómo nombramos a las facciones</h2>
+      <p>La prensa no les ha puesto nombre a estas facciones: cubre episodios (una vocería que cae, un líder que habla de «traición»), no bloques estables. Por eso cada bando lleva el nombre de su integrante más visible: <b>López Chau</b>, fundador de Ahora Nación; <b>Huilca</b>, exvocera de la bancada; <b>Figallo</b>, vocero de Buen Gobierno en el Senado; <b>Alayza</b>, quien explicó en público el rechazo al presupuesto; <b>Barragán</b>, vocero de Obras en el Senado; y <b>Agripina Flores</b>, la única fundadora de Obras en la bancada. Lo que reporta la prensa de cada partido:</p>
+      <ul>
+        <li><b>Ahora Nación.</b> Indira Huilca y César Holguín dejaron la vocería en Diputados tras discrepar de la bancada sobre las facultades al Ejecutivo y la interpelación al ministro del Interior. La mayoría (Meneses, Colchado, Marcelo, Muedas, Buitrón) votó a favor de las facultades. En el presupuesto, las senadoras Ruth Luque y Mirtha Vásquez argumentaron en contra.</li>
+        <li><b>Buen Gobierno.</b> Jorge Nieto acusó a los senadores Flores Suárez y Gavidia de «romper la disciplina del partido» por apoyar las facultades; Gavidia anunció su renuncia el 26/10. En el presupuesto el quiebre fue otro: cuatro diputados votaron No en las tres leyes. Rossana Alayza explicó el rechazo por los fondos para colegios en riesgo y la prioridad del gasto militar.</li>
+        <li><b>Obras.</b> Ricardo Belmont llamó «traición» al apoyo de sus diputados a la censura del ministro Astudillo, mientras el vocero Víctor Piñán aseguraba que la bancada votaba unida. Belmont anunció después una reestructuración del partido.</li>
+      </ul>
+      <details>
+        <summary>Fuentes de prensa</summary>
+        <ul class="src">
+          <li><a href="https://larepublica.pe/politica/2026/11/21/congreso-aprueba-presupuesto-2027-de-s-266-506-millones-con-107-votos-a-favor-46-en-contra-y-15-abstenciones-hnews-822192">La República, 21/11: Congreso aprueba presupuesto 2027 (107-46-15)</a></li>
+          <li><a href="https://larepublica.pe/politica/2026/11/21/oposicion-rechaza-presupuesto-2027-por-flexibilizar-requisitos-para-funcionarios-de-confianza-y-postergar-demandas-sociales-hnews-1238076">La República, 21/11: Oposición rechaza Presupuesto 2027</a></li>
+          <li><a href="https://larepublica.pe/politica/2026/10/29/discrepancias-en-ahora-nacion-indira-huilca-renuncia-a-la-voceria-alterna-tras-reunirse-con-lopez-chau-hnews-1968056">La República, 29/10: Huilca renuncia a la vocería alterna</a></li>
+          <li><a href="https://jornada.com.pe/ahora-nacion-se-quiebra-despues-de-discrepancias-tras-la-delegacion-de-facultades/">Jornada, 03/11: Ahora Nación se quiebra tras la delegación de facultades</a></li>
+          <li><a href="https://elcomercio.pe/politica/proyecto-de-amnistia-para-golpista-castillo-empieza-a-dividir-a-ahora-nacion-noticia/">El Comercio, 18/11: La amnistía a Castillo divide a Ahora Nación</a></li>
+          <li><a href="https://www.infobae.com/peru/2026/11/11/harvey-colchado-revela-que-quiso-votar-por-acusar-a-pedro-castillo-pero-ahora-nacion-decidio-abstenerse/">Infobae, 11/11: Colchado y la abstención en el caso Castillo</a></li>
+          <li><a href="https://larepublica.pe/politica/2026/09/10/jorge-nieto-apoya-facultades-del-gobierno-mientras-su-bancada-se-divide-entre-el-apoyo-y-rechazo-al-pedido-hnews-247200">La República, 10/09: Buen Gobierno se divide ante las facultades</a></li>
+          <li><a href="https://www.exitosanoticias.pe/politica/nieto-sobre-senadores-buen-gobierno-votaron-favor-facultades-rompieron-disciplina-partido-n186589">Exitosa: Nieto, «rompieron la disciplina del partido»</a></li>
+          <li><a href="https://www.infobae.com/peru/2026/10/28/jorge-nieto-denuncia-una-operacion-en-marcha-para-debilitar-a-la-oposicion-del-congreso-luego-de-la-renuncia-del-senador-gavidia/">Infobae, 28/10: renuncia de Gavidia</a></li>
+          <li><a href="https://elcomercio.pe/politica/congreso/partido-de-buen-gobierno-radiografia-de-la-bancada-de-jorge-nieto-entre-el-perfil-tecnocratico-y-la-inexperiencia-politica-congreso-senado-diputado-tlc-nota-noticia/">El Comercio, 05/05: Radiografía de la bancada de Buen Gobierno</a></li>
+          <li><a href="https://www.infobae.com/peru/2026/09/28/ricardo-belmont-se-enfrenta-a-su-bancada-considera-traicion-censura-al-mininter-pero-vocero-de-obras-lo-desmiente/">Infobae, 28/09: Belmont contra su bancada por la censura</a></li>
+          <li><a href="https://www.infobae.com/peru/2026/11/03/ricardo-belmont-anuncia-una-reestructuracion-nacional-de-obras-cambiara-su-postura-en-el-congreso/">Infobae, 03/11: Belmont anuncia la reestructuración de Obras</a></li>
+          <li><a href="https://comunicaciones.congreso.gob.pe/?p=476549">Comunicaciones del Congreso: Figallo, vocero de Buen Gobierno en el Senado</a></li>
+          <li><a href="https://elcomercio.pe/politica/congreso/obras-radiografia-de-la-bancada-de-ricardo-belmont-que-recicla-a-aliados-de-roberto-sanchez-y-antauro-humala-onpe-jne-congreso-tlc-nota-noticia/">El Comercio, 11/05: Radiografía de la bancada de Obras</a></li>
+        </ul>
+      </details>
+
+      <h2>Método</h2>
+      <p class="metodo">Votos nominales de las actas del Pleno del Congreso del 20/11/2026, leídas por el <a href="/articulos/congreso-2026-2031/">tablero de votaciones</a>; cada mitad (Diputados y Senado) cuadra con los totales impresos. Son actas <b>provisionales</b>, «sin registros orales»: en el Senado del 11/11, la versión final cambió 9 de 420 votos. La República reporta 36 votos a favor de la Ley de Presupuesto en el Senado; el acta provisional registra 35. La bancada de cada parlamentario es la del padrón oficial de su cámara.</p>
+      <details id="tabla"><summary>Ver todos los votos como tabla</summary></details>
+    </div>
+  </article>
+
+<!--DATA--><script id="data" type="application/json">{"votaciones": [{"key": "endeudamiento", "nombre": "Endeudamiento", "fecha": "20/11/2026", "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 4-2026-2031-CR, QUE PROPONE LA LEY DE ENDEUDAMIENTO DEL SECTOR PÚBLICO PARA EL ANO FISCAL 2027", "totales": {"diputados": {"SI": 71, "NO": 30, "ABS": 4}, "senado": {"SI": 38, "NO": 10, "ABS": 4}}, "provisional": true}, {"key": "equilibrio", "nombre": "Equilibrio Financiero", "fecha": "20/11/2026", "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 3-2026-2031-CR, QUE PROPONE LA LEY DE EQUILIBRIO FINANCIERO DEL PRESUPUESTO DEL SECTOR PUBLICO PARA EL AÑO FISCAL 2027", "totales": {"diputados": {"SI": 75, "NO": 30, "ABS": 4}, "senado": {"SI": 39, "NO": 13, "ABS": 0}}, "provisional": true}, {"key": "presupuesto", "nombre": "Presupuesto", "fecha": "20/11/2026", "asunto": "TEXTO SUSTITUTORIO DEL PROYECTO DE LEY 2-2026-2031-CR, QUE PROPONE LA LEY DE PRESUPUESTO DEL SECTOR PÚBLICO PARA EL AÑO FISCAL 2027", "totales": {"diputados": {"SI": 71, "NO": 32, "ABS": 12}, "senado": {"SI": 35, "NO": 14, "ABS": 3}}, "provisional": true}], "bandos": {"AN": {"ABS": "Ala López Chau", "NO": "Ala Huilca"}, "PBG": {"SI": "Ala Figallo", "NO": "Ala Alayza"}, "PCO": {"SI": "Ala Barragán", "ABS": "Ala Agripina Flores"}}, "miembros": [{"id": "d1322", "slug": "cabrera-nieto-juan-cesar", "nombre": "Cabrera Nieto, Juan César", "apellidos": "Cabrera Nieto", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/cabrera-nieto-juan-cesar.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1316", "slug": "hancco-hancco-dina-irene", "nombre": "Hancco Hancco, Dina Irene", "apellidos": "Hancco Hancco", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/hancco-hancco-dina-irene.jpg", "trayectoria": {"endeudamiento": "ABS", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "ABS", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1315", "slug": "sonco-villanueva-helard-bladimir", "nombre": "Sonco Villanueva, Helard Bladimir", "apellidos": "Sonco Villanueva", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/sonco-villanueva-helard-bladimir.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1311", "slug": "albanil-carmona-henry-antonio", "nombre": "Albañil Carmona, Henry Antonio", "apellidos": "Albañil Carmona", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/albanil-carmona-henry-antonio.jpg", "trayectoria": {"endeudamiento": "ABS", "equilibrio": "ABS", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "ABS", "equilibrio": "ABS", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1310", "slug": "huaman-cornejo-miguel-felix", "nombre": "Huamán Cornejo, Miguel Felix", "apellidos": "Huamán Cornejo", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/huaman-cornejo-miguel-felix.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1302", "slug": "fernandez-nina-nery-rodolfo", "nombre": "Fernández Nina, Nery Rodolfo", "apellidos": "Fernández Nina", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/fernandez-nina-nery-rodolfo.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1294", "slug": "santana-vera-milagros-karina", "nombre": "Santana Vera, Milagros Karina", "apellidos": "Santana Vera", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/santana-vera-milagros-karina.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "LIC", "equilibrio": "LIC", "presupuesto": "LIC"}, "bando": "NV", "nota": ""}, {"id": "d1293", "slug": "eusebio-padilla-arturo-cesar", "nombre": "Eusebio Padilla, Arturo César", "apellidos": "Eusebio Padilla", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/eusebio-padilla-arturo-cesar.jpg", "trayectoria": {"endeudamiento": "ABS", "equilibrio": "ABS", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "ABS", "equilibrio": "ABS", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1289", "slug": "camargo-porta-raul-jesus", "nombre": "Camargo Porta, Raúl Jesús", "apellidos": "Camargo Porta", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/camargo-porta-raul-jesus.jpg", "trayectoria": {"endeudamiento": "ABS", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "ABS", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1288", "slug": "medina-stein-andrea-dayna", "nombre": "Medina Stein, Andrea Dayna", "apellidos": "Medina Stein", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/medina-stein-andrea-dayna.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "ABS", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "ABS", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1287", "slug": "pinan-mamani-victor-eduardo", "nombre": "Piñán Mamani, Víctor Eduardo", "apellidos": "Piñán Mamani", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/pinan-mamani-victor-eduardo.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1286", "slug": "samanez-gonzales-vigil-jeenny-cristina", "nombre": "Samanez Gonzales Vigil, Jeenny Cristina", "apellidos": "Samanez Gonzales Vigil", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/samanez-gonzales-vigil-jeenny-cristina.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1285", "slug": "meneses-crispin-angel-renato", "nombre": "Meneses Crispin, Angel Renato", "apellidos": "Meneses Crispin", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/meneses-crispin-angel-renato.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SINRES", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1284", "slug": "manrique-olivera-bernardino-jair", "nombre": "Manrique Olivera, Bernardino Jair", "apellidos": "Manrique Olivera", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/manrique-olivera-bernardino-jair.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "LIC", "equilibrio": "LIC", "presupuesto": "LIC"}, "bando": "NV", "nota": ""}, {"id": "d1283", "slug": "huilca-flores-indira-isabel", "nombre": "Huilca Flores, Indira Isabel", "apellidos": "Huilca Flores", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/huilca-flores-indira-isabel.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "d1282", "slug": "colchado-huamani-harvey-julio", "nombre": "Colchado Huamani, Harvey Julio", "apellidos": "Colchado Huamani", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/colchado-huamani-harvey-julio.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1281", "slug": "uribe-saenz-romina-alejandra", "nombre": "Uribe Saenz, Romina Alejandra", "apellidos": "Uribe Saenz", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/uribe-saenz-romina-alejandra.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1280", "slug": "alayza-maccera-rossana-herminia", "nombre": "Alayza Maccera, Rossana Herminia", "apellidos": "Alayza Maccera", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/alayza-maccera-rossana-herminia.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "d1279", "slug": "benitez-barrionuevo-jessica", "nombre": "Benitez Barrionuevo, Jessica", "apellidos": "Benitez Barrionuevo", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/benitez-barrionuevo-jessica.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "d1278", "slug": "fernandez-de-la-torre-hilda-judit", "nombre": "Fernández de la Torre, Hilda Judit", "apellidos": "Fernández de la Torre", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/fernandez-de-la-torre-hilda-judit.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1277", "slug": "quispe-candia-luis-eliseo", "nombre": "Quispe Candia, Luis Eliseo", "apellidos": "Quispe Candia", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/quispe-candia-luis-eliseo.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1276", "slug": "molina-soto-nathaly-milagros", "nombre": "Molina Soto, Nathaly Milagros", "apellidos": "Molina Soto", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/molina-soto-nathaly-milagros.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1275", "slug": "reto-otero-oscar-de-jesus", "nombre": "Reto Otero, Oscar de Jesús", "apellidos": "Reto Otero", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/reto-otero-oscar-de-jesus.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1258", "slug": "castrejon-fernandez-segundo-juan", "nombre": "Castrejon Fernandez, Segundo Juan", "apellidos": "Castrejon Fernandez", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/castrejon-fernandez-segundo-juan.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "LIC", "equilibrio": "LIC", "presupuesto": "LIC"}, "bando": "NV", "nota": ""}, {"id": "d1253", "slug": "valqui-calderon-demetrio-flavio", "nombre": "Valqui Calderón, Demetrio Flavio", "apellidos": "Valqui Calderón", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/valqui-calderon-demetrio-flavio.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1252", "slug": "llaque-linares-nora-maria", "nombre": "Llaque Linares, Nora María", "apellidos": "Llaque Linares", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/llaque-linares-nora-maria.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1246", "slug": "duarte-georgina", "nombre": "Duarte, Georgina", "apellidos": "Duarte", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/duarte-georgina.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "d1245", "slug": "peralta-jorpa-maximo", "nombre": "Peralta Jorpa, Máximo", "apellidos": "Peralta Jorpa", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/peralta-jorpa-maximo.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "AUS", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1242", "slug": "muedas-balbiese-cesar-augusto", "nombre": "Muedas Balbiese, Cesar Augusto", "apellidos": "Muedas Balbiese", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/muedas-balbiese-cesar-augusto.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1241", "slug": "prado-vallejos-lila-marianela", "nombre": "Prado Vallejos, Lila Marianela", "apellidos": "Prado Vallejos", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/prado-vallejos-lila-marianela.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1240", "slug": "yataco-torrealva-jose-ricardo", "nombre": "Yataco Torrealva, José Ricardo", "apellidos": "Yataco Torrealva", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/yataco-torrealva-jose-ricardo.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "LIC", "equilibrio": "LIC", "presupuesto": "LIC"}, "bando": "NV", "nota": ""}, {"id": "d1232", "slug": "lopez-letona-heber", "nombre": "López Letona, Heber", "apellidos": "López Letona", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/lopez-letona-heber.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1231", "slug": "espinoza-huillca-edwin", "nombre": "Espinoza Huillca, Edwin", "apellidos": "Espinoza Huillca", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/espinoza-huillca-edwin.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1230", "slug": "holguin-loaiza-cesar-augusto", "nombre": "Holguin Loaiza, Cesar Augusto", "apellidos": "Holguin Loaiza", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/holguin-loaiza-cesar-augusto.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "ABS", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "ABS", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "d1227", "slug": "garcia-huby-fernando-alberto", "nombre": "García Huby, Fernando Alberto", "apellidos": "García Huby", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/garcia-huby-fernando-alberto.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "d1217", "slug": "buitron-martinez-freshman", "nombre": "Buitron Martínez, Freshman", "apellidos": "Buitron Martínez", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/buitron-martinez-freshman.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1214", "slug": "masco-caceres-luis-aurelio", "nombre": "Masco Cáceres, Luis Aurelio", "apellidos": "Masco Cáceres", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/masco-caceres-luis-aurelio.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1212", "slug": "arminta-valencia-marleny-bibiana", "nombre": "Arminta Valencia, Marleny Bibiana", "apellidos": "Arminta Valencia", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/arminta-valencia-marleny-bibiana.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "LIC", "equilibrio": "LIC", "presupuesto": "LIC"}, "bando": "NV", "nota": ""}, {"id": "d1210", "slug": "hirache-pizarro-gloria-charito", "nombre": "Hirache Pizarro, Gloria Charito", "apellidos": "Hirache Pizarro", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/hirache-pizarro-gloria-charito.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1209", "slug": "gonzales-polar-edgar-dember", "nombre": "Gonzales Polar, Edgar Dember", "apellidos": "Gonzales Polar", "camara": "diputados", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/diputados/gonzales-polar-edgar-dember.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "d1206", "slug": "alvaron-de-la-cruz-edgar-adrian", "nombre": "Alvaron de la Cruz, Edgar Adrián", "apellidos": "Alvaron de la Cruz", "camara": "diputados", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/diputados/alvaron-de-la-cruz-edgar-adrian.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "AUS", "equilibrio": "AUS", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "d1205", "slug": "marcelo-salazar-jose-miguel", "nombre": "Marcelo Salazar, José Miguel", "apellidos": "Marcelo Salazar", "camara": "diputados", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/diputados/marcelo-salazar-jose-miguel.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "s1285", "slug": "ticona-cohaila-juana-guisella", "nombre": "Ticona Cohaila, Juana Guisella", "apellidos": "Ticona Cohaila", "camara": "senado", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/senado/ticona-cohaila-juana-guisella.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "s1284", "slug": "astucuri-laura-roger-miguel", "nombre": "Astucuri Laura, Roger Miguel", "apellidos": "Astucuri Laura", "camara": "senado", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/senado/astucuri-laura-roger-miguel.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1283", "slug": "gago-rodriguez-walter-francisco", "nombre": "Gago Rodríguez, Walter Francisco", "apellidos": "Gago Rodríguez", "camara": "senado", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/senado/gago-rodriguez-walter-francisco.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1282", "slug": "flores-cordova-agripina-maria-del-pilar", "nombre": "Flores Córdova, Agripina María del Pilar", "apellidos": "Flores Córdova", "camara": "senado", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/senado/flores-cordova-agripina-maria-del-pilar.jpg", "trayectoria": {"endeudamiento": "ABS", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "ABS", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}, {"id": "s1281", "slug": "barragan-coloma-daniel-hugo", "nombre": "Barragán Coloma, Daniel Hugo", "apellidos": "Barragán Coloma", "camara": "senado", "grupo": "PCO", "foto": "../congreso-2026-2031/data/fotos/senado/barragan-coloma-daniel-hugo.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1244", "slug": "bonifaz-carmona-nora", "nombre": "Bonifaz Carmona, Nora", "apellidos": "Bonifaz Carmona", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/bonifaz-carmona-nora.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "s1243", "slug": "gavidia-rodriguez-jorge-octavio", "nombre": "Gavidia Rodríguez, Jorge Octavio", "apellidos": "Gavidia Rodríguez", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/gavidia-rodriguez-jorge-octavio.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": "Anunció su renuncia al partido el 26/10; sigue en el padrón oficial del PBG."}, {"id": "s1242", "slug": "caballero-leon-carlos-david", "nombre": "Caballero León, Carlos David", "apellidos": "Caballero León", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/caballero-leon-carlos-david.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1241", "slug": "matute-charun-susana-flor-de-maria", "nombre": "Matute Charún, Susana Flor de María", "apellidos": "Matute Charún", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/matute-charun-susana-flor-de-maria.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "SINRES", "equilibrio": "SINRES", "presupuesto": "SINRES"}, "bando": "NV", "nota": ""}, {"id": "s1240", "slug": "iturregui-byrne-patricia-milagros", "nombre": "Iturregui Byrne, Patricia Milagros", "apellidos": "Iturregui Byrne", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/iturregui-byrne-patricia-milagros.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1239", "slug": "figallo-rivadeneyra-flavio-felipe", "nombre": "Figallo Rivadeneyra, Flavio Felipe", "apellidos": "Figallo Rivadeneyra", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/figallo-rivadeneyra-flavio-felipe.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1238", "slug": "flores-suarez-juver-nilson", "nombre": "Flores Suárez, Juver Nilson", "apellidos": "Flores Suárez", "camara": "senado", "grupo": "PBG", "foto": "../congreso-2026-2031/data/fotos/senado/flores-suarez-juver-nilson.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "SI"}, "bando": "SI", "nota": ""}, {"id": "s1237", "slug": "vasquez-chuquilin-mirtha-esther", "nombre": "Vásquez Chuquilín, Mirtha Esther", "apellidos": "Vásquez Chuquilín", "camara": "senado", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/senado/vasquez-chuquilin-mirtha-esther.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "s1236", "slug": "luque-ibarra-ruth", "nombre": "Luque Ibarra, Ruth", "apellidos": "Luque Ibarra", "camara": "senado", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/senado/luque-ibarra-ruth.jpg", "trayectoria": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "voto_raw": {"endeudamiento": "NO", "equilibrio": "NO", "presupuesto": "NO"}, "bando": "NO", "nota": ""}, {"id": "s1235", "slug": "delgado-zegarra-jaime-ricardo", "nombre": "Delgado Zegarra, Jaime Ricardo", "apellidos": "Delgado Zegarra", "camara": "senado", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/senado/delgado-zegarra-jaime-ricardo.jpg", "trayectoria": {"endeudamiento": "NV", "equilibrio": "NV", "presupuesto": "NV"}, "voto_raw": {"endeudamiento": "SINRES", "equilibrio": "SINRES", "presupuesto": "SINRES"}, "bando": "NV", "nota": ""}, {"id": "s1234", "slug": "chau-nava-pablo-alfonso-lopez", "nombre": "López Chau Nava, Pablo Alfonso", "apellidos": "López Chau Nava", "camara": "senado", "grupo": "AN", "foto": "../congreso-2026-2031/data/fotos/senado/chau-nava-pablo-alfonso-lopez.jpg", "trayectoria": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "voto_raw": {"endeudamiento": "SI", "equilibrio": "SI", "presupuesto": "ABS"}, "bando": "ABS", "nota": ""}]}</script><!--/DATA-->
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const PARTIES = [
+    { k: 'AN',  name: 'Ahora Nación' },
+    { k: 'PBG', name: 'Partido del Buen Gobierno' },
+    { k: 'PCO', name: 'Partido Cívico Obras' },
+  ];
+  const ORDER = ['SI', 'ABS', 'NO', 'NV'];
+  const VL = { SI: 'Sí', NO: 'No', ABS: 'Abstención', NV: 'No votó' };
+  const LEY = { endeudamiento: 'Endeudamiento', equilibrio: 'Equilibrio Financiero', presupuesto: 'Presupuesto' };
+  const TEXT = {
+    AN: 'La mayoría, con López Chau y Colchado, votó Sí al endeudamiento y al equilibrio financiero y se abstuvo en la Ley de Presupuesto. Cuatro votaron No al presupuesto: Huilca y Holguín, que dejaron la vocería en Diputados, y las senadoras Luque y Vásquez. Es la misma línea que partió a la bancada en las facultades.',
+    PBG: 'Buen Gobierno votó Sí casi entero. El quiebre está en cuatro diputados que votaron No en las tres leyes. En el Senado solo Nora Bonifaz se les sumó, y solo en la Ley de Presupuesto.',
+    PCO: 'Obras es la bancada más pareja: diez votaron Sí y ocho se abstuvieron en la Ley de Presupuesto, con los dos voceros del lado del Sí. Varios de los que se abstuvieron habían votado Sí en Equilibrio Financiero.',
+  };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
+  const CORTO = { 'López Chau Nava': 'López Chau' };
+  // primer apellido; el siguiente solo si el primero se repite en la bancada
+  const corto = (m, todos) => {
+    if (CORTO[m.apellidos]) return CORTO[m.apellidos];
+    const a = m.apellidos.split(' ');
+    if (a.length > 1 && todos.filter(o => o.apellidos.split(' ')[0] === a[0]).length > 1) {
+      const i = a.findIndex((w, k) => k > 0 && !/^(de|del|la|los|las)$/i.test(w));
+      return a.slice(0, i < 0 ? a.length : i + 1).join(' ');
+    }
+    return a[0];
+  };
+
+  const face = (m, todos) => {
+    const t = m.trayectoria;
+    return `<div class="face" tabindex="0" data-id="${m.id}">
+      <div class="ph">${m.foto ? `<img src="${esc(m.foto)}" alt="${esc(m.nombre)}" loading="lazy">` : ''}</div>
+      <span class="cam">${m.camara === 'senado' ? 'S' : 'D'}</span>
+      <div class="nm">${esc(corto(m, todos))}${m.nota ? '<span class="ast">*</span>' : ''}</div>
+      <div class="tray">${Object.keys(LEY).map(k => `<span class="dot d-${t[k]}"></span>`).join('')}</div>
+    </div>`;
+  };
+
+  const legend = `<div class="legend">
+    <span class="legend-item"><span class="dot d-SI"></span>Sí</span>
+    <span class="legend-item"><span class="dot d-NO"></span>No</span>
+    <span class="legend-item"><span class="dot d-ABS"></span>Abstención</span>
+    <span class="legend-item"><span class="dot d-NV"></span>No votó</span>
+    <span class="legend-item"><span class="cam inline">S</span> senador <span class="cam inline">D</span> diputado</span></div>`;
+
+  const root = document.getElementById('parties');
+  for (const P of PARTIES) {
+    const ms = D.miembros.filter(m => m.grupo === P.k);
+    const camps = ORDER.filter(v => ms.some(m => m.bando === v)).map(v => {
+      const g = ms.filter(m => m.bando === v).sort((a, b) =>
+        (a.camara === 'senado' ? 0 : 1) - (b.camara === 'senado' ? 0 : 1) || a.apellidos.localeCompare(b.apellidos, 'es'));
+      const nS = g.filter(m => m.camara === 'senado').length;
+      const name = v === 'NV' ? 'No votó' : (D.bandos[P.k][v] || VL[v]);
+      const sub = `<span class="n">${g.length}</span>` +
+        (v === 'NV' ? '' : `<span class="dot d-${v}"></span>${VL[v]} al presupuesto · `) +
+        `${plural(g.length - nS, 'diputado', 'diputados')}, ${plural(nS, 'senador', 'senadores')}`;
+      return `<div class="camp${v === 'NV' ? ' nv' : ''}"><div><div class="camp-name">${esc(name)}</div>
+        <div class="camp-sub">${sub}</div></div><div class="faces">${g.map(m => face(m, ms)).join('')}</div></div>`;
+    }).join('');
+    const notas = ms.filter(m => m.nota).map(m => `* ${esc(corto(m, ms))}: ${esc(m.nota)} `).join('');
+    root.insertAdjacentHTML('beforeend', `
+      <h2><span class="sw" style="background:var(--p-${P.k})"></span>${P.name}</h2>
+      <p>${TEXT[P.k]}</p>
+      <figure class="fig" style="--pc:var(--p-${P.k})">
+        <div class="fig-title">${P.name}: los bandos en la Ley de Presupuesto 2027</div>
+        <div class="fig-sub">${ms.length} parlamentarios · Diputados y Senado · Pleno del Congreso, 20/11/2026</div>
+        ${legend}
+        <div class="camps">${camps}</div>
+        <div class="fig-note">${notas}Puntos: Endeudamiento · Equilibrio Financiero · Presupuesto. Fuente: actas provisionales del Pleno del Congreso, leídas por Datapol.</div>
+      </figure>`);
+  }
+
+  // selector color / blanco y negro (borrador)
+  document.querySelectorAll('.fototoggle button').forEach(b => b.addEventListener('click', () => {
+    document.body.classList.toggle('bn', b.dataset.f === 'bn');
+    document.querySelectorAll('.fototoggle button').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+  }));
+
+  // tooltip
+  const byId = Object.fromEntries(D.miembros.map(m => [m.id, m]));
+  const tip = document.getElementById('tip');
+  const show = (el, x, y) => {
+    const m = byId[el.dataset.id];
+    tip.innerHTML = `<b>${esc(m.nombre)}</b>${m.camara === 'senado' ? 'Senado' : 'Diputados'} · ${m.grupo}` +
+      Object.entries(LEY).map(([k, l]) => `<div class="row"><span class="dot d-${m.trayectoria[k]}"></span>${l}: ${VL[m.trayectoria[k]]}</div>`).join('') +
+      (m.nota ? `<div style="margin-top:.3rem;opacity:.8">* ${esc(m.nota)}</div>` : '');
+    tip.style.display = 'block';
+    const r = tip.getBoundingClientRect();
+    tip.style.left = Math.max(8, Math.min(x + 14, innerWidth - r.width - 8)) + 'px';
+    tip.style.top = Math.max(8, Math.min(y + 14, innerHeight - r.height - 8)) + 'px';
+  };
+  document.addEventListener('mousemove', e => {
+    const f = e.target.closest('.face');
+    if (f) show(f, e.clientX, e.clientY); else tip.style.display = 'none';
+  });
+  document.addEventListener('focusin', e => {
+    const f = e.target.closest('.face');
+    if (f) { const r = f.getBoundingClientRect(); show(f, r.right, r.top); }
+  });
+  document.addEventListener('focusout', () => { tip.style.display = 'none'; });
+
+  // tabla
+  const rows = D.miembros.slice().sort((a, b) => a.grupo.localeCompare(b.grupo) || a.apellidos.localeCompare(b.apellidos, 'es'));
+  document.getElementById('tabla').insertAdjacentHTML('beforeend', `<table class="t"><thead><tr><th>Parlamentario</th><th>Bancada</th><th>Cámara</th>
+    ${Object.values(LEY).map(l => `<th>${l}</th>`).join('')}</tr></thead><tbody>${rows.map(m => `<tr><td>${esc(m.nombre)}</td><td>${m.grupo}</td>
+    <td>${m.camara === 'senado' ? 'Senado' : 'Diputados'}</td>${Object.keys(LEY).map(k => `<td>${VL[m.trayectoria[k]]}</td>`).join('')}</tr>`).join('')}</tbody></table>`);
+})();
+</script>
+</body>
+</html>
