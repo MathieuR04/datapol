@@ -17,7 +17,7 @@ import pandas as pd
 
 HERE = Path(__file__).resolve().parent.parent
 TAB = HERE.parent / "congreso-2026-2031" / "data"
-PARTIDOS = ["AN", "PBG", "PCO"]
+PARTIDOS = ["FP", "RP", "JP", "AN", "PBG", "PCO"]
 LEYES = [("endeudamiento", "ENDEUDAMIENTO", "Endeudamiento"),
          ("equilibrio", "EQUILIBRIO", "Equilibrio Financiero"),
          ("presupuesto", "LEY DE PRESUPUESTO DEL SECTOR", "Presupuesto")]
@@ -28,7 +28,7 @@ VOTO = {"SI": "SI", "NO": "NO", "ABS": "ABS"}   # el resto: no votó
 # (ver la revisión de fuentes en el artículo).
 BANDOS = {
     # Cada bando lleva el nombre de su integrante más visible (vocero, fundador o
-    # quien explicó el voto en público; ver «Cómo nombramos a las facciones»).
+    # quien explicó el voto en público).
     "AN": {"ABS": "Ala López Chau", "NO": "Ala Huilca"},
     "PBG": {"SI": "Ala Figallo", "NO": "Ala Alayza"},
     "PCO": {"SI": "Ala Barragán", "ABS": "Ala Agripina Flores"},
